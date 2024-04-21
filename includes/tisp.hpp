@@ -60,6 +60,7 @@
 #include "TISP_sqr.hpp"
 #include "TISP_sqrt.hpp"
 #include "TISP_ssrc.hpp"
+#include "TISP_stft.hpp"
 #include "TISP_subBlockStatistics.hpp"
 #include "TISP_superNode.hpp"
 #include "TISP_tableInterpolate.hpp"
