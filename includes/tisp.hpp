@@ -37,6 +37,7 @@
 #include "TISP_ifftr1dBatched.hpp"
 #include "TISP_initDru.hpp"
 #include "TISP_interleave.hpp"
+#include "TISP_istft.hpp"
 #include "TISP_limiter.hpp"
 #include "TISP_log.hpp"
 #include "TISP_log10.hpp"

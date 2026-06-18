@@ -26,31 +26,70 @@ namespace TISP {
  */
 static void generateComplexTwiddles(float *pW, uint32_t numPoints)
 {
-   uint32_t     i;
-   uint32_t     j;
-   uint32_t     k;
-   uint32_t     t;
+   uint32_t      i, j, k = 0, t;
    const double PI = 3.141592654;
-   t               = numPoints >> 2U;
-   j               = 1U;
-   k               = 0U;
-   while (j <= (numPoints >> 2U)) {
-      for (i = 0U; i < (numPoints >> 2U); i += j) {
-         pW[k]      = static_cast<FFTLIB_F32>(cos(2.0 * PI * static_cast<double>(i) / static_cast<double>(numPoints)));
-         pW[k + 1U] = static_cast<FFTLIB_F32>(-sin(2.0 * PI * static_cast<double>(i) / static_cast<double>(numPoints)));
-         pW[k + 2U * t] =
-             static_cast<FFTLIB_F32>(cos(4.0 * PI * static_cast<double>(i) / static_cast<double>(numPoints)));
-         pW[k + 2U * t + 1U] =
-             static_cast<FFTLIB_F32>(-sin(4.0 * PI * static_cast<double>(i) / static_cast<double>(numPoints)));
-         pW[k + 4U * t] =
-             static_cast<FFTLIB_F32>(cos(6.0 * PI * static_cast<double>(i) / static_cast<double>(numPoints)));
-         pW[k + 4U * t + 1U] =
-             static_cast<FFTLIB_F32>(-sin(6.0 * PI * static_cast<double>(i) / static_cast<double>(numPoints)));
-         k += 2U;
+   uint32_t uNumPoints = numPoints;
+
+   /* SECTION 1: RADIX-5 */
+   if (uNumPoints % 5 == 0) {
+      uint32_t numPointsStage = uNumPoints;
+      t = uNumPoints / 5;
+      for (j = 1; j <= uNumPoints / 5 && numPointsStage % 5 == 0; j = j * 5) {
+         for (i = 0; i < uNumPoints / 5; i += j) {
+            pW[k]         = static_cast<FFTLIB_F32>(cos(2 * PI * i / uNumPoints));
+            pW[k + 1]     = static_cast<FFTLIB_F32>(-sin(2 * PI * i / uNumPoints));
+            pW[k + 2 * t]     = static_cast<FFTLIB_F32>(cos(4 * PI * i / uNumPoints));
+            pW[k + 2 * t + 1] = static_cast<FFTLIB_F32>(-sin(4 * PI * i / uNumPoints));
+            pW[k + 4 * t]     = static_cast<FFTLIB_F32>(cos(6 * PI * i / uNumPoints));
+            pW[k + 4 * t + 1] = static_cast<FFTLIB_F32>(-sin(6 * PI * i / uNumPoints));
+            pW[k + 6 * t]     = static_cast<FFTLIB_F32>(cos(8 * PI * i / uNumPoints));
+            pW[k + 6 * t + 1] = static_cast<FFTLIB_F32>(-sin(8 * PI * i / uNumPoints));
+            k += 2;
+         }
+         k += t * 6;
+         t = t / 5;
+         numPointsStage /= 5;
       }
-      k += t * 4U;
-      t >>= 2U;
-      j <<= 2U;
+      uNumPoints = numPointsStage;
+   }
+
+   /* SECTION 2: RADIX-3 */
+   if (uNumPoints % 3 == 0) {
+      uint32_t numPointsStage = uNumPoints;
+      t = uNumPoints / 3;
+      for (j = 1; j <= uNumPoints / 3 && numPointsStage % 3 == 0; j = j * 3) {
+         for (i = 0; i < uNumPoints / 3; i += j) {
+            pW[k]         = static_cast<FFTLIB_F32>(cos(2 * PI * i / uNumPoints));
+            pW[k + 1]     = static_cast<FFTLIB_F32>(-sin(2 * PI * i / uNumPoints));
+            pW[k + 2 * t]     = static_cast<FFTLIB_F32>(cos(4 * PI * i / uNumPoints));
+            pW[k + 2 * t + 1] = static_cast<FFTLIB_F32>(-sin(4 * PI * i / uNumPoints));
+            k += 2;
+         }
+         k += t * 2;
+         t = t / 3;
+         numPointsStage /= 3;
+      }
+      uNumPoints = numPointsStage;
+   }
+
+   /* SECTION 3: RADIX-4 */
+   if (uNumPoints % 4 == 0) {
+      uint32_t numPointsStage = uNumPoints;
+      t = uNumPoints >> 2;
+      for (j = 1; j <= uNumPoints >> 2 && numPointsStage % 4 == 0; j = j << 2) {
+         for (i = 0; i < uNumPoints >> 2; i += j) {
+            pW[k]             = static_cast<FFTLIB_F32>(cos(2 * PI * i / uNumPoints));
+            pW[k + 1]         = static_cast<FFTLIB_F32>(-sin(2 * PI * i / uNumPoints));
+            pW[k + 2 * t]     = static_cast<FFTLIB_F32>(cos(4 * PI * i / uNumPoints));
+            pW[k + 2 * t + 1] = static_cast<FFTLIB_F32>(-sin(4 * PI * i / uNumPoints));
+            pW[k + 4 * t]     = static_cast<FFTLIB_F32>(cos(6 * PI * i / uNumPoints));
+            pW[k + 4 * t + 1] = static_cast<FFTLIB_F32>(-sin(6 * PI * i / uNumPoints));
+            k += 2;
+         }
+         k += t * 4;
+         t = t >> 2;
+         numPointsStage /= 4;
+      }
    }
 }
 
@@ -65,35 +104,70 @@ static void generateComplexTwiddles(float *pW, uint32_t numPoints)
  */
 static void generateRealTwiddles(float *pW, uint32_t numPoints)
 {
-   uint32_t     i;
-   uint32_t     j;
-   uint32_t     k;
-   uint32_t     t;
+   uint32_t      i, j, k = 0, t;
    const double PI = 3.141592654;
+   uint32_t uNumPoints = numPoints >> 1U;
 
-   uint32_t numPointsLocal = numPoints >> 1U;
-
-   t = numPointsLocal >> 2U;
-   j = 1U;
-   k = 0U;
-   while (j <= (numPointsLocal >> 2U)) {
-      for (i = 0U; i < (numPointsLocal >> 2U); i += j) {
-         pW[k] = static_cast<FFTLIB_F32>(cos(2.0 * PI * static_cast<double>(i) / static_cast<double>(numPointsLocal)));
-         pW[k + 1U] =
-             static_cast<FFTLIB_F32>(-sin(2.0 * PI * static_cast<double>(i) / static_cast<double>(numPointsLocal)));
-         pW[k + 2U * t] =
-             static_cast<FFTLIB_F32>(cos(4.0 * PI * static_cast<double>(i) / static_cast<double>(numPointsLocal)));
-         pW[k + 2U * t + 1U] =
-             static_cast<FFTLIB_F32>(-sin(4.0 * PI * static_cast<double>(i) / static_cast<double>(numPointsLocal)));
-         pW[k + 4U * t] =
-             static_cast<FFTLIB_F32>(cos(6.0 * PI * static_cast<double>(i) / static_cast<double>(numPointsLocal)));
-         pW[k + 4U * t + 1U] =
-             static_cast<FFTLIB_F32>(-sin(6.0 * PI * static_cast<double>(i) / static_cast<double>(numPointsLocal)));
-         k += 2U;
+   /* SECTION 1: RADIX-5 */
+   if (uNumPoints % 5 == 0) {
+      uint32_t numPointsStage = uNumPoints;
+      t = uNumPoints / 5;
+      for (j = 1; j <= uNumPoints / 5 && numPointsStage % 5 == 0; j = j * 5) {
+         for (i = 0; i < uNumPoints / 5; i += j) {
+            pW[k]         = static_cast<FFTLIB_F32>(cos(2 * PI * i / uNumPoints));
+            pW[k + 1]     = static_cast<FFTLIB_F32>(-sin(2 * PI * i / uNumPoints));
+            pW[k + 2 * t]     = static_cast<FFTLIB_F32>(cos(4 * PI * i / uNumPoints));
+            pW[k + 2 * t + 1] = static_cast<FFTLIB_F32>(-sin(4 * PI * i / uNumPoints));
+            pW[k + 4 * t]     = static_cast<FFTLIB_F32>(cos(6 * PI * i / uNumPoints));
+            pW[k + 4 * t + 1] = static_cast<FFTLIB_F32>(-sin(6 * PI * i / uNumPoints));
+            pW[k + 6 * t]     = static_cast<FFTLIB_F32>(cos(8 * PI * i / uNumPoints));
+            pW[k + 6 * t + 1] = static_cast<FFTLIB_F32>(-sin(8 * PI * i / uNumPoints));
+            k += 2;
+         }
+         k += t * 6;
+         t = t / 5;
+         numPointsStage /= 5;
       }
-      k += t * 4U;
-      t >>= 2U;
-      j <<= 2U;
+      uNumPoints = numPointsStage;
+   }
+
+   /* SECTION 2: RADIX-3 */
+   if (uNumPoints % 3 == 0) {
+      uint32_t numPointsStage = uNumPoints;
+      t = uNumPoints / 3;
+      for (j = 1; j <= uNumPoints / 3 && numPointsStage % 3 == 0; j = j * 3) {
+         for (i = 0; i < uNumPoints / 3; i += j) {
+            pW[k]         = static_cast<FFTLIB_F32>(cos(2 * PI * i / uNumPoints));
+            pW[k + 1]     = static_cast<FFTLIB_F32>(-sin(2 * PI * i / uNumPoints));
+            pW[k + 2 * t]     = static_cast<FFTLIB_F32>(cos(4 * PI * i / uNumPoints));
+            pW[k + 2 * t + 1] = static_cast<FFTLIB_F32>(-sin(4 * PI * i / uNumPoints));
+            k += 2;
+         }
+         k += t * 2;
+         t = t / 3;
+         numPointsStage /= 3;
+      }
+      uNumPoints = numPointsStage;
+   }
+
+   /* SECTION 3: RADIX-4 */
+   if (uNumPoints % 4 == 0) {
+      uint32_t numPointsStage = uNumPoints;
+      t = uNumPoints >> 2;
+      for (j = 1; j <= uNumPoints >> 2 && numPointsStage % 4 == 0; j = j << 2) {
+         for (i = 0; i < uNumPoints >> 2; i += j) {
+            pW[k]             = static_cast<FFTLIB_F32>(cos(2 * PI * i / uNumPoints));
+            pW[k + 1]         = static_cast<FFTLIB_F32>(-sin(2 * PI * i / uNumPoints));
+            pW[k + 2 * t]     = static_cast<FFTLIB_F32>(cos(4 * PI * i / uNumPoints));
+            pW[k + 2 * t + 1] = static_cast<FFTLIB_F32>(-sin(4 * PI * i / uNumPoints));
+            pW[k + 4 * t]     = static_cast<FFTLIB_F32>(cos(6 * PI * i / uNumPoints));
+            pW[k + 4 * t + 1] = static_cast<FFTLIB_F32>(-sin(6 * PI * i / uNumPoints));
+            k += 2;
+         }
+         k += t * 4;
+         t = t >> 2;
+         numPointsStage /= 4;
+      }
    }
 }
 
