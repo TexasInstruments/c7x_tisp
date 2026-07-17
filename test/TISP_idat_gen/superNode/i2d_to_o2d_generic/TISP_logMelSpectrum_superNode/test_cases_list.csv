@@ -1,0 +1,4 @@
+ID,dType,fftSize,windowLength,hopSize,numChannels,numInputSamples,numMelBins,sampleRate,fMin,fMax,power,logOffset,melScale,melNorm,windowType,windowAlign,windowPeriodic,numBlocks,testType,demoCase,outputDataLocation,numReps,C7100
+1,float,512,512,256,1,2048,64,16000,0,8000,2.0,1e-6,htk,none,hann,center,TRUE,2,STATIC,FALSE,AUDIOLIB_TEST_OUTPUT_MSMC,1,TRUE
+2,float,512,400,160,1,1600,64,16000,125,7500,1.0,1e-3,htk,none,hann,center,TRUE,2,STATIC,FALSE,AUDIOLIB_TEST_OUTPUT_MSMC,1,TRUE
+3,float,512,512,256,2,2048,40,16000,0,8000,2.0,1e-6,htk,none,hann,center,TRUE,2,STATIC,FALSE,AUDIOLIB_TEST_OUTPUT_MSMC,1,TRUE
