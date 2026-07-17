@@ -1,0 +1,28 @@
+---
+BasedOnStyle: LLVM
+AlignAfterOpenBracket: Align
+# AlignConsecutiveMacros: 'true'
+AlignConsecutiveAssignments: 'true'
+AlignConsecutiveDeclarations: 'true'
+AlignOperands: 'true'
+AlignTrailingComments: 'true'
+AllowAllParametersOfDeclarationOnNextLine: 'false'
+# AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: 'false'
+BinPackArguments: 'true'
+BinPackParameters: 'false'
+BreakBeforeBraces: Stroustrup
+ColumnLimit: '120'
+DerivePointerAlignment: 'true'
+IndentWidth: '3'
+PointerAlignment: Right
+ReflowComments: 'true'
+PenaltyBreakComment: 300
+PenaltyBreakOpenParenthesis: 0
+SpaceAfterCStyleCast: 'true'
+SpaceAfterTemplateKeyword: 'true'
+SpaceBeforeAssignmentOperators: 'true'
+# SpaceBeforeParens: Always
+UseTab: Never
+
+...

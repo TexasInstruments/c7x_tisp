@@ -1,0 +1,9 @@
+ID,dType,numSamples,balance,fader,sideGainFactor,lfeBalanceGainFactor,lfeFaderGainFactor,samplingRate,strideInElements,strideOutElements,testType,plotSignals,waveFiles,amplitude,frequency,lfeBalanceMode,lfeFaderMode,isInterleave,channelLayoutName,blockWidth,blockHeight
+1,float,1024,0,-1,0,0,0,48000,1024,1024,SINE,FALSE,FALSE,1,1000,unaffected,unaffected,FALSE,7.1_standard,256,8
+2,float,1024,0,-0.5,0,0,0,48000,1024,1024,SINE,FALSE,FALSE,1,1000,unaffected,AVERAGE,TRUE,7.1_standard,8,256
+3,float,2048,0.5,0,0.8,0.1,0,48000,2048,2048,SINE,FALSE,FALSE,1,1000,PARTIAL,POSITION_BASED,FALSE,7.1_standard,512,8
+4,float,2048,-0.5,0,0,0,0,48000,2048,2048,SINE,FALSE,FALSE,1,1000,FULL,FULL,TRUE,7.1_standard,8,512
+5,float,4096,1,0,0,0,0,48000,4096,4096,SINE,FALSE,FALSE,1,1000,unaffected,unaffected,FALSE,7.1_standard,1024,8
+6,float,4096,-1,0,0,0,0,48000,4096,4096,SINE,FALSE,FALSE,1,1000,unaffected,AVERAGE,TRUE,7.1_standard,8,1024
+7,float,8192,0,-0.5,0.5,0.5,0.6,48000,8192,8192,SINE,FALSE,FALSE,1,1000,PARTIAL,POSITION_BASED,FALSE,7.1_standard,2048,8
+8,float,8192,0,0.5,0.8,0.1,0,48000,8192,8192,SINE,FALSE,FALSE,1,1000,FULL,FULL,TRUE,7.1_standard,8,2048

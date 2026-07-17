@@ -1,0 +1,9 @@
+ID,dType,mode,interleave,maxDelay,numChannels,numSamples,strideInElements,strideOutElements,blockWidth,blockHeight,testPattern
+1,float,0,0,130,16,128,128,128,32,16,STATIC
+2,double,1,1,64,16,128,16,16,16,32,STATIC
+3,float,0,0,64,32,128,128,128,16,32,STATIC
+4,double,1,1,32,32,128,32,32,32,16,STATIC
+5,float,0,0,16,64,256,256,256,64,64,STATIC
+6,double,0,1,16,64,256,64,64,64,64,STATIC
+7,float,0,0,8,64,512,512,512,32,64,STATIC
+8,double,1,0,16,32,512,512,512,64,32,STATIC

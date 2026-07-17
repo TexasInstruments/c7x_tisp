@@ -1,0 +1,10 @@
+ID,dType,widthIn,outChannels,heightIn,inPitch,outPitch,blockWidth,blockHeight,testPattern,isInterleave,alignStride,AM275 SOC
+1,float,1024,"[1,5,3,10,1,1,9,1]",8,1024,1024,8,128,STATIC,1,TRUE,no
+2,float,512,"[1,5,3,10,1,1,9,3]",32,512,512,32,64,STATIC,1,TRUE,no
+3,float,2048,"[1,5,3,10,1,1,1,5,7,8,9,3,2,4,7,1]",16,2048,2048,512,16,STATIC,0,TRUE,no
+4,float,4096,"[1,5,3,10,1,1,1,5,7,8,9,3,2,4,7,1]",16,4096,4096,512,16,STATIC,0,TRUE,no
+5,double,1024,"[1,5,3,10,1,1,9,5]",8,1024,1024,128,8,STATIC,0,TRUE,no
+6,double,512,"[1,5,3,10,1,1,9,5]",32,512,512,32,64,STATIC,1,TRUE,no
+7,double,2048,"[1,5,3,10,1,1,1,5,7,8,9,3,2,4,7,1]",16,2048,2048,16,256,STATIC,1,TRUE,no
+8,double,4096,"[1,5,3,10,1,1,1,5,7,8,9,3,2,4,7,1]",16,4096,4096,512,16,STATIC,0,TRUE,no
+9,float,512,"[1,5,3,1,2,1,1,0]",8,512,512,8,64,STATIC,1,TRUE,yes

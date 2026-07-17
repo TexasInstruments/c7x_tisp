@@ -1,0 +1,18 @@
+if(CMAKE_HOST_WIN32)
+  set(SUFFIX .exe)
+else()
+  set(SUFFIX "")
+endif()
+
+# Without that flag CMake is not able to pass test compilation check
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+
+set(CMAKE_AR $ENV{CGT7X_ROOT}/bin/ar7x${SUFFIX})
+set(CMAKE_ASM_COMPILER $ENV{CGT7X_ROOT}/bin/cl7x${SUFFIX})
+set(CMAKE_C_COMPILER $ENV{CGT7X_ROOT}/bin/cl7x${SUFFIX})
+set(CMAKE_CXX_COMPILER $ENV{CGT7X_ROOT}/bin/cl7x${SUFFIX})
+set(CMAKE_LINKER $ENV{CGT7X_ROOT}/bin/cl7x${SUFFIX})
+set(CMAKE_OBJCOPY $ENV{CGT7X_ROOT}/bin/cl7x${SUFFIX})
+set(CMAKE_CXX_LINK_EXECUTABLE ${CMAKE_CXX_COMPILER})
+
+set(C7x_LIBS "$ENV{CGT7X_ROOT}/lib/libc.a")

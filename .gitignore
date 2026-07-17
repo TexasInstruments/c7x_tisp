@@ -1,0 +1,45 @@
+# If you put build tree in the source tree add it like so:
+build_debug/
+build_release/
+
+build
+
+# Generated and user files
+**/CMakeCache.txt
+**/CMakeUserPresets.json
+**/CTestTestfile.cmake
+**/CPackConfig.cmake
+**/cmake_install.cmake
+**/extProjConfig.json
+**/.cache
+**/CMakeFiles
+**/.cmake
+
+**/install_manifest.txt
+**/compile_commands.json
+**/tlmtrace.txt
+**/stats.txt
+lib
+bin
+**/user_guide
+**/test_data
+external
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+## vscode ignores
+.vscode/*
+
+# CMake ignores
+**/CMakeFiles
+**/Makefile
+# CMakeUserPresets.json
+.claude/
+CLAUDE.md
+
+# macOS metadata
+.DS_Store
+._*

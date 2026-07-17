@@ -1,0 +1,24 @@
+
+#################################################
+        FFT 1D Batched Demo using TISP                 
+#################################################
+
+Creating Graph:
+
+DDR-->L2-->fft1dBatched-->L2-->DDR
+
+Executing graph
+Total cycles to execute graph = 463983
+
+Theoritical cycle count (assuming flat memory w/ no stalls): 412928
+
+Obeserved/Theoritical: 1.12
+
+Peformance of 1D Bathced FFT: 4.52 GB/sec
+
+Warning at: row=0, col=1, val1=33.258926, val2=33.258919
+Opt and NatC match!  PASSED! 
+
+Freeing resources...
+
+Demo complete!

@@ -1,0 +1,41 @@
+[
+   {"testID":  1, "numSubgraphs": 1, "fftSize": [64],              "numChannels": [1]},
+   {"testID":  2, "numSubgraphs": 1, "fftSize": [64],              "numChannels": [8]},
+   {"testID":  3, "numSubgraphs": 1, "fftSize": [128],             "numChannels": [4]},
+   {"testID":  4, "numSubgraphs": 1, "fftSize": [256],             "numChannels": [2]},
+   {"testID":  5, "numSubgraphs": 1, "fftSize": [256],             "numChannels": [8]},
+   {"testID":  6, "numSubgraphs": 1, "fftSize": [512],             "numChannels": [1]},
+   {"testID":  7, "numSubgraphs": 1, "fftSize": [512],             "numChannels": [4]},
+   {"testID":  8, "numSubgraphs": 1, "fftSize": [1024],            "numChannels": [1]},
+   {"testID":  9, "numSubgraphs": 1, "fftSize": [1024],            "numChannels": [2]},
+   {"testID": 10, "numSubgraphs": 1, "fftSize": [1024],            "numChannels": [4]},
+
+   {"testID": 11, "numSubgraphs": 2, "fftSize": [64, 128],             "numChannels": [4, 2]},
+   {"testID": 12, "numSubgraphs": 2, "fftSize": [128, 256],            "numChannels": [2, 2]},
+   {"testID": 13, "numSubgraphs": 2, "fftSize": [256, 512],            "numChannels": [4, 2]},
+   {"testID": 14, "numSubgraphs": 2, "fftSize": [64, 1024],            "numChannels": [8, 1]},
+   {"testID": 15, "numSubgraphs": 3, "fftSize": [64, 128, 256],        "numChannels": [4, 4, 2]},
+   {"testID": 16, "numSubgraphs": 3, "fftSize": [128, 256, 512],       "numChannels": [2, 2, 1]},
+   {"testID": 17, "numSubgraphs": 3, "fftSize": [64, 256, 1024],       "numChannels": [8, 2, 1]},
+   {"testID": 18, "numSubgraphs": 4, "fftSize": [64, 128, 256, 512],   "numChannels": [8, 4, 2, 1]},
+   {"testID": 19, "numSubgraphs": 4, "fftSize": [64, 128, 256, 512],   "numChannels": [4, 4, 4, 4]},
+   {"testID": 20, "numSubgraphs": 4, "fftSize": [64, 128, 512, 1024],  "numChannels": [4, 2, 1, 1]},
+
+   {"testID": 21, "numSubgraphs": 2, "fftSize": [256, 256],            "numChannels": [4, 2]},
+   {"testID": 22, "numSubgraphs": 2, "fftSize": [512, 512],            "numChannels": [2, 2]},
+   {"testID": 23, "numSubgraphs": 2, "fftSize": [1024, 1024],          "numChannels": [1, 1]},
+   {"testID": 24, "numSubgraphs": 3, "fftSize": [256, 256, 512],       "numChannels": [4, 2, 1]},
+   {"testID": 25, "numSubgraphs": 3, "fftSize": [128, 128, 128],       "numChannels": [8, 4, 2]},
+   {"testID": 26, "numSubgraphs": 4, "fftSize": [256, 512, 256, 512],  "numChannels": [4, 2, 4, 2]},
+   {"testID": 27, "numSubgraphs": 4, "fftSize": [128, 128, 256, 256],  "numChannels": [8, 4, 4, 2]},
+   {"testID": 28, "numSubgraphs": 4, "fftSize": [512, 512, 512, 512],  "numChannels": [2, 2, 2, 2]},
+
+   {"testID": 29, "numSubgraphs": 1, "fftSize": [2048],                "numChannels": [1]},
+   {"testID": 30, "numSubgraphs": 2, "fftSize": [1024, 2048],          "numChannels": [1, 1]},
+   {"testID": 31, "numSubgraphs": 1, "fftSize": [4096],                "numChannels": [1]},
+   {"testID": 32, "numSubgraphs": 4, "fftSize": [64, 128, 512, 1024],  "numChannels": [1, 1, 1, 1]},
+
+   {"testID": 33, "numSubgraphs": 2, "fftSize": [1024, 1024],          "numChannels": [1, 1]},
+   {"testID": 34, "numSubgraphs": 3, "fftSize": [512, 1024, 512],      "numChannels": [2, 1, 2]},
+   {"testID": 35, "numSubgraphs": 3, "fftSize": [1024, 1024, 128],     "numChannels": [1, 1, 4]}
+]

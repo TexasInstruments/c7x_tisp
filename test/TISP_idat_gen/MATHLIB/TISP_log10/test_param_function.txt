@@ -1,0 +1,8 @@
+/*
+ *  Sends the test parameter structure and number of tests
+ */
+ void TISP_log10_getTestParams(TISP_log10_testParams_t **params, int32_t *numTests)
+{
+   *params = testParams;
+   *numTests = sizeof(testParams) / sizeof(TISP_log10_testParams_t);
+}

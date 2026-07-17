@@ -1,0 +1,9 @@
+/*
+ *  Sends the test parameter structure and number of tests
+ */
+
+void TISP_multiplexer_getTestParams(TISP_multiplexer_testParams_t **params, int32_t *numTests)
+{
+   *params   = testParams;
+   *numTests = sizeof(testParams) / sizeof(TISP_multiplexer_testParams_t);
+}

@@ -1,0 +1,9 @@
+ID,dType,numSamples,numChannels,samplingRate,filterLength,stepSize,strideInElements,strideOutElements,testType,numBlocks,plotSignals,waveFiles,amplitude,frequency,blockWidth,blockHeight,isInterleaved,AM275 SOC
+1,float,64,8,48000,64,0.1,64,64,STATIC,1,FALSE,FALSE,1,2000,8,16,1,yes
+2,float,128,64,48000,32,0.2,128,128,STATIC,1,TRUE,FALSE,1,6000,32,64,0,no
+3,float,256,32,48000,16,0.1,256,256,STATIC,1,FALSE,FALSE,1,2000,32,64,1,no
+4,float,128,128,48000,128,0.02,128,128,STATIC,1,TRUE,FALSE,1,6000,32,128,0,no
+5,float,256,64,48000,32,0.1,256,256,STATIC,1,FALSE,FALSE,1,2000,64,64,1,no
+6,float,512,64,48000,256,0.1,512,512,STATIC,1,TRUE,FALSE,1,6000,128,64,0,no
+7,float,1024,32,48000,512,0.2,1024,1024,STATIC,1,FALSE,FALSE,1,2000,256,32,0,no
+8,float,512,128,48000,256,0.1,512,512,STATIC,1,TRUE,FALSE,1,6000,128,128,0,no

@@ -1,0 +1,9 @@
+ID,dType,inChannels,inSamples,strideInElements,strideOutElements,blockWidth,blockHeight,AM275 SOC
+1,uint16_t,64,128,128,128,32,64,yes
+2,int16_t,32,256,256,256,32,32,no
+3,uint32_t,128,128,128,128,32,128,no
+4,int32_t,64,256,256,256,64,64,no
+5,float,64,512,512,512,128,64,no
+6,float,128,512,512,512,128,128,no
+7,double,32,1024,1024,1024,128,32,no
+8,double,64,1024,1024,1024,128,64,no

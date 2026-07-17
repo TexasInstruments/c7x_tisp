@@ -1,0 +1,10 @@
+ID,dType,mode,interleave,delaySize,numChannels,numSamples,strideInElements,strideOutElements,blockWidth,blockHeight,testPattern,AM275 SOC
+1,double,0,1,32,32,512,32,32,32,64,STATIC,yes
+2,float,0,0,130,64,128,128,128,32,64,STATIC,no
+3,double,1,1,64,64,128,64,64,64,32,STATIC,no
+4,float,0,0,128,128,128,128,128,32,128,STATIC,no
+5,double,1,1,256,128,128,128,128,128,32,STATIC,no
+6,float,0,0,64,128,256,256,256,64,128,STATIC,no
+7,double,1,1,256,64,256,64,64,64,64,STATIC,no
+8,float,0,0,128,128,512,512,512,64,128,STATIC,no
+9,double,1,1,32,32,512,32,32,32,64,STATIC,no

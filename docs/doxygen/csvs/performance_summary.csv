@@ -1,0 +1,5 @@
+Name,Problem Size,Datatype,EVM Cycles, Performance
+TISP_fft2d_superNode (2D FFT),512x512,complex float,1046251, 14.7 GFLOPs/sec
+TISP_fft1dBatched,512x512,complex float,463983,16.5 GFLOPs/sec
+TISP_blockCopy_transpose_superNode,2048x2048,float,8294046,4.05 GB/sec
+TISP_blockCopy_superNode,2048x2048,float,3185174,5.2 GB/sec

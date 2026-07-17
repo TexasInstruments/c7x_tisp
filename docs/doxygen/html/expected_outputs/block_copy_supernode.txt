@@ -1,0 +1,17 @@
+#################################################
+ Block Copy + Square Supernode Demo using TISP     
+#################################################
+
+Creating Graph:
+
+DDR-->L2-->blockCopy-->L2-->DSPLIB_sqr-->L2-->DDR
+
+Executing Graph
+Total cycles to execute graph = 3186154
+
+Peformance: 5.27 GB/sec
+Opt and NatC match!  PASSED! 
+
+Freeing resources...
+
+Demo complete!

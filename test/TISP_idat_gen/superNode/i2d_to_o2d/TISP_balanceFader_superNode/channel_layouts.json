@@ -1,0 +1,93 @@
+{
+  "layouts": {
+    "7.1_standard": {
+      "numChannels": 8,
+      "speakers": [
+        "FRONT_LEFT",
+        "FRONT_RIGHT",
+        "FRONT_CENTER",
+        "LOW_FREQUENCY_EFFECTS",
+        "SIDE_LEFT",
+        "SIDE_RIGHT",
+        "REAR_LEFT",
+        "REAR_RIGHT"
+      ],
+      "frequencies": {
+        "FRONT_LEFT": 440.00,
+        "FRONT_RIGHT": 523.00,
+        "FRONT_CENTER": 392.00,
+        "LOW_FREQUENCY_EFFECTS": 60.00,
+        "SIDE_LEFT": 349.00,
+        "SIDE_RIGHT": 659.00,
+        "REAR_LEFT": 294.00,
+        "REAR_RIGHT": 698.00
+      }
+    },
+    "5.1_standard": {
+      "numChannels": 6,
+      "speakers": [
+        "FRONT_LEFT_TREBBLE",
+        "FRONT_RIGHT_TREBBLE",
+        "FRONT_CENTER",
+        "LOW_FREQUENCY_EFFECTS",
+        "REAR_LEFT",
+        "REAR_RIGHT"
+      ],
+      "frequencies": {
+        "FRONT_LEFT_TREBBLE": 440.00,
+        "FRONT_RIGHT_TREBBLE": 523.00,
+        "FRONT_CENTER": 392.00,
+        "LOW_FREQUENCY_EFFECTS": 60.00,
+        "REAR_LEFT": 294.00,
+        "REAR_RIGHT": 698.00
+      }
+    },
+    "stereo": {
+      "numChannels": 2,
+      "speakers": [
+        "FRONT_LEFT_TREBBLE",
+        "FRONT_RIGHT_TREBBLE"
+      ],
+      "frequencies": {
+        "FRONT_LEFT_TREBBLE": 440.00,
+        "FRONT_RIGHT_TREBBLE": 523.00
+      }
+    },
+    "custom_4.0": {
+      "numChannels": 4,
+      "speakers": [
+        "FRONT_LEFT_TREBBLE",
+        "FRONT_RIGHT_TREBBLE",
+        "REAR_LEFT",
+        "REAR_RIGHT"
+      ],
+      "frequencies": {
+        "FRONT_LEFT_TREBBLE": 440.00,
+        "FRONT_RIGHT_TREBBLE": 523.00,
+        "REAR_LEFT": 294.00,
+        "REAR_RIGHT": 698.00
+      }
+    },
+    "height_7.0": {
+      "numChannels": 7,
+      "speakers": [
+        "TOP_FRONT_LEFT",
+        "TOP_FRONT_RIGHT",
+        "TOP_MIDDLE_LEFT",
+        "TOP_MIDDLE_RIGHT",
+        "TOP_REAR_LEFT",
+        "TOP_REAR_RIGHT",
+        "OVERHEAD"
+      ],
+      "frequencies": {
+        "TOP_FRONT_LEFT": 440.00,
+        "TOP_FRONT_RIGHT": 523.00,
+        "TOP_MIDDLE_LEFT": 349.00,
+        "TOP_MIDDLE_RIGHT": 659.00,
+        "TOP_REAR_LEFT": 294.00,
+        "TOP_REAR_RIGHT": 698.00,
+        "OVERHEAD": 392.00
+      }
+    }
+  }
+}

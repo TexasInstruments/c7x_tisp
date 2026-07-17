@@ -1,0 +1,16 @@
+#################################################
+ Transpose + block Copy Demo using TISP   
+#################################################
+
+Creating Graph:
+
+DDR-->L2-->matTrans-->DDR-->L2-->blockCopy-->L2-->DDR
+
+Executing Graph
+Total cycles execute graph = 8294046
+Bandwidth: 4.05 GB/sec
+Opt and NatC match!  PASSED! 
+
+Freeing resources...
+
+Demo complete!

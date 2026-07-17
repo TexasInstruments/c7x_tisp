@@ -1,0 +1,9 @@
+ID,inDType,outDType,inChannels,inSamples,strideInElements,strideOutElements,testQ31,testType,blockWidth,blockHeight,enableStrideIn
+1,float,int16_t,128,128,128,128,1,STATIC,32,128,TRUE
+2,float,int32_t,64,128,128,128,1,STATIC,16,64,TRUE
+3,double,int16_t,128,256,256,256,1,STATIC,32,128,TRUE
+4,double,int32_t,64,256,256,256,1,STATIC,32,64,TRUE
+5,int16_t,float,32,1024,1024,1024,0,STATIC,128,32,TRUE
+6,int32_t,float,32,1024,1024,1024,1,STATIC,128,32,TRUE
+7,int16_t,double,64,512,512,512,0,STATIC,64,64,TRUE
+8,int32_t,double,64,512,512,512,1,STATIC,64,64,TRUE

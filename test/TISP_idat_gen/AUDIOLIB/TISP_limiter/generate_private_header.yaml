@@ -1,0 +1,136 @@
+###########################################
+# Kernel Supported Datatypes
+###########################################
+supported_data_types:
+  - "float"
+
+###########################################
+# Kernel Macros
+###########################################
+macros:
+  - name: "AUDIOLIB_LIMITER_PBLOCK_SIZE"
+    description: "Macro to define the size of bufPblock array of @ref AUDIOLIB_limiter_PrivArgs structure."
+    value: "(0 /* TODO: fill in SE/SA pBlock size */)"
+
+###########################################
+# Kernel Exec Function Pointer Description
+###########################################
+function_pointers:
+  - name: "pFxnAUDIOLIB_limiter_exec"
+    description: "This is a function pointer type that conforms to the declaration of @ref AUDIOLIB_limiter_exec_ci and @ref AUDIOLIB_limiter_exec_cn."
+    return_type: "AUDIOLIB_STATUS"
+    arguments:
+      - name: "handle"
+        type: "AUDIOLIB_kernelHandle"
+      - name: "pIn"
+        type: "void *restrict"
+      - name: "pGain"
+        type: "void *restrict"
+      - name: "pOut"
+        type: "void *restrict"
+
+###########################################
+# Kernel Private Function Description
+###########################################
+private_functions:
+  - name: "init_ci"
+    description: "This function is the initialization function for the C7x implementation of the kernel."
+    details:
+      - "This function determines the configuration for the streaming engine and MMA hardware resources based on the function call parameters,"
+      - "and the configuration is saved in bufPBlock array. In the kernel call sequence, @ref AUDIOLIB_limiter_exec_ci would be"
+      - "called later independently by the application. When @ref AUDIOLIB_limiter_exec_ci runs, it merely retrieves"
+      - "the configuration from the bufPBlock and uses it to set up the hardware resources. This arrangement is so that"
+      - "@ref AUDIOLIB_limiter_exec_ci does not lose cycles to determine the hardware configuration."
+    return_type: "AUDIOLIB_STATUS"
+    template: "dataType"
+    arguments:
+      - name: "handle"
+        type: "AUDIOLIB_kernelHandle"
+        io_type: "in"
+        description: "Active handle to the kernel"
+      - name: "bufParamsIn"
+        type: "const AUDIOLIB_bufParams2D_t *"
+        io_type: "in"
+        description: "Pointer to the structure containing dimensional information of input buffer"
+      - name: "bufParamsGain"
+        type: "const AUDIOLIB_bufParams1D_t *"
+        io_type: "out"
+        description: "Pointer to the structure containing dimensional information of gain buffer"
+      - name: "bufParamsOut"
+        type: "const AUDIOLIB_bufParams2D_t *"
+        io_type: "out"
+        description: "Pointer to the structure containing dimensional information of output buffer"
+      - name: "pKerInitArgs"
+        type: "const AUDIOLIB_limiter_InitArgs  *"
+        io_type: "in"
+        description: "Pointer to the structure holding init parameters"
+    return_description: "Status value indicating success or failure. Refer to @ref AUDIOLIB_STATUS."
+
+  - name: "exec_ci"
+    description: "This function is the main execution function for the C7x implementation of the kernel."
+    details:
+      - "The function uses streaming engines to load data onto C7x and performs the computation."
+      - "Result of the compute is stored into memory using a stream limiterress generator."
+    return_type: "AUDIOLIB_STATUS"
+    template: "dataType"
+    arguments:
+      - name: "handle"
+        type: "AUDIOLIB_kernelHandle"
+        io_type: "in"
+        description: "Active handle to the kernel"
+      - name: "pIn"
+        type: "void *restrict"
+        io_type: "in"
+        description: "Pointer to buffer holding the input data"
+      - name: "pGain"
+        type: "void *restrict"
+        io_type: "out"
+        description: "Pointer to buffer holding the gain data"
+      - name: "pOut"
+        type: "void *restrict"
+        io_type: "out"
+        description: "Pointer to buffer holding the output data"
+    return_description: "Status value indicating success or failure. Refer to @ref AUDIOLIB_STATUS."
+    performance_considerations:
+      - "the input and output data buffers are expected to be in L2 memory"
+      - "the buffer pointers are assumed to be 64-byte aligned"
+
+  - name: "exec_cn"
+    description: "This function is the main execution function for the natural C implementation of the kernel."
+    return_type: "AUDIOLIB_STATUS"
+    template: "dataType"
+    arguments:
+      - name: "handle"
+        type: "AUDIOLIB_kernelHandle"
+        io_type: "in"
+        description: "Active handle to the kernel"
+      - name: "pIn"
+        type: "void *restrict"
+        io_type: "in"
+        description: "Pointer to buffer holding the input data"
+      - name: "pGain"
+        type: "void *restrict"
+        io_type: "out"
+        description: "Pointer to buffer holding the gain data"
+      - name: "pOut"
+        type: "void *restrict"
+        io_type: "out"
+        description: "Pointer to buffer holding the output data"
+    return_description: "Status value indicating success or failure. Refer to @ref AUDIOLIB_STATUS."
+
+###########################################
+# Kernel Private Args Struct Description
+###########################################
+private_structures:
+  - name: "PrivArgs"
+    description: "Structure that is reserved for internal use by the kernel"
+    fields:
+      - name: "execute"
+        type: "pFxnAUDIOLIB_limiter_exec"
+        description: "Function pointer to point to the right execution variant between @ref AUDIOLIB_limiter_exec_cn and @ref AUDIOLIB_limiter_exec_ci."
+      - name: "bufPblock[AUDIOLIB_LIMITER_PBLOCK_SIZE]"
+        type: "uint8_t"
+        description: "Private memory block allocated for storing SE/SA and kernel-related data"
+      - name: "initArgs"
+        type: "AUDIOLIB_limiter_InitArgs"
+        description: "Init args for this kernel"

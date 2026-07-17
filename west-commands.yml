@@ -1,0 +1,6 @@
+west-commands:
+  - file: west_ext.py
+    commands:
+      - name: build-tisp
+        class: BuildTisp
+        help: configure and build TISP + xlib dependencies

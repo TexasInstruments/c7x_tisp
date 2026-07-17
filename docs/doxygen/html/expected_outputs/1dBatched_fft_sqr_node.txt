@@ -1,0 +1,17 @@
+#################################################
+        FFT 1D Batched + Sqr Demo using TISP     
+#################################################
+
+Creating Graph:
+
+L2-->fft1dBatched-->DSPLIB_sqr-->L2
+
+Executing graph
+Total cycles to execute graph = 30722
+
+Theoritical cycle count (assuming flat memory w/ no stalls): 29688
+
+Obeserved/Theoritical: 1.03
+
+Warning at: row=0, col=1, val1=1106.156128, val2=1106.155640
+Opt and NatC match!  PASSED! 

@@ -1,0 +1,9 @@
+ID,sampleDataType,inputBlockSize,subBlockSize,numChannels,strideIn,strideOut,statisticsType,testType,flagPerChanStats,blockWidth,blockHeight
+1,float,128,8,64,128,128,0,STATIC,TRUE,128,16
+2,double,128,8,64,128,64,1,STATIC,FALSE,16,64
+3,float,128,16,128,128,128,2,STATIC,TRUE,128,32
+4,double,128,16,128,128,128,3,STATIC,FALSE,16,128
+5,float,128,32,256,128,128,4,STATIC,TRUE,128,64
+6,double,128,32,256,128,256,5,STATIC,FALSE,32,256
+7,float,128,64,512,128,128,6,STATIC,TRUE,128,128
+8,double,128,64,256,128,256,7,STATIC,FALSE,64,256

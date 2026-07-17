@@ -1,0 +1,9 @@
+ID,dType,length,blockWidth,AM275 SOC
+1,float,8192,2048,yes
+2,float,8192,4096,no
+3,float,16384,1024,no
+4,float,16384,2048,no
+5,float,32768,1024,no
+6,float,32768,2048,no
+7,float,65536,2048,no
+8,float,65536,4096,no

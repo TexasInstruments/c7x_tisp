@@ -1,0 +1,17 @@
+
+#################################################
+        Memcopy Demo using TISP                 
+#################################################
+
+Creating Graph:
+
+DDR-->L2-->blockCopy-->L2-->DDR
+
+Executing graph
+Cycles - Using Opvec = 3185174
+Bandwidth: 5.27 GB/sec
+Opt and NatC match!  PASSED! 
+
+Freeing resources...
+
+Demo complete!

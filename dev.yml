@@ -1,0 +1,37 @@
+manifest:
+  self:
+    path: tisp
+    west-commands: west-commands.yml
+
+  defaults:
+    remote: origin
+    revision: dev
+
+  remotes:
+    - name: origin
+      url-base: https://github.com/TexasInstruments
+
+  projects:
+    # ── xlibs (top-level wins over imported bare-named duplicates) ────────────
+    - name: c7x_fftlib
+      path: mcu_plus_sdk/source/fftlib
+    - name: c7x_dsplib
+      path: mcu_plus_sdk/source/dsplib
+    - name: c7x_mathlib
+      path: mcu_plus_sdk/source/mathlib
+    - name: c7x_audiolib
+      path: mcu_plus_sdk/source/audiolib
+      west-commands: west-commands.yml
+
+    # ── MCU+ SDK — full import from mcupsdk-manifests ─────────────────────────
+    - name: mcupsdk-manifests
+      revision: k3_main
+      import:
+        file: all/dev.yml
+        name-blocklist:
+          - dsplib
+          - audiolib
+          - fftlib
+          - mathlib
+          - tisp
+          - vxlib

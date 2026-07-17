@@ -1,0 +1,9 @@
+/*
+ *  Sends the test parameter structure and number of tests
+ */
+
+void TISP_delay_getTestParams(TISP_delay_testParams_t **params, int32_t *numTests)
+{
+   *params   = testParams;
+   *numTests = sizeof(testParams) / sizeof(TISP_delay_testParams_t);
+}

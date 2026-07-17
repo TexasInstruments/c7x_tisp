@@ -1,0 +1,20 @@
+
+#################################################
+  DSPLIB_addConstant + DSPLIBsqr Demo using TISP
+#################################################
+
+Creating Graph:
+
+L2-->DSPLIB_addConstant-->DSPLIB_sqr-->L2
+
+Executing graph
+Total cycles to execute graph = 16980
+
+Theoritical cycle count (assuming flat memory w/ no stalls): 16384
+
+Obeserved/Theoritical: 1.04
+Opt and NatC match!  PASSED! 
+
+Freeing resources...
+
+Demo complete!

@@ -1,0 +1,3 @@
+ID,testType,M,N,K,dTypeIn,dTypeOut,pitchA,pitchB,pitchOut,numReps,demoCase,outputDataLocation,AM275 SOC
+1,STATIC,256,256,256,float,float,1024,1024,1024,1,False,DSPLIB_TEST_OUTPUT_HEAP,yes
+2,STATIC,512,512,512,float,float,2048,2048,2048,1,False,DSPLIB_TEST_OUTPUT_HEAP,no

@@ -1,0 +1,9 @@
+ID,dType,numSamples,numChannels,balance,samplingRate,smoothingTime,strideInElements,strideOutElements,testType,blockWidth,blockHeight,numBlocks,plotSignals,waveFiles,amplitude,frequency,AM275 SOC
+1,float,128,64,0.7,48000,500,128,128,SINE,32,64,1,TRUE,TRUE,1,6000,yes
+2,float,256,32,0.707,48000,3,256,256,STATIC,64,32,1,FALSE,FALSE,1,4000,no
+3,float,128,128,0,48000,600,128,128,SINE,32,128,1,TRUE,FALSE,1,2000,no
+4,float,256,64,-0.8,48000,4.5,256,256,STATIC,64,64,1,TRUE,TRUE,1,2000,no
+5,float,512,64,-0.5,48000,5.5,512,512,SINE,128,64,1,FALSE,FALSE,1,2000,no
+6,float,1024,32,-1,48000,0,1024,1024,STATIC,256,32,1,TRUE,FALSE,1,2000,no
+7,float,512,128,0.5,48000,0,512,512,SINE,128,128,1,TRUE,TRUE,1,2000,no
+8,float,1024,64,0.7,48000,500,1024,1024,STATIC,256,64,1,FALSE,FALSE,1,4000,no

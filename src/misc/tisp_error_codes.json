@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "title": "TISP Error Codes Reference",
+    "version": "1.0",
+    "source_file": "includes/TISP_ErrorCtxt.hpp",
+    "last_updated": "26-May-2026"
+  },
+  "error_codes": {
+    "0": {
+      "error_name": "TISP_ERROR_NONE",
+      "hex_value": "0x00000000",
+      "description": "No error",
+      "long_description": "Operation completed successfully with no errors."
+    },
+    "1": {
+      "error_name": "TISP_ERROR_NULL_POINTER",
+      "hex_value": "0x00000001",
+      "description": "Null pointer error",
+      "long_description": "A required pointer parameter provided to a function or method was null."
+    },
+    "2": {
+      "error_name": "TISP_ERROR_INVALID_PARAMETER",
+      "hex_value": "0x00000002",
+      "description": "Invalid parameter error",
+      "long_description": "One or more parameters passed to the function were invalid or out of acceptable bounds."
+    },
+    "3": {
+      "error_name": "TISP_ERROR_MEMORY",
+      "hex_value": "0x00000003",
+      "description": "Memory allocation error",
+      "long_description": "Failed to allocate the required memory for DSP operations or buffer management."
+    },
+    "4": {
+      "error_name": "TISP_ERROR_LIBRARY",
+      "hex_value": "0x00000004",
+      "description": "Library operation error",
+      "long_description": "An error occurred within an underlying DSP or math library operation during processing."
+    },
+    "5": {
+      "error_name": "TISP_ERROR_INVALID_NODE",
+      "hex_value": "0x00000005",
+      "description": "Invalid node error",
+      "long_description": "The specified signal chain node is invalid, uninitialized, or incompatible with the requested operation."
+    },
+    "6": {
+      "error_name": "TISP_ERROR_INVALID_OBJECT_ID",
+      "hex_value": "0x00000006",
+      "description": "Invalid object ID error",
+      "long_description": "An invalid object or node ID was encountered in the operation vector (opVec)."
+    },
+    "7": {
+      "error_name": "TISP_ERROR_INVALID_SIGNAL_CHAIN",
+      "hex_value": "0x00000007",
+      "description": "Invalid signal chain error",
+      "long_description": "The signal chain or graph structure is invalid or malformed."
+    }
+  },
+  "version_history": {
+    "1.0": {
+      "date": "26-May-2026",
+      "changes": "Initial release with 6 error codes from TISP_ErrorCtxt.hpp"
+    }
+  }
+}

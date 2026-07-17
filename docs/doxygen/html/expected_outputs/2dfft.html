@@ -1,0 +1,23 @@
+<p>-------------------------------------------------</p>
+<p>         2D FFT Demo using TISP                  </p>
+<p>-------------------------------------------------</p>
+
+<p>Creating Graph:
+</p>
+<p>DDR--&gt;L2--&gt;1DBatchedFFT--&gt;L2--&gt;MatrixTranspose--&gt;L2--&gt;DDR--&gt;L2--&gt;1DBatchedFFT--&gt;L2--&gt;DDR
+</p>
+<p>Executing Graph<br/>
+Total cycles to execute graph = 1032520
+</p>
+<p>Theoritical cycle count (assuming flat memory w/ no stalls): 891392
+</p>
+<p>Obeserved/Theoritical: 1.16
+</p>
+<p>Memory performance of 2D FFT: 4.06 GB/sec
+</p>
+<p>Warning at: row=0, col=0, val1=3613.451416, val2=3613.451660
+Opt and NatC match!  PASSED! 
+</p>
+<p>Freeing resources...
+</p>
+<p>Demo complete!</p>

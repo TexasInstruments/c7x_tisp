@@ -1,0 +1,11 @@
+/*
+ *  Sends the test parameter structure and number of tests
+ */
+void DSPLIB_cascadeBiquad_getTestParams (
+   DSPLIB_cascadeBiquad_testParams_t **params,
+    int32_t *                                 numTests)
+{
+   *params = testParams;
+   *numTests =
+       sizeof (testParams) / sizeof (DSPLIB_cascadeBiquad_testParams_t);
+}

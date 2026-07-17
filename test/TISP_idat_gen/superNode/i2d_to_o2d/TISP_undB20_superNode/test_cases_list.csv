@@ -1,0 +1,9 @@
+ID,dType,widthIn,heightIn,inPitch,outPitch,blockWidth,blockHeight,testPattern,minX,maxX
+1,float,128,64,128,128,128,16,STATIC,-35,35
+2,float,256,32,256,256,256,8,STATIC,-35,35
+3,float,128,128,128,128,128,32,STATIC,-35,35
+4,float,256,64,256,256,256,8,STATIC,-35,35
+5,float,256,128,256,256,256,32,STATIC,-35,35
+6,float,512,64,512,512,512,8,STATIC,-35,35
+7,float,256,256,256,256,256,64,STATIC,-35,35
+8,float,512,128,512,512,512,32,STATIC,-35,35

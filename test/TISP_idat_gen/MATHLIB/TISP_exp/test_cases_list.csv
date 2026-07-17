@@ -1,0 +1,4 @@
+testID,dType,length,testType,demoCase,minX,maxX,numReps,C7100,numBlocks
+1,float,512,STATIC,FALSE,-1,1,1,TRUE,4
+2,float,1024,STATIC,FALSE,-1,1,1,TRUE,3
+3,float,2048,STATIC,FALSE,-1,1,1,TRUE,2

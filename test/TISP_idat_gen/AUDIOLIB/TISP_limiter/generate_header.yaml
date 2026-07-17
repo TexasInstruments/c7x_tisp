@@ -1,0 +1,175 @@
+####################################
+# Kernel Summary
+####################################
+kernel_name: "limiter"
+description: "Kernel that maintains audio signals within a specific threshold."
+details:
+  - "The kernel may be used in automatic gain control (AGC) systems to contain the output signal within a specified dynamic range"
+  - "The following datatypes are supported: "
+  - "float"
+###########################################
+# Kernel Supported Datatypes
+###########################################
+supported_data_types:
+  - "float"
+
+#####################################
+# Kernel Init Args Struct
+#####################################
+types:
+  - name: "InitArgs"
+    description: "Structure containing the parameters to initialize the kernel"
+    fields:
+      - name: "funcStyle"
+        type: "int8_t"
+        description: "Variant of the function refer to @ref AUDIOLIB_FUNCTION_STYLE"
+      - name: "blockSize"
+        type: "uint32_t"
+        description: "Size of input data"
+      - name: "numChannels"
+        type: "uint32_t"
+        description: "Number of channels"
+      - name: "kneeWidth_dB"
+        type: "uint32_t*"
+        description: "Per-channel Knee width in dB to specify hard or soft knee"
+      - name: threshold_dB
+        type: "int32_t*"
+        description: "Per-channel Max level of the allowed dynamic range in dB before gain is applied"
+      - name: attackCoeff
+        type: "float*"
+        description: "Per-channel Attack coefficient of gain smoothing in range [0.0f, 1.0f)"
+      - name: releaseCoeff
+        type: "float*"
+        description: "Per-channel Release coefficient of gain smoothing in range [0.0f, 1.0f)"
+        
+#####################################
+# Kernel Function Descriptions
+#####################################
+functions:
+  - name: "getHandleSize"
+    return_type: "int32_t"
+    description: "This is a query function to calculate the size of internal handle"
+    arguments:
+      - name: "pKerInitArgs"
+        type: "AUDIOLIB_limiter_InitArgs *"
+        description: "Pointer to structure holding init parameters"
+        io_type: "in"
+    return_description: "Size of the buffer in bytes"
+    remarks:
+      - "Application is expected to allocate buffer of the requested"
+      - "size and provide it as input to other functions requiring it."
+
+  - name: "init"
+    return_type: "AUDIOLIB_STATUS"
+    description: "This function should be called before the @ref AUDIOLIB_limiter_exec function is called. This function takes care of any one-time operations such as setting up the configuration of required hardware resources such as the MMA accelerator and the streaming engine. The results of these operations are stored in the handle."
+    arguments:
+      - name: "handle"
+        type: "AUDIOLIB_kernelHandle"
+        description: "Active handle to the kernel"
+        io_type: "in"
+      - name: "bufParamsIn"
+        type: "AUDIOLIB_bufParams2D_t *"
+        description: "Pointer to the structure containing dimensional information of input buffer"
+        io_type: "in"
+      - name: "bufParamsOut"
+        type: "AUDIOLIB_bufParams2D_t *"
+        description: "Pointer to the structure containing dimensional information of output buffer"
+        io_type: "out"
+      - name: "bufParamsGain"
+        type: "AUDIOLIB_bufParams1D_t *"
+        description: "Pointer to the structure containing dimensional information of gain buffer"
+        io_type: "out"
+      - name: "pKerInitArgs"
+        type: "const AUDIOLIB_limiter_InitArgs *"
+        description: "Pointer to the structure holding init parameters"
+        io_type: "in"
+    return_description: "Status value indicating success or failure. Refer to @ref AUDIOLIB_STATUS."
+    remarks:
+      - "Application is expected to provide a valid handle."
+
+  - name: "init_checkParams"
+    return_type: "AUDIOLIB_STATUS"
+    description: "This function checks the validity of the parameters passed to @ref AUDIOLIB_limiter_init function. This function is called with the same parameters as the @ref AUDIOLIB_limiter_init, and this function must be called before the @ref AUDIOLIB_limiter_init is called."
+    arguments:
+      - name: "handle"
+        type: "AUDIOLIB_kernelHandle"
+        description: "Active handle to the kernel"
+        io_type: "in"
+      - name: "bufParamsIn"
+        type: "const AUDIOLIB_bufParams2D_t *"
+        description: "Pointer to the structure containing dimensional information of input buffer"
+        io_type: "in"
+      - name: "bufParamsOut"
+        type: "const AUDIOLIB_bufParams2D_t *"
+        description: "Pointer to the structure containing dimensional information of output buffer"
+        io_type: "out"
+      - name: "bufParamsGain"
+        type: "AUDIOLIB_bufParams1D_t *"
+        description: "Pointer to the structure containing dimensional information of gain buffer"
+        io_type: "out"
+      - name: "pKerInitArgs"
+        type: "const AUDIOLIB_limiter_InitArgs *"
+        description: "Pointer to the structure holding init parameters"
+        io_type: "in"
+    return_description: "Status value indicating success or failure. Refer to @ref AUDIOLIB_STATUS."
+    remarks:
+      - "None"
+
+  - name: "exec_checkParams"
+    return_type: "AUDIOLIB_STATUS"
+    description: "This function checks the validity of the parameters passed to @ref AUDIOLIB_limiter_exec function. This function is called with the same parameters as the @ref AUDIOLIB_limiter_init, and this function must be called before the @ref AUDIOLIB_limiter_init is called."
+    arguments:
+      - name: "handle"
+        type: "AUDIOLIB_kernelHandle"
+        description: "Active handle to the kernel"
+        io_type: "in"
+      - name: "pIn"
+        type: "const void *restrict"
+        description: "Pointer to the structure input buffer"
+        io_type: "in"
+      - name: "pGain"
+        type: "const void *restrict"
+        description: "Pointer to the structure gain buffer"
+        io_type: "out"
+      - name: "pOut"
+        type: "const void *restrict"
+        description: "Pointer to the output buffer"
+        io_type: "out"
+    return_description: "Status value indicating success or failure. Refer to @ref AUDIOLIB_STATUS."
+    remarks:
+      - "None"
+
+  - name: "exec"
+    return_type: "AUDIOLIB_STATUS"
+    description: "This function is the main kernel compute function."
+    details_reference: "AUDIOLIB_limiter_exec"
+    arguments:
+      - name: "handle"
+        type: "AUDIOLIB_kernelHandle"
+        description: "Active handle to the kernel"
+        io_type: "in"
+      - name: "pIn"
+        type: "void *restrict"
+        description: "Pointer to buffer holding the input data"
+        io_type: "in"
+      - name: "pGain"
+        type: "void *restrict"
+        description: "Pointer to buffer holding the input data"
+        io_type: "out"
+      - name: "pOut"
+        type: "void *restrict"
+        description: "Pointer to buffer holding the output data"
+        io_type: "out"
+    return_description: "Status value indicating success or failure. Refer to @ref AUDIOLIB_STATUS."
+    assumptions:
+      - "The input and gain buffers are expected to be provided in channel-interleaved format. The output will be provided in channel-interleaved format as well."
+    performance_considerations:
+      - "the input and output data buffers are expected to be in L2 memory"
+      - "the buffer pointers are assumed to be 64-byte aligned"
+      - "the channel count is recommended to be at least processor SIMD-width"
+    remarks:
+      - "Before calling this function, application is expected to call"
+      - "@ref AUDIOLIB_limiter_init,"
+      - "@ref AUDIOLIB_lmiter_init_checkParams, and"
+      - "@ref AUDIOLIB_limiter_exec_checkParams functions."
+      - "This ensures resource configuration and error checks are done only once for several invocations of this function."

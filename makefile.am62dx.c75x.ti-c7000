@@ -1,0 +1,52 @@
+# Makefile for TISP kernel build and run
+
+# Use bash so we can rely on pipefail and stricter flags
+SHELL := /bin/bash
+.SHELLFLAGS := -eu -o pipefail -c
+
+# Detect platform: on Windows, OS=Windows_NT; otherwise use uname
+ifeq ($(OS),Windows_NT)
+  HOST_OS := Windows
+else
+  HOST_OS := $(shell uname -s)
+endif
+
+# Only enable these rules on Linux
+ifeq ($(HOST_OS),Linux)
+BASEDIR := .
+BUILDDIR_TARGET := $(BASEDIR)/build-target
+BUILDDIR_PC := $(BASEDIR)/build-pc
+PROFILE?=release
+
+
+.PHONY: all clean scrub
+
+# Clean rule
+clean:
+	@echo "Cleaning: TISP build directories..."
+	rm -rf build-target/ build-pc/ lib/$(PROFILE) out/ logs/
+
+scrub:
+	@echo "Scrubbing: TISP build directories..."
+	rm -rf build-target/ build-pc/ lib/ out/ logs/
+all:
+	@echo "Compiling: Configuring TISP for C7504 Target.."; \
+	mkdir -p build-target/ logs/ lib/ ;	\
+	cmake -S . -B build-target --preset $(PROFILE)-buildlib-am62d-target; \
+	echo "Building TISP for C7504 Target...."; \
+	bash -o pipefail -c 'cmake --build "$(BUILDDIR_TARGET)" -- -j8 2>&1 | grep -v -- "-j8 forced in submake: resetting jobserver mode\." | tee logs/build-target.log' ; \
+	echo "Compiling: Configuring TISP for C7504 Host Emulation.."; \
+	mkdir -p build-pc/ logs/ lib/ ;	\
+	cmake -S . -B build-pc --preset $(PROFILE)-buildlib-am62d-pc; \
+	echo "Building TISP for C7504 Host Emulation...."; \
+	bash -o pipefail -c 'cmake --build "$(BUILDDIR_PC)" -- -j8 2>&1 | grep -v -- "-j8 forced in submake: resetting jobserver mode\." | tee logs/build-pc.log' ; \
+	echo "==========================================================================================";\
+
+.PHONY: docs
+docs: all
+	@echo "Docs build: XLIB TISP..." ;\
+	cmake --build $(BUILDDIR_TARGET) --target=user_guide; \
+	echo "==========================================================================================";\
+	
+endif
+

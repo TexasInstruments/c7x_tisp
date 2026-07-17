@@ -1,0 +1,313 @@
+{note}
+*Status:* Draft | *Author:* Ramesh | *Date:* March 2026
+{note}
+
+{toc:maxLevel=2}
+
+h1. Introduction
+
+TISP is a signal processing middleware framework for TI C7x DSPs. A key architectural decision is the implementation language: *standard C* or *C++14*. Both can call the same underlying C kernels (AUDIOLIB, DSPLIB, FFTLIB, MATHLIB). The difference is in how the framework orchestrates those kernels — how nodes are created, configured, dispatched, and torn down.
+
+This page evaluates both approaches across five dimensions:
+* *Productivity* — lines of code, maintainability, ease of change
+* *Safety* — classes of bugs prevented at compile time vs. runtime
+* *Performance* — dispatch overhead, memory access patterns, frame budget impact
+* *Memory* — overhead in bytes for dispatch infrastructure
+* *Industry precedent* — standards and production systems using each approach
+
+h1. Executive Summary
+
+{panel:title=Recommendation|borderStyle=solid|borderColor=#00875A}
+We recommend implementing the TISP framework in C++14 over standard C because:
+
+* *10-15x less code* for equivalent signal chains, with automatic resource cleanup
+* *6 classes of bugs eliminated* at compile time that C can only catch through discipline
+* *<5 KB memory overhead* and *<0.002% frame budget* for dispatch in realistic graphs (10-30 nodes)
+* *Industry-standard patterns* mandated by AUTOSAR, endorsed by MISRA C++:2023, deployed at scale by Google
+
+Every C++ pattern used in TISP is mapped to its C equivalent below for direct comparison.
+{panel}
+
+h1. What Is TISP?
+
+* A *signal chain* is a list of processing steps (gain, biquad, FFT, ...) executed in order on audio/DSP data
+* A *node* is one processing step — it wraps a C kernel (e.g., {{AUDIOLIB_gain_exec}}) with its configuration
+* An *opVec* is the list of nodes — {{std::vector<std::unique_ptr<VirtualOp>>}}
+* *Execution* is a for-loop over that list, calling each node's {{exec()}} function
+
+{code:language=cpp|title=execute::graph() — the entire hot loop (TISP_util.hpp:32-49)|linenumbers=true}
+static void graph(const opVec &myOpVec)
+{
+   for (auto const &op : myOpVec) {
+      op->exec();  // calls the right kernel for this node type
+   }
+}
+{code}
+
+{tip:title=Key Point}
+This is a for-loop over function pointers — the same dispatch pattern used in C generic frameworks.
+{tip}
+
+h1. C++ to C Concept Mapping
+
+|| C++ (TISP) || C Equivalent || What It Does ||
+| {{class VirtualOp}} | {{struct}} with function pointer table | Base interface — defines {{exec()}}, {{setAddr()}}, etc. |
+| {{class Gain final : public VirtualOp}} | {{struct gain_node}} that populates the function pointer table | Concrete node type that implements the interface |
+| {{virtual void exec()}} | Function pointer in the struct: {{void (*exec)(void *self)}} | Indirect call to the right kernel |
+| {{std::unique_ptr<VirtualOp>}} | Pointer + guaranteed {{free()}} on scope exit | Owns a node; automatically cleans up |
+| {{template <typename T>}} | One function per type (manual copy-paste) | Compiler generates type-specific code |
+| {{make_unique_node<T>(...)}} | {{malloc()}} + {{init_function()}} | Allocate + initialize in one call |
+| {{opVec}} | Array of {{struct node *}} pointers | The signal chain |
+| {{op->exec()}} | {{nodes[i]->vtable->exec(nodes[i])}} | Call the i-th node's processing function |
+| {{~VirtualOp()}} (destructor) | Manual {{cleanup()}} call on every error path | Automatic teardown |
+
+h2. Decomposing a Node Creation
+
+{code:language=cpp|title=What this line does, step by step|linenumbers=true}
+myOpVec->push_back(
+   std::make_unique<TISP::AUDIOLIB::Gain<float>>(pX, pG, pY, w, h, pitchIn, pitchOut)
+);
+
+// C-equivalent steps:
+// 1. malloc(sizeof(Gain_float))            — allocate memory for one Gain node
+// 2. Gain_float_init(ptr, pX, pG, pY, ...) — call constructor (sets up SE/SA, kernel handle)
+// 3. nodes[n] = ptr                        — append to the signal chain list
+// 4. (free is automatic when the list is destroyed — no manual cleanup needed)
+{code}
+
+h2. What exec() Looks Like Inside a Node
+
+{code:language=cpp|title=Gain::exec() — src/AUDIOLIB/TISP_gain.cpp:176|linenumbers=true}
+template <typename T>
+void Gain<T>::exec() noexcept
+{
+   AUDIOLIB_gain_exec(_handle.get(), _pX, _pG, _pY);
+}
+{code}
+
+{info:title=Key Insight}
+One line. The same C kernel call you would write by hand. The constructor configured the SE/SA templates, allocated the kernel handle, and set up buffer parameters — {{exec()}} just calls the kernel.
+{info}
+
+h1. Benefits of the C++ Approach
+
+* *Automatic resource cleanup (RAII)* — {{unique_ptr}} guarantees cleanup on scope exit. No manual {{free()}} tracking on error paths.
+* *Type safety* — {{static_assert}} and templates reject wrong types at compile time. No {{void*}} casts.
+* *Compile-time enforcement* — Wrong allocator = compile error. Wrong override signature = compile error.
+* *Encapsulation* — SE/SA template configuration, buffer sizes, kernel handles: all hidden in the constructor. Users call {{exec()}}.
+* *Standard library data structures* — {{std::vector}} (contiguous, prefetch-friendly), {{std::map}} (balanced BST), {{std::shared_ptr}} (thread-safe refcount). Correct and performant by default.
+* *10-15x less code* — 15 lines vs. 200-400 for the same 10-node chain (see side-by-side below).
+
+h2. Standard Library vs. Hand-Rolled Data Structures
+
+|| TISP Usage || C++ Mechanism || C Alternative || Consideration ||
+| {{opVec}} (signal chain) | {{std::vector}} — contiguous memory, amortized O(1) append, prefetcher-friendly | Hand-rolled dynamic array ({{realloc}} + capacity tracking + growth factor + alignment + error paths) or linked list | Linked list incurs ~150 cy/node pointer-chasing LDD on C7x. Dynamic array requires careful sizing and error handling. |
+| {{TwiddleLUT}} (shared FFT data) | {{std::map}} — balanced BST, O(log n), correct by construction | Hand-rolled tree or hash table | Balanced tree implementations are nontrivial to get right and test. |
+| Node ownership | {{std::unique_ptr}} — zero-overhead RAII, single owner | Every {{malloc}} needs matching {{free}} on every code path | Error-path cleanup is a common source of leaks in C codebases. |
+| Shared twiddle data | {{std::shared_ptr}} — thread-safe reference counting | Hand-rolled refcount with atomic operations | Reference counting correctness requires careful concurrency reasoning. |
+
+h1. Side-by-Side: Same Signal Chain
+
+h2. Approach A: Standard C
+
+{code:language=c|title=C approach — representative boilerplate per node (x10 = 200-400 lines total)|linenumbers=true}
+/* === Per-node setup (repeated for each of 10 nodes) === */
+
+/* 1. Allocate buffers */
+float *pBuf0 = (float *)malloc(blockWidth * blockHeight * sizeof(float));
+if (pBuf0 == NULL) { /* error handling for this + all prior mallocs */ }
+
+/* 2. Allocate and initialize kernel handle */
+AUDIOLIB_gain_InitArgs kerInitArgs;
+kerInitArgs.funcStyle = AUDIOLIB_FUNCTION_OPTIMIZED;
+
+char *handle = (char *)malloc(AUDIOLIB_gain_getHandleSize(&kerInitArgs));
+if (handle == NULL) { free(pBuf0); /* + all prior frees */ }
+
+AUDIOLIB_bufParams2D_t bufParamsIn;
+bufParamsIn.data_type = AUDIOLIB_FLOAT32;
+bufParamsIn.dim_x     = blockWidth;
+bufParamsIn.dim_y     = blockHeight;
+bufParamsIn.stride_y  = pitchBytes;
+
+AUDIOLIB_bufParams2D_t bufParamsOut;
+bufParamsOut.data_type = AUDIOLIB_FLOAT32;
+bufParamsOut.dim_x     = blockWidth;
+bufParamsOut.dim_y     = blockHeight;
+bufParamsOut.stride_y  = pitchBytes;
+
+AUDIOLIB_bufParams1D_t bufParamsGain;
+bufParamsGain.data_type = AUDIOLIB_FLOAT32;
+bufParamsGain.dim_x     = 1;
+
+AUDIOLIB_gain_init(handle, &bufParamsIn, &bufParamsGain, &bufParamsOut, &kerInitArgs);
+
+/* 3. Execute */
+AUDIOLIB_gain_exec(handle, pX, pG, pY);
+
+/* 4. Teardown — must free every handle and buffer in reverse order */
+free(handle);
+free(pBuf0);
+/* ... repeat for all 10 nodes ... */
+
+/* Total: ~30-40 lines per node x 10 nodes = 300-400 lines */
+/* Changing the chain order requires rewriting most of this. */
+{code}
+
+h2. Approach B: TISP (C++)
+
+{code:language=cpp|title=TISP approach — same 10-node chain, complete|linenumbers=true}
+auto myOpVec = std::make_unique<TISP::opVec>();
+
+auto k0  = std::make_unique<TISP::AUDIOLIB::TypeConversion<int32_t, float>>(
+               pIn, pA, nCh, blockSz);
+auto k1  = std::make_unique<TISP::DSPLIB::CascadeBiquad<float>>(
+               pA, pCoeff, pB, nCh, blockSz, nStages);
+auto k2  = std::make_unique<TISP::AUDIOLIB::GainNCh<float>>(
+               pB, pGain, pC, nCh, blockSz);
+auto k3  = std::make_unique<TISP::AUDIOLIB::MuteNCh<float>>(
+               pC, pD, nCh, blockSz);
+auto k4  = std::make_unique<TISP::DSPLIB::Fir<float>>(
+               pD, pCoeffFir, pE, blockSz, nTaps);
+auto k5  = std::make_unique<TISP::AUDIOLIB::DcSource<float>>(
+               pE, pF, nCh, blockSz);
+auto k6  = std::make_unique<TISP::AUDIOLIB::BalanceFader<float>>(
+               pF, pG, nCh, blockSz);
+auto k7  = std::make_unique<TISP::DSPLIB::CascadeBiquad<float>>(
+               pG, pCoeff2, pH, nCh, blockSz, nStages);
+auto k8  = std::make_unique<TISP::AUDIOLIB::GainNCh<float>>(
+               pH, pGain2, pI, nCh, blockSz);
+auto k9  = std::make_unique<TISP::AUDIOLIB::TypeConversion<float, int32_t>>(
+               pI, pOut, nCh, blockSz);
+
+myOpVec->push_back(std::move(k0));
+myOpVec->push_back(std::move(k1));
+myOpVec->push_back(std::move(k2));
+myOpVec->push_back(std::move(k3));
+myOpVec->push_back(std::move(k4));
+myOpVec->push_back(std::move(k5));
+myOpVec->push_back(std::move(k6));
+myOpVec->push_back(std::move(k7));
+myOpVec->push_back(std::move(k8));
+myOpVec->push_back(std::move(k9));
+
+// Execute forever — no per-frame allocation
+while (running) {
+   TISP::execute::graph(*myOpVec);
+}
+
+// Teardown: automatic when myOpVec goes out of scope.
+// Changing the chain? Add, remove, or reorder lines.
+{code}
+
+{panel:title=What TISP Encapsulates|borderStyle=solid|borderColor=#0052CC}
+|| Responsibility || Where It Happens || What You Write ||
+| SE/SA template configuration | Constructor (e.g., {{Gain}} calls {{AUDIOLIB_gain_init}}) | Nothing — constructor handles it |
+| Buffer parameter structs | Constructor ({{bufParamsIn}}, {{bufParamsOut}}, {{bufParamsGain}}) | Pass pointers and dimensions |
+| Kernel handle allocation | Constructor ({{std::make_unique<char[]>(getHandleSize())}}) | Nothing — RAII manages lifetime |
+| Kernel execution | {{exec()}} — one line: {{AUDIOLIB_gain_exec(handle, pX, pG, pY)}} | {{op->exec()}} |
+| Teardown | Destructor — automatic when {{unique_ptr}} goes out of scope | Nothing — guaranteed |
+| Error-path cleanup | Destructor — runs on all exit paths including early returns | Nothing |
+{panel}
+
+h1. Tradeoff Analysis: Performance and Memory
+
+{panel:title=Approach Comparison|borderStyle=solid|borderColor=#0052CC}
+|| Dimension || C (hardcoded) || C (generic framework) || TISP (C++) ||
+| *Vtable / dispatch table memory* | None | ~56B/type (7 fn ptrs x 8B) | ~80B/type (+24B for ABI slots) |
+| *10 types total delta* | — | baseline | +240 bytes over C framework |
+| *20 types total delta* | — | baseline | +480 bytes over C framework |
+| *Per-instance overhead* | None | 8B (one fn ptr struct pointer) | 8B (one vtable pointer) — identical |
+| *Dispatch cost* | Direct call (~5 cy) | Indirect call (~20 cy): load fn ptr + call | Indirect call (~30 cy): load vtable ptr + load fn ptr + call. Extra ~10 cy vtable ptr load vs. C framework |
+| *Arg passing per node* | 5-10 args on stack | {{void*}} context | Zero args — state in {{this}} |
+| *Data locality* | Scattered across caller's stack | {{void*}} struct (manual layout) | Contiguous in node object |
+| *With L2SRAM placement* | N/A | N/A | All member access ~15 cy |
+| *Net hot-path per node* | baseline | ~same dispatch cost as C++ | ~10 cy more dispatch than C framework; offset by argument-passing savings with L2SRAM |
+| *Data structure choice* | Developer's responsibility | Developer's responsibility | {{std::vector}} provides contiguous layout by default |
+| *Template code size* | N/A (manual per-type functions) | N/A | Same — {{float}} vs {{int32}} math differs regardless of language |
+{panel}
+
+h2. Dispatch Cost Analysis
+
+{info:title=The extra vtable load — and what it provides}
+C++ dispatch has one extra memory load vs. a C generic framework: the vtable pointer load from the object. With {{make_unique_node}} placing objects in L2SRAM, this costs ~10 cy. That is the real delta.
+{info}
+
+* *The dispatch chain, step by step:*
+** C (generic framework): load fn ptr from struct -> indirect call = ~20 cy
+** C++ (TISP): load vtable ptr from object -> load fn ptr from vtable -> indirect call = ~30 cy
+** *Delta*: ~10 cy per node with L2SRAM placement (vtable ptr load from L2SRAM)
+** Without L2SRAM: vtable ptr load hits DDR = ~150 cy extra. This is why {{make_unique_node}} matters.
+* *What the ~10 cy provides:*
+** Compiler-enforced interface contracts (wrong override signature = compile error)
+** Virtual destructor chaining (automatic correct teardown)
+** Type-safe heterogeneous container ({{opVec}}) without {{void*}} casts
+* *Argument-passing consideration:*
+** C (hardcoded): each kernel call passes 5-10 arguments explicitly — register pressure causes stack spills at ~10-150 cy each
+** C++ (exec()): passes only {{this}} (one pointer) — all state is contiguous in the node object
+** With L2SRAM placement, every member load is ~15 cy with spatial locality
+
+{tip:title=Frame Budget — Typical (10 Nodes)}
+10 nodes x 30 cy dispatch = 300 cycles out of a 20M-cycle frame budget = *0.0015%*.
+{tip}
+
+{note:title=Frame Budget — Extreme (400 Nodes)}
+400 nodes x 30 cy dispatch = 12,000 cycles out of a 20M-cycle frame budget = *0.06%*. Memory: 400 instances x 8B vtable ptr + 200 types x 24B ABI overhead = ~8 KB over a C generic framework. Under 0.1% of frame budget and under 2% of a 448 KB L2SRAM.
+{note}
+
+h1. Safety Comparison
+
+|| Bug Class || C || C++ (TISP) ||
+| *Memory leak* | Missed {{free()}} on error path | Prevented by {{unique_ptr}} (automatic cleanup) |
+| *Double free* | Manual tracking failure | Prevented by single-ownership model |
+| *Use-after-free* | Dangling pointer after {{free()}} | Prevented by ownership semantics |
+| *Type confusion* | {{void*}} cast to wrong type — silent at compile time | Compile error (templates enforce types) |
+| *Wrong dispatch* | Wrong function pointer in struct — silent at compile time | Compile error (virtual override signature must match) |
+| *Wrong allocator* | No enforcement mechanism | Compile error (deleter type mismatch) |
+
+{info:title=MISRA C++:2023 Alignment}
+MISRA C++:2008 blanket-banned dynamic memory. MISRA C++:2023 (Rules 21.6.2, 21.6.4) recognizes that RAII-managed allocation is deterministic and safe. C++ is currently the only way to satisfy Rule 21.6.2 (RAII-managed resources) — C has no language-level RAII mechanism.
+{info}
+
+h1. Industry Adoption
+
+|| Pattern || Backing || Year || Relevance ||
+| [C++17 PMR (Polymorphic Memory Resources)|https://en.cppreference.com/w/cpp/memory/polymorphic_allocator] | ISO C++ Standard (P0220R1) | 2017 | TISP's bump allocator follows the ISO-standardized pattern |
+| [Google Protobuf Arena|https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/arena.h] | Google | 10+ yrs | Planetary-scale production deployment of arena allocation |
+| [AUTOSAR C++14, Rule A18-5-10|https://www.autosar.org/standards/adaptive-platform] | BMW, Bosch, Toyota, et al. | 2017 | Automotive safety standard mandates pool allocator + placement new |
+| [ETL (Embedded Template Library)|https://github.com/ETLCPP/etl] | Embedded community (TI CCS supported) | 2014+ | MISRA-targeting embedded C++ library using same patterns |
+| [CERT MEM54-CPP|https://wiki.sei.cmu.edu/confluence/display/cplusplus/MEM54-CPP.+Provide+placement+new+with+properly+aligned+pointers+to+sufficient+storage+capacity] | U.S. DoD / Carnegie Mellon SEI | 2016 | Defense coding standard governs (not bans) placement new |
+| [CppCon 2025: Embedded C++ (Andreas Fertig)|https://cppcon.org/] | C++ committee member | 2025 | Being taught as textbook material in professional training |
+
+{info:title=Context}
+These patterns are established in automotive and server infrastructure. Applying them to DSP is a natural extension, not a new experiment.
+{info}
+
+h1. Recommendation
+
+{panel:title=Summary|borderStyle=solid|borderColor=#00875A}
+* *Productivity*: 10-15x less framework code. Adding or reordering nodes is a one-line change.
+* *Safety*: 6 classes of bugs eliminated at compile time that C can only address through discipline.
+* *Memory*: <5 KB overhead for any realistic graph (10-30 nodes). 240 bytes for 10 types over a C generic framework.
+* *Performance*: ~10 cy/node extra dispatch vs. a C generic framework with L2SRAM placement. 0.0015% of frame budget for a 10-node chain.
+* *Industry precedent*: AUTOSAR, MISRA C++:2023, Google Protobuf, ISO C++17 PMR — all use or mandate these patterns.
+
+The underlying C kernels (AUDIOLIB, DSPLIB, FFTLIB, MATHLIB) are unchanged. C++ provides the framework layer — dispatch, ownership, configuration — at negligible cost with measurable safety and productivity gains.
+{panel}
+
+h1. Further Reading
+
+h2. Internal Documents
+
+* {{docs/design_l2sram_node_allocation.confluence}} — Full prior art analysis, MISRA compliance, memory budget, L2SRAM placement design
+* {{docs/design_fft_twiddle_lut.confluence}} — {{shared_ptr}} patterns, MISRA C++:2023 compliance, twiddle factor sharing
+* {{docs/conference_paper_idea.confluence}} — Publication concept, C vs. C++ overhead analysis, design philosophy
+
+h2. External References
+
+* [AUTOSAR C++14 Guidelines|https://www.autosar.org/standards/adaptive-platform] — Rule A18-5-10 (pool allocators with placement new)
+* [CERT MEM54-CPP|https://wiki.sei.cmu.edu/confluence/display/cplusplus/MEM54-CPP.+Provide+placement+new+with+properly+aligned+pointers+to+sufficient+storage+capacity] — DoD coding standard for placement new
+* [P0211R3 (allocate_unique proposal)|https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/p0211r3.html] — ISO C++ proposal; TISP implements this pattern
+* [ETL (Embedded Template Library)|https://github.com/ETLCPP/etl] — MISRA-targeting embedded C++ library
+* [Google Protobuf arena.h|https://github.com/protocolbuffers/protobuf/blob/main/src/google/protobuf/arena.h] — Arena allocation at planetary scale
+* [C++17 PMR (std::pmr)|https://en.cppreference.com/w/cpp/memory/polymorphic_allocator] — ISO-standardized bump allocator pattern
