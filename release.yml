@@ -11,17 +11,17 @@ manifest:
     - name: c7x_fftlib
       remote: origin
       path: mcu_plus_sdk/source/fftlib
-      revision: DEV.12.01.00.00
+      revision: REL.FFTLIB.12.01.00.02      
     - name: c7x_dsplib
       remote: origin
       path: mcu_plus_sdk/source/dsplib
-      revision: DEV.12.01.00.00
+      revision: REL.DSPLIB.12.01.00.02      
     - name: c7x_mathlib
       remote: origin
       path: mcu_plus_sdk/source/mathlib
-      revision: DEV.12.01.00.00
+      revision: REL.MATHLIB.12.01.00.02      
     - name: c7x_audiolib
       remote: origin
       path: mcu_plus_sdk/source/audiolib
-      revision: DEV.12.01.00.00
+      revision: REL.AUDIOLIB.12.01.00.03
       west-commands: west-commands.yml
