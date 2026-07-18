@@ -1,6 +1,6 @@
 manifest:
   self:
-    path: mcu_plus_sdk/source/tisp
+    path: tisp
     west-commands: west-commands.yml
 
   remotes:
@@ -10,18 +10,18 @@ manifest:
   projects:
     - name: c7x_fftlib
       remote: origin
-      path: mcu_plus_sdk/source/fftlib
-      revision: REL.FFTLIB.12.01.00.02      
+      path: fftlib
+      revision: REL.FFTLIB.12.01.00.02
     - name: c7x_dsplib
       remote: origin
-      path: mcu_plus_sdk/source/dsplib
-      revision: REL.DSPLIB.12.01.00.02      
+      path: dsplib
+      revision: REL.DSPLIB.12.01.00.02
     - name: c7x_mathlib
       remote: origin
-      path: mcu_plus_sdk/source/mathlib
-      revision: REL.MATHLIB.12.01.00.02      
+      path: mathlib
+      revision: REL.MATHLIB.12.01.00.02
     - name: c7x_audiolib
       remote: origin
-      path: mcu_plus_sdk/source/audiolib
+      path: audiolib
       revision: REL.AUDIOLIB.12.01.00.03
       west-commands: west-commands.yml

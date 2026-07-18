@@ -317,12 +317,34 @@ class BuildTisp(WestCommand):
                 return _run(fh)
         return _run(None)
 
+    def _detect_topology(self):
+        """Return (xlib_base, mcu_sdk_path) for the current west workspace.
+
+        Dev topology  (topdir is workspace root):
+          xlib_base = topdir/mcu_plus_sdk/source/
+          mcu_sdk   = topdir/mcu_plus_sdk/
+
+        Release topology (topdir = workspace/mcu_plus_sdk/source/):
+          xlib_base = topdir/
+          mcu_sdk   = topdir/../  (the mcu_plus_sdk clone root)
+        """
+        dev_xlib_base = Path(self.topdir) / "mcu_plus_sdk" / "source"
+        if dev_xlib_base.is_dir():
+            return dev_xlib_base, Path(self.topdir) / "mcu_plus_sdk"
+        if Path(self.topdir).parent.name == "mcu_plus_sdk":
+            return Path(self.topdir), Path(self.topdir).parent
+        self.die(
+            "Cannot detect workspace topology.\n"
+            "  Dev:     <ws>/mcu_plus_sdk/source/ must exist under topdir\n"
+            "  Release: topdir must be inside a directory named 'mcu_plus_sdk'"
+        )
+
     def _build_xlib(
-        self, name, soc, platform, build_type, tisp_dir, env, printer, throttle=True
+        self, name, soc, platform, build_type, xlib_base, tisp_dir, env, printer, throttle=True
     ):
         label = f"{I_PKG.strip()} {name:<8}  {soc}/{platform}/{build_type}"
         printer.building(label)
-        xlib_src = Path(self.topdir) / "mcu_plus_sdk" / "source" / name
+        xlib_src = xlib_base / name
         xlib_build = tisp_dir / "build" / "xlibs" / soc / platform / build_type / name
         preset = f"{build_type}-buildlib-{soc}-{platform}"
         log = tisp_dir / "build" / "logs" / soc / platform / build_type / f"{name}.log"
@@ -343,7 +365,7 @@ class BuildTisp(WestCommand):
         printer.done(label)
 
     def _build_mcu_sdk(
-        self, soc, platform, build_type, jobs, tisp_dir, env, printer, throttle=True
+        self, soc, platform, build_type, jobs, mcu_sdk, tisp_dir, env, printer, throttle=True
     ):
         """Build MCU+ SDK libraries using make-based system.
 
@@ -352,7 +374,7 @@ class BuildTisp(WestCommand):
         It serializes builds for the same SOC/device to prevent object file
         conflicts between release/debug builds.
         """
-        mcu_sdk_dir = Path(self.topdir) / "mcu_plus_sdk"
+        mcu_sdk_dir = mcu_sdk
 
         # PC platform: build dmautils host emulation library only.
         # Serialize per-device (same lock key as target) to prevent make races
@@ -499,18 +521,17 @@ class BuildTisp(WestCommand):
 
     # ── per-combo worker ──────────────────────────────────────────────
 
-    def _build_combo(self, soc, platform, build_type, args, tisp_dir, printer):
+    def _build_combo(self, soc, platform, build_type, args, tisp_dir, xlib_base, mcu_sdk, printer):
         label = f"{soc}/{platform}/{build_type}"
 
         jobs = args.jobs
 
         env = dict(os.environ)
-        mcu_sdk = Path(self.topdir) / "mcu_plus_sdk"
         env["MCU_PLUS_SDK_ROOT"] = str(mcu_sdk)
 
         def _audiolib_track():
-            self._build_xlib("dsplib", soc, platform, build_type, tisp_dir, env, printer, args.throttle)
-            self._build_xlib("audiolib", soc, platform, build_type, tisp_dir, env, printer, args.throttle)
+            self._build_xlib("dsplib", soc, platform, build_type, xlib_base, tisp_dir, env, printer, args.throttle)
+            self._build_xlib("audiolib", soc, platform, build_type, xlib_base, tisp_dir, env, printer, args.throttle)
 
         with ThreadPoolExecutor(
             max_workers=4
@@ -522,6 +543,7 @@ class BuildTisp(WestCommand):
                     soc,
                     platform,
                     build_type,
+                    xlib_base,
                     tisp_dir,
                     env,
                     printer,
@@ -533,6 +555,7 @@ class BuildTisp(WestCommand):
                     soc,
                     platform,
                     build_type,
+                    xlib_base,
                     tisp_dir,
                     env,
                     printer,
@@ -545,6 +568,7 @@ class BuildTisp(WestCommand):
                     platform,
                     build_type,
                     jobs,
+                    mcu_sdk,
                     tisp_dir,
                     env,
                     printer,
@@ -709,9 +733,7 @@ class BuildTisp(WestCommand):
             self._do_clean(combos, tisp_dir, printer)
             return
 
-        xlib_dir = Path(self.topdir) / "mcu_plus_sdk" / "source"
-        if not xlib_dir.is_dir():
-            self.die('mcu_plus_sdk/source/ not found — run "west update" first')
+        xlib_base, mcu_sdk = self._detect_topology()
 
         printer.section(f"west build-tisp  —  {len(combos)} combos")
         print(f"  {C_DIM}workspace : {self.topdir}{C_RESET}")
@@ -730,7 +752,7 @@ class BuildTisp(WestCommand):
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = {
                 executor.submit(
-                    self._build_combo, soc, plat, bt, args, tisp_dir, printer
+                    self._build_combo, soc, plat, bt, args, tisp_dir, xlib_base, mcu_sdk, printer
                 ): f"{soc}/{plat}/{bt}"
                 for soc, plat, bt in combos
             }
