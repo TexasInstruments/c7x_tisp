@@ -22,7 +22,8 @@ Concat<T>::Concat(const TISP_BufDesc2D *pInputs,
     : _pY(pY), _numInputs(numInputs), _totalInChannels(0), _inSamples(inSamples), _isInterleave(isInterleave)
 {
    // Copy input pointers into owned void* array
-   _inputPtrs = make_unique_handle<void *>(numInputs);
+   _inputPtrs = std::make_unique<void*[]>(numInputs); 
+
    if (!_inputPtrs) {
       errorCtx.setMemoryError("Concat constructor", "failed to allocate inputPtrs array");
    }

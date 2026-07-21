@@ -21,8 +21,9 @@ Split<T>::Split(T                    *pIn,
                 ErrorCtxt            &errorCtx)
     : _pIn(pIn), _numOutputs(numOutputs), _totalInputChannels(0), _inSamples(inSamples), _isInterleave(isInterleave)
 {
-   // Allocate output pointer array from handle arena
-   _outputPtrs = make_unique_handle<void *>(numOutputs);
+   // Allocate output pointer array from heap section
+   _outputPtrs = std::make_unique<void*[]>(numOutputs); 
+
    if (!_outputPtrs) {
       errorCtx.setMemoryError("Split constructor", "failed to allocate outputPtrs array");
    }

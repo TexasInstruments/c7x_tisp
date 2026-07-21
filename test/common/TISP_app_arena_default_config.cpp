@@ -33,5 +33,9 @@ __attribute__((section(".tisp_handle_arena"), aligned(32)))
 #else
 __attribute__((aligned(32)))
 #endif
+#if defined(__C7504__)
+uint8_t tisp_handleArenaBuffer[16U * 1024U];
+#else
 uint8_t tisp_handleArenaBuffer[32U * 1024U];
+#endif
 extern const size_t tisp_handleArenaSize = sizeof(tisp_handleArenaBuffer);

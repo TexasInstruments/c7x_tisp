@@ -169,7 +169,7 @@ template <typename T> class Mixer final : public VirtualOp {
    T                        *_pYTemp;           /*!< Pointer to temporary output buffer for interleaving. */
    T                        *_pCoeff;           /*!< Pointer to mixing coefficient matrix. */
    T                        *_pScratch;         /*!< Pointer to scratch buffer for aggregated inputs. */
-   TISP::HandlePtr<void *> _inputPtrs;        /*!< Array of pointers to input buffers. */
+   std::unique_ptr<void*[]> _inputPtrs;        /*!< Array of pointers to input buffers. */
    TISP::HandlePtr<char>   _handle;           /*!< Handle to AUDIOLIB_inputAggregator kernel. */
    TISP::HandlePtr<char>   _handleMatMul;     /*!< Handle for DSPLIB matrix multiplication. */
    TISP::HandlePtr<char>   _handleInterleave; /*!< Handle for DSPLIB interleave operation. */
