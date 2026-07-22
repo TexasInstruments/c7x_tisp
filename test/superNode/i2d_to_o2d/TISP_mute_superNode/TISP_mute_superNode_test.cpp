@@ -237,8 +237,8 @@ int TISP_mute_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::execute::graph(mySuperNodeVec);
 
             TISP_mute_deleteSuperNode(mySuperNodeVec);
-         TISP::handleAllocator().reset();
-         TISP::nodeAllocator().reset();
+            TISP::handleAllocator().reset();
+            TISP::nodeAllocator().reset();
 
             TI_profile_stop();
          }

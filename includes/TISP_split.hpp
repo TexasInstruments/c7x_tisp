@@ -31,7 +31,7 @@ namespace AUDIOLIB {
 
 template <typename T> class Split final : public VirtualOp {
 
-   TISP::HandlePtr<void *> _outputPtrs; /*!< void* array passed to AUDIOLIB_split_exec. */
+   std::unique_ptr<void*[]> _outputPtrs; /*!< void* array passed to AUDIOLIB_split_exec. */
    T                        *_pIn;        /*!< Single input pointer. */
    NodeInfo                  _nodeInfo;   /*!< Node name, parameters, and ID. */
 

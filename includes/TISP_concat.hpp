@@ -31,7 +31,7 @@ namespace AUDIOLIB {
 
 template <typename T> class Concat final : public VirtualOp {
 
-   TISP::HandlePtr<void *> _inputPtrs; /*!< void* array passed to AUDIOLIB_concat_exec. */
+   std::unique_ptr<void*[]> _inputPtrs; /*!< void* array passed to AUDIOLIB_concat_exec. */
    T                        *_pY;        /*!< Single output pointer. */
    NodeInfo                  _nodeInfo;  /*!< Node name, parameters, and ID. */
 

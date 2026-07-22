@@ -419,7 +419,6 @@ int TISP_ssrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
             TISP::ErrorCtxt errorCtx;
-
             auto k0 = TISP_ssrc_createKernelObject(
                 pIn.get(), pState, pFiltCoeffs, pOut.get(), static_cast<uint32_t>(inputSampleCount),
                 currPrm.sampleDataType, static_cast<uint32_t>(widthIn), static_cast<uint32_t>(heightIn),
@@ -567,6 +566,8 @@ int TISP_ssrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
                   TI_profile_stop();
                }
+               TISP::handleAllocator().reset();
+               TISP::nodeAllocator().reset();
             }
 
             /* get output to L1D */

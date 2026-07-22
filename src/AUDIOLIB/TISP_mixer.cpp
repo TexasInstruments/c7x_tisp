@@ -129,7 +129,7 @@ Mixer<T>::Mixer(TISP_BufDesc2D *pX,
       if (errorCtx.isSuccess()) {
 
          // Allocate the scratch pointer array ONCE here
-         _inputPtrs = make_unique_handle<void *>(numInputs);
+         _inputPtrs = std::make_unique<void*[]>(numInputs); 
 
          if (!_inputPtrs) {
             errorCtx.setMemoryError("Mixer constructor", "failed to allocate input pointer array");
