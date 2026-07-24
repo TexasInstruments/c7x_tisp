@@ -27,7 +27,8 @@ enum class ErrorCode : int32_t {
    kLibrary            = 4, ///< Library operation error
    kInvalidNode        = 5, ///< Invalid node error
    kInvalidObjectId    = 6, ///< Invalid object/node ID in opVec
-   kInvalidSignalChain = 7  ///< Invalid signal chain/graph structure
+   kInvalidSignalChain = 7, ///< Invalid signal chain/graph structure
+   kDataProbeBusy      = 8  ///< Resource is already in use and was not disturbed
 };
 
 /**
@@ -200,6 +201,8 @@ class GraphSetupErrorCtxt {
          return "Invalid object ID error";
       case ErrorCode::kInvalidSignalChain:
          return "Invalid signal chain error";
+      case ErrorCode::kDataProbeBusy:
+         return "Resource busy error";
       default:
          return "Unknown error";
       }

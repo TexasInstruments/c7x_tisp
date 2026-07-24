@@ -57,13 +57,13 @@ TypeConversion<Tin, Tout>::TypeConversion(Tin       *pX,
 
       // Initialize bufParams with node input and output buffer parameters
       _nodeInfo.bufParams.inputDataType     = ElementDType<Tin>::value;
-      _nodeInfo.bufParams.isInputInterleave = 0;
+      _nodeInfo.bufParams.isInputInterleave = 1;
       _nodeInfo.bufParams.widthIn[0]        = width;
       _nodeInfo.bufParams.heightIn[0]       = height;
       _nodeInfo.bufParams.inPitchBytes[0]   = inPitchBytes;
 
       _nodeInfo.bufParams.outputDataType     = ElementDType<Tout>::value;
-      _nodeInfo.bufParams.isOutputInterleave = 0;
+      _nodeInfo.bufParams.isOutputInterleave = 1;
       _nodeInfo.bufParams.widthOut[0]        = width;
       _nodeInfo.bufParams.heightOut[0]       = height;
       _nodeInfo.bufParams.outPitchBytes[0]   = outPitchBytes;
