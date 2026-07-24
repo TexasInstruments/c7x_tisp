@@ -22,6 +22,14 @@ namespace DSPLIB {
  *  \class CascadeBiquad
  *  @brief Provides node-level APIs for the DSPLIB_CascadeBiquad kernel from DSPLIB.
  *  @tparam T        : Supports float and double
+ *
+ *  @details This node applies a cascade of second-order (biquad) sections to each channel of the
+ *  input buffer pIn and writes the filtered values to the output buffer pOut. The sections are
+ *  applied in series, the output of one stage feeding the next. Input and output are interleaved:
+ *  each row holds one sample across all channels. The per-channel filter state is carried in
+ *  pFilterVar across calls, so blocks must be presented in order. The coefficient buffer
+ *  pFilterCoeff is shared by all channels unless `enableNChCoeffs` is set, and its layout depends
+ *  on the selected `biquadForm` (DF1, DF2, or TDF2).
  */
 
 /**
@@ -32,7 +40,8 @@ namespace DSPLIB {
  *
  */
 enum class CascadeBiquadParamId : uint16_t {
-   kFilterCoeffs = 0 /**< kFilterCoeffs: Filter coefficients block */
+   kFilterCoeffs = 0, /**< kFilterCoeffs: Filter coefficients block */
+   kBypass       = 1  /**< kBypass: uint32_t bypass mode; `0` applies the filter, `1` copies input to output */
 };
 
 template <typename T> class CascadeBiquad final : public VirtualOp {
@@ -43,10 +52,29 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
    T       *_pOut;         /*!< Pointer to output buffer */
    NodeInfo _nodeInfo;     /*!< Node name, parameters, and ID */
 
-   size_t _stateBufferSize; /*!< Size of state buffer in bytes. */
+   size_t _size;              /*!< Number of samples per channel. */
+   size_t _numChannels;       /*!< Number of channels. */
+   size_t _dataPitchInBytes;  /*!< Pitch of the input buffer in bytes. */
+   size_t _dataPitchOutBytes; /*!< Pitch of the output buffer in bytes. */
 
-   TISP::HandlePtr<char> _handle; /*!< handle required by DSPLIB_cascadeBiquad kernel */
-   size_t _coeffSizeBytes; /*!< Cached size in bytes of the filter coefficients buffer */
+   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the filter, `1` copies input to output. */
+
+   TISP::HandlePtr<char> _handle;          /*!< handle required by DSPLIB_cascadeBiquad kernel */
+   size_t                _coeffSizeBytes;  /*!< Cached size in bytes of the filter coefficients buffer */
+   size_t                _stateBufferSize; /*!< Cached size in bytes of the state buffer @ref _pFilterVar */
+
+   /**
+    * @brief Copies @ref _size rows of @ref _numChannels elements from @ref _pIn to @ref _pOut,
+    *        honouring @ref _dataPitchInBytes and @ref _dataPitchOutBytes
+    *
+    * Used by the bypass path. The state buffer @ref _pFilterVar is not advanced while bypass is
+    * enabled, so @ref cleanInternalBuffers() is invoked when bypass is disengaged to discard the
+    * now-stale filter history.
+    *
+    * @retval None
+    * @throw None
+    */
+   void bypassCopy() noexcept;
 
  public:
    /**
@@ -58,18 +86,18 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
     * @param[in]  *pFilterCoeff     : Pointer to filter coefficient buffer; initializes @ref _pFilterCoeff
     * @param[in]  *pFilterVar       : Pointer for node to hold state buffer; initializes @ref _pFilterVar
     * @param[out] *pOut             : Pointer to output buffer; initializes @ref _pOut
-    * @param[in]  size              : size of input; initializes @ref _size
+    * @param[in]  size              : Number of samples per channel; initializes @ref _size
     * @param[in]  numChannels       : Number of channels; initializes @ref _numChannels
-    * @param[in]  numStages         : Number of stages; initializes @ref _numStages
-    * @param[in]  biquadForm        : One of the following; initializes @ref _biquadForm
+    * @param[in]  numStages         : Number of biquad stages in the cascade
+    * @param[in]  biquadForm        : One of the following:
     *                                 - DSPLIB_BIQUAD_DF1
     *                                 - DSPLIB_BIQUAD_DF2
     *                                 - DSPLIB_BIQUAD_TDF2
     * @param[in]  dataPitchInBytes  : Pitch of input buffer in bytes; initializes @ref _dataPitchInBytes
     * @param[in]  dataPitchOutBytes : Pitch of output buffer in bytes; initializes @ref _dataPitchOutBytes
-    * @param[in]  filterVarPitchBytes : Pitch of filter buffer in bytes; initializes @ref _filterVarPitchBytes
-    * @param[in]  enableNchcoeffs   : Every channel has its own set of filter coeff(T/F);
-    * @param [in]  errorCtx          : Error context for reporting constructor errors
+    * @param[in]  filterVarPitchBytes : Pitch of the state buffer in bytes
+    * @param[in]  enableNChCoeffs   : Every channel has its own set of filter coefficients (T/F)
+    * @param[in]  errorCtx          : Error context for reporting constructor errors
     * @retval None
     * @throw None
     *
@@ -98,21 +126,20 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
     * @param[in]  *pFilterCoeff     : Pointer to filter coefficient buffer; initializes @ref _pFilterCoeff
     * @param[in]  *pFilterVar       : Pointer for node to hold state buffer; initializes @ref _pFilterVar
     * @param[out] *pOut             : Pointer to output buffer; initializes @ref _pOut
-    * @param[in]  size              : size of input; initializes @ref _size
+    * @param[in]  size              : Number of samples per channel; initializes @ref _size
     * @param[in]  numChannels       : Number of channels; initializes @ref _numChannels
-    * @param[in]  numStages         : Number of stages; initializes @ref _numStages
-    * @param[in]  biquadForm        : One of the following; initializes @ref _biquadForm
+    * @param[in]  numStages         : Number of biquad stages in the cascade
+    * @param[in]  biquadForm        : One of the following:
     *                                 - DSPLIB_BIQUAD_DF1
     *                                 - DSPLIB_BIQUAD_DF2
     *                                 - DSPLIB_BIQUAD_TDF2
     * @param[in]  dataPitchInBytes  : Pitch of input buffer in bytes; initializes @ref _dataPitchInBytes
     * @param[in]  dataPitchOutBytes : Pitch of output buffer in bytes; initializes @ref _dataPitchOutBytes
-    * @param[in]  filterVarPitchBytes : Pitch of filter buffer in bytes; initializes @ref _filterVarPitchBytes
-    * @param[in]  enableNchcoeffs   : Every channel has its own set of filter coeff(T/F); initializes
-    *                                 @ref _enableNChCoeffs
+    * @param[in]  filterVarPitchBytes : Pitch of the state buffer in bytes
+    * @param[in]  enableNChCoeffs   : Every channel has its own set of filter coefficients (T/F)
     * @param[in]  nodeName          : Name of the node; initializes @ref _nodeInfo
     * @param[in]  nodeId            : ID of the node; initializes @ref _nodeInfo
-    * @param [in]  errorCtx          : Error context for reporting constructor errors
+    * @param[in]  errorCtx          : Error context for reporting constructor errors
     * @retval None
     * @throw None
     *

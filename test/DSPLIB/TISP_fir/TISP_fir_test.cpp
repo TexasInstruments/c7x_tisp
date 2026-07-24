@@ -96,10 +96,11 @@ int DSPLIB_fir_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          size_t filterPitch = currPrm.filterPitch;
          size_t outPitch    = currPrm.dataPitchOut;
 
-         bool   enableNchCoefs = currPrm.enableNchCoefs;
-         bool   enableMMA      = currPrm.enableMMA;
-         bool   enableQ        = currPrm.enableQ; // for fixed point only
-         size_t Q              = currPrm.Q;
+         bool     enableNchCoefs = currPrm.enableNchCoefs;
+         bool     enableMMA      = currPrm.enableMMA;
+         bool     enableQ        = currPrm.enableQ; // for fixed point only
+         size_t   Q              = currPrm.Q;
+         uint32_t bypassMode     = currPrm.bypassMode;
 
          size_t numBlocks = currPrm.numBlocks;
 
@@ -182,6 +183,9 @@ int DSPLIB_fir_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                 static_cast<uint32_t>(statePitch), static_cast<uint32_t>(filterPitch),
                 static_cast<uint32_t>(outPitch * numBlocks), static_cast<bool>(enableNchCoefs),
                 static_cast<bool>(enableMMA), static_cast<bool>(enableQ), static_cast<uint32_t>(Q), errorCtx);
+
+            k0->setParams(static_cast<uint16_t>(TISP::DSPLIB::FirParamId::kBypass), &bypassMode, sizeof(bypassMode),
+                          errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
@@ -290,12 +294,23 @@ int DSPLIB_fir_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             outputSize = inputSize;
 
-            for (size_t n = 0; n < numBlocks; n++) {
-               DSPLIB_fir_cn((float *) ((int8_t *) pIn.get() + n * inputSize * sizeof(DSPLIB_F32)),
-                             (float *) pState.get(), (float *) ((int8_t *) pFilter.get() + filterOffsetCn),
-                             (float *) ((int8_t *) pOutCn + n * outputSize * sizeof(DSPLIB_F32)), inputSize, stateSize,
-                             filterSize, outputSize, batchSize, (inPitch * numBlocks), statePitch, filterPitch,
-                             (outPitch * numBlocks), enableNchCoefs, enableMMA, enableQ, Q);
+            if (bypassMode != 0U) {
+               // bypass copies the input to the output, leaving the filter unapplied
+               size_t   rowBytes = outputSize * numBlocks * sizeof(DSPLIB_F32);
+               uint8_t *pSrcCn   = (uint8_t *) pIn.get();
+               uint8_t *pDstCn   = (uint8_t *) pOutCn;
+               for (size_t i = 0; i < batchSize; i++) {
+                  memcpy(&pDstCn[i * outPitch * numBlocks], &pSrcCn[i * inPitch * numBlocks], rowBytes);
+               }
+            }
+            else {
+               for (size_t n = 0; n < numBlocks; n++) {
+                  DSPLIB_fir_cn((float *) ((int8_t *) pIn.get() + n * inputSize * sizeof(DSPLIB_F32)),
+                                (float *) pState.get(), (float *) ((int8_t *) pFilter.get() + filterOffsetCn),
+                                (float *) ((int8_t *) pOutCn + n * outputSize * sizeof(DSPLIB_F32)), inputSize,
+                                stateSize, filterSize, outputSize, batchSize, (inPitch * numBlocks), statePitch,
+                                filterPitch, (outPitch * numBlocks), enableNchCoefs, enableMMA, enableQ, Q);
+               }
             }
 
             status_nat_vs_opt = TI_compare_mem_2D_float((void *) pOut.get(), (void *) pOutCn, 0, (double) powf(2, -10),

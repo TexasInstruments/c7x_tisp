@@ -123,15 +123,16 @@ int TISP_gainNChTrim_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
           * if a comparison was done or not                                   */
          int32_t comparisonDone = 0;
 
-         currentTestFail     = 0;
-         size_t dataSize     = AUDIOLIB_sizeof(currPrm.dataType);
-         size_t strideIn     = currPrm.strideInElements;
-         size_t strideOut    = currPrm.strideOutElements;
-         size_t isInterleave = currPrm.isInterleave;
-         size_t numBlocks    = currPrm.numBlocks;
-         size_t widthIn      = currPrm.widthIn;
-         size_t heightIn     = currPrm.heightIn;
-         size_t gheightIn    = currPrm.heightIn;
+         currentTestFail       = 0;
+         size_t   dataSize     = AUDIOLIB_sizeof(currPrm.dataType);
+         size_t   strideIn     = currPrm.strideInElements;
+         size_t   strideOut    = currPrm.strideOutElements;
+         size_t   isInterleave = currPrm.isInterleave;
+         size_t   numBlocks    = currPrm.numBlocks;
+         size_t   widthIn      = currPrm.widthIn;
+         size_t   heightIn     = currPrm.heightIn;
+         size_t   gheightIn    = currPrm.heightIn;
+         uint32_t bypassMode   = currPrm.bypassMode;
          if (isInterleave == 1) {
             widthIn  = currPrm.heightIn;
             heightIn = currPrm.widthIn;
@@ -182,6 +183,14 @@ int TISP_gainNChTrim_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
+               return -1;
+            }
+
+            k0->setParams(static_cast<uint16_t>(TISP::AUDIOLIB::GainNChTrimParamId::kBypass), &bypassMode,
+                          sizeof(bypassMode), errorCtx);
+
+            if (!errorCtx.isSuccess()) {
+               printf("\nError setting bypass mode: %s\n", errorCtx.getMessage());
                return -1;
             }
 
@@ -262,9 +271,19 @@ int TISP_gainNChTrim_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             outputSize = widthIn;
 
             for (size_t n = 0; n < numBlocks; n++) {
-               AUDIOLIB_gainNChTrim_cn(pIn.get() + n * heightIn * strideIn, pGainnchtrim.get(), pMasterGain.get(),
-                                       pOutCn + n * heightIn * strideOut, currPrm.dataType, widthIn, heightIn,
-                                       strideInElements, strideOutElements, isInterleave);
+               if (bypassMode != 0U) {
+                  // bypass copies the input to the output, leaving the gain unapplied
+                  uint8_t *pSrcCn = (uint8_t *) pIn.get() + n * heightIn * strideIn;
+                  uint8_t *pDstCn = (uint8_t *) pOutCn + n * heightIn * strideOut;
+                  for (size_t i = 0; i < heightIn; i++) {
+                     memcpy(&pDstCn[i * strideOut], &pSrcCn[i * strideIn], widthIn * dataSize);
+                  }
+               }
+               else {
+                  AUDIOLIB_gainNChTrim_cn(pIn.get() + n * heightIn * strideIn, pGainnchtrim.get(), pMasterGain.get(),
+                                          pOutCn + n * heightIn * strideOut, currPrm.dataType, widthIn, heightIn,
+                                          strideInElements, strideOutElements, isInterleave);
+               }
             }
 
             status_nat_vs_opt = TI_TEST_KERNEL_PASS;

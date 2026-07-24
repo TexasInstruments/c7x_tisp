@@ -189,6 +189,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write("%d, // LFE Fader Mode \n" % (lfeFaderMode))
     idatFile.write("%s, // Channel Config \n" % (channelConfig_ref))
     idatFile.write("%d, // isInterleave\n" % (isInterleave))
+    idatFile.write("%d, // bypassMode\n" % (currPrm["bypassMode"]))
     idatFile.write(
         "AUDIOLIB_CALC_STRIDE(%s * sizeof(%s), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements \n"
         % ((strideInElements), dType)
@@ -268,6 +269,7 @@ def process_test_case(testCase):
     testCase["lfeBalanceGainFactor"] = float(testCase.get("lfeBalanceGainFactor", 0.7))
     testCase["lfeFaderGainFactor"] = float(testCase.get("lfeFaderGainFactor", 0.7))
     testCase["numBlocks"] = int(testCase["numBlocks"])
+    testCase["bypassMode"] = int(testCase["bypassMode"])
 
     lfe_balance_mode_str = testCase.get("lfeBalanceMode", "unaffected").upper()
     lfe_balance_mode_key = f"AUDIOLIB_LFE_BALANCE_{lfe_balance_mode_str}"
@@ -370,6 +372,7 @@ def gen_test_case_header_file(testCase):
     lfeBalanceGainFactor = testCase["lfeBalanceGainFactor"]
     lfeFaderGainFactor = testCase["lfeFaderGainFactor"]
     numBlocks = testCase["numBlocks"]
+    bypassMode = testCase["bypassMode"]
 
     CMAP = AUDIOLIB_channelMappings.AUDIOLIB_CHANNEL_MAP
     LFE_BALANCE_MAP = AUDIOLIB_channelMappings.AUDIOLIB_LFE_BALANCE_MODE_MAP
@@ -508,6 +511,12 @@ def gen_test_case_header_file(testCase):
         out_list = out.flatten()
         pIn_interleaved = in_list  # Already interleaved
         pOut_interleaved = out_list
+
+    # bypass copies the input to the output, leaving the gain unapplied
+    if bypassMode:
+        out = in0 if not isInterleave else in0.T
+        out_list = in_list.copy()
+        pOut_interleaved = pIn_interleaved
 
     # Generate plots if plotSignals is TRUE
     if plotSignals:

@@ -147,6 +147,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write(
         "%d, // enableCalcCoeffs \n" % (1 if enableCalcCoeffs == "True" else 0)
     )
+    idatFile.write("%d, // bypassMode \n" % (currPrm["bypassMode"]))
     idatFile.write("%s, // Output data location \n" % (outputDataLocation))
     # idatFile.write("%d, // Number of execution repetitions \n" % (int(numExecReps)))
     idatFile.write("%d, // Number of repetitions \n" % (int(numReps)))
@@ -214,6 +215,7 @@ def process_test_case(testCase):
     testCase["numExecReps"] = int(testCase["numExecReps"])
     testCase["numReps"] = int(testCase["numReps"])
     testCase["testCategory"] = int(testCase["testCategory"])
+    testCase["bypassMode"] = int(testCase["bypassMode"])
 
     return testCase
 
@@ -480,6 +482,10 @@ def gen_test_case_header_file(testCase):
     else:
         tifBiquadCascadeCoefs = None
         tifBiquadCascadeGains = None
+
+    # bypass copies the input to the output, leaving the filter unapplied
+    if testCase["bypassMode"]:
+        outputData = inputData.copy()
 
     # Write out header file
     headerFileName = "staticRefCase" + str(testId) + ".h"

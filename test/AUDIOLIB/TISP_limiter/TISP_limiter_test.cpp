@@ -109,10 +109,11 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          paramSize      = numChannels * dataSize;
 
          // TODO: add pitch to test case csv
-         size_t pitchX        = currPrm.pitchX;
-         size_t pitchS        = currPrm.pitchS;
-         size_t pitchY        = currPrm.pitchY;
-         bool   isInterleaved = currPrm.isInterleaved;
+         size_t   pitchX        = currPrm.pitchX;
+         size_t   pitchS        = currPrm.pitchS;
+         size_t   pitchY        = currPrm.pitchY;
+         bool     isInterleaved = currPrm.isInterleaved;
+         uint32_t bypassMode    = currPrm.bypassMode;
 
          auto pIn           = myL2Heap.allocate64ByteAligned<uint8_t>(inputSize);
          auto pGain         = myL2Heap.allocate64ByteAligned<uint8_t>(gainSize);
@@ -166,6 +167,14 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
+               return -1;
+            }
+
+            k0->setParams(static_cast<uint16_t>(TISP::AUDIOLIB::LimiterParamId::kBypass), &bypassMode,
+                          sizeof(bypassMode), errorCtx);
+
+            if (!errorCtx.isSuccess()) {
+               printf("\nError setting bypass mode: %s\n", errorCtx.getMessage());
                return -1;
             }
 
@@ -238,11 +247,24 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             TI_profile_stop();
 
-            // Run C native implementation for comparison
-            TISP_limiter_exec_cn<float>((float *) pIn.get(), (float *) pGainCn, (float *) pScratchCn, (float *) pOutCn,
-                                        (float *) pThreshold_dB.get(), (float *) pKneeWidth_dB.get(),
-                                        (float *) pAttackCoeff.get(), (float *) pReleaseCoeff.get(), numChannels,
-                                        blockSize, pitchX, pitchS, pitchY, isInterleaved);
+            if (bypassMode != 0U) {
+               // bypass copies the input to the output, leaving the limiter gain unapplied
+               size_t   copyWidth  = isInterleaved ? numChannels : blockSize;
+               size_t   copyHeight = isInterleaved ? blockSize : numChannels;
+               uint8_t *pSrcCn     = (uint8_t *) pIn.get();
+               uint8_t *pDstCn     = (uint8_t *) pOutCn;
+               for (size_t i = 0; i < copyHeight; i++) {
+                  memcpy(&pDstCn[i * pitchY], &pSrcCn[i * pitchX], copyWidth * dataSize);
+               }
+            }
+            else {
+               // Run C native implementation for comparison
+               TISP_limiter_exec_cn<float>((float *) pIn.get(), (float *) pGainCn, (float *) pScratchCn,
+                                           (float *) pOutCn, (float *) pThreshold_dB.get(),
+                                           (float *) pKneeWidth_dB.get(), (float *) pAttackCoeff.get(),
+                                           (float *) pReleaseCoeff.get(), numChannels, blockSize, pitchX, pitchS,
+                                           pitchY, isInterleaved);
+            }
 
             status_nat_vs_opt = TI_TEST_KERNEL_PASS;
 

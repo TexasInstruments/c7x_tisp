@@ -26,7 +26,7 @@ GainNChTrim<T>::GainNChTrim(T         *pX,
                             size_t     outPitchBytes,
                             size_t     isInterleave,
                             ErrorCtxt &errorCtx)
-    : _pX(pX), _pG(pG), _pM(pM), _pY(pY)
+    : _pX(pX), _pG(pG), _pM(pM), _pY(pY), _bypassMode(0U)
 {
 
    // Initialize _params with the node parameters
@@ -160,9 +160,33 @@ template <typename T> void GainNChTrim<T>::setAddr(SetAddr_t &addr, SetAddrMode_
    }
 }
 
+template <typename T> void GainNChTrim<T>::bypassCopy() noexcept
+{
+   const size_t rowBytes = _width * sizeof(T);
+
+   if (_pX != _pY) {
+      if ((_inPitchBytes == rowBytes) && (_outPitchBytes == rowBytes)) {
+         (void) memcpy(_pY, _pX, rowBytes * _height);
+      }
+      else {
+         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
+         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
+
+         for (size_t i = 0; i < _height; i++) {
+            (void) memcpy(&pDst[i * _outPitchBytes], &pSrc[i * _inPitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         }
+      }
+   }
+}
+
 template <typename T> void GainNChTrim<T>::exec() noexcept
 {
-   AUDIOLIB_gainNChTrim_exec(_handle.get(), _pX, _pG, _pM, _pY);
+   if (_bypassMode != 0U) {
+      bypassCopy();
+   }
+   else {
+      AUDIOLIB_gainNChTrim_exec(_handle.get(), _pX, _pG, _pM, _pY);
+   }
 }
 
 template <typename T>
@@ -224,6 +248,22 @@ bool GainNChTrim<T>::setParams(uint16_t paramId, void *value, size_t size, Error
          }
          break;
       }
+      case GainNChTrimParamId::kBypass: {
+         if (size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("GainNChTrim::setParams", "Value size smaller than expected for kBypass");
+         }
+         else {
+            uint32_t bypassMode = 0U;
+            memcpy(&bypassMode, value, sizeof(uint32_t));
+            if (bypassMode > 1U) {
+               errorCtx.setInvalidParameterError("GainNChTrim::setParams", "bypass mode must be either zero or one");
+            }
+            else {
+               _bypassMode = bypassMode;
+            }
+         }
+         break;
+      }
       default:
          errorCtx.setInvalidParameterError("GainNChTrim::setParams", "Invalid paramId");
          break;
@@ -265,6 +305,16 @@ bool GainNChTrim<T>::getParams(uint16_t paramId, void *value, size_t *size, Erro
             memcpy(value, _pM, sizeof(T));
          }
          *size = sizeof(T);
+         break;
+      }
+      case GainNChTrimParamId::kBypass: {
+         if (*size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("GainNChTrim::getParams", "Value size smaller than expected for kBypass");
+         }
+         else {
+            memcpy(value, &_bypassMode, sizeof(uint32_t));
+         }
+         *size = sizeof(uint32_t);
          break;
       }
       default:

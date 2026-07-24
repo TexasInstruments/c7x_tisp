@@ -34,7 +34,7 @@ Limiter<T>::Limiter(T         *pX,
                     ErrorCtxt &errorCtx)
     : _pX(pX), _pG(pG), _pS(pS), _pY(pY), _pThreshold_dB(pThreshold_dB), _pKneeWidth_dB(pKneeWidth_dB),
       _pAttackCoeff(pAttackCoeff), _pReleaseCoeff(pReleaseCoeff), _numChannels(numChannels), _blockSize(blockSize),
-      _pitchX(pitchX), _pitchS(pitchS), _pitchY(pitchY), _isInterleaved(isInterleaved)
+      _pitchX(pitchX), _pitchS(pitchS), _pitchY(pitchY), _isInterleaved(isInterleaved), _bypassMode(0U)
 {
 
    // Initialize _params with the node parameters
@@ -323,6 +323,22 @@ bool Limiter<T>::setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt
          }
          break;
       }
+      case LimiterParamId::kBypass: {
+         if (size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("Limiter::setParams", "Value size smaller than expected for kBypass");
+         }
+         else {
+            uint32_t bypassMode = 0U;
+            memcpy(&bypassMode, value, sizeof(uint32_t));
+            if (bypassMode > 1U) {
+               errorCtx.setInvalidParameterError("Limiter::setParams", "bypass mode must be either zero or one");
+            }
+            else {
+               _bypassMode = bypassMode;
+            }
+         }
+         break;
+      }
       default:
          errorCtx.setInvalidParameterError("Limiter::setParams", "Invalid paramId");
          break;
@@ -340,6 +356,16 @@ bool Limiter<T>::getParams(uint16_t paramId, void *value, size_t *size, ErrorCtx
    }
    else if (size == nullptr) {
       errorCtx.setNullPointerError("Limiter::getParams", "size pointer is null");
+   }
+   else if (static_cast<LimiterParamId>(paramId) == LimiterParamId::kBypass) {
+      /* Handled ahead of the per-channel size gate below: bypass is a single uint32_t. */
+      if (*size < sizeof(uint32_t)) {
+         errorCtx.setInvalidParameterError("Limiter::getParams", "Value size smaller than expected for kBypass");
+      }
+      else {
+         memcpy(value, &_bypassMode, sizeof(uint32_t));
+      }
+      *size = sizeof(uint32_t);
    }
    else {
       size_t expectedSize = _numChannels * sizeof(T);
@@ -375,16 +401,41 @@ bool Limiter<T>::getParams(uint16_t paramId, void *value, size_t *size, ErrorCtx
    return errorCtx.isSuccess();
 }
 
+template <typename T> void Limiter<T>::bypassCopy() noexcept
+{
+   const size_t width    = (_isInterleaved) ? _numChannels : _blockSize;
+   const size_t height   = (_isInterleaved) ? _blockSize : _numChannels;
+   const size_t rowBytes = width * sizeof(T);
+
+   if (_pX != _pY) {
+      if ((_pitchX == rowBytes) && (_pitchY == rowBytes)) {
+         (void) memcpy(_pY, _pX, rowBytes * height);
+      }
+      else {
+         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
+         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
+
+         for (size_t i = 0; i < height; i++) {
+            (void) memcpy(&pDst[i * _pitchY], &pSrc[i * _pitchX], rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         }
+      }
+   }
+}
+
 template <typename T> void Limiter<T>::exec() noexcept
 {
+   if (_bypassMode != 0U) {
+      bypassCopy();
+   }
+   else {
+      TISP_limiter_abs_exec(_handle_abs.get(), _pX, _pY);
+      AUDIOLIB_dB20_exec(_handle_dB20.get(), _pY, _pS);
 
-   TISP_limiter_abs_exec(_handle_abs.get(), _pX, _pY);
-   AUDIOLIB_dB20_exec(_handle_dB20.get(), _pY, _pS);
+      TISP_limiter_gainComputer_exec(_handle_gainComputer.get(), _pS, _pY, _pG);
+      AUDIOLIB_undB20_exec(_handle_undB20.get(), _pY, _pS);
 
-   TISP_limiter_gainComputer_exec(_handle_gainComputer.get(), _pS, _pY, _pG);
-   AUDIOLIB_undB20_exec(_handle_undB20.get(), _pY, _pS);
-
-   TISP_limiter_mul_exec(_handle_mul.get(), _pX, _pS, _pY);
+      TISP_limiter_mul_exec(_handle_mul.get(), _pX, _pS, _pY);
+   }
 }
 
 template <typename T>

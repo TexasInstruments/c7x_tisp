@@ -76,6 +76,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     frequency = currPrm["frequency"]
     isInterleaved = currPrm["isInterleaved"]
     fadeType = currPrm["fadeType"]
+    bypassMode = currPrm["bypassMode"]
     AUDIOLIB_dType = TISP_utils.resolve_AUDIOLIB_dType(dType)
 
     # Map fadeType string to integer
@@ -117,6 +118,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write("%s, // fadeTime \n" % (fadeTime))
     idatFile.write("%d, // isInterleaved \n" % (int(isInterleaved)))
     idatFile.write("%d, // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)\n" % (fadeType_int))
+    idatFile.write("%d, // bypassMode \n" % (bypassMode))
     idatFile.write(
         "AUDIOLIB_CALC_STRIDE(%s * sizeof(%s), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements \n"
         % (strideInElements, AUDIOLIB_dType)
@@ -206,6 +208,7 @@ def process_test_case(testCase):
     testCase["frequency"] = float(testCase.get("frequency", 2000.0))
     testCase["isInterleaved"] = testCase["isInterleaved"].upper() == "TRUE"
     testCase["fadeType"] = testCase["fadeType"].upper()
+    testCase["bypassMode"] = int(testCase["bypassMode"])
     # Validate isInterleaved
     if testCase["isInterleaved"] not in [True, False]:
         raise ValueError(
@@ -245,6 +248,7 @@ def gen_test_case_header_file(testCase):
     frequency = testCase["frequency"]
     isInterleaved = testCase["isInterleaved"]
     fadeType = testCase["fadeType"]
+    bypassMode = testCase["bypassMode"]
     current_gain = np.array(testCase["initialGain"])  # (numChannels,)
     targetGain = np.array(testCase["targetGain"])  # (numChannels,)
     frameSize = numSamples
@@ -387,6 +391,10 @@ def gen_test_case_header_file(testCase):
                     pOutLocal[frame, startIdx + j] = (
                         pInLocal[frame, startIdx + j] * pCurrentGain[i, gainIdx]
                     )
+
+    # bypass copies the input to the output, leaving the mute gain unapplied
+    if bypassMode:
+        pOutLocal = pInLocal.copy()
 
     # Generate plots for all channels if plotSignals is TRUE
     if plotSignals:

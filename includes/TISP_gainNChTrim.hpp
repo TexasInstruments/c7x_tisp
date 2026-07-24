@@ -56,11 +56,12 @@ namespace AUDIOLIB {
  *
  * <b>Configuration & Parameters:</b>
  *
- * | Parameter      | Configuration Time | Description |
- * |----------------|--------------------|------------------------------------------------------------------------------|
- * | gHeight        | Instance Creation  | Number of channels (gain array size). <b>FIXED</b> at creation time. | | Gain
- *values    | Runtime            | Gain factor for each channel. <b>ONLY</b> runtime changeable parameter.      | |
- *Master gain    | Runtime            | Master gain factor. <b>ONLY</b> runtime changeable parameter.                |
+ * | Parameter    | Configuration Time | Description                                                         |
+ * |--------------|--------------------|---------------------------------------------------------------------|
+ * | gHeight      | Instance Creation  | Number of channels (gain array size). <b>FIXED</b> at creation time.|
+ * | Gain values  | Runtime            | Gain factor for each channel.                                       |
+ * | Master gain  | Runtime            | Master gain factor.                                                 |
+ * | Bypass       | Runtime            | Copies input to output, leaving the gain unapplied.                 |
  *
  **/
 
@@ -72,7 +73,8 @@ namespace AUDIOLIB {
  */
 enum class GainNChTrimParamId : uint16_t {
    kGainValues = 0, /**< kGainValues: Gain values to set/get for each channel */
-   kMasterGain = 1  /**< kMasterGain: Master gain scalar (float) to set/get */
+   kMasterGain = 1, /**< kMasterGain: Master gain scalar (float) to set/get */
+   kBypass     = 2  /**< kBypass: uint32_t bypass mode; `0` applies the gain, `1` copies input to output */
 };
 
 template <typename T> class GainNChTrim final : public VirtualOp {
@@ -84,14 +86,25 @@ template <typename T> class GainNChTrim final : public VirtualOp {
    T *_pM; /*!< Pointer to input master gain value. */
    T *_pY; /*!< Pointer to output matrix. */
 
-   size_t _width;
-   size_t _height;
-   size_t _gHeight;
-   size_t _inPitchBytes;
-   size_t _outPitchBytes;
-   size_t _isInterleave;
+   size_t _width;         /*!< Width of the input matrix. */
+   size_t _height;        /*!< Height of the input matrix. */
+   size_t _gHeight;       /*!< Number of elements in the gain array. */
+   size_t _inPitchBytes;  /*!< Pitch of the input matrix in bytes. */
+   size_t _outPitchBytes; /*!< Pitch of the output matrix in bytes. */
+   size_t _isInterleave;  /*!< `0`: non-interleaved, `1`: interleaved input data. */
+
+   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the gain, `1` copies input to output. */
 
    TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_gainNChTrim kernel. */
+
+   /**
+    * @brief Copies @ref _height rows of @ref _width elements from @ref _pX to @ref _pY, honouring
+    *        @ref _inPitchBytes and @ref _outPitchBytes.
+    *
+    * @retval None
+    * @throw None
+    */
+   void bypassCopy() noexcept;
 
  public:
    /**

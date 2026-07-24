@@ -66,6 +66,22 @@
 #include "test_data/staticRefCase15.h"
 #endif
 
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 16))
+#include "test_data/staticRefCase16.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 17))
+#include "test_data/staticRefCase17.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 18))
+#include "test_data/staticRefCase18.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 19))
+#include "test_data/staticRefCase19.h"
+#endif
+
 static TISP_muteNCh_testParams_t testParams[] = {
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 1))
     {
@@ -80,6 +96,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         10.0,                  // fadeTime
         1,                     // isInterleaved
         0,                     // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                     // bypassMode
         AUDIOLIB_CALC_STRIDE(20 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(20 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
@@ -102,6 +119,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         2.0,                   // fadeTime
         0,                     // isInterleaved
         0,                     // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                     // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                          // Output data location
@@ -124,6 +142,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         0.0,                   // fadeTime
         1,                     // isInterleaved
         1,                     // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                     // bypassMode
         AUDIOLIB_CALC_STRIDE(34 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(34 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
@@ -146,6 +165,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         1.0,                   // fadeTime
         1,                     // isInterleaved
         0,                     // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                     // bypassMode
         AUDIOLIB_CALC_STRIDE(1 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(1 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                        // Output data location
@@ -168,6 +188,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         5.5,                   // fadeTime
         0,                     // isInterleaved
         0,                     // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                     // bypassMode
         AUDIOLIB_CALC_STRIDE(64 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(64 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
@@ -190,6 +211,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         0.0,                   // fadeTime
         1,                     // isInterleaved
         2,                     // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                     // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                          // Output data location
@@ -212,6 +234,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         0.0,                   // fadeTime
         0,                     // isInterleaved
         2,                     // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                     // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                          // Output data location
@@ -234,6 +257,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         0.0,                   // fadeTime
         1,                     // isInterleaved
         2,                     // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                     // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                          // Output data location
@@ -256,6 +280,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         0.0,                   // fadeTime
         0,                     // isInterleaved
         0,                     // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                     // bypassMode
         AUDIOLIB_CALC_STRIDE(256 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(256 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                          // Output data location
@@ -278,6 +303,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         0.0,                    // fadeTime
         0,                      // isInterleaved
         0,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                      // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                          // Output data location
@@ -300,6 +326,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         0.0,                    // fadeTime
         0,                      // isInterleaved
         1,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                      // bypassMode
         AUDIOLIB_CALC_STRIDE(256 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(256 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                          // Output data location
@@ -322,6 +349,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         2.0,                    // fadeTime
         1,                      // isInterleaved
         2,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                      // bypassMode
         AUDIOLIB_CALC_STRIDE(64 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(64 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
@@ -344,6 +372,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         5.5,                    // fadeTime
         0,                      // isInterleaved
         0,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                      // bypassMode
         AUDIOLIB_CALC_STRIDE(27 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(27 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
@@ -366,6 +395,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         5.5,                    // fadeTime
         0,                      // isInterleaved
         1,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                      // bypassMode
         AUDIOLIB_CALC_STRIDE(17 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(17 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
@@ -388,6 +418,7 @@ static TISP_muteNCh_testParams_t testParams[] = {
         0.5,                    // fadeTime
         1,                      // isInterleaved
         1,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        0,                      // bypassMode
         AUDIOLIB_CALC_STRIDE(54 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(54 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
@@ -397,13 +428,105 @@ static TISP_muteNCh_testParams_t testParams[] = {
     },
 #endif
 
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 16))
+    {
+        STATIC,                 // Test Pattern
+        staticRefInCase16,      // staticIn
+        staticRefOutCase16,     // staticOut
+        AUDIOLIB_FLOAT32,       // Sample Data Type
+        128,                    // Samples per channel
+        6,                      // Number of Channels
+        staticRefIsMutedCase16, // isMuted
+        48000,                  // Sampling Rate
+        2.0,                    // fadeTime
+        0,                      // isInterleaved
+        0,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        1,                      // bypassMode
+        AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
+        AUDIOLIB_CALC_STRIDE(128 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                                          // Output data location
+        1,                                                                                  // number of reps.
+        5,                                                                                  // numBlocks
+        16,                                                                                 // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 17))
+    {
+        STATIC,                 // Test Pattern
+        staticRefInCase17,      // staticIn
+        staticRefOutCase17,     // staticOut
+        AUDIOLIB_FLOAT32,       // Sample Data Type
+        24,                     // Samples per channel
+        34,                     // Number of Channels
+        staticRefIsMutedCase17, // isMuted
+        48000,                  // Sampling Rate
+        0.0,                    // fadeTime
+        1,                      // isInterleaved
+        1,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        1,                      // bypassMode
+        AUDIOLIB_CALC_STRIDE(34 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
+        AUDIOLIB_CALC_STRIDE(34 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
+        1,                                                                                 // number of reps.
+        6,                                                                                 // numBlocks
+        17,                                                                                // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 18))
+    {
+        STATIC,                 // Test Pattern
+        staticRefInCase18,      // staticIn
+        staticRefOutCase18,     // staticOut
+        AUDIOLIB_FLOAT32,       // Sample Data Type
+        27,                     // Samples per channel
+        4,                      // Number of Channels
+        staticRefIsMutedCase18, // isMuted
+        48000,                  // Sampling Rate
+        5.5,                    // fadeTime
+        0,                      // isInterleaved
+        0,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        1,                      // bypassMode
+        AUDIOLIB_CALC_STRIDE(27 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
+        AUDIOLIB_CALC_STRIDE(27 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
+        1,                                                                                 // number of reps.
+        4,                                                                                 // numBlocks
+        18,                                                                                // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 19))
+    {
+        STATIC,                 // Test Pattern
+        staticRefInCase19,      // staticIn
+        staticRefOutCase19,     // staticOut
+        AUDIOLIB_FLOAT32,       // Sample Data Type
+        64,                     // Samples per channel
+        16,                     // Number of Channels
+        staticRefIsMutedCase19, // isMuted
+        48000,                  // Sampling Rate
+        10.0,                   // fadeTime
+        1,                      // isInterleaved
+        2,                      // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)
+        1,                      // bypassMode
+        AUDIOLIB_CALC_STRIDE(16 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
+        AUDIOLIB_CALC_STRIDE(16 * sizeof(AUDIOLIB_FLOAT32), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                                         // Output data location
+        1,                                                                                 // number of reps.
+        3,                                                                                 // numBlocks
+        19,                                                                                // test ID
+    },
+#endif
+
 };
 
 /*
  *  Sends the test parameter structure and number of tests
  */
 
-void TISP_muteNCh_getTestParams(TISP_muteNCh_testParams_t** params, int32_t* numTests)
+void TISP_muteNCh_getTestParams(TISP_muteNCh_testParams_t **params, int32_t *numTests)
 {
    *params   = testParams;
    *numTests = sizeof(testParams) / sizeof(TISP_muteNCh_testParams_t);

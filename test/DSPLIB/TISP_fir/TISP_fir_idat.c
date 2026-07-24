@@ -247,195 +247,305 @@
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 61))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase61.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 62))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase62.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 63))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase63.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 64))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase64.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 65))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase65.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 66))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase66.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 67))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase67.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 68))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase68.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 69))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase69.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 70))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase70.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 71))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase71.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 72))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase72.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 73))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase73.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 74))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase74.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 75))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase75.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 76))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase76.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 77))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase77.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 78))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase78.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 79))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase79.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 80))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase80.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 81))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase81.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 82))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase82.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 83))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase83.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 84))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase84.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 85))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase85.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 86))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase86.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 87))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase87.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 88))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase88.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 89))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase89.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 90))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase90.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 91))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase91.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 92))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase92.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 93))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase93.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 94))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase94.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 95))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase95.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 96))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase96.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 97))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase97.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 98))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase98.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 99))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase99.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 100))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase100.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 101))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase101.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 102))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase102.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 103))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase103.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 104))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase104.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 105))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase105.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 106))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase106.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 107))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase107.h"
+#endif
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 108))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
 #include "test_data/staticRefCase108.h"
+#endif
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 109))
+#include "test_data/staticRefCase109.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 110))
+#include "test_data/staticRefCase110.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 111))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
+#include "test_data/staticRefCase111.h"
+#endif
 #endif
 
 static DSPLIB_fir_testParams_t testParams[] = {
@@ -457,6 +567,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         1,                       // test ID
@@ -481,6 +592,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         2,                       // test ID
@@ -505,6 +617,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         3,                       // test ID
@@ -529,6 +642,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         4,                       // test ID
@@ -553,6 +667,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         5,                       // test ID
@@ -577,6 +692,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         6,                       // test ID
@@ -601,6 +717,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         7,                       // test ID
@@ -625,6 +742,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         8,                       // test ID
@@ -649,6 +767,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         9,                       // test ID
@@ -673,6 +792,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         10,                      // test ID
@@ -697,6 +817,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         11,                      // test ID
@@ -721,6 +842,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         12,                      // test ID
@@ -745,6 +867,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         13,                      // test ID
@@ -769,6 +892,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         14,                      // test ID
@@ -793,6 +917,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         15,                      // test ID
@@ -817,6 +942,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         16,                      // test ID
@@ -841,6 +967,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         17,                      // test ID
@@ -865,6 +992,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         18,                      // test ID
@@ -889,6 +1017,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         19,                      // test ID
@@ -913,6 +1042,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         20,                      // test ID
@@ -937,6 +1067,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         21,                      // test ID
@@ -961,6 +1092,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         22,                      // test ID
@@ -985,6 +1117,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         23,                      // test ID
@@ -1009,6 +1142,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         24,                      // test ID
@@ -1033,6 +1167,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         25,                      // test ID
@@ -1057,6 +1192,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         26,                      // test ID
@@ -1081,6 +1217,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         27,                      // test ID
@@ -1105,6 +1242,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         28,                      // test ID
@@ -1129,6 +1267,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         29,                      // test ID
@@ -1153,6 +1292,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         30,                      // test ID
@@ -1177,6 +1317,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         31,                      // test ID
@@ -1201,6 +1342,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         32,                      // test ID
@@ -1225,6 +1367,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         33,                      // test ID
@@ -1249,6 +1392,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         34,                      // test ID
@@ -1273,6 +1417,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         35,                      // test ID
@@ -1297,6 +1442,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         36,                      // test ID
@@ -1321,6 +1467,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         37,                      // test ID
@@ -1345,6 +1492,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         38,                      // test ID
@@ -1369,6 +1517,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         39,                      // test ID
@@ -1393,6 +1542,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         40,                      // test ID
@@ -1417,6 +1567,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         41,                      // test ID
@@ -1441,6 +1592,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         42,                      // test ID
@@ -1465,6 +1617,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         43,                      // test ID
@@ -1489,6 +1642,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         44,                      // test ID
@@ -1513,6 +1667,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         45,                      // test ID
@@ -1537,6 +1692,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         46,                      // test ID
@@ -1561,6 +1717,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         47,                      // test ID
@@ -1585,6 +1742,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         48,                      // test ID
@@ -1609,6 +1767,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         49,                      // test ID
@@ -1633,6 +1792,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         50,                      // test ID
@@ -1657,6 +1817,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         51,                      // test ID
@@ -1681,6 +1842,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         52,                      // test ID
@@ -1705,6 +1867,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         53,                      // test ID
@@ -1729,6 +1892,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         54,                      // test ID
@@ -1753,6 +1917,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         55,                      // test ID
@@ -1777,6 +1942,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         56,                      // test ID
@@ -1801,6 +1967,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         57,                      // test ID
@@ -1825,6 +1992,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         58,                      // test ID
@@ -1849,6 +2017,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         59,                      // test ID
@@ -1873,6 +2042,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         60,                      // test ID
@@ -1880,6 +2050,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 61))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase61,       // Input vector
@@ -1897,13 +2068,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         61,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 62))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase62,       // Input vector
@@ -1921,13 +2095,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         62,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 63))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase63,       // Input vector
@@ -1945,13 +2122,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         63,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 64))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase64,       // Input vector
@@ -1969,13 +2149,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         64,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 65))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase65,       // Input vector
@@ -1993,13 +2176,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         65,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 66))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase66,       // Input vector
@@ -2017,13 +2203,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         66,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 67))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase67,       // Input vector
@@ -2041,13 +2230,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         67,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 68))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase68,       // Input vector
@@ -2065,13 +2257,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         68,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 69))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase69,       // Input vector
@@ -2089,13 +2284,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         69,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 70))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase70,       // Input vector
@@ -2113,13 +2311,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         70,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 71))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase71,       // Input vector
@@ -2137,13 +2338,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         71,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 72))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase72,       // Input vector
@@ -2161,13 +2365,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         72,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 73))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase73,       // Input vector
@@ -2185,13 +2392,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         73,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 74))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase74,       // Input vector
@@ -2209,13 +2419,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         74,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 75))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase75,       // Input vector
@@ -2233,13 +2446,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         75,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 76))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase76,       // Input vector
@@ -2257,13 +2473,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         76,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 77))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase77,       // Input vector
@@ -2281,13 +2500,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         77,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 78))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase78,       // Input vector
@@ -2305,13 +2527,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         78,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 79))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase79,       // Input vector
@@ -2329,13 +2554,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         79,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 80))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase80,       // Input vector
@@ -2353,13 +2581,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         80,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 81))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase81,       // Input vector
@@ -2377,13 +2608,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         81,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 82))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase82,       // Input vector
@@ -2401,13 +2635,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         82,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 83))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase83,       // Input vector
@@ -2425,13 +2662,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         83,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 84))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase84,       // Input vector
@@ -2449,13 +2689,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         84,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 85))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase85,       // Input vector
@@ -2473,13 +2716,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         85,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 86))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase86,       // Input vector
@@ -2497,13 +2743,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         86,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 87))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase87,       // Input vector
@@ -2521,13 +2770,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         87,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 88))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase88,       // Input vector
@@ -2545,13 +2797,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         88,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 89))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase89,       // Input vector
@@ -2569,13 +2824,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         89,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 90))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase90,       // Input vector
@@ -2593,13 +2851,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         90,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 91))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase91,       // Input vector
@@ -2617,13 +2878,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         91,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 92))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase92,       // Input vector
@@ -2641,13 +2905,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         92,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 93))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase93,       // Input vector
@@ -2665,13 +2932,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         93,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 94))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase94,       // Input vector
@@ -2689,13 +2959,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         94,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 95))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase95,       // Input vector
@@ -2713,13 +2986,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         95,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 96))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase96,       // Input vector
@@ -2737,13 +3013,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         96,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 97))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase97,       // Input vector
@@ -2761,13 +3040,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         97,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 98))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase98,       // Input vector
@@ -2785,13 +3067,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         98,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 99))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase99,       // Input vector
@@ -2809,13 +3094,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         99,                      // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 100))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase100,      // Input vector
@@ -2833,13 +3121,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         100,                     // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 101))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase101,      // Input vector
@@ -2857,13 +3148,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         101,                     // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 102))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase102,      // Input vector
@@ -2881,13 +3175,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         102,                     // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 103))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase103,      // Input vector
@@ -2905,13 +3202,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         103,                     // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 104))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase104,      // Input vector
@@ -2929,13 +3229,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         104,                     // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 105))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase105,      // Input vector
@@ -2953,13 +3256,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         105,                     // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 106))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase106,      // Input vector
@@ -2977,13 +3283,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         106,                     // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 107))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase107,      // Input vector
@@ -3001,13 +3310,16 @@ static DSPLIB_fir_testParams_t testParams[] = {
         0,                       // enableMMA
         0,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         107,                     // test ID
     },
 #endif
+#endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 108))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
     {
         STATIC,                  // Test pattern
         staticRefInCase108,      // Input vector
@@ -3025,10 +3337,89 @@ static DSPLIB_fir_testParams_t testParams[] = {
         1,                       // enableMMA
         1,                       // enableQ
         23,                      // Q
+        0,                       // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         108,                     // test ID
     },
+#endif
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 109))
+    {
+        STATIC,                  // Test pattern
+        staticRefInCase109,      // Input vector
+        staticRefFilterCase109,  // Filter vector
+        staticRefOutCase109,     // Output vector
+        DSPLIB_FLOAT32,          // datatype
+        32,                      // dataSize
+        4,                       // numBlocks
+        128,                     // dataPitchIn
+        128,                     // dataPitchOut
+        1,                       // batchSize
+        16,                      // filterSize
+        64,                      // filterPitch
+        1,                       // enableNchCoefs
+        0,                       // enableMMA
+        0,                       // enableQ
+        23,                      // Q
+        1,                       // bypassMode
+        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        1,                       // number of reps.
+        109,                     // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 110))
+    {
+        STATIC,                  // Test pattern
+        staticRefInCase110,      // Input vector
+        staticRefFilterCase110,  // Filter vector
+        staticRefOutCase110,     // Output vector
+        DSPLIB_FLOAT32,          // datatype
+        256,                     // dataSize
+        4,                       // numBlocks
+        1024,                    // dataPitchIn
+        1024,                    // dataPitchOut
+        8,                       // batchSize
+        64,                      // filterSize
+        256,                     // filterPitch
+        1,                       // enableNchCoefs
+        1,                       // enableMMA
+        1,                       // enableQ
+        23,                      // Q
+        1,                       // bypassMode
+        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        1,                       // number of reps.
+        110,                     // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 111))
+#if !(SOC == AM275 && !defined(HOST_EMULATION))
+    {
+        STATIC,                  // Test pattern
+        staticRefInCase111,      // Input vector
+        staticRefFilterCase111,  // Filter vector
+        staticRefOutCase111,     // Output vector
+        DSPLIB_FLOAT32,          // datatype
+        1024,                    // dataSize
+        4,                       // numBlocks
+        4096,                    // dataPitchIn
+        4096,                    // dataPitchOut
+        8,                       // batchSize
+        128,                     // filterSize
+        512,                     // filterPitch
+        1,                       // enableNchCoefs
+        1,                       // enableMMA
+        1,                       // enableQ
+        23,                      // Q
+        1,                       // bypassMode
+        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        1,                       // number of reps.
+        111,                     // test ID
+    },
+#endif
 #endif
 
 };
@@ -3036,7 +3427,7 @@ static DSPLIB_fir_testParams_t testParams[] = {
 /*
  *  Sends the test parameter structure and number of tests
  */
-void DSPLIB_fir_getTestParams(DSPLIB_fir_testParams_t** params, int32_t* numTests)
+void DSPLIB_fir_getTestParams(DSPLIB_fir_testParams_t **params, int32_t *numTests)
 {
    *params   = testParams;
    *numTests = sizeof(testParams) / sizeof(DSPLIB_fir_testParams_t);

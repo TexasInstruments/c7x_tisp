@@ -48,7 +48,8 @@ namespace AUDIOLIB {
 enum class MutenchParamId : uint16_t {
    kIsMuteValue = 0, /**< kIsMuteValue: Mute status values to set/get for each channel */
    kFadeTime    = 1, /**< kFadeTime: Duration of the fade-in or fade-out ramp in ms */
-   kFadeType    = 2  /**< kFadeType: Type of fade curve to apply */
+   kFadeType    = 2, /**< kFadeType: Type of fade curve to apply */
+   kBypass      = 3  /**< kBypass: uint32_t bypass mode; `0` applies the mute, `1` copies input to output */
 };
 
 template <typename T> class Mutench final : public VirtualOp {
@@ -65,8 +66,19 @@ template <typename T> class Mutench final : public VirtualOp {
    size_t  _isInterleaved; /*!< Data layout: 1 = interleaved, 0 = non-interleaved. */
    int32_t _samplingRate;  /*!< Audio sampling rate in Hz. */
 
-   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_muteNCh kernel. */
+   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the mute, `1` copies input to output. */
+
+   TISP::HandlePtr<char> _handle;     /*!< Handle to low level AUDIOLIB_muteNCh kernel. */
    TISP::HandlePtr<char> _setArgsBuf; /*!< Buffer to hold AUDIOLIB_muteNCh_SetArgs private member. */
+
+   /**
+    * @brief Copies @ref _height rows of @ref _width elements from @ref _pX to @ref _pY, honouring
+    *        @ref _inPitchBytes and @ref _outPitchBytes.
+    *
+    * @retval None
+    * @throw None
+    */
+   void bypassCopy() noexcept;
 
  public:
    /**

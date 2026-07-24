@@ -24,6 +24,7 @@ typedef struct {
    uint32_t filterVarPitch;
    uint32_t enableNChCoeffs;
    uint32_t enableCalcCoeffs;
+   uint32_t bypassMode;         // 0 -> apply filter, 1 -> copy input to output
    uint32_t outputDataLocation; // 0 -> HEAP (probably L2SRAM), 1 -> MSMC
    uint32_t numReps;
    uint32_t testID;

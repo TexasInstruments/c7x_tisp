@@ -34,7 +34,7 @@ BalanceFader<T>::BalanceFader(T         *pX,
                               int32_t    lfeBalanceMode,
                               int32_t    lfeFaderMode,
                               ErrorCtxt &errorCtx)
-    : _pX(pX), _pG(pG), _pY(pY)
+    : _pX(pX), _pG(pG), _pY(pY), _bypassMode(0U)
 {
 
    // Initialize _params with the node parameters
@@ -225,9 +225,33 @@ template <typename T> void BalanceFader<T>::setAddr(SetAddr_t &addr, SetAddrMode
    }
 }
 
+template <typename T> void BalanceFader<T>::bypassCopy() noexcept
+{
+   const size_t rowBytes = _widthIn * sizeof(T);
+
+   if (_pX != _pY) {
+      if ((_inPitchBytes == rowBytes) && (_outPitchBytes == rowBytes)) {
+         (void) memcpy(_pY, _pX, rowBytes * _heightIn);
+      }
+      else {
+         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
+         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
+
+         for (size_t i = 0; i < _heightIn; i++) {
+            (void) memcpy(&pDst[i * _outPitchBytes], &pSrc[i * _inPitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         }
+      }
+   }
+}
+
 template <typename T> void BalanceFader<T>::exec() noexcept
 {
-   AUDIOLIB_balanceFader_exec(_handle.get(), _pX, _pG, _pY);
+   if (_bypassMode != 0U) {
+      bypassCopy();
+   }
+   else {
+      AUDIOLIB_balanceFader_exec(_handle.get(), _pX, _pG, _pY);
+   }
 }
 
 template <typename T>
@@ -289,6 +313,9 @@ bool BalanceFader<T>::setParams(uint16_t paramId, void *value, size_t size, Erro
       memcpy(&setArgs, pSetArgs, sizeof(AUDIOLIB_balanceFader_SetArgs));
 
       const char *paramName = "Unknown";
+
+      /* Bypass is node local state and is not forwarded to the kernel. */
+      bool applyToKernel = true;
 
       switch (static_cast<BalanceFaderParamId>(paramId)) {
       case BalanceFaderParamId::kBalance: {
@@ -383,12 +410,29 @@ bool BalanceFader<T>::setParams(uint16_t paramId, void *value, size_t size, Erro
          }
          break;
       }
+      case BalanceFaderParamId::kBypass: {
+         applyToKernel = false;
+         if (size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("BalanceFader::setParams", "Value size smaller than expected for kBypass");
+         }
+         else {
+            uint32_t bypassMode = 0U;
+            memcpy(&bypassMode, value, sizeof(uint32_t));
+            if (bypassMode > 1U) {
+               errorCtx.setInvalidParameterError("BalanceFader::setParams", "bypass mode must be either zero or one");
+            }
+            else {
+               _bypassMode = bypassMode;
+            }
+         }
+         break;
+      }
       default:
          errorCtx.setInvalidParameterError("BalanceFader::setParams", "Invalid paramId");
          break;
       }
 
-      if (errorCtx.isSuccess()) {
+      if (errorCtx.isSuccess() && applyToKernel) {
          AUDIOLIB_STATUS status = AUDIOLIB_balanceFader_set(_handle.get(), _pG, &setArgs);
          std::string     msg    = std::string("AUDIOLIB_balanceFader_set with ") + paramName;
          (void) errorCtx.remapXLIBError(status, msg.c_str());
@@ -506,6 +550,16 @@ bool BalanceFader<T>::getParams(uint16_t paramId, void *value, size_t *size, Err
             memcpy(value, _channelConfig, expectedSize);
          }
          *size = expectedSize;
+         break;
+      }
+      case BalanceFaderParamId::kBypass: {
+         if (*size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("BalanceFader::getParams", "Value size smaller than expected for kBypass");
+         }
+         else {
+            memcpy(value, &_bypassMode, sizeof(uint32_t));
+         }
+         *size = sizeof(uint32_t);
          break;
       }
       default:

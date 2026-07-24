@@ -21,6 +21,14 @@ namespace DSPLIB {
  *  \class Fir
  *  @brief Provides node-level APIs for the DSPLIB_fir kernel from DSPLIB.
  *  @tparam T        : Supports float
+ *
+ *  @details This node applies a finite impulse response filter to each channel of the input
+ *  buffer pX and writes the filtered values to the output buffer pY. Filtering is performed
+ *  block by block: each @ref exec() first copies the incoming block into the state buffer pS
+ *  behind the retained `filterSize - 1` history samples, runs the kernel over the state buffer,
+ *  and then shifts the tail of the state buffer back to the front so the next block sees the
+ *  correct history. The filter coefficients pH are shared across channels unless
+ *  `enableNchCoefs` is set, in which case one coefficient set per channel is used.
  */
 
 /**
@@ -31,7 +39,8 @@ namespace DSPLIB {
  *
  */
 enum class FirParamId : uint16_t {
-   kFilterCoeffs = 0 /**< kFilterCoeffs: Filter coefficients to set/get for the node */
+   kFilterCoeffs = 0, /**< kFilterCoeffs: Filter coefficients to set/get for the node */
+   kBypass       = 1  /**< kBypass: uint32_t bypass mode; `0` applies the filter, `1` copies input to output */
 };
 
 template <typename T> class Fir final : public VirtualOp {
@@ -60,12 +69,14 @@ template <typename T> class Fir final : public VirtualOp {
    size_t _Q;              /*!< Q value */
 
    // input to state
-   __SE_TEMPLATE_v1 _se0ParamsPre = __gen_SE_TEMPLATE_v1(); /*!< structure to hold SE params*/
-   __SA_TEMPLATE_v1 _sa0ParamsPre = __gen_SA_TEMPLATE_v1(); /*!< structure to hold SA params*/
+   __SE_TEMPLATE_v1 _se0ParamsPre = __gen_SE_TEMPLATE_v1(); /*!< SE params for the input-to-state block copy */
+   __SA_TEMPLATE_v1 _sa0ParamsPre = __gen_SA_TEMPLATE_v1(); /*!< SA params for the input-to-state block copy */
 
    // state delay after FIR block processing
-   __SE_TEMPLATE_v1 _se0ParamsPost = __gen_SE_TEMPLATE_v1(); /*!< structure to hold SE params*/
-   __SA_TEMPLATE_v1 _sa0ParamsPost = __gen_SA_TEMPLATE_v1(); /*!< structure to hold SA params*/
+   __SE_TEMPLATE_v1 _se0ParamsPost = __gen_SE_TEMPLATE_v1(); /*!< SE params for the state delay-line block copy */
+   __SA_TEMPLATE_v1 _sa0ParamsPost = __gen_SA_TEMPLATE_v1(); /*!< SA params for the state delay-line block copy */
+
+   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the filter, `1` copies input to output. */
 
    TISP::HandlePtr<char> _handle; /*!< handle required by DSPLIB_fir kernel */
 
@@ -74,13 +85,14 @@ template <typename T> class Fir final : public VirtualOp {
     *
     * This function is called to process block copy transactions of internal buffers
     *
-    * @param[in]  pX      : Pointer to input matrix
-    * @param[in]  pY      : Pointer to output matrix
-    * @param[in]  width      : Width of the copy dimensions
-    * @param[in]  height     : Height of the copy dimensions
-    * @param[out] se0Params      : SE0 parameters for 2d block copy
-    * @param[out] sa0Params      : SA0 parameters for 2d block copy
-    *
+    * @param[in]  pX        : Pointer to input matrix
+    * @param[out] pY        : Pointer to output matrix
+    * @param[in]  width     : Width of the copy dimensions
+    * @param[in]  height    : Height of the copy dimensions
+    * @param[in]  se0Params : SE0 parameters for 2d block copy
+    * @param[in]  sa0Params : SA0 parameters for 2d block copy
+    * @retval None
+    * @throw None
     */
 
    void TISP_fir_blockCopy2D(T               *pX,
@@ -89,6 +101,19 @@ template <typename T> class Fir final : public VirtualOp {
                              size_t           height,
                              __SE_TEMPLATE_v1 se0Params,
                              __SA_TEMPLATE_v1 sa0Params);
+
+   /**
+    * @brief Copies @ref _batchSize rows of @ref _inputSize elements from @ref _pX to @ref _pY,
+    *        honouring @ref _pitchX and @ref _pitchY
+    *
+    * Used by the bypass path. The state buffer @ref _pS is not advanced while bypass is enabled,
+    * so @ref cleanInternalBuffers() is invoked when bypass is disengaged to discard the
+    * now-stale filter history.
+    *
+    * @retval None
+    * @throw None
+    */
+   void bypassCopy() noexcept;
 
  public:
    /**

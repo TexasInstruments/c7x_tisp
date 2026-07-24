@@ -35,7 +35,7 @@ Fir<T>::Fir(T         *pX,
 
     : _pX(pX), _pS(pS), _pH(pH), _pY(pY), _inputSize(inputSize), _filterSize(filterSize), _batchSize(batchSize),
       _stateSize(stateSize), _pitchX(pitchX), _pitchS(pitchS), _pitchH(pitchH), _pitchY(pitchY),
-      _enableNchCoefs(enableNchCoefs), _enableMMA(enableMMA), _enableQ(enableQ), _Q(Q)
+      _enableNchCoefs(enableNchCoefs), _enableMMA(enableMMA), _enableQ(enableQ), _Q(Q), _bypassMode(0U)
 {
 
    // Initialize _params with the node parameters
@@ -228,19 +228,42 @@ template <typename T> void Fir<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) 
    }
 }
 
+template <typename T> void Fir<T>::bypassCopy() noexcept
+{
+   const size_t rowBytes = _inputSize * sizeof(T);
+
+   if (_pX != _pY) {
+      if ((_pitchX == rowBytes) && (_pitchY == rowBytes)) {
+         (void) std::memcpy(_pY, _pX, rowBytes * _batchSize);
+      }
+      else {
+         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
+         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
+
+         for (size_t i = 0; i < _batchSize; i++) {
+            (void) std::memcpy(&pDst[i * _pitchY], &pSrc[i * _pitchX], rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         }
+      }
+   }
+}
+
 template <typename T> void Fir<T>::exec() noexcept
 {
+   if (_bypassMode != 0U) {
+      bypassCopy();
+   }
+   else {
+      // copy from input to state
+      TISP_fir_blockCopy2D(_pX, &_pS[_filterSize - 1U], _inputSize, _batchSize, _se0ParamsPre,
+                           _sa0ParamsPre); // NOLINT(MISRA.PTR.ARITH)
 
-   // copy from input to state
-   TISP_fir_blockCopy2D(_pX, &_pS[_filterSize - 1U], _inputSize, _batchSize, _se0ParamsPre,
-                        _sa0ParamsPre); // NOLINT(MISRA.PTR.ARITH)
+      // execute fir kernel
+      DSPLIB_fir_exec(_handle.get(), _pS, _pH, _pY);
 
-   // execute fir kernel
-   DSPLIB_fir_exec(_handle.get(), _pS, _pH, _pY);
-
-   // add delay lines to state buffer
-   TISP_fir_blockCopy2D(&_pS[_inputSize], _pS, (_filterSize - 1U), _batchSize, _se0ParamsPost,
-                        _sa0ParamsPost); // NOLINT(MISRA.PTR.ARITH)
+      // add delay lines to state buffer
+      TISP_fir_blockCopy2D(&_pS[_inputSize], _pS, (_filterSize - 1U), _batchSize, _se0ParamsPost,
+                           _sa0ParamsPost); // NOLINT(MISRA.PTR.ARITH)
+   }
 }
 
 template <typename T>
@@ -342,6 +365,28 @@ template <typename T> bool Fir<T>::setParams(uint16_t paramId, void *value, size
          }
          break;
       }
+      case FirParamId::kBypass: {
+         if (size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("Fir::setParams", "Value size smaller than expected for kBypass");
+         }
+         else {
+            uint32_t bypassMode = 0U;
+            (void) std::memcpy(&bypassMode, value, sizeof(uint32_t));
+            if (bypassMode > 1U) {
+               errorCtx.setInvalidParameterError("Fir::setParams", "bypass mode must be either zero or one");
+            }
+            else {
+               /* Leaving bypass: the delay line in _pS still holds the tail of the last block
+                * processed before bypass was engaged, so convolving fresh input against it would
+                * splice two unrelated signals. Discard it and resume from a cold start. */
+               if ((_bypassMode != 0U) && (bypassMode == 0U)) {
+                  cleanInternalBuffers();
+               }
+               _bypassMode = bypassMode;
+            }
+         }
+         break;
+      }
       default:
          errorCtx.setInvalidParameterError("Fir::setParams", "Invalid paramId");
          break;
@@ -376,6 +421,16 @@ template <typename T> bool Fir<T>::getParams(uint16_t paramId, void *value, size
             }
          }
          *size = expectedSize;
+         break;
+      }
+      case FirParamId::kBypass: {
+         if (*size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("Fir::getParams", "Provided buffer size is too small for kBypass");
+         }
+         else {
+            (void) std::memcpy(value, &_bypassMode, sizeof(uint32_t));
+         }
+         *size = sizeof(uint32_t);
          break;
       }
       default:

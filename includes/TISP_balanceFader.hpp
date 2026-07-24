@@ -49,7 +49,8 @@ enum class BalanceFaderParamId : uint16_t {
    kSideGainFactor       = 4, /**< kSideGainFactor: Side gain factor */
    kLfeBalanceMode       = 5, /**< kLfeBalanceMode: LFE balance mode */
    kLfeFaderMode         = 6, /**< kLfeFaderMode: LFE fader mode */
-   kChannelConfig        = 7  /**< kChannelConfig: Speaker type per channel array */
+   kChannelConfig        = 7, /**< kChannelConfig: Speaker type per channel array */
+   kBypass               = 8  /**< kBypass: uint32_t bypass mode; `0` applies the gain, `1` copies input to output */
 };
 
 template <typename T> class BalanceFader final : public VirtualOp {
@@ -74,8 +75,19 @@ template <typename T> class BalanceFader final : public VirtualOp {
    int32_t  _lfeBalanceMode;       /*!< LFE response mode to balance control. */
    int32_t  _lfeFaderMode;         /*!< LFE response mode to fader control. */
 
-   TISP::HandlePtr<char> _handle;      /*!< Handle to low level AUDIOLIB_balanceFader kernel. */
+   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the gain, `1` copies input to output. */
+
+   TISP::HandlePtr<char> _handle;     /*!< Handle to low level AUDIOLIB_balanceFader kernel. */
    TISP::HandlePtr<char> _setArgsBuf; /*!< Buffer to hold AUDIOLIB_balanceFader_SetArgs private member. */
+
+   /**
+    * @brief Copies @ref _heightIn rows of @ref _widthIn elements from @ref _pX to @ref _pY, honouring
+    *        @ref _inPitchBytes and @ref _outPitchBytes.
+    *
+    * @retval None
+    * @throw None
+    */
+   void bypassCopy() noexcept;
 
  public:
    /**

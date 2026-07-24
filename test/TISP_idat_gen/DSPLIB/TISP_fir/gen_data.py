@@ -102,6 +102,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write("%s, // enableMMA \n" % ((enableMMA)))
     idatFile.write("%s, // enableQ \n" % ((enableQ)))
     idatFile.write("%s, // Q \n" % ((Q)))
+    idatFile.write("%s, // bypassMode \n" % (currPrm["bypassMode"]))
     idatFile.write("%s, // Output data location \n" % (outputDataLocation))
     idatFile.write("%d, // number of reps. \n" % (int(numReps)))
     idatFile.write("%d, // test ID\n" % int(testId))
@@ -195,6 +196,7 @@ def process_test_case(testCase):
     testCase["pitchH"] = int(testCase["pitchH"])
     testCase["stateSize"] = int(testCase["stateSize"])
     testCase["numBlocks"] = int(testCase["numBlocks"])
+    testCase["bypassMode"] = int(testCase["bypassMode"])
 
     return testCase
 
@@ -360,6 +362,10 @@ def gen_test_case_header_file(testCase):
                     mode="valid",
                 )
             )
+
+    # bypass copies the input to the output, leaving the filter unapplied
+    if testCase["bypassMode"]:
+        outputData = [inputData[ch, 0:outSize] for ch in range(batchSize)]
 
     print(np.shape(outputData))
 

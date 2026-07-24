@@ -29,7 +29,7 @@ Mutench<T>::Mutench(T         *pX,
                     float      fadeTime,
                     uint32_t   fadeType,
                     ErrorCtxt &errorCtx)
-    : _pX(pX), _pY(pY)
+    : _pX(pX), _pY(pY), _bypassMode(0U)
 {
 
    // Initialize _params with the node parameters
@@ -179,9 +179,33 @@ template <typename T> void Mutench<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mo
    }
 }
 
+template <typename T> void Mutench<T>::bypassCopy() noexcept
+{
+   const size_t rowBytes = _width * sizeof(T);
+
+   if (_pX != _pY) {
+      if ((_inPitchBytes == rowBytes) && (_outPitchBytes == rowBytes)) {
+         (void) memcpy(_pY, _pX, rowBytes * _height);
+      }
+      else {
+         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
+         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
+
+         for (size_t i = 0; i < _height; i++) {
+            (void) memcpy(&pDst[i * _outPitchBytes], &pSrc[i * _inPitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         }
+      }
+   }
+}
+
 template <typename T> void Mutench<T>::exec() noexcept
 {
-   AUDIOLIB_muteNCh_exec(_handle.get(), static_cast<void *>(_pX), static_cast<void *>(_pY));
+   if (_bypassMode != 0U) {
+      bypassCopy();
+   }
+   else {
+      AUDIOLIB_muteNCh_exec(_handle.get(), static_cast<void *>(_pX), static_cast<void *>(_pY));
+   }
 }
 
 template <typename T>
@@ -199,6 +223,9 @@ bool Mutench<T>::setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt
       memcpy(&setArgs, pSetArgs, sizeof(AUDIOLIB_muteNCh_SetArgs));
 
       const char *paramName = "Unknown";
+
+      /* Bypass is node local state and is not forwarded to the kernel. */
+      bool applyToKernel = true;
 
       switch (static_cast<MutenchParamId>(paramId)) {
       case MutenchParamId::kIsMuteValue: {
@@ -233,12 +260,29 @@ bool Mutench<T>::setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt
          }
          break;
       }
+      case MutenchParamId::kBypass: {
+         applyToKernel = false;
+         if (size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("Mutench::setParams", "Value size smaller than expected for kBypass");
+         }
+         else {
+            uint32_t bypassMode = 0U;
+            memcpy(&bypassMode, value, sizeof(uint32_t));
+            if (bypassMode > 1U) {
+               errorCtx.setInvalidParameterError("Mutench::setParams", "bypass mode must be either zero or one");
+            }
+            else {
+               _bypassMode = bypassMode;
+            }
+         }
+         break;
+      }
       default:
          errorCtx.setInvalidParameterError("Mutench::setParams", "Invalid paramId");
          break;
       }
 
-      if (errorCtx.isSuccess()) {
+      if (errorCtx.isSuccess() && applyToKernel) {
          AUDIOLIB_STATUS status = AUDIOLIB_muteNCh_set(_handle.get(), &setArgs);
          std::string     msg    = std::string("AUDIOLIB_muteNCh_set with ") + paramName;
          (void) errorCtx.remapXLIBError(status, msg.c_str());
@@ -297,6 +341,16 @@ bool Mutench<T>::getParams(uint16_t paramId, void *value, size_t *size, ErrorCtx
             memcpy(value, &pSetArgs->fadeType, sizeof(pSetArgs->fadeType));
          }
          *size = sizeof(pSetArgs->fadeType);
+         break;
+      }
+      case MutenchParamId::kBypass: {
+         if (*size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("Mutench::getParams", "Value size smaller than expected for kBypass");
+         }
+         else {
+            memcpy(value, &_bypassMode, sizeof(uint32_t));
+         }
+         *size = sizeof(uint32_t);
          break;
       }
       default:

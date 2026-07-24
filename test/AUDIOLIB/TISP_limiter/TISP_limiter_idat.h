@@ -25,6 +25,7 @@ typedef struct {
    uint32_t pitchS;
    uint32_t pitchY;
    uint32_t isInterleaved;
+   uint32_t bypassMode;
    void*    staticIn;
    void*    staticOut;
    void*    staticGainOut;
