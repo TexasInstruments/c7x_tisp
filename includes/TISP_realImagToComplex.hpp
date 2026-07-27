@@ -100,8 +100,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     * @param [in]  inPitchBytes  : Pitch of input matrix in bytes.
     * @param [in]  outPitchBytes : Pitch of output matrix in bytes.
     * @param [in]  errorCtx      : Error context for reporting constructor errors
-    * @retval None
-    * @throw None
     *
     */
    RealimagToComplex(T         *pIn0,
@@ -118,23 +116,8 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
    /**
     * @brief Creates a DSPLIB_RealimagToComplex node with node name and ID.
     *
-    * This delegating constructor initializes a node for the DSPLIB_RealimagToComplex kernel
-    * with additional node identification.
-    *
-    * @param [in]  *pIn0         : Pointer to the input array 0.
-    * @param [in]  *pIn1         : Pointer to the input array 1.
-    * @param [out] *pOut         : Pointer to the output array.
-    * @param [in]  widthIn       : Width of input matrix.
-    * @param [in]  heightIn      : Height of input matrix.
-    * @param [in]  widthOut      : Width of output matrix.
-    * @param [in]  heightOut     : Height of output matrix.
-    * @param [in]  inPitchBytes  : Pitch of input matrix in bytes.
-    * @param [in]  outPitchBytes : Pitch of output matrix in bytes.
-    * @param [in]  nodeName      : Name of the node.
-    * @param [in]  nodeId        : ID of the node.
-    * @param [in]  errorCtx      : Error context for reporting constructor errors
-    * @retval None
-    * @throw None
+    * Convenience overload -- same as the primary constructor, but also takes
+    * @c nodeName and @c nodeId.
     */
    RealimagToComplex(T          *pIn0,
                      T          *pIn1,
@@ -158,7 +141,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     *
     * @param[in]  index : Index of the input buffer (0 or 1)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
-    * @throw None
     */
    void *getInputAddr(size_t index) const noexcept override;
 
@@ -170,7 +152,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
-    * @throw None
     */
    void *getOutputAddr(size_t index) const noexcept override;
 
@@ -178,7 +159,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     * @brief Get the number of input buffers
     *
     * @retval    size_t : The number of input buffers (2: _pIn0 and _pIn1)
-    * @throw None
     */
    size_t getNumInputs() const noexcept override;
 
@@ -186,7 +166,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     * @brief Get the number of output buffers
     *
     * @retval    size_t : The number of output buffers (1: _pOut)
-    * @throw None
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -197,8 +176,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     *
     * @param [in] addrs  : Structure containing source and destination addresses
     * @param [in] mode   : Mode of address setting (input, output, or both)
-    * @retval None
-    * @throw None
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
@@ -207,8 +184,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     *
     * This function performs the actual operation.
     *
-    * @retval None
-    * @throw None
     */
 
    void exec() noexcept override;
@@ -218,7 +193,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     *
     * @return Pointer to the node name string
     * @retval const char*
-    * @throw None
     */
    const char *getNodeName() const noexcept override { return _nodeInfo.getNodeName(); }
 
@@ -227,7 +201,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     *
     * @return Node ID
     * @retval uint32_t
-    * @throw None
     */
    uint32_t getNodeId() const noexcept override { return _nodeInfo.getNodeId(); }
 
@@ -236,7 +209,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     *
     * @return Pointer to the parameters string
     * @retval const char*
-    * @throw None
     */
    const char *getNodeParams() const noexcept override { return _nodeInfo.getNodeParams(); }
 
@@ -246,7 +218,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     * This function returns reference to node's i/o buffer properties
     *
     * @retval const NodeBufParams& : A constant reference to the NodeBufParams representing node's i/o buffer properties
-    * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
@@ -255,8 +226,6 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     *
     * This destructor is set to default
     *
-    * @retval None
-    * @throw None
     */
 
    ~RealimagToComplex() = default;

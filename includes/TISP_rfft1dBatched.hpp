@@ -54,7 +54,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     * This function returns the name of the node.
     *
     * @retval const char* The name of the node
-    * @throw None
     */
    const char *getNodeName() const noexcept override { return _nodeInfo.getNodeName(); }
 
@@ -64,7 +63,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     * This function returns the ID of the node.
     *
     * @retval uint32_t The ID of the node
-    * @throw None
     */
    uint32_t getNodeId() const noexcept override { return _nodeInfo.getNodeId(); }
 
@@ -74,7 +72,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     * This function returns a string containing the parameters of the node.
     *
     * @retval const char* The parameters of the node
-    * @throw None
     */
    const char *getNodeParams() const noexcept override { return _nodeInfo.getNodeParams(); }
 
@@ -84,16 +81,17 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     * This function returns reference to node's i/o buffer properties
     *
     * @retval const NodeBufParams& : A constant reference to the NodeBufParams representing node's i/o buffer properties
-    * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
    /**
     * @brief Creates a FFTLIB_rfft1dBatched node
     * @param [in]  pX          : Pointer to input; initializes @ref _pX
+    * @param [in]  *pXFFT      : Pointer to FFT scratch buffer
     * @param [out] pY          : Pointer to FFT output; initializes @ref _pY
     * @param [in]  numPoints   : FFT size
     * @param [in]  numChannels : Number of FFT channels
+    * @param [in]  outMode     : Output mode flag
     * @param [in]  errorCtx    : Error context for reporting constructor errors
     */
 
@@ -102,14 +100,8 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
    /**
     * @brief Creates a RFFT1dBatched node with a name and ID
     *
-    * This constructor is a delegator that accepts a node name and ID
-    *
-    * @param[in] T *pX, T *pXFFT, T *pY, uint32_t numPoints, uint32_t numChannels, bool outMode
-    * @param[in] nodeName          : Name of the node; initializes @ref _nodeInfo
-    * @param[in] nodeId            : ID of the node; initializes @ref _nodeInfo
-    * @param [in]  errorCtx        : Error context for reporting constructor errors
-    * @retval None
-    * @throw None
+    * Convenience overload -- same as the primary constructor, but also takes
+    * @c nodeName and @c nodeId.
     */
    RFFT1dBatched(T          *pX,
                  T          *pXFFT,
@@ -129,7 +121,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
-    * @throw None
     */
    void *getInputAddr(size_t index) const noexcept override;
 
@@ -141,7 +132,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
-    * @throw None
     */
    void *getOutputAddr(size_t index) const noexcept override;
 
@@ -149,7 +139,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     * @brief Get the number of input buffers
     *
     * @retval    size_t : The number of input buffers (1: _pX)
-    * @throw None
     */
    size_t getNumInputs() const noexcept override;
 
@@ -157,7 +146,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     * @brief Get the number of output buffers
     *
     * @retval    size_t : The number of output buffers (1: _pY)
-    * @throw None
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -168,8 +156,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     *
     * @param[in] addrs Structure containing source and destination addresses
     * @param[in] mode Mode of address setting (input, output, or both)
-    * @retval None
-    * @throw None
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
@@ -178,8 +164,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     *
     * This function performs the actual operation.
     *
-    * @retval None
-    * @throw None
     */
    void exec() noexcept override;
 
@@ -188,8 +172,6 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     *
     * This destructor is set to default
     *
-    * @retval None
-    * @throw None
     */
 
    ~RFFT1dBatched() = default;

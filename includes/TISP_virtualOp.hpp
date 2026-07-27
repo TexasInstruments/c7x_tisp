@@ -113,7 +113,6 @@ class VirtualOp {
     * This function should be implemented by derived classes to return the node name.
     *
     * @retval const char* The name of the node
-    * @throw None
     */
    virtual const char *getNodeName() const noexcept = 0;
 
@@ -123,7 +122,6 @@ class VirtualOp {
     * This function should be implemented by derived classes to return the node ID.
     *
     * @retval uint32_t The ID of the node
-    * @throw None
     */
    virtual uint32_t getNodeId() const noexcept = 0;
 
@@ -134,7 +132,6 @@ class VirtualOp {
     * This function should be implemented by derived classes to return the node parameters.
     *
     * @retval const char* The parameters of the node
-    * @throw None
     */
    virtual const char *getNodeParams() const noexcept = 0;
 
@@ -145,7 +142,6 @@ class VirtualOp {
     * This function should be implemented by derived classes to return the node parameters.
     *
     * @retval const NodeBufParams& : A constant reference to the NodeBufParams representing node's i/o buffer properties
-    * @throw None
     */
    virtual const NodeBufParams &getNodeBufParams() const noexcept = 0;
 
@@ -155,8 +151,6 @@ class VirtualOp {
     * This function should be implemented by any concrete operation class.
     * It is intended to perform the actual operation.
     *
-    * @retval None
-    * @throw None
     */
    virtual void exec() noexcept = 0;
 
@@ -165,7 +159,6 @@ class VirtualOp {
     *
     * @param[in]  index : Index of the input buffer
     * @retval     void* : Pointer to the input buffer, or nullptr if invalid
-    * @throw None
     *
     * @note Default implementation returns nullptr (for nodes without indexed inputs)
     */
@@ -180,7 +173,6 @@ class VirtualOp {
     *
     * @param[in]  index : Index of the output buffer
     * @retval     void* : Pointer to the output buffer, or nullptr if invalid
-    * @throw None
     *
     * @note Default implementation returns nullptr (for nodes without indexed outputs)
     */
@@ -194,7 +186,6 @@ class VirtualOp {
     * @brief Get the number of input buffers
     *
     * @retval    size_t : The number of input buffers
-    * @throw None
     *
     * @note Default implementation returns 0
     */
@@ -204,7 +195,6 @@ class VirtualOp {
     * @brief Get the number of output buffers
     *
     * @retval    size_t : The number of output buffers
-    * @throw None
     *
     * @note Default implementation returns 0
     */
@@ -256,8 +246,6 @@ class VirtualOp {
     *
     * @param[in] addrs Structure containing source and destination addresses
     * @param[in] mode Mode of address setting (input, output, or both)
-    * @retval None
-    * @throw None
     */
    virtual void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept = 0;
 
@@ -281,8 +269,6 @@ class VirtualOp {
     *
     * This destructor is declared as virtual to ensure proper destruction of derived class objects.
     *
-    * @retval None
-    * @throw None
     */
    virtual ~VirtualOp() noexcept = default;
 };

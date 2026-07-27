@@ -122,7 +122,6 @@ template <typename T> class Fir final : public VirtualOp {
     * This function returns the name of the node.
     *
     * @retval const char* The name of the node
-    * @throw None
     */
    const char *getNodeName() const noexcept override { return _nodeInfo.getNodeName(); }
 
@@ -132,7 +131,6 @@ template <typename T> class Fir final : public VirtualOp {
     * This function returns the ID of the node.
     *
     * @retval uint32_t The ID of the node
-    * @throw None
     */
    uint32_t getNodeId() const noexcept override { return _nodeInfo.getNodeId(); }
 
@@ -142,7 +140,6 @@ template <typename T> class Fir final : public VirtualOp {
     * This function returns a string containing the parameters of the node.
     *
     * @retval const char* The parameters of the node
-    * @throw None
     */
    const char *getNodeParams() const noexcept override { return _nodeInfo.getNodeParams(); }
 
@@ -152,7 +149,6 @@ template <typename T> class Fir final : public VirtualOp {
     * This function returns reference to node's i/o buffer properties
     *
     * @retval const NodeBufParams& : A constant reference to the NodeBufParams representing node's i/o buffer properties
-    * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
@@ -179,8 +175,6 @@ template <typename T> class Fir final : public VirtualOp {
     * Fixed-Point MMA)
     * @param[in]  Q              : Q value for Q-enabled computations
     * @param[in]  errorCtx       : Error context for reporting constructor errors
-    * @retval None
-    * @throw None
     *
     */
 
@@ -205,30 +199,8 @@ template <typename T> class Fir final : public VirtualOp {
    /**
     * @brief Creates a Fir node with a name and ID
     *
-    * This constructor is a delegator that accepts a node name and ID
-    *
-    * @param[in]  *pX              : Pointer to input matrix; initializes @ref _pX
-    * @param[in]  *pS              : Pointer to state matrix; initializes @ref _pS
-    * @param[in]  *pH              : Pointer to filter matrix; initializes @ref _pH
-    * @param[out] *pY              : Pointer to output matrix; initializes @ref _pY
-    * @param[in]  inputSize        : Size of input per channel; initializes @ref _inputSize
-    * @param[in]  filterSize       : Size of filter per channel; initializes @ref _filterSize
-    * @param[in]  stateSize        : Size of state buffer per channel; initializes @ref _stateSize
-    * @param[in]  batchSize        : Number of channels; initializes @ref _batchSize
-    * @param[in]  pitchX           : Pitch of input data (in bytes); initializes @ref _pitchX
-    * @param[in]  pitchS           : Pitch of state data (in bytes); initializes @ref _pitchS
-    * @param[in]  pitchH           : Pitch of filter data (in bytes); initializes @ref _pitchH
-    * @param[in]  pitchY           : Pitch of output data (in bytes); initializes @ref _pitchY
-    * @param[in]  enableNchCoefs   : Flag for different coefficients per channel; initializes @ref _enableNchCoefs
-    * @param[in]  enableMMA        : Flag for enabling MMA-based computation; initializes @ref _enableMMA
-    * @param[in]  enableQ          : Flag for enabling fixed Q format for MMA-based computation; initializes @ref
-    * _enableQ
-    * @param[in]  Q                : Q value for Q-enabled computations; initializes @ref _Q
-    * @param[in]  nodeName         : Name of the node; initializes @ref _nodeInfo
-    * @param[in]  nodeId           : ID of the node; initializes @ref _nodeInfo
-    * @param[in]  errorCtx         : Error context for reporting constructor errors
-    * @retval None
-    * @throw None
+    * Convenience overload -- same as the primary constructor, but also takes
+    * @c nodeName and @c nodeId.
     */
    Fir(T          *pX,
        T          *pS,
@@ -258,7 +230,6 @@ template <typename T> class Fir final : public VirtualOp {
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
-    * @throw None
     */
    void *getInputAddr(size_t index) const noexcept override;
 
@@ -270,7 +241,6 @@ template <typename T> class Fir final : public VirtualOp {
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
-    * @throw None
     */
    void *getOutputAddr(size_t index) const noexcept override;
 
@@ -278,7 +248,6 @@ template <typename T> class Fir final : public VirtualOp {
     * @brief Get the number of input buffers
     *
     * @retval    size_t : The number of input buffers (1: _pX)
-    * @throw None
     */
    size_t getNumInputs() const noexcept override;
 
@@ -286,7 +255,6 @@ template <typename T> class Fir final : public VirtualOp {
     * @brief Get the number of output buffers
     *
     * @retval    size_t : The number of output buffers (1: _pY)
-    * @throw None
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -297,8 +265,6 @@ template <typename T> class Fir final : public VirtualOp {
     *
     * @param[in] addrs Structure containing source and destination addresses
     * @param[in] mode Mode of address setting (input, output, or both)
-    * @retval None
-    * @throw None
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
@@ -307,8 +273,6 @@ template <typename T> class Fir final : public VirtualOp {
     *
     * This function performs the actual operation.
     *
-    * @retval None
-    * @throw None
     */
    void exec() noexcept override;
 
@@ -325,8 +289,6 @@ template <typename T> class Fir final : public VirtualOp {
     *
     * This destructor is set to default
     *
-    * @retval None
-    * @throw None
     */
 
    ~Fir() = default;
@@ -345,7 +307,6 @@ template <typename T> class Fir final : public VirtualOp {
     *
     * @retval true         : Parameters updated successfully
     * @retval false        : Failed to update parameters
-    * @throw None
     */
    bool setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt &errorCtx) noexcept override;
 
@@ -366,7 +327,6 @@ template <typename T> class Fir final : public VirtualOp {
     *
     * @retval true          : Parameters retrieved successfully
     * @retval false         : Failed to retrieve parameters
-    * @throw None
     */
    bool getParams(uint16_t paramId, void *value, size_t *size, ErrorCtxt &errorCtx) noexcept override;
 };

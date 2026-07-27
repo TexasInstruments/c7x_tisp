@@ -61,6 +61,7 @@ template <> void print_to_file<float>(const char *fileName, const float *pData)
 extern "C" {
 #endif
 
+//! [create_graph]
 void *create_graph()
 {
    TISP::ErrorCtxt errorCtx;
@@ -277,7 +278,9 @@ void *create_graph()
 
    return myGraph;
 }
+//! [create_graph]
 
+//! [execute_graph]
 void execute_graph(void *myGraph)
 {
 
@@ -320,6 +323,7 @@ void execute_graph(void *myGraph)
    /*    printf("\n%d: %s\n", (*myOpVec)[i]->getNodeId(), (*myOpVec)[i]->getNodeName()); */
    /* } */
 }
+//! [execute_graph]
 
 void check_output()
 {

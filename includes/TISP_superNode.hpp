@@ -62,9 +62,9 @@ class BaseSuperNode {
    /**
     * @brief BaseSuperNode constructor that is called to create the supernode with appropriate parameters. Typically,
     * used by classes derived from the @ref SuperNode as part of their constructor c
-    * @param [in] numChannels    : Total number of DMA channels to be used by the supernode
-    * @param [in] numInChannels  : Total number of input DMA channels
-    * @param [in] numOutChannels : Total number of output DMA channels
+    * @param [in] _numChannels    : Total number of DMA channels to be used by the supernode
+    * @param [in] _numInChannels  : Total number of input DMA channels
+    * @param [in] _numOutChannels : Total number of output DMA channels
     */
    BaseSuperNode(size_t _numChannels, size_t _numInChannels, size_t _numOutChannels);
 
@@ -94,8 +94,7 @@ class BaseSuperNode {
      compute flow. The function calls the @ref execute::graph function which in turn executes the correct compute flow.
      For data movement, appropriate APIs are called around the @ref execute::graph function. Typical execute case of
      most superNodes variants (derived classes)
-     * @return None.
-   */
+     */
 
    void execDefault(std::unique_ptr<opVec> &myOpVec);
 
@@ -337,6 +336,7 @@ template <typename dTypeIn, typename dTypeOut> class i2d_to_o2dMatMul final : pu
     * @param [in]  _blockWidthA  : Width of 2D block for matrix A in L2
     * @param [in]  _blockHeightA : Height of 2D block for matrix A in L2
     * @param [in]  _blockWidthB  : Width of 2D block for matrix B in L2
+    * @param [in]  _blockHeightB : Height of 2D block for matrix B in L2
     * @param [in]  _inPitchA     : Input pitch for matrix A in DDR
     * @param [in]  _inPitchB     : Input pitch for matrix B in DDR
     * @param [in]  _outPitch    : Output pitch in DDR
@@ -659,7 +659,7 @@ template <typename dTypeIn, typename dTypeOut> class I2dI2dToO2dO2d final : publ
     * @param [in]  *_pInA        : Input pointer for matrix A in DDR space
     * @param [in]  *_pInB        : Input pointer for matrix B in DDR space
     * @param [out] *_pOutA       : Output pointer for matrix A in DDR space
-    * @param [out] *_pOutA       : Output pointer for matrix B in DDR space
+    * @param [out] *_pOutB       : Output pointer for matrix B in DDR space
     * @param [in]  *_pInBlockA   : Input pointer for matrix A in L2 space
     * @param [in]  *_pInBlockB   : Input pointer for matrix B in L2 space
     * @param [out] *_pOutBlockA  : Output pointer matrix A in L2 space

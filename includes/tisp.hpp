@@ -114,3 +114,9 @@
  * \defgroup SUPERNODE Supernodes
  * \brief SuperNode-level APIs
  */
+
+/**
+ * \defgroup errorHandling Error Handling
+ * \brief Error-reporting context (ErrorCtxt) used by node and supernode
+ *        constructors to report setup failures without exceptions.
+ */
