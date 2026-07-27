@@ -38,20 +38,23 @@ RFFT1dBatched<T>::RFFT1dBatched(T         *pX,
 
       _bufParamsX.dim_x = static_cast<uint32_t>(numPoints * numChannels);
 
+      /* Complex bins the kernel emits per channel: N for full spectrum, N/2 + 1 for half.*/
+      const size_t numPointsOut = outMode ? numPoints : ((numPoints >> 1U) + 1U);
+
       // Initialize bufParams with node input and output buffer parameters
-      // pX is a real buffer (numPoints * numChannels elements); pY is the complex spectrum, sized for the
-      // full-spectrum case (numPoints * numChannels * 2 elements) regardless of outMode.
+      // pX is real, one row of numPoints samples per channel; pY is the complex spectrum,
+      // one row of numPointsOut interleaved re/im pairs per channel.
       _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
       _nodeInfo.bufParams.isInputInterleave = 0;
-      _nodeInfo.bufParams.widthIn[0]        = _bufParamsX.dim_x;
-      _nodeInfo.bufParams.heightIn[0]       = 1;
-      _nodeInfo.bufParams.inPitchBytes[0]   = _bufParamsX.dim_x * sizeof(T);
+      _nodeInfo.bufParams.widthIn[0]        = numPoints;
+      _nodeInfo.bufParams.heightIn[0]       = numChannels;
+      _nodeInfo.bufParams.inPitchBytes[0]   = numPoints * sizeof(T);
 
       _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
       _nodeInfo.bufParams.isOutputInterleave = 0;
-      _nodeInfo.bufParams.widthOut[0]        = _bufParamsX.dim_x * 2U;
-      _nodeInfo.bufParams.heightOut[0]       = 1;
-      _nodeInfo.bufParams.outPitchBytes[0]   = _bufParamsX.dim_x * 2U * sizeof(T);
+      _nodeInfo.bufParams.widthOut[0]        = numPointsOut * 2U;
+      _nodeInfo.bufParams.heightOut[0]       = numChannels;
+      _nodeInfo.bufParams.outPitchBytes[0]   = numPointsOut * 2U * sizeof(T);
 
       _pW = TwiddleLUT<T>::getOrCreateRealTwiddles(_numPoints, errorCtx);
       if (_pW == nullptr) {
