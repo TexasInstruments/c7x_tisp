@@ -94,15 +94,15 @@ CascadeBiquad<T>::CascadeBiquad(T         *pIn,
       if (errorCtx.isSuccess()) {
          _coeffSizeBytes = bufParamsFilterCoeff.dim_y * bufParamsFilterCoeff.stride_y;
 
-         // Initialize bufParams with node input and output buffer parameters
+         // Initialize bufParams with node input and output buffer parameters.
          _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
-         _nodeInfo.bufParams.isInputInterleave = 0;
+         _nodeInfo.bufParams.isInputInterleave = 1;
          _nodeInfo.bufParams.widthIn[0]        = numChannels;
          _nodeInfo.bufParams.heightIn[0]       = size;
          _nodeInfo.bufParams.inPitchBytes[0]   = dataPitchInBytes;
 
          _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
-         _nodeInfo.bufParams.isOutputInterleave = 0;
+         _nodeInfo.bufParams.isOutputInterleave = 1;
          _nodeInfo.bufParams.widthOut[0]        = numChannels;
          _nodeInfo.bufParams.heightOut[0]       = size;
          _nodeInfo.bufParams.outPitchBytes[0]   = dataPitchOutBytes;

@@ -50,18 +50,18 @@ FFT1dBatched<T>::FFT1dBatched(T *pX, T *pY, uint32_t numPoints, uint32_t numChan
          _bufParamsX.dim_x = static_cast<uint32_t>(_numPoints * _numChannels * 2);
          _bufParamsW.dim_x = static_cast<uint32_t>(_numPoints * 2);
 
-         // Initialize bufParams with node input and output buffer parameters
+         // Initialize bufParams with node input and output buffer parameters.
          _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
          _nodeInfo.bufParams.isInputInterleave = 0;
-         _nodeInfo.bufParams.widthIn[0]        = _bufParamsX.dim_x;
-         _nodeInfo.bufParams.heightIn[0]       = 1;
-         _nodeInfo.bufParams.inPitchBytes[0]   = _bufParamsX.dim_x * sizeof(T);
+         _nodeInfo.bufParams.widthIn[0]        = _numPoints * 2U;
+         _nodeInfo.bufParams.heightIn[0]       = _numChannels;
+         _nodeInfo.bufParams.inPitchBytes[0]   = _numPoints * 2U * sizeof(T);
 
          _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
          _nodeInfo.bufParams.isOutputInterleave = 0;
-         _nodeInfo.bufParams.widthOut[0]        = _bufParamsX.dim_x;
-         _nodeInfo.bufParams.heightOut[0]       = 1;
-         _nodeInfo.bufParams.outPitchBytes[0]   = _bufParamsX.dim_x * sizeof(T);
+         _nodeInfo.bufParams.widthOut[0]        = _numPoints * 2U;
+         _nodeInfo.bufParams.heightOut[0]       = _numChannels;
+         _nodeInfo.bufParams.outPitchBytes[0]   = _numPoints * 2U * sizeof(T);
 
          _pW = TwiddleLUT<T>::getOrCreateComplexTwiddles(_numPoints, errorCtx);
          if (_pW == nullptr) {
