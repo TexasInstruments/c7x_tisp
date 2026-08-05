@@ -35,7 +35,7 @@ Fir<T>::Fir(T         *pX,
 
     : _pX(pX), _pS(pS), _pH(pH), _pY(pY), _inputSize(inputSize), _filterSize(filterSize), _batchSize(batchSize),
       _stateSize(stateSize), _pitchX(pitchX), _pitchS(pitchS), _pitchH(pitchH), _pitchY(pitchY),
-      _enableNchCoefs(enableNchCoefs), _enableMMA(enableMMA), _enableQ(enableQ), _Q(Q)
+      _enableNchCoefs(enableNchCoefs), _enableMMA(enableMMA), _enableQ(enableQ), _Q(Q), _historyBufSize(0)
 {
 
    // Initialize _params with the node parameters
@@ -99,6 +99,8 @@ Fir<T>::Fir(T         *pX,
       }
 
       if (errorCtx.isSuccess()) {
+
+         _historyBufSize = pitchS * batchSize;
 
          // instantiate appropriate bufparams for all buffers
          DSPLIB_bufParams2D_t bufParamsFilter;
@@ -186,6 +188,8 @@ Fir<T>::Fir(T         *pX,
                   _sa0ParamsPost.ICNT0 = static_cast<uint32_t>(filterSize - 1U);
                   _sa0ParamsPost.DIM1  = static_cast<int32_t>(pitchS / sizeof(T));
                   _sa0ParamsPost.ICNT1 = static_cast<uint32_t>(batchSize);
+
+                  cleanInternalBuffers();
                }
             }
          }
@@ -331,6 +335,7 @@ template <typename T> bool Fir<T>::setParams(uint16_t paramId, void *value, size
             errorCtx.setInvalidParameterError("Fir::setParams", "Value size smaller than expected for kFilterCoeffs");
          }
          else {
+            cleanInternalBuffers();
             const uint8_t *coeffData = static_cast<const uint8_t *>(value);
             for (size_t c = 0; c < numChannels; c++) {
                uint8_t *dst = reinterpret_cast<uint8_t *>(_pH) + (c * _pitchH);
@@ -382,6 +387,13 @@ template <typename T> bool Fir<T>::getParams(uint16_t paramId, void *value, size
    }
 
    return errorCtx.isSuccess();
+}
+
+template <typename T> void Fir<T>::cleanInternalBuffers() noexcept
+{
+   if (_pS != nullptr && _historyBufSize > 0) {
+      std::memset(_pS, 0, _historyBufSize);
+   }
 }
 
 template class Fir<float>;

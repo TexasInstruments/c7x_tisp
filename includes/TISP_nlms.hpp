@@ -52,6 +52,7 @@ template <typename T> class Nlms final : public VirtualOp {
    size_t _inPitchBytes;
    size_t _outPitchBytes;
    size_t _isInterleave;
+   size_t _historyBufSize; /*!< Size of history buffer. */
 
    TISP::HandlePtr<char> _handle;  /*!< Handle to low level AUDIOLIB_nlms kernel. */
    TISP::HandlePtr<char> _handle1; /*!< Handle to low level DSPLIB_deinterleave kernel. */
@@ -87,6 +88,8 @@ template <typename T> class Nlms final : public VirtualOp {
     * @param [in]  isInterleave    : Indicates whether the input matrix data is interleaved:
     *                              - `0`: Non-interleaved (Rows represent channels, columns represent samples).
     *                              - `1`: Interleaved (Rows represent samples, columns represent channels).
+    * @param [in]  historyBufSize  : Size of history buffer. Minimum size is 512 bytes, rounded up to the nearest power
+    * of 2 to accommodate filterLength + widthIn.
     * @param [in]  errorCtx        : Error context for reporting constructor errors
     * @retval None
     * @throw None
@@ -110,6 +113,7 @@ template <typename T> class Nlms final : public VirtualOp {
         size_t     inPitchBytes,
         size_t     outPitchBytes,
         size_t     isInterleave,
+        size_t     historyBufSize,
         ErrorCtxt &errorCtx);
 
    /**
@@ -134,6 +138,8 @@ template <typename T> class Nlms final : public VirtualOp {
     * @param [in]  inPitchBytes    : Pitch of input matrix in bytes.
     * @param [in]  outPitchBytes   : Pitch of output matrix in bytes.
     * @param [in]  isInterleave    : Indicates whether the input matrix data is interleaved.
+    * @param [in]  historyBufSize  : Size of history buffer. Minimum size is 512 bytes, rounded up to the nearest power
+    * of 2 to accommodate filterLength + widthIn.
     * @param [in]  nodeName        : Name of the node; initializes @ref _nodeInfo.
     * @param [in]  nodeId          : ID of the node; initializes @ref _nodeInfo.
     * @param [in]  errorCtx        : Error context for reporting constructor errors
@@ -158,6 +164,7 @@ template <typename T> class Nlms final : public VirtualOp {
         size_t      inPitchBytes,
         size_t      outPitchBytes,
         size_t      isInterleave,
+        size_t      historyBufSize,
         const char *nodeName,
         uint32_t    nodeId,
         ErrorCtxt  &errorCtx);
@@ -265,6 +272,14 @@ template <typename T> class Nlms final : public VirtualOp {
     * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
+
+   /**
+    * @brief Clean and reset all internal state buffers to zero
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor

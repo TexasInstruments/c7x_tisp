@@ -29,11 +29,11 @@ DelayNChannel<T>::DelayNChannel(T         *pX,
                                 size_t     mode,
                                 uint32_t  *pDelaySize,
                                 ErrorCtxt &errorCtx)
-    : _pX(pX), _pD(pD), _pS(pS), _pY(pY)
+    : _pX(pX), _pD(pD), _pS(pS), _pY(pY), _historyBufSize(0)
 {
    // Initialize _params with the node parameters
-   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
-                   "width=%zu,height=%zu,widthD=%zu,heightD=%zu", width, height, widthD, heightD);
+   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(), "width=%zu,height=%zu,widthD=%zu,heightD=%zu",
+                   width, height, widthD, heightD);
 
    // Input validation checks
    if (pX == nullptr) {
@@ -78,6 +78,8 @@ DelayNChannel<T>::DelayNChannel(T         *pX,
       _delayBytes    = delayBytes;
       _interleave    = interleave;
       _mode          = mode;
+
+      _historyBufSize = heightD * delayBytes;
 
       // Initialize bufParams with node input and output buffer parameters. The delay (pD)
       // and scratch (pS) buffers are internal/owned state, not exposed via getInputAddr(),
@@ -148,6 +150,9 @@ DelayNChannel<T>::DelayNChannel(T         *pX,
             AUDIOLIB_STATUS initRet =
                 AUDIOLIB_delayNChannel_init(_handle.get(), &bufParamsIn, &bufParamsDelay, &bufParamsOut, &kerInitArgs);
             errorCtx.remapXLIBError(initRet, "AUDIOLIB_delayNChannel_init");
+            if (errorCtx.isSuccess()) {
+               cleanInternalBuffers();
+            }
          }
       }
    }
@@ -226,6 +231,13 @@ template <typename T> void DelayNChannel<T>::setAddr(SetAddr_t &addr, SetAddrMod
 template <typename T> void DelayNChannel<T>::exec() noexcept
 {
    AUDIOLIB_delayNChannel_exec(_handle.get(), _pX, _pD, _pY, _pS);
+}
+
+template <typename T> void DelayNChannel<T>::cleanInternalBuffers() noexcept
+{
+   if (_pD != nullptr && _historyBufSize > 0) {
+      std::memset(_pD, 0, _historyBufSize);
+   }
 }
 
 template class DelayNChannel<float>;

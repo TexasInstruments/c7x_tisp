@@ -33,6 +33,7 @@ Ssrc<T>::Ssrc(T         *pX,
               size_t     bufferFormat,
               size_t     enableMMA,
               size_t     mmaSize,
+              size_t     historyBufSize,
               ErrorCtxt &errorCtx)
     : _pX(pX), _pState(pState), _pFiltCoeffs(pFiltCoeffs), _pY(pY)
 {
@@ -90,6 +91,10 @@ Ssrc<T>::Ssrc(T         *pX,
    if (mmaSize == 0) {
       errorCtx.setInvalidParameterError("Ssrc constructor", "mmaSize must be greater than zero");
    }
+   if (historyBufSize == 0 && (!((isInterleave == AUDIOLIB_DATA_FORMAT_INTERLEAVED) &&
+                                 (bufferFormat == AUDIOLIB_SSRC_BUFFER_FORMAT_PING_PONG_CIRCULAR)))) {
+      errorCtx.setInvalidParameterError("Ssrc constructor", "historyBufSize must be greater than zero");
+   }
    // Only proceed with initialization if all validation checks passed
    if (errorCtx.isSuccess()) {
       _deinterleaveHandle = nullptr;
@@ -99,6 +104,7 @@ Ssrc<T>::Ssrc(T         *pX,
       _blkCopy2DHandle3   = nullptr;
       _firHandle1         = nullptr;
       _firHandle2         = nullptr;
+      _historyBufSize     = historyBufSize;
 
       // Initialize bufParams with node input and output buffer parameters
       _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
@@ -250,6 +256,10 @@ Ssrc<T>::Ssrc(T         *pX,
                   AUDIOLIB_STATUS setRet =
                       AUDIOLIB_ssrc_set(_handle.get(), static_cast<uint8_t>(AUDIOLIB_SSRC_MODE_RESET), _pX, _pState);
                   errorCtx.remapXLIBError(setRet, "AUDIOLIB_ssrc_set");
+                  if (errorCtx.isSuccess() && (!((isInterleave == AUDIOLIB_DATA_FORMAT_INTERLEAVED) &&
+                                                 (bufferFormat == AUDIOLIB_SSRC_BUFFER_FORMAT_PING_PONG_CIRCULAR)))) {
+                     cleanInternalBuffers();
+                  }
                }
             }
          }
@@ -313,6 +323,7 @@ Ssrc<T>::Ssrc(T          *pX,
               size_t      bufferFormat,
               size_t      enableMMA,
               size_t      mmaSize,
+              size_t      historyBufSize,
               const char *nodeName,
               uint32_t    nodeId,
               ErrorCtxt  &errorCtx)
@@ -335,6 +346,7 @@ Ssrc<T>::Ssrc(T          *pX,
            bufferFormat,
            enableMMA,
            mmaSize,
+           historyBufSize,
            errorCtx)
 {
    (void) pX;
@@ -356,8 +368,16 @@ Ssrc<T>::Ssrc(T          *pX,
    (void) bufferFormat;
    (void) enableMMA;
    (void) mmaSize;
+   (void) historyBufSize;
    _nodeInfo.setName(nodeName);
    _nodeInfo.nodeId = nodeId;
+}
+
+template <typename T> void Ssrc<T>::cleanInternalBuffers() noexcept
+{
+   if (_pState != nullptr && _historyBufSize > 0) {
+      std::memset(_pState, 0, _historyBufSize);
+   }
 }
 
 template class Ssrc<float>;

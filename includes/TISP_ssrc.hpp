@@ -74,6 +74,7 @@ template <typename T> class Ssrc final : public VirtualOp {
    T *_pY;          /*!< Pointer to output matrix. */
 
    NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
+   size_t   _historyBufSize; /*!< Size of history buffer. */
 
    TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_ssrc kernel. */
 
@@ -121,6 +122,7 @@ template <typename T> class Ssrc final : public VirtualOp {
     * @param [in]  mmaSize            : MMA size related to precision.
     *                                 - AUDIOLIB_SSRC_MODE_RESET: Resets the filter state.
     * @param [in]  inputSampleCount   : Max number of ssrc input samples.
+    * @param [in]  historyBufSize     : Size of history buffer.
     * @param [in]  errorCtx           : Error context for reporting constructor errors
     * @retval None
     * @throw None
@@ -145,6 +147,7 @@ template <typename T> class Ssrc final : public VirtualOp {
         size_t     bufferFormat,
         size_t     enableMMA,
         size_t     mmaSize,
+        size_t     historyBufSize,
         ErrorCtxt &errorCtx);
 
    /**
@@ -175,6 +178,7 @@ template <typename T> class Ssrc final : public VirtualOp {
     * @param [in]  bufferFormat       : Buffer format.
     * @param [in]  enableMMA          : Flag to indicate whether to use MMA unit (1) or not (0).
     * @param [in]  mmaSize            : MMA size related to precision.
+    * @param [in]  historyBufSize     : Size of history buffer.
     * @param [in]  nodeName           : Name of the node; initializes @ref _nodeInfo.
     * @param [in]  nodeId             : ID of the node; initializes @ref _nodeInfo.
     * @param [in]  errorCtx           : Error context for reporting constructor errors
@@ -202,6 +206,7 @@ template <typename T> class Ssrc final : public VirtualOp {
         size_t      bufferFormat,
         size_t      enableMMA,
         size_t      mmaSize,
+        size_t      historyBufSize,
         const char *nodeName,
         uint32_t    nodeId,
         ErrorCtxt  &errorCtx);
@@ -311,6 +316,15 @@ template <typename T> class Ssrc final : public VirtualOp {
     * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
+
+   /**
+    * @brief Clean and reset all internal state buffers to zero when data is non-interleaved or when data is interleaved
+    * with linear bufferFormat.
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor

@@ -189,13 +189,14 @@ std::unique_ptr<TISP::VirtualOp> TISP_ssrc_createKernelObject(void            *p
                                                               uint8_t          bufferFormat,
                                                               uint32_t         enableMMA,
                                                               uint8_t          mmaSize,
+                                                              int32_t          historyBufSize,
                                                               TISP::ErrorCtxt &errorCtx)
 {
    if (sampleDataType == AUDIOLIB_FLOAT32) {
       return std::make_unique<TISP::AUDIOLIB::Ssrc<float>>(
           (float *) pIn, (float *) pState, (float *) pFiltCoeffs, (float *) pOut, inputSampleCount, sampleDataType,
           widthIn, heightIn, strideIn, widthOut, heightOut, strideOut, inputSampleRate, outputSampleRate, numChannels,
-          isInterleave, bufferFormat, enableMMA, mmaSize, errorCtx);
+          isInterleave, bufferFormat, enableMMA, mmaSize, historyBufSize, errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_ssrc_createKernelObject", "unsupported data type for Ssrc kernel");
@@ -276,7 +277,7 @@ int TISP_ssrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          uint32_t           alignedEleCount   = AUDIOLIB_L2DATA_ALIGNMENT / eleSize;
          bufferFormat = AUDIOLIB_ssrc_optimalBufferFormat(inputSampleRate, outputSampleRate, inputSampleCount,
                                                           numChannels, isInterleave, enableMMA);
-         size_t widthIn, heightIn, widthOut, heightOut, strideIn, strideOut;
+         size_t widthIn, heightIn, widthOut, heightOut, strideIn, strideOut, historyBufSize;
 
          if (bufferFormat == AUDIOLIB_SSRC_BUFFER_FORMAT_PING_PONG_CIRCULAR) {
             enableMMA = 0;
@@ -306,6 +307,8 @@ int TISP_ssrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                pInAlign  = cbParams.alignment;
 
                pState = nullptr;
+
+               historyBufSize = 0;
 
                heightOut = outFrameLength;
                widthOut  = numChannels;
@@ -358,6 +361,8 @@ int TISP_ssrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
                pState = (void *) TI_memalign(AUDIOLIB_L2DATA_ALIGNMENT, lbParams.bufferSize);
 
+               historyBufSize = lbParams.bufferSize;
+
                heightOut = outFrameLength;
                widthOut  = numChannels;
                strideOut = numChannels * AUDIOLIB_sizeof(currPrm.sampleDataType);
@@ -385,6 +390,8 @@ int TISP_ssrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             pInAlign  = 64;
 
             pState = (void *) TI_memalign(AUDIOLIB_L2DATA_ALIGNMENT, lbParams.bufferSize);
+
+            historyBufSize = lbParams.bufferSize;
 
             heightOut = numChannels;
             widthOut  = outFrameLength;
@@ -426,7 +433,7 @@ int TISP_ssrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                 static_cast<int32_t>(strideOut), static_cast<uint8_t>(inputSampleRate),
                 static_cast<uint8_t>(outputSampleRate), static_cast<uint8_t>(numChannels),
                 static_cast<uint8_t>(isInterleave), static_cast<uint8_t>(bufferFormat), static_cast<uint8_t>(enableMMA),
-                static_cast<uint32_t>(mmaSize), errorCtx);
+                static_cast<uint32_t>(mmaSize), static_cast<int32_t>(historyBufSize), errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
@@ -504,7 +511,8 @@ int TISP_ssrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                    static_cast<int32_t>(strideOut), static_cast<uint8_t>(inputSampleRate),
                    static_cast<uint8_t>(outputSampleRate), static_cast<uint8_t>(numChannels),
                    static_cast<uint8_t>(isInterleave), static_cast<uint8_t>(bufferFormat),
-                   static_cast<uint8_t>(enableMMA), static_cast<uint32_t>(mmaSize), errorCtx);
+                   static_cast<uint8_t>(enableMMA), static_cast<uint32_t>(mmaSize),
+                   static_cast<int32_t>(historyBufSize), errorCtx);
 
                if (!errorCtx.isSuccess()) {
                   printf("\nError creating kernel: %s\n", errorCtx.getMessage());
@@ -597,7 +605,8 @@ int TISP_ssrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                    static_cast<int32_t>(strideOut), static_cast<uint8_t>(inputSampleRate),
                    static_cast<uint8_t>(outputSampleRate), static_cast<uint8_t>(numChannels),
                    static_cast<uint8_t>(isInterleave), static_cast<uint8_t>(bufferFormat),
-                   static_cast<uint8_t>(enableMMA), static_cast<uint32_t>(mmaSize), errorCtx);
+                   static_cast<uint8_t>(enableMMA), static_cast<uint32_t>(mmaSize),
+                   static_cast<int32_t>(historyBufSize), errorCtx);
 
                if (!errorCtx.isSuccess()) {
                   printf("\nError creating kernel: %s\n", errorCtx.getMessage());

@@ -132,6 +132,7 @@ template <typename T> class MultiplexerSmooth final : public VirtualOp {
    size_t   _curentIdx;
    size_t   _prevIdx;
    uint32_t _maxInputs;
+   size_t   _historyBufSize; /*!< Size of history buffer. */
 
    NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
 
@@ -362,6 +363,14 @@ template <typename T> class MultiplexerSmooth final : public VirtualOp {
     * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
+
+   /**
+    * @brief Clean and reset all internal history buffers to zero when smoothedSamples are not equal to zero.
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor

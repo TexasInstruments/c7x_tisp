@@ -72,6 +72,7 @@ std::unique_ptr<TISP::VirtualOp> TISP_nlms_createKernelObject(void            *p
                                                               int32_t          strideOut,
                                                               uint32_t         sampleDataType,
                                                               uint32_t         isInterleave,
+                                                              uint32_t         historyBufSize,
                                                               TISP::ErrorCtxt &errorCtx)
 {
    std::unique_ptr<TISP::VirtualOp> kernel = nullptr;
@@ -80,7 +81,7 @@ std::unique_ptr<TISP::VirtualOp> TISP_nlms_createKernelObject(void            *p
       kernel = std::make_unique<TISP::AUDIOLIB::Nlms<float>>(
           (float *) pIn0, (float *) pIn1, (float *) pIn2, (float *) pIn3, (float *) pIn4, (float *) pOut,
           (float *) pInD, (float *) pInDesiredD, (float *) pOutI, width, height, filterLength, stepSize, numChannels,
-          strideIn, strideOut, isInterleave, errorCtx);
+          strideIn, strideOut, isInterleave, historyBufSize, errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_nlms_createKernelObject", "unsupported data type for Nlms kernel");
@@ -180,6 +181,7 @@ int TISP_nlms_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          // This stride is used for alignment and memory allocation
          uint32_t stateStrideBytes = CircularBufBaseMmemSize * AUDIOLIB_sizeof(currPrm.dataType);
          uint32_t stateBufferSize  = currPrm.inChannels * stateStrideBytes;
+         size_t   historyBufSize   = stateBufferSize + stateStrideBytes;
 
          // --- Scratch Buffer Allocation (Accumulators) ---
          // Scratch size for accumulators (e.g., 1 filter length per channel)
@@ -252,11 +254,11 @@ int TISP_nlms_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             TISP::ErrorCtxt errorCtx;
             auto            k0 = TISP_nlms_createKernelObject(
-                           pIn.get(), pInDesired.get(), pStateBuffer, pScratchBuffer, pCoefficients, pOut.get(), pInD, pInDesiredD,
-                           pOutI, static_cast<uint32_t>(widthIn), static_cast<uint32_t>(heightIn),
-                           static_cast<uint32_t>(filterLength), static_cast<float>(stepSize), static_cast<uint32_t>(numChannels),
-                           static_cast<uint32_t>(strideIn), static_cast<uint32_t>(strideOut), currPrm.dataType,
-                           static_cast<uint32_t>(isInterleave), errorCtx);
+                pIn.get(), pInDesired.get(), pStateBuffer, pScratchBuffer, pCoefficients, pOut.get(), pInD, pInDesiredD,
+                pOutI, static_cast<uint32_t>(widthIn), static_cast<uint32_t>(heightIn),
+                static_cast<uint32_t>(filterLength), static_cast<float>(stepSize), static_cast<uint32_t>(numChannels),
+                static_cast<uint32_t>(strideIn), static_cast<uint32_t>(strideOut), currPrm.dataType,
+                static_cast<uint32_t>(isInterleave), static_cast<uint32_t>(historyBufSize), errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

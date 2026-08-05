@@ -37,7 +37,7 @@ MultiplexerSmooth<T>::MultiplexerSmooth(T         *pX0,
                                         float      fadeTime,
                                         ErrorCtxt &errorCtx)
     : _pX0(pX0), _pWs(pWs), _pSmoothedSampleBuff(pSmoothedSampleBuff), _pGainFadeIn(pGainFadeIn),
-      _pGainFadeOut(pGainFadeOut), _pY(pY), _maxInputs(maxInputs)
+      _pGainFadeOut(pGainFadeOut), _pY(pY), _maxInputs(maxInputs), _historyBufSize(0)
 {
 
    /* Initialize _params with the node parameters */
@@ -248,6 +248,12 @@ MultiplexerSmooth<T>::MultiplexerSmooth(T         *pX0,
                 _handleCrossFader.get(), &bufParamsCrosFadeIn0, &bufParamsCrosFadeIn1, &bufParamsCrosFadeGain0,
                 &bufParamsCrosFadeGain1, &bufParamsCrosFadeIOut, &kerInitArgs);
             errorCtx.remapXLIBError(status, "AUDIOLIB_crossfade_init");
+
+            _historyBufSize = heightIn * _smoothedSamples * sizeof(T);
+
+            if (errorCtx.isSuccess()) {
+               cleanInternalBuffers();
+            }
          }
       }
    }
@@ -490,6 +496,13 @@ MultiplexerSmooth<T>::MultiplexerSmooth(T          *pX0,
 {
    _nodeInfo.setName(nodeName);
    _nodeInfo.nodeId = nodeId;
+}
+
+template <typename T> void MultiplexerSmooth<T>::cleanInternalBuffers() noexcept
+{
+   if (_pSmoothedSampleBuff != nullptr && _historyBufSize > 0) {
+      std::memset(_pSmoothedSampleBuff, 0, _historyBufSize);
+   }
 }
 
 template class MultiplexerSmooth<float>;

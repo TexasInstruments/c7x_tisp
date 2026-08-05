@@ -30,7 +30,7 @@ Delay<T>::Delay(T         *pX,
                 size_t     mode,
                 size_t     delaySize,
                 ErrorCtxt &errorCtx)
-    : _pX(pX), _pD(pD), _pS(pS), _pY(pY)
+    : _pX(pX), _pD(pD), _pS(pS), _pY(pY), _historyBufSize(0)
 {
 
    // Initialize _params with the node parameters
@@ -79,6 +79,8 @@ Delay<T>::Delay(T         *pX,
       _delayBytes    = delayBytes;
       _interleave    = interleave;
       _mode          = mode;
+
+      _historyBufSize = heightD * delayBytes;
 
       // Initialize bufParams with node input and output buffer parameters. The delay (pD)
       // and scratch (pS) buffers are internal/owned state, not exposed via getInputAddr(),
@@ -144,6 +146,9 @@ Delay<T>::Delay(T         *pX,
             AUDIOLIB_STATUS initRet =
                 AUDIOLIB_delay_init(_handle.get(), &bufParamsIn, &bufParamsDelay, &bufParamsOut, &kerInitArgs);
             errorCtx.remapXLIBError(initRet, "AUDIOLIB_delay_init");
+            if (errorCtx.isSuccess()) {
+               cleanInternalBuffers();
+            }
          }
       }
    }
@@ -180,6 +185,13 @@ template <typename T> void Delay<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mode
 }
 
 template <typename T> void Delay<T>::exec() noexcept { AUDIOLIB_delay_exec(_handle.get(), _pX, _pD, _pY, _pS); }
+
+template <typename T> void Delay<T>::cleanInternalBuffers() noexcept
+{
+   if (_pD != nullptr && _historyBufSize > 0) {
+      std::memset(_pD, 0, _historyBufSize);
+   }
+}
 
 template <typename T>
 Delay<T>::Delay(T          *pX,

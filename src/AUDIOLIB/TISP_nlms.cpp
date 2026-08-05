@@ -36,6 +36,7 @@ Nlms<T>::Nlms(T         *pIn,
               size_t     inPitchBytes,
               size_t     outPitchBytes,
               size_t     isInterleave,
+              size_t     historyBufSize,
               ErrorCtxt &errorCtx)
     : _pIn(pIn), _pInDesired(pInDesired), _pStateBuffer(pStateBuffer), _pScratchBuffer(pScratchBuffer),
       _pCoefficients(pCoefficients), _pOut(pOut), _pInD(pInD), _pInDesiredD(pInDesiredD), _pOutI(pOutD)
@@ -94,6 +95,9 @@ Nlms<T>::Nlms(T         *pIn,
    if (isInterleave > 1) {
       errorCtx.setInvalidParameterError("Nlms constructor", "isInterleave must be either zero or one");
    }
+   if (historyBufSize == 0) {
+      errorCtx.setInvalidParameterError("Nlms constructor", "historyBufSize must be greater than zero");
+   }
 
    // Only proceed with initialization if all validation checks passed
    if (errorCtx.isSuccess()) {
@@ -105,6 +109,8 @@ Nlms<T>::Nlms(T         *pIn,
       _inPitchBytes  = inPitchBytes;
       _outPitchBytes = outPitchBytes;
       _isInterleave  = isInterleave;
+
+      _historyBufSize = historyBufSize;
 
       // Initialize bufParams with node input and output buffer parameters. Nlms has two
       // inputs (pIn, pInDesired) of identical geometry and one output (pOut).
@@ -267,6 +273,7 @@ Nlms<T>::Nlms(T         *pIn,
             AUDIOLIB_STATUS initRet = AUDIOLIB_nlms_init(_handle.get(), &bufParamsIn, &bufParamsOut, &kerInitArgs);
             errorCtx.remapXLIBError(initRet, "AUDIOLIB_nlms_init");
             if (errorCtx.isSuccess()) {
+               cleanInternalBuffers();
                _execImpl = (isInterleave == 1) ? &Nlms::_execInterleaved : &Nlms::_execNonInterleaved;
             }
          }
@@ -352,6 +359,7 @@ Nlms<T>::Nlms(T          *pIn,
               size_t      inPitchBytes,
               size_t      outPitchBytes,
               size_t      isInterleave,
+              size_t      historyBufSize,
               const char *nodeName,
               uint32_t    nodeId,
               ErrorCtxt  &errorCtx)
@@ -372,6 +380,7 @@ Nlms<T>::Nlms(T          *pIn,
            inPitchBytes,
            outPitchBytes,
            isInterleave,
+           historyBufSize,
            errorCtx)
 {
    (void) pIn;
@@ -391,6 +400,7 @@ Nlms<T>::Nlms(T          *pIn,
    (void) inPitchBytes;
    (void) outPitchBytes;
    (void) isInterleave;
+   (void) historyBufSize;
    _nodeInfo.setName(nodeName);
    _nodeInfo.nodeId = nodeId;
 }
@@ -400,6 +410,13 @@ Nlms<T>::Nlms(T          *pIn,
 //! [TISP::Nlms getNodeId]
 
 //! [TISP::Nlms getParams]
+
+template <typename T> void Nlms<T>::cleanInternalBuffers() noexcept
+{
+   if (_pStateBuffer != nullptr && _historyBufSize > 0) {
+      std::memset(_pStateBuffer, 0, _historyBufSize);
+   }
+}
 
 template class Nlms<float>;
 

@@ -48,6 +48,7 @@ template <typename T> class Fir final : public VirtualOp {
    size_t _filterSize; /*!< Filter size */
    size_t _batchSize;  /*!< Number of channels */
    size_t _stateSize;  /*!< State size */
+   size_t _historyBufSize; /*!< Size of history buffer. */
 
    size_t _pitchX; /*!< Input pitch */
    size_t _pitchS; /*!< State pitch */
@@ -286,6 +287,14 @@ template <typename T> class Fir final : public VirtualOp {
     * @throw None
     */
    void exec() noexcept override;
+
+   /**
+    * @brief Clean and reset all internal state buffers to zero
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor

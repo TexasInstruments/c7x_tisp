@@ -35,6 +35,7 @@ Asrc<T>::Asrc(T         *pX,
               size_t     numChannels,
               size_t     frameModuloFactor,
               size_t     isInterleave,
+              size_t     historyBufSize,
               ErrorCtxt &errorCtx)
     : _pX(pX), _pNonInterleavedData(pNonInterleavedData), _pFiltCoeffs(pFiltCoeffs), _pFilterRembuf(pFilterRembuf),
       _pY(pY)
@@ -91,9 +92,13 @@ Asrc<T>::Asrc(T         *pX,
    else if (isInterleave > 1) {
       errorCtx.setInvalidParameterError("Asrc constructor", "isInterleave must be either zero or one");
    }
+   else if (historyBufSize == 0 && isInterleave == 1) {
+      errorCtx.setInvalidParameterError("Asrc constructor", "historyBufSize must be greater than zero");
+   }
    else {
       _inputSampleCount  = maxSampleCountPerBlock;
       _outputSampleCount = outputSampleCount;
+      _historyBufSize    = historyBufSize;
 
       // Initialize bufParams with node input and output buffer parameters
       _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
@@ -173,6 +178,10 @@ Asrc<T>::Asrc(T         *pX,
                   status =
                       AUDIOLIB_asrc_set(_handle.get(), AUDIOLIB_ASRC_MODE_RESET, asrcRatio, _pNonInterleavedData, _pX);
                   errorCtx.remapXLIBError(status, "AUDIOLIB_asrc_set");
+
+                  if (errorCtx.isSuccess() && isInterleave == 1) {
+                     cleanInternalBuffers();
+                  }
                }
             }
          }
@@ -313,6 +322,7 @@ Asrc<T>::Asrc(T          *pX,
               size_t      numChannels,
               size_t      frameModuloFactor,
               size_t      isInterleave,
+              size_t      historyBufSize,
               const char *nodeName,
               uint32_t    nodeId,
               ErrorCtxt  &errorCtx)
@@ -335,10 +345,18 @@ Asrc<T>::Asrc(T          *pX,
            numChannels,
            frameModuloFactor,
            isInterleave,
+           historyBufSize,
            errorCtx)
 {
    _nodeInfo.setName(nodeName);
    _nodeInfo.nodeId = nodeId;
+}
+
+template <typename T> void Asrc<T>::cleanInternalBuffers() noexcept
+{
+   if (_pNonInterleavedData != nullptr && _historyBufSize > 0) {
+      std::memset(_pNonInterleavedData, 0, _historyBufSize);
+   }
 }
 
 template class Asrc<float>;

@@ -72,6 +72,9 @@ template <typename T> class Delay final : public VirtualOp {
    size_t _delayBytes;
    size_t _interleave;
    size_t _mode;
+   size_t _historyBufSize; /*!< The size of the history buffer in elements which is calculated by heightD * delayBytes.
+                              In case of circular delay mode, minimum value of delayBytes is 512 bytes, rounded up to
+                              the nearest power of 2 to accommodate delaySize + widthIn. */
 
    TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_delay kernel. */
 
@@ -259,6 +262,14 @@ template <typename T> class Delay final : public VirtualOp {
     * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
+
+   /**
+    * @brief Clean and reset all internal state and history buffers to zero
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor
