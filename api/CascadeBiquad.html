@@ -1,0 +1,2730 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="AddNch.html">
+      
+      
+        <link rel="next" href="Deinterleave.html">
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>CascadeBiquad - TISP Documentation</title>
+      
+    
+    
+      
+        
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.b15b49b1bf85bc4cc.min.css?v=77f6292e" />
+        <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+        <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/theme_overrides.css?v=71b8c996" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/immaterial_overrides.css?v=82266e3c" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="TISP Documentation" class="md-header__button md-logo" aria-label="TISP Documentation" data-md-component="logo">
+      <img src="../_static/ti_logo_mono.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            <a href="../index.html" style="color:inherit;text-decoration:none">TISP Documentation</a>
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CascadeBiquad
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="teal"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/TexasInstruments/c7x_tisp" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    c7x_tisp
+    <span class="ti-branch">main</span>
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="TISP Documentation" class="md-nav__button md-logo" aria-label="TISP Documentation" data-md-component="logo">
+      <img src="../_static/ti_logo_mono.svg" alt="logo">
+    </a>
+    TISP Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/TexasInstruments/c7x_tisp" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    c7x_tisp
+    <span class="ti-branch">main</span>
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>Architecture</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27zM5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83s-2.05.78-2.83 0m-5.66 7.07-1.41-1.41zM6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22zM2 22h1.41l4.77-4.76-1.42-1.41L2 20.59zm0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>Getting Started</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repository_layout.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h6v4H3zm12 7h6v4h-6zm0 7h6v4h-6zm-2-4H7v5h6v2H5V9h2v2h6z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>Repository Layout</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="index.html" class="md-nav__link ">
+              
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>API Reference</span>
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            <span>API Reference</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="framework.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Framework</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="errorHandling.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Error Handling</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="audio_nodes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Audio Nodes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="dsp_nodes.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span>DSP Nodes</span>
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            <span>DSP Nodes</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="addConstant.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>add<wbr>Constant</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="AddNch.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Add<wbr>Nch</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    <span>Cascade<wbr>Biquad</span>
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Cascade<wbr>Biquad</span>
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Cascade<wbr>Biquad</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CascadeBiquad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-template-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Template Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" class="md-nav__link">
+    
+      <span aria-label="C++ type template parameter" class="objinfo-icon objinfo-icon__alias" title="C++ type template parameter">T</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span>T</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breathe-section-title-public-functions" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Public Functions</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Cascade<wbr>Biquad</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CascadeBiquad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-size" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::size (C++ function parameter) — [in] : size of input; initializes _size"><span>size</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numChannels" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::numChannels (C++ function parameter) — [in] : Number of channels; initializes _numChannels"><span>num<wbr>Channels</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numStages" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::numStages (C++ function parameter) — [in] : Number of stages; initializes _numStages"><span>num<wbr>Stages</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-biquadForm" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::biquadForm (C++ function parameter) — DSPLIB_BIQUAD_DF1"><span>biquad<wbr>Form</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchInBytes" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::dataPitchInBytes (C++ function parameter) — [in] : Pitch of input buffer in bytes; initializes _dataPitchInBytes"><span>data<wbr>Pitch<wbr>In<wbr>Bytes</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchOutBytes" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::dataPitchOutBytes (C++ function parameter) — [in] : Pitch of output buffer in bytes; initializes _dataPitchOutBytes"><span>data<wbr>Pitch<wbr>Out<wbr>Bytes</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-filterVarPitchBytes" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::filterVarPitchBytes (C++ function parameter) — [in] : Pitch of filter buffer in bytes; initializes _filterVarPitchBytes"><span>filter<wbr>Var<wbr>Pitch<wbr>Bytes</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-enableNChCoeffs" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::enableNChCoeffs (C++ function parameter) — [in] : Every channel has its own set of filter coeff(T/F);"><span>enable<wbr>NCh<wbr>Coeffs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-errorCtx" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::errorCtx (C++ function parameter) — [in] : Error context for reporting constructor errors"><span>error<wbr>Ctx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Cascade<wbr>Biquad</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Input<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getInputAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-p-index" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getInputAddr::index (C++ function parameter) — [in] : Index of the input buffer (0)"><span>index</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Output<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getOutputAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-p-index" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getOutputAddr::index (C++ function parameter) — [in] : Index of the output buffer (0)"><span>index</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Num<wbr>Inputs</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNumInputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Num<wbr>Outputs</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNumOutputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>set<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="setAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setAddr::addrs (C++ function parameter) — [in] Structure containing source and destination addresses"><span>addrs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-mode" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setAddr::mode (C++ function parameter) — [in] Mode of address setting (input, output, or both)"><span>mode</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad4execEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>exec</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Name</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeName">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Id</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeId">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Buf<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeBufParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>set<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="setParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-paramId" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setParams::paramId (C++ function parameter) — [in] : Parameter ID to update"><span>param<wbr>Id</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-value" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setParams::value (C++ function parameter) — [in] : Pointer to a buffer containing the new parameter value"><span>value</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-size" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setParams::size (C++ function parameter) — [in] : The size in bytes of the payload"><span>size</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-errorCtx" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setParams::errorCtx (C++ function parameter) — [inout] : Error context for reporting errors"><span>error<wbr>Ctx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-paramId" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getParams::paramId (C++ function parameter) — [in] : Parameter ID to query"><span>param<wbr>Id</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-value" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getParams::value (C++ function parameter) — [out] : Pointer to a buffer where parameters will be stored"><span>value</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-size" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getParams::size (C++ function parameter) — [inout] : Input: Capacity of value buffer in bytes."><span>size</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-errorCtx" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getParams::errorCtx (C++ function parameter) — [inout] : Error context for reporting errors"><span>error<wbr>Ctx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquadD0Ev" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>~Cascade<wbr>Biquad</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Deinterleave.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Deinterleave</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Fir.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Fir</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Interleave.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Interleave</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="matMul.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>mat<wbr>Mul</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="MatTrans.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Mat<wbr>Trans</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="RealimagToComplex.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Realimag<wbr>To<wbr>Complex</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Sqr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Sqr</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="fft_nodes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>FFT Nodes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="math_nodes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Math Nodes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="utility_nodes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Utility Nodes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../perf/index.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m16 11.78 4.24-7.33 1.73 1-5.23 9.05-6.51-3.75L5.46 19H22v2H2V3h2v14.54L9.5 8z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>Performance</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3c-1.27 0-2.4.8-2.82 2H3v2h1.95L2 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3L6.05 7h3.12c.33.85.98 1.5 1.83 1.83V20H2v2h20v-2h-9V8.82c.85-.32 1.5-.97 1.82-1.82h3.13L15 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3l-2.95-7H21V5h-6.17C14.4 3.8 13.27 3 12 3m0 2a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m-6.5 5.25L7 14H4zm13 0L20 14h-3z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>License</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Cascade<wbr>Biquad</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CascadeBiquad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-template-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Template Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" class="md-nav__link">
+    
+      <span aria-label="C++ type template parameter" class="objinfo-icon objinfo-icon__alias" title="C++ type template parameter">T</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span>T</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breathe-section-title-public-functions" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Public Functions</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Cascade<wbr>Biquad</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CascadeBiquad">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-size" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::size (C++ function parameter) — [in] : size of input; initializes _size"><span>size</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numChannels" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::numChannels (C++ function parameter) — [in] : Number of channels; initializes _numChannels"><span>num<wbr>Channels</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numStages" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::numStages (C++ function parameter) — [in] : Number of stages; initializes _numStages"><span>num<wbr>Stages</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-biquadForm" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::biquadForm (C++ function parameter) — DSPLIB_BIQUAD_DF1"><span>biquad<wbr>Form</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchInBytes" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::dataPitchInBytes (C++ function parameter) — [in] : Pitch of input buffer in bytes; initializes _dataPitchInBytes"><span>data<wbr>Pitch<wbr>In<wbr>Bytes</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchOutBytes" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::dataPitchOutBytes (C++ function parameter) — [in] : Pitch of output buffer in bytes; initializes _dataPitchOutBytes"><span>data<wbr>Pitch<wbr>Out<wbr>Bytes</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-filterVarPitchBytes" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::filterVarPitchBytes (C++ function parameter) — [in] : Pitch of filter buffer in bytes; initializes _filterVarPitchBytes"><span>filter<wbr>Var<wbr>Pitch<wbr>Bytes</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-enableNChCoeffs" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::enableNChCoeffs (C++ function parameter) — [in] : Every channel has its own set of filter coeff(T/F);"><span>enable<wbr>NCh<wbr>Coeffs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-errorCtx" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::errorCtx (C++ function parameter) — [in] : Error context for reporting constructor errors"><span>error<wbr>Ctx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Cascade<wbr>Biquad</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Input<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getInputAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-p-index" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getInputAddr::index (C++ function parameter) — [in] : Index of the input buffer (0)"><span>index</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Output<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getOutputAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-p-index" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getOutputAddr::index (C++ function parameter) — [in] : Index of the output buffer (0)"><span>index</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Num<wbr>Inputs</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNumInputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Num<wbr>Outputs</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNumOutputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>set<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="setAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setAddr::addrs (C++ function parameter) — [in] Structure containing source and destination addresses"><span>addrs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-mode" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setAddr::mode (C++ function parameter) — [in] Mode of address setting (input, output, or both)"><span>mode</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad4execEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>exec</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Name</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeName">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Id</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeId">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Buf<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeBufParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>set<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="setParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-paramId" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setParams::paramId (C++ function parameter) — [in] : Parameter ID to update"><span>param<wbr>Id</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-value" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setParams::value (C++ function parameter) — [in] : Pointer to a buffer containing the new parameter value"><span>value</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-size" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setParams::size (C++ function parameter) — [in] : The size in bytes of the payload"><span>size</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-errorCtx" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::setParams::errorCtx (C++ function parameter) — [inout] : Error context for reporting errors"><span>error<wbr>Ctx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-paramId" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getParams::paramId (C++ function parameter) — [in] : Parameter ID to query"><span>param<wbr>Id</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-value" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getParams::value (C++ function parameter) — [out] : Pointer to a buffer where parameters will be stored"><span>value</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-size" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getParams::size (C++ function parameter) — [inout] : Input: Capacity of value buffer in bytes."><span>size</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-errorCtx" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::DSPLIB::CascadeBiquad::getParams::errorCtx (C++ function parameter) — [inout] : Error context for reporting errors"><span>error<wbr>Ctx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP6DSPLIB13CascadeBiquadD0Ev" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>~Cascade<wbr>Biquad</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                
+                
+                  
+
+
+<h1 id="cascadebiquad">CascadeBiquad<a class="headerlink" href="#cascadebiquad" title="Link to this heading">¶</a></h1>
+<dl class="cpp class objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE">
+<span id="_CPPv3I0EN4TISP6DSPLIB13CascadeBiquadE"></span><span id="_CPPv2I0EN4TISP6DSPLIB13CascadeBiquadE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname sig-name-nonprimary"><a class="desctype n reference internal" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span class="n"><span class="pre">T</span></span></a></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CascadeBiquad</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">TISP</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VirtualOp</span></span><a class="headerlink" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Provides node-level APIs for the DSPLIB_CascadeBiquad kernel from DSPLIB. </p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-template-parameters">Template Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-template-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T"><span class="k">typename</span><span class="w"> </span><span class="sig-name descname"><span class="n">T</span></span><a class="headerlink" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="Permalink to this definition">¶</a></dt><dd><p>: Supports float and double </p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions<a class="headerlink" href="#breathe-section-title-public-functions" title="Permalink to this headline">¶</a></p>
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt">
+<span id="_CPPv3N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt"></span><span id="_CPPv2N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt"></span><span id="TISP::DSPLIB::CascadeBiquad::CascadeBiquad__TP.TP.TP.TP.s.s.s.uint32_t.s.s.s.b.ErrorCtxtR"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1ade94eca016c7f198965fa8c2c0f9024e"></span><span class="sig-name descname"><span class="n"><span class="pre">CascadeBiquad</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::pIn (C++ function parameter)"><span class="n sig-param"><span class="pre">pIn</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::pFilterCoeff (C++ function parameter)"><span class="n sig-param"><span class="pre">pFilterCoeff</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::pFilterVar (C++ function parameter)"><span class="n sig-param"><span class="pre">pFilterVar</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::pOut (C++ function parameter)"><span class="n sig-param"><span class="pre">pOut</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-size" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::size (C++ function parameter) — [in] : size of input; initializes _size"><span class="n sig-param"><span class="pre">size</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numChannels" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::numChannels (C++ function parameter) — [in] : Number of channels; initializes _numChannels"><span class="n sig-param"><span class="pre">numChannels</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numStages" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::numStages (C++ function parameter) — [in] : Number of stages; initializes _numStages"><span class="n sig-param"><span class="pre">numStages</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-biquadForm" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::biquadForm (C++ function parameter) — DSPLIB_BIQUAD_DF1"><span class="n sig-param"><span class="pre">biquadForm</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchInBytes" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::dataPitchInBytes (C++ function parameter) — [in] : Pitch of input buffer in bytes; initializes _dataPitchInBytes"><span class="n sig-param"><span class="pre">dataPitchInBytes</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchOutBytes" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::dataPitchOutBytes (C++ function parameter) — [in] : Pitch of output buffer in bytes; initializes _dataPitchOutBytes"><span class="n sig-param"><span class="pre">dataPitchOutBytes</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-filterVarPitchBytes" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::filterVarPitchBytes (C++ function parameter) — [in] : Pitch of filter buffer in bytes; initializes _filterVarPitchBytes"><span class="n sig-param"><span class="pre">filterVarPitchBytes</span></span></a>, </span><span class="sig-param-decl"><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-enableNChCoeffs" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::enableNChCoeffs (C++ function parameter) — [in] : Every channel has its own set of filter coeff(T/F);"><span class="n sig-param"><span class="pre">enableNChCoeffs</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n"><span class="pre">ErrorCtxt</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-errorCtx" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::errorCtx (C++ function parameter) — [in] : Error context for reporting constructor errors"><span class="n sig-param"><span class="pre">errorCtx</span></span></a></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Creates a DSPLIB_CascadeBiquad node. </p>
+<p>[DSPLIB_matTrans constructor]</p>
+<p>This constructor is called to create the node</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt><span class="sig-name descname">*pIn</span></dt><dd><p><strong>[in]</strong> : Pointer to input buffer; initializes _pIn </p>
+</dd>
+<dt><span class="sig-name descname">*pFilterCoeff</span></dt><dd><p><strong>[in]</strong> : Pointer to filter coefficient buffer; initializes _pFilterCoeff </p>
+</dd>
+<dt><span class="sig-name descname">*pFilterVar</span></dt><dd><p><strong>[in]</strong> : Pointer for node to hold state buffer; initializes _pFilterVar </p>
+</dd>
+<dt><span class="sig-name descname">*pOut</span></dt><dd><p><strong>[out]</strong> : Pointer to output buffer; initializes _pOut </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-size"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">size</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-size" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : size of input; initializes _size </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numChannels"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">numChannels</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numChannels" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Number of channels; initializes _numChannels </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numStages"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">numStages</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-numStages" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Number of stages; initializes _numStages </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-biquadForm"><span class="n">uint32_t</span><span class="w"> </span><span class="n sig-param sig-name">biquadForm</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-biquadForm" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : One of the following; initializes _biquadForm<ul class="simple">
+<li><p>DSPLIB_BIQUAD_DF1</p></li>
+<li><p>DSPLIB_BIQUAD_DF2</p></li>
+<li><p>DSPLIB_BIQUAD_TDF2 </p></li>
+</ul>
+</p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchInBytes"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">dataPitchInBytes</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchInBytes" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Pitch of input buffer in bytes; initializes _dataPitchInBytes </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchOutBytes"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">dataPitchOutBytes</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-dataPitchOutBytes" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Pitch of output buffer in bytes; initializes _dataPitchOutBytes </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-filterVarPitchBytes"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">filterVarPitchBytes</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-filterVarPitchBytes" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Pitch of filter buffer in bytes; initializes _filterVarPitchBytes </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-enableNChCoeffs"><span class="kt">bool</span><span class="w"> </span><span class="n sig-param sig-name">enableNChCoeffs</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-enableNChCoeffs" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Every channel has its own set of filter coeff(T/F); </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-errorCtx"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n">ErrorCtxt</span></a><span class="w"> </span><span class="p">&amp;</span><span class="n sig-param sig-name">errorCtx</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbR9ErrorCtxt-p-errorCtx" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Error context for reporting constructor errors </p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt">
+<span id="_CPPv3N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt"></span><span id="_CPPv2N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt"></span><span id="TISP::DSPLIB::CascadeBiquad::CascadeBiquad__TP.TP.TP.TP.s.s.s.uint32_t.s.s.s.b.cCP.uint32_t.ErrorCtxtR"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a25f7a521d490e957ea778c8bf0f71cf0"></span><span class="sig-name descname"><span class="n"><span class="pre">CascadeBiquad</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::pIn (C++ function parameter)"><span class="n sig-param"><span class="pre">pIn</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::pFilterCoeff (C++ function parameter)"><span class="n sig-param"><span class="pre">pFilterCoeff</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::pFilterVar (C++ function parameter)"><span class="n sig-param"><span class="pre">pFilterVar</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP6DSPLIB13CascadeBiquadE-p-T" title="TISP::DSPLIB::CascadeBiquad::T (C++ type template parameter) — : Supports float and double"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::pOut (C++ function parameter)"><span class="n sig-param"><span class="pre">pOut</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::size (C++ function parameter)"><span class="n sig-param"><span class="pre">size</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::numChannels (C++ function parameter)"><span class="n sig-param"><span class="pre">numChannels</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::numStages (C++ function parameter)"><span class="n sig-param"><span class="pre">numStages</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::biquadForm (C++ function parameter)"><span class="n sig-param"><span class="pre">biquadForm</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::dataPitchInBytes (C++ function parameter)"><span class="n sig-param"><span class="pre">dataPitchInBytes</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::dataPitchOutBytes (C++ function parameter)"><span class="n sig-param"><span class="pre">dataPitchOutBytes</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::filterVarPitchBytes (C++ function parameter)"><span class="n sig-param"><span class="pre">filterVarPitchBytes</span></span></a>, </span><span class="sig-param-decl"><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::enableNChCoeffs (C++ function parameter)"><span class="n sig-param"><span class="pre">enableNChCoeffs</span></span></a>, </span><span class="sig-param-decl"><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::nodeName (C++ function parameter)"><span class="n sig-param"><span class="pre">nodeName</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::nodeId (C++ function parameter)"><span class="n sig-param"><span class="pre">nodeId</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n"><span class="pre">ErrorCtxt</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="TISP::DSPLIB::CascadeBiquad::CascadeBiquad::errorCtx (C++ function parameter)"><span class="n sig-param"><span class="pre">errorCtx</span></span></a></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad13CascadeBiquadEP1TP1TP1TP1T6size_t6size_t6size_t8uint32_t6size_t6size_t6size_tbPKc8uint32_tR9ErrorCtxt" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Creates a DSPLIB_CascadeBiquad node with a name and ID. </p>
+<p>Convenience overload &amp;#8212; same as the primary constructor, but also takes <code class="docutils literal notranslate"><span class="pre">nodeName</span></code> and <code class="docutils literal notranslate"><span class="pre">nodeId</span></code>. </p>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t">
+<span id="_CPPv3NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t"></span><span id="_CPPv2NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t"></span><span id="TISP::DSPLIB::CascadeBiquad::getInputAddr__sC"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a45a8a72fd407dacaa6a4daeed2cc43f7"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getInputAddr</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-p-index" title="TISP::DSPLIB::CascadeBiquad::getInputAddr::index (C++ function parameter) — [in] : Index of the input buffer (0)"><span class="n sig-param"><span class="pre">index</span></span></a></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the address of an input buffer. </p>
+<p>[DSPLIB_CascadeBiquad constructor]</p>
+<p>Buffer Address Mapping:<ul class="simple">
+<li><p>index 0: _pIn (input data matrix) - managed by <a class="reference internal" href="#classTISP_1_1DSPLIB_1_1CascadeBiquad_1a77cb42eb03f451ec368cd063a5d29ffb"><span class="std std-ref">setAddr()</span></a></p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-p-index"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">index</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-p-index" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Index of the input buffer (0) </p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getInputAddrE6size_t-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p><strong>void*</strong> – : Pointer to the input buffer, or nullptr if the index is invalid </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t">
+<span id="_CPPv3NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t"></span><span id="_CPPv2NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t"></span><span id="TISP::DSPLIB::CascadeBiquad::getOutputAddr__sC"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a7c253e3120b33042d0527bb3d5de9027"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getOutputAddr</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-p-index" title="TISP::DSPLIB::CascadeBiquad::getOutputAddr::index (C++ function parameter) — [in] : Index of the output buffer (0)"><span class="n sig-param"><span class="pre">index</span></span></a></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the address of an output buffer. </p>
+<p>Buffer Address Mapping:<ul class="simple">
+<li><p>index 0: _pOut (output data matrix) - managed by <a class="reference internal" href="#classTISP_1_1DSPLIB_1_1CascadeBiquad_1a77cb42eb03f451ec368cd063a5d29ffb"><span class="std std-ref">setAddr()</span></a></p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-p-index"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">index</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-p-index" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Index of the output buffer (0) </p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getOutputAddrE6size_t-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p><strong>void*</strong> – : Pointer to the output buffer, or nullptr if the index is invalid </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv">
+<span id="_CPPv3NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv"></span><span id="_CPPv2NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv"></span><span id="TISP::DSPLIB::CascadeBiquad::getNumInputsC"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1add4f39ffafe563b49d80946ff51c45ca"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNumInputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the number of input buffers. </p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad12getNumInputsEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>size_t</strong> – : The number of input buffers (1: _pIn) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv">
+<span id="_CPPv3NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv"></span><span id="_CPPv2NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv"></span><span id="TISP::DSPLIB::CascadeBiquad::getNumOutputsC"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a720c66a2283f6d6b01afb51940a74de0"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNumOutputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the number of output buffers. </p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNumOutputsEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>size_t</strong> – : The number of output buffers (1: _pOut) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t">
+<span id="_CPPv3N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t"></span><span id="_CPPv2N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t"></span><span id="TISP::DSPLIB::CascadeBiquad::setAddr__SetAddr_tR.SetAddrMode_t"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a77cb42eb03f451ec368cd063a5d29ffb"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAddr</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">SetAddr_t</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs" title="TISP::DSPLIB::CascadeBiquad::setAddr::addrs (C++ function parameter) — [in] Structure containing source and destination addresses"><span class="n sig-param"><span class="pre">addrs</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">SetAddrMode_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-mode" title="TISP::DSPLIB::CascadeBiquad::setAddr::mode (C++ function parameter) — [in] Mode of address setting (input, output, or both)"><span class="n sig-param"><span class="pre">mode</span></span></a></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Set source and destination addresses for the operation. </p>
+<p>This function sets the source and destination addresses for the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs"><span class="n">SetAddr_t</span><span class="w"> </span><span class="p">&amp;</span><span class="n sig-param sig-name">addrs</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> Structure containing source and destination addresses </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-mode"><span class="n">SetAddrMode_t</span><span class="w"> </span><span class="n sig-param sig-name">mode</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad7setAddrER9SetAddr_t13SetAddrMode_t-p-mode" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> Mode of address setting (input, output, or both) </p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad4execEv">
+<span id="_CPPv3N4TISP6DSPLIB13CascadeBiquad4execEv"></span><span id="_CPPv2N4TISP6DSPLIB13CascadeBiquad4execEv"></span><span id="TISP::DSPLIB::CascadeBiquad::exec"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1ad58ca80c9a9e38a03f75f8ab0eac5f75"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">exec</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad4execEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Execute the operation. </p>
+<p>This function performs the actual operation. </p>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv">
+<span id="_CPPv3NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv"></span><span id="_CPPv2NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv"></span><span id="TISP::DSPLIB::CascadeBiquad::getNodeNameC"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1ab2fe6498fdeb537318e5c7255046c46c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getNodeName</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the name of the node. </p>
+<p>This function returns the name of the node.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad11getNodeNameEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>const</strong> – char* The name of the node </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv">
+<span id="_CPPv3NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv"></span><span id="_CPPv2NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv"></span><span id="TISP::DSPLIB::CascadeBiquad::getNodeIdC"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a4174536145a6d2c5f95b6bef25fa1719"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNodeId</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the ID of the node. </p>
+<p>This function returns the ID of the node.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad9getNodeIdEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>uint32_t</strong> – The ID of the node </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv">
+<span id="_CPPv3NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv"></span><span id="_CPPv2NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv"></span><span id="TISP::DSPLIB::CascadeBiquad::getNodeParamsC"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a31989c7154a3f80a1a262fc5d921d44d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getNodeParams</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the parameters of the node. </p>
+<p>This function returns a string containing the parameters of the node.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad13getNodeParamsEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>const</strong> – char* The parameters of the node </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv">
+<span id="_CPPv3NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv"></span><span id="_CPPv2NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv"></span><span id="TISP::DSPLIB::CascadeBiquad::getNodeBufParamsC"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a40e7a68383730eebf16136d28d46f455"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">NodeBufParams</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getNodeBufParams</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the input and output buffer parameters of the node. </p>
+<p>This function returns reference to node’s i/o buffer properties</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP6DSPLIB13CascadeBiquad16getNodeBufParamsEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>const</strong> – NodeBufParams&amp; : A constant reference to the NodeBufParams representing node’s i/o buffer properties </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt">
+<span id="_CPPv3N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt"></span><span id="_CPPv2N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt"></span><span id="TISP::DSPLIB::CascadeBiquad::setParams__uint16_t.voidP.s.ErrorCtxtR"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a73996e5434a566f73c140c40a9811982"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setParams</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-paramId" title="TISP::DSPLIB::CascadeBiquad::setParams::paramId (C++ function parameter) — [in] : Parameter ID to update"><span class="n sig-param"><span class="pre">paramId</span></span></a>, </span><span class="sig-param-decl"><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-value" title="TISP::DSPLIB::CascadeBiquad::setParams::value (C++ function parameter) — [in] : Pointer to a buffer containing the new parameter value"><span class="n sig-param"><span class="pre">value</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-size" title="TISP::DSPLIB::CascadeBiquad::setParams::size (C++ function parameter) — [in] : The size in bytes of the payload"><span class="n sig-param"><span class="pre">size</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n"><span class="pre">ErrorCtxt</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-errorCtx" title="TISP::DSPLIB::CascadeBiquad::setParams::errorCtx (C++ function parameter) — [inout] : Error context for reporting errors"><span class="n sig-param"><span class="pre">errorCtx</span></span></a></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Update runtime parameters with detailed error reporting. </p>
+<p>Updates the specified runtime parameter by ID with the data provided in the value buffer. The node strictly validates that the provided <code class="docutils literal notranslate"><span class="pre">size</span></code> argument matches or exceeds the expected byte size for the given parameter before mapping the state into the active node memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-paramId"><span class="n">uint16_t</span><span class="w"> </span><span class="n sig-param sig-name">paramId</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-paramId" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Parameter ID to update </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-value"><span class="kt">void</span><span class="w"> </span><span class="p">*</span><span class="n sig-param sig-name">value</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-value" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Pointer to a buffer containing the new parameter value </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-size"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">size</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-size" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : The size in bytes of the payload </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-errorCtx"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n">ErrorCtxt</span></a><span class="w"> </span><span class="p">&amp;</span><span class="n sig-param sig-name">errorCtx</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-p-errorCtx" title="Permalink to this definition">¶</a></dt><dd><p><strong>[inout]</strong> : Error context for reporting errors</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9setParamsE8uint16_tPv6size_tR9ErrorCtxt-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>true</strong> – : Parameters updated successfully </p></li>
+<li><p><strong>false</strong> – : Failed to update parameters </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt">
+<span id="_CPPv3N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt"></span><span id="_CPPv2N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt"></span><span id="TISP::DSPLIB::CascadeBiquad::getParams__uint16_t.voidP.sP.ErrorCtxtR"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a4a839e087110e4b5563072ab7992d80f"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getParams</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">uint16_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-paramId" title="TISP::DSPLIB::CascadeBiquad::getParams::paramId (C++ function parameter) — [in] : Parameter ID to query"><span class="n sig-param"><span class="pre">paramId</span></span></a>, </span><span class="sig-param-decl"><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-value" title="TISP::DSPLIB::CascadeBiquad::getParams::value (C++ function parameter) — [out] : Pointer to a buffer where parameters will be stored"><span class="n sig-param"><span class="pre">value</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-size" title="TISP::DSPLIB::CascadeBiquad::getParams::size (C++ function parameter) — [inout] : Input: Capacity of value buffer in bytes."><span class="n sig-param"><span class="pre">size</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n"><span class="pre">ErrorCtxt</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-errorCtx" title="TISP::DSPLIB::CascadeBiquad::getParams::errorCtx (C++ function parameter) — [inout] : Error context for reporting errors"><span class="n sig-param"><span class="pre">errorCtx</span></span></a></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Retrieve current runtime parameters with detailed error reporting. </p>
+<p>This API fetches the current live state from the node for the specified parameter ID and writes it into the provided buffer.</p>
+<p>If the user provides a buffer, it populates the requested data. If the buffer is too small (or <code class="docutils literal notranslate"><span class="pre">value</span></code> is <code class="docutils literal notranslate"><span class="pre">nullptr</span></code>), it safely fails (returns <code class="docutils literal notranslate"><span class="pre">false</span></code>) but injects the exact required byte capacity into <code class="docutils literal notranslate"><span class="pre">*size</span></code>, allowing the application to re-allocate precisely.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-paramId"><span class="n">uint16_t</span><span class="w"> </span><span class="n sig-param sig-name">paramId</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-paramId" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Parameter ID to query </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-value"><span class="kt">void</span><span class="w"> </span><span class="p">*</span><span class="n sig-param sig-name">value</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-value" title="Permalink to this definition">¶</a></dt><dd><p><strong>[out]</strong> : Pointer to a buffer where parameters will be stored </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-size"><span class="n">size_t</span><span class="w"> </span><span class="p">*</span><span class="n sig-param sig-name">size</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-size" title="Permalink to this definition">¶</a></dt><dd><p><strong>[inout]</strong> : Input: Capacity of value buffer in bytes. Output: Actual bytes written or required. </p>
+</dd>
+<dt id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-errorCtx"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n">ErrorCtxt</span></a><span class="w"> </span><span class="p">&amp;</span><span class="n sig-param sig-name">errorCtx</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-p-errorCtx" title="Permalink to this definition">¶</a></dt><dd><p><strong>[inout]</strong> : Error context for reporting errors</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquad9getParamsE8uint16_tPvP6size_tR9ErrorCtxt-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>true</strong> – : Parameters retrieved successfully </p></li>
+<li><p><strong>false</strong> – : Failed to retrieve parameters </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4N4TISP6DSPLIB13CascadeBiquadD0Ev">
+<span id="_CPPv3N4TISP6DSPLIB13CascadeBiquadD0Ev"></span><span id="_CPPv2N4TISP6DSPLIB13CascadeBiquadD0Ev"></span><span id="TISP::DSPLIB::CascadeBiquad::~CascadeBiquad"></span><span class="target" id="classTISP_1_1DSPLIB_1_1CascadeBiquad_1a0286f254281ad23755b5dc3f0831b49f"></span><span class="sig-name descname"><span class="n"><span class="pre">~CascadeBiquad</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N4TISP6DSPLIB13CascadeBiquadD0Ev" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Destructor. </p>
+<p>This destructor is set to default </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+
+
+
+
+
+
+  
+    
+  
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    Aug 07, 2026
+  </span>
+
+    
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2026, Texas Instruments Incorporated.
+        
+    </div>
+  
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "search.highlight", "toc.follow"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+      
+        <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+  </body>
+</html>

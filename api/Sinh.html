@@ -1,0 +1,2241 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="Sin.html">
+      
+      
+        <link rel="next" href="Sqrt.html">
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>Sinh - TISP Documentation</title>
+      
+    
+    
+      
+        
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.b15b49b1bf85bc4cc.min.css?v=77f6292e" />
+        <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+        <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/theme_overrides.css?v=71b8c996" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/immaterial_overrides.css?v=82266e3c" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="teal">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_CPPv4I0EN4TISP7MATHLIB4SinhE" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="TISP Documentation" class="md-header__button md-logo" aria-label="TISP Documentation" data-md-component="logo">
+      <img src="../_static/ti_logo_mono.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            <a href="../index.html" style="color:inherit;text-decoration:none">TISP Documentation</a>
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Sinh
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="teal"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/TexasInstruments/c7x_tisp" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    c7x_tisp
+    <span class="ti-branch">main</span>
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="TISP Documentation" class="md-nav__button md-logo" aria-label="TISP Documentation" data-md-component="logo">
+      <img src="../_static/ti_logo_mono.svg" alt="logo">
+    </a>
+    TISP Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/TexasInstruments/c7x_tisp" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33s1.71.11 2.5.33c1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    c7x_tisp
+    <span class="ti-branch">main</span>
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 0 1 8.5 12 3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5 3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97s-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1s.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>Architecture</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m13.13 22.19-1.63-3.83c1.57-.58 3.04-1.36 4.4-2.27zM5.64 12.5l-3.83-1.63 6.1-2.77C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39S16.66.269 11 5.93c-2.19 2.19-3.5 4.6-4.35 6.71-.28.75-.09 1.57.46 2.13l2.13 2.12c.55.56 1.37.74 2.12.46A19.1 19.1 0 0 0 18.07 13c5.66-5.66 3.54-10.61 3.54-10.61m-7.07 7.07c-.78-.78-.78-2.05 0-2.83s2.05-.78 2.83 0c.77.78.78 2.05 0 2.83s-2.05.78-2.83 0m-5.66 7.07-1.41-1.41zM6.24 22l3.64-3.64c-.34-.09-.67-.24-.97-.45L4.83 22zM2 22h1.41l4.77-4.76-1.42-1.41L2 20.59zm0-2.83 4.09-4.08c-.21-.3-.36-.62-.45-.97L2 17.76z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>Getting Started</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repository_layout.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h6v4H3zm12 7h6v4h-6zm0 7h6v4h-6zm-2-4H7v5h6v2H5V9h2v2h6z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>Repository Layout</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="index.html" class="md-nav__link ">
+              
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.5c-1.35-.85-3.8-1.5-5.5-1.5-1.65 0-3.35.3-4.75 1.05-.1.05-.15.05-.25.05-.25 0-.5-.25-.5-.5V6c.6-.45 1.25-.75 2-1 1.11-.35 2.33-.5 3.5-.5 1.95 0 4.05.4 5.5 1.5 1.45-1.1 3.55-1.5 5.5-1.5 1.17 0 2.39.15 3.5.5.75.25 1.4.55 2 1v14.6c0 .25-.25.5-.5.5-.1 0-.15 0-.25-.05-1.4-.75-3.1-1.05-4.75-1.05-1.7 0-4.15.65-5.5 1.5M12 8v11.5c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5V7c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5m1 3.5c1.11-.68 2.6-1 4.5-1 .91 0 1.76.09 2.5.28V9.23c-.87-.15-1.71-.23-2.5-.23q-2.655 0-4.5.84zm4.5.17c-1.71 0-3.21.26-4.5.79v1.69c1.11-.65 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24v-1.5c-.87-.16-1.71-.23-2.5-.23m2.5 2.9c-.87-.16-1.71-.24-2.5-.24-1.83 0-3.33.27-4.5.8v1.69c1.11-.66 2.6-.99 4.5-.99 1.04 0 1.88.08 2.5.24z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>API Reference</span>
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            <span>API Reference</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="framework.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Framework</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="errorHandling.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Error Handling</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="audio_nodes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Audio Nodes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dsp_nodes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>DSP Nodes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="fft_nodes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>FFT Nodes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="math_nodes.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    <span>Math Nodes</span>
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            <span>Math Nodes</span>
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Acos.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Acos</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Asin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Asin</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Atan.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Atan</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Cos.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Cos</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Cosh.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Cosh</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Div.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Div</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Exp.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Exp</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Log.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Log</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Log10.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Log10</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Log2.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Log2</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Sin.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Sin</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    <span>Sinh</span>
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Sinh</span>
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP7MATHLIB4SinhE" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Sinh</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sinh">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-template-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Template Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-p-T" class="md-nav__link">
+    
+      <span aria-label="C++ type template parameter" class="objinfo-icon objinfo-icon__alias" title="C++ type template parameter">T</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::T (C++ type template parameter) — : Supports float"><span>T</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breathe-section-title-public-functions" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Public Functions</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Sinh</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sinh">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-size" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::Sinh::size (C++ function parameter) — [in] : length of matrix; initializes _size"><span>size</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-errorCtx" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::Sinh::errorCtx (C++ function parameter) — [in] : Error context for reporting constructor errors"><span>error<wbr>Ctx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Sinh</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Input<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getInputAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-p-index" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::getInputAddr::index (C++ function parameter) — [in] : Index of the input buffer (0)"><span>index</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Output<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getOutputAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-p-index" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::getOutputAddr::index (C++ function parameter) — [in] : Index of the output buffer (0)"><span>index</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getNumInputsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Num<wbr>Inputs</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNumInputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getNumInputsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNumOutputsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Num<wbr>Outputs</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNumOutputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNumOutputsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>set<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="setAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::setAddr::addrs (C++ function parameter) — [in] : Structure containing source and destination addresses"><span>addrs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-mode" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::setAddr::mode (C++ function parameter) — [in] : Mode of address setting (input, output, or both)"><span>mode</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4execEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>exec</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh11getNodeNameEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Name</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeName">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh11getNodeNameEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh9getNodeIdEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Id</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeId">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh9getNodeIdEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNodeParamsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNodeParamsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Buf<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeBufParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4SinhD0Ev" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>~Sinh</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Sqrt.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Sqrt</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Tan.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Tan</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="Tanh.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Tanh</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="utility_nodes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    <span>Utility Nodes</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../perf/index.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m16 11.78 4.24-7.33 1.73 1-5.23 9.05-6.51-3.75L5.46 19H22v2H2V3h2v14.54L9.5 8z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>Performance</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../license.html" class="md-nav__link">
+        
+  
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3c-1.27 0-2.4.8-2.82 2H3v2h1.95L2 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3L6.05 7h3.12c.33.85.98 1.5 1.83 1.83V20H2v2h20v-2h-9V8.82c.85-.32 1.5-.97 1.82-1.82h3.13L15 14c-.47 2 1 3 3.5 3s4.06-1 3.5-3l-2.95-7H21V5h-6.17C14.4 3.8 13.27 3 12 3m0 2a1 1 0 0 1 1 1 1 1 0 0 1-1 1 1 1 0 0 1-1-1 1 1 0 0 1 1-1m-6.5 5.25L7 14H4zm13 0L20 14h-3z"/></svg>
+  
+  
+  <span class="md-ellipsis">
+    <span>License</span>
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP7MATHLIB4SinhE" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Sinh</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sinh">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-template-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Template Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-p-T" class="md-nav__link">
+    
+      <span aria-label="C++ type template parameter" class="objinfo-icon objinfo-icon__alias" title="C++ type template parameter">T</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::T (C++ type template parameter) — : Supports float"><span>T</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breathe-section-title-public-functions" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Public Functions</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Sinh</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sinh">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-size" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::Sinh::size (C++ function parameter) — [in] : length of matrix; initializes _size"><span>size</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-errorCtx" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::Sinh::errorCtx (C++ function parameter) — [in] : Error context for reporting constructor errors"><span>error<wbr>Ctx</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Sinh</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Input<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getInputAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-p-index" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::getInputAddr::index (C++ function parameter) — [in] : Index of the input buffer (0)"><span>index</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Output<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getOutputAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-p-index" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::getOutputAddr::index (C++ function parameter) — [in] : Index of the output buffer (0)"><span>index</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getNumInputsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Num<wbr>Inputs</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNumInputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh12getNumInputsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNumOutputsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Num<wbr>Outputs</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNumOutputs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNumOutputsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>set<wbr>Addr</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="setAddr">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-parameters" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Parameters</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::setAddr::addrs (C++ function parameter) — [in] : Structure containing source and destination addresses"><span>addrs</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-mode" class="md-nav__link">
+    
+      <span aria-label="C++ function parameter" class="objinfo-icon objinfo-icon__sub-data" title="C++ function parameter">p</span>
+    
+    <span class="md-ellipsis">
+      <span title="TISP::MATHLIB::Sinh::setAddr::mode (C++ function parameter) — [in] : Mode of address setting (input, output, or both)"><span>mode</span></span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4Sinh4execEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>exec</span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh11getNodeNameEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Name</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeName">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh11getNodeNameEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh9getNodeIdEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Id</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeId">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh9getNodeIdEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNodeParamsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNodeParamsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>get<wbr>Node<wbr>Buf<wbr>Params</span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="getNodeBufParams">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv-return-values" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>Return values</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_CPPv4N4TISP7MATHLIB4SinhD0Ev" class="md-nav__link">
+    
+    <span class="md-ellipsis">
+      <span>~Sinh</span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                
+                
+                  
+
+
+<h1 id="sinh">Sinh<a class="headerlink" href="#sinh" title="Link to this heading">¶</a></h1>
+<dl class="cpp class objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4I0EN4TISP7MATHLIB4SinhE">
+<span id="_CPPv3I0EN4TISP7MATHLIB4SinhE"></span><span id="_CPPv2I0EN4TISP7MATHLIB4SinhE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname sig-name-nonprimary"><a class="desctype n reference internal" href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-p-T" title="TISP::MATHLIB::Sinh::T (C++ type template parameter) — : Supports float"><span class="n"><span class="pre">T</span></span></a></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Sinh</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">TISP</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">VirtualOp</span></span><a class="headerlink" href="#_CPPv4I0EN4TISP7MATHLIB4SinhE" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Provides node-level APIs for the MATHLIB_sinh kernel from MATHLIB. </p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4I0EN4TISP7MATHLIB4SinhE-template-parameters">Template Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-template-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4I0EN4TISP7MATHLIB4SinhE-p-T"><span class="k">typename</span><span class="w"> </span><span class="sig-name descname"><span class="n">T</span></span><a class="headerlink" href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-p-T" title="Permalink to this definition">¶</a></dt><dd><p>: Supports float </p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions<a class="headerlink" href="#breathe-section-title-public-functions" title="Permalink to this headline">¶</a></p>
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt">
+<span id="_CPPv3N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt"></span><span id="_CPPv2N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt"></span><span id="TISP::MATHLIB::Sinh::Sinh__s.TP.TP.ErrorCtxtR"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1a9390680a9986a37d407b55187b650f62"></span><span class="sig-name descname"><span class="n"><span class="pre">Sinh</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-size" title="TISP::MATHLIB::Sinh::Sinh::size (C++ function parameter) — [in] : length of matrix; initializes _size"><span class="n sig-param"><span class="pre">size</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-p-T" title="TISP::MATHLIB::Sinh::T (C++ type template parameter) — : Supports float"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt" title="TISP::MATHLIB::Sinh::Sinh::pIn (C++ function parameter)"><span class="n sig-param"><span class="pre">pIn</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-p-T" title="TISP::MATHLIB::Sinh::T (C++ type template parameter) — : Supports float"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt" title="TISP::MATHLIB::Sinh::Sinh::pOut (C++ function parameter)"><span class="n sig-param"><span class="pre">pOut</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n"><span class="pre">ErrorCtxt</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-errorCtx" title="TISP::MATHLIB::Sinh::Sinh::errorCtx (C++ function parameter) — [in] : Error context for reporting constructor errors"><span class="n sig-param"><span class="pre">errorCtx</span></span></a></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Creates an sinh node. </p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt><span class="sig-name descname">*pIn</span></dt><dd><p><strong>[in]</strong> : Pointer to input matrix; initializes _pIn </p>
+</dd>
+<dt><span class="sig-name descname">*pOut</span></dt><dd><p><strong>[out]</strong> : Pointer to output matrix; initializes _pOut </p>
+</dd>
+<dt id="_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-size"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">size</span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-size" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : length of matrix; initializes _size </p>
+</dd>
+<dt id="_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-errorCtx"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n">ErrorCtxt</span></a><span class="w"> </span><span class="p">&amp;</span><span class="n sig-param sig-name">errorCtx</span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TR9ErrorCtxt-p-errorCtx" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Error context for reporting constructor errors </p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt">
+<span id="_CPPv3N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt"></span><span id="_CPPv2N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt"></span><span id="TISP::MATHLIB::Sinh::Sinh__s.TP.TP.cCP.uint32_t.ErrorCtxtR"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1afed4a6c6ad63fc6cb50439fb09fa69f0"></span><span class="sig-name descname"><span class="n"><span class="pre">Sinh</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt" title="TISP::MATHLIB::Sinh::Sinh::size (C++ function parameter)"><span class="n sig-param"><span class="pre">size</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-p-T" title="TISP::MATHLIB::Sinh::T (C++ type template parameter) — : Supports float"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt" title="TISP::MATHLIB::Sinh::Sinh::pIn (C++ function parameter)"><span class="n sig-param"><span class="pre">pIn</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="#_CPPv4I0EN4TISP7MATHLIB4SinhE-p-T" title="TISP::MATHLIB::Sinh::T (C++ type template parameter) — : Supports float"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt" title="TISP::MATHLIB::Sinh::Sinh::pOut (C++ function parameter)"><span class="n sig-param"><span class="pre">pOut</span></span></a>, </span><span class="sig-param-decl"><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt" title="TISP::MATHLIB::Sinh::Sinh::nodeName (C++ function parameter)"><span class="n sig-param"><span class="pre">nodeName</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt" title="TISP::MATHLIB::Sinh::Sinh::nodeId (C++ function parameter)"><span class="n sig-param"><span class="pre">nodeId</span></span></a>, </span><span class="sig-param-decl"><a class="desctype reference internal" href="errorHandling.html#_CPPv49ErrorCtxt" title="ErrorCtxt (C++ type) — Convenience alias for GraphSetupErrorCtxt."><span class="n"><span class="pre">ErrorCtxt</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt" title="TISP::MATHLIB::Sinh::Sinh::errorCtx (C++ function parameter)"><span class="n sig-param"><span class="pre">errorCtx</span></span></a></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh4SinhE6size_tP1TP1TPKc8uint32_tR9ErrorCtxt" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Creates a MATHLIB_sinh node with a name and ID. </p>
+<p>Convenience overload &amp;#8212; same as the primary constructor, but also takes <code class="docutils literal notranslate"><span class="pre">nodeName</span></code> and <code class="docutils literal notranslate"><span class="pre">nodeId</span></code>. </p>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t">
+<span id="_CPPv3NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t"></span><span id="_CPPv2NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t"></span><span id="TISP::MATHLIB::Sinh::getInputAddr__sC"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1a0c09e39262489007ba7c542319ae69bf"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getInputAddr</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-p-index" title="TISP::MATHLIB::Sinh::getInputAddr::index (C++ function parameter) — [in] : Index of the input buffer (0)"><span class="n sig-param"><span class="pre">index</span></span></a></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the address of an input buffer. </p>
+<p>Buffer Address Mapping:<ul class="simple">
+<li><p>index 0: _pIn (input array)</p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-p-index"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">index</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-p-index" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Index of the input buffer (0) </p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh12getInputAddrE6size_t-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p><strong>void*</strong> – : Pointer to the input buffer, or nullptr if the index is invalid </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t">
+<span id="_CPPv3NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t"></span><span id="_CPPv2NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t"></span><span id="TISP::MATHLIB::Sinh::getOutputAddr__sC"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1ab2f6122d4e4c174b74bce8ca3d046f44"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getOutputAddr</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-p-index" title="TISP::MATHLIB::Sinh::getOutputAddr::index (C++ function parameter) — [in] : Index of the output buffer (0)"><span class="n sig-param"><span class="pre">index</span></span></a></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the address of an output buffer. </p>
+<p>Buffer Address Mapping:<ul class="simple">
+<li><p>index 0: _pOut (output array)</p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-p-index"><span class="n">size_t</span><span class="w"> </span><span class="n sig-param sig-name">index</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-p-index" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Index of the output buffer (0) </p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even" id="_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh13getOutputAddrE6size_t-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-even"><p><strong>void*</strong> – : Pointer to the output buffer, or nullptr if the index is invalid </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP7MATHLIB4Sinh12getNumInputsEv">
+<span id="_CPPv3NK4TISP7MATHLIB4Sinh12getNumInputsEv"></span><span id="_CPPv2NK4TISP7MATHLIB4Sinh12getNumInputsEv"></span><span id="TISP::MATHLIB::Sinh::getNumInputsC"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1abdee1b2cf1e398f542ab2212548fd326"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNumInputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh12getNumInputsEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the number of input buffers. </p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP7MATHLIB4Sinh12getNumInputsEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh12getNumInputsEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>size_t</strong> – : The number of input buffers (1: _pIn) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP7MATHLIB4Sinh13getNumOutputsEv">
+<span id="_CPPv3NK4TISP7MATHLIB4Sinh13getNumOutputsEv"></span><span id="_CPPv2NK4TISP7MATHLIB4Sinh13getNumOutputsEv"></span><span id="TISP::MATHLIB::Sinh::getNumOutputsC"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1afead18a5202e151cfdf5689960653f7b"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNumOutputs</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNumOutputsEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the number of output buffers. </p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP7MATHLIB4Sinh13getNumOutputsEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNumOutputsEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>size_t</strong> – : The number of output buffers (1: _pOut) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t">
+<span id="_CPPv3N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t"></span><span id="_CPPv2N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t"></span><span id="TISP::MATHLIB::Sinh::setAddr__SetAddr_tR.SetAddrMode_t"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1a82708fe4c0c146efef58470c910364a3"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setAddr</span></span></span><span class="sig-paren">(</span><span class="sig-param-decl"><span class="n"><span class="pre">SetAddr_t</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs" title="TISP::MATHLIB::Sinh::setAddr::addrs (C++ function parameter) — [in] : Structure containing source and destination addresses"><span class="n sig-param"><span class="pre">addrs</span></span></a>, </span><span class="sig-param-decl"><span class="n"><span class="pre">SetAddrMode_t</span></span><span class="w"> </span><a class="n sig-param reference internal" href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-mode" title="TISP::MATHLIB::Sinh::setAddr::mode (C++ function parameter) — [in] : Mode of address setting (input, output, or both)"><span class="n sig-param"><span class="pre">mode</span></span></a></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Set source and destination addresses for the operation. </p>
+<p>This function sets the source and destination addresses for the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-parameters">Parameters<span class="colon">:</span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-parameters" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><dl class="simple api-field highlight">
+<dt id="_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs"><span class="n">SetAddr_t</span><span class="w"> </span><span class="p">&amp;</span><span class="n sig-param sig-name">addrs</span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-addrs" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Structure containing source and destination addresses </p>
+</dd>
+<dt id="_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-mode"><span class="n">SetAddrMode_t</span><span class="w"> </span><span class="n sig-param sig-name">mode</span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh7setAddrER9SetAddr_t13SetAddrMode_t-p-mode" title="Permalink to this definition">¶</a></dt><dd><p><strong>[in]</strong> : Mode of address setting (input, output, or both) </p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4N4TISP7MATHLIB4Sinh4execEv">
+<span id="_CPPv3N4TISP7MATHLIB4Sinh4execEv"></span><span id="_CPPv2N4TISP7MATHLIB4Sinh4execEv"></span><span id="TISP::MATHLIB::Sinh::exec"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1a7fe59c818f84db5a0b8bcc55ad2011c1"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">exec</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4Sinh4execEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Execute the operation. </p>
+<p>This function performs the actual operation. </p>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP7MATHLIB4Sinh11getNodeNameEv">
+<span id="_CPPv3NK4TISP7MATHLIB4Sinh11getNodeNameEv"></span><span id="_CPPv2NK4TISP7MATHLIB4Sinh11getNodeNameEv"></span><span id="TISP::MATHLIB::Sinh::getNodeNameC"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1a6df8056d510baa796f17533b44837203"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getNodeName</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh11getNodeNameEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the name of the node. </p>
+<p>This function returns the name of the node.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP7MATHLIB4Sinh11getNodeNameEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh11getNodeNameEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>const</strong> – char* The name of the node </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP7MATHLIB4Sinh9getNodeIdEv">
+<span id="_CPPv3NK4TISP7MATHLIB4Sinh9getNodeIdEv"></span><span id="_CPPv2NK4TISP7MATHLIB4Sinh9getNodeIdEv"></span><span id="TISP::MATHLIB::Sinh::getNodeIdC"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1a7d84b74d2432b7926a8aa54e1786e0e6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">uint32_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getNodeId</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh9getNodeIdEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the ID of the node. </p>
+<p>This function returns the ID of the node.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP7MATHLIB4Sinh9getNodeIdEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh9getNodeIdEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>uint32_t</strong> – The ID of the node </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4NK4TISP7MATHLIB4Sinh13getNodeParamsEv">
+<span id="_CPPv3NK4TISP7MATHLIB4Sinh13getNodeParamsEv"></span><span id="_CPPv2NK4TISP7MATHLIB4Sinh13getNodeParamsEv"></span><span id="TISP::MATHLIB::Sinh::getNodeParamsC"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1a8c8779647a97877b67d4bb157b76fc84"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">getNodeParams</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNodeParamsEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the parameters of the node. </p>
+<p>This function returns a string containing the parameters of the node.</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP7MATHLIB4Sinh13getNodeParamsEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh13getNodeParamsEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>const</strong> – char* The parameters of the node </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight sig-wrap cpp" id="_CPPv4NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv">
+<span id="_CPPv3NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv"></span><span id="_CPPv2NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv"></span><span id="TISP::MATHLIB::Sinh::getNodeBufParamsC"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1a73e90a74c80b81ed13fa21adc7043dde"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">NodeBufParams</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">getNodeBufParams</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Get the input and output buffer parameters of the node. </p>
+<p>This function returns reference to node’s i/o buffer properties</p>
+<dl class="field-list simple">
+<dt class="field-odd" id="_CPPv4NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv-return-values">Return values<span class="colon">:</span><a class="headerlink" href="#_CPPv4NK4TISP7MATHLIB4Sinh16getNodeBufParamsEv-return-values" title="Permalink to this headline">¶</a></dt>
+<dd class="field-odd"><p><strong>const</strong> – NodeBufParams&amp; : A constant reference to the NodeBufParams representing node’s i/o buffer properties </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function objdesc">
+<dt class="sig sig-object highlight cpp" id="_CPPv4N4TISP7MATHLIB4SinhD0Ev">
+<span id="_CPPv3N4TISP7MATHLIB4SinhD0Ev"></span><span id="_CPPv2N4TISP7MATHLIB4SinhD0Ev"></span><span id="TISP::MATHLIB::Sinh::~Sinh"></span><span class="target" id="classTISP_1_1MATHLIB_1_1Sinh_1ab6667cd15a1f5120e7e11cf7e609d19b"></span><span class="sig-name descname"><span class="n"><span class="pre">~Sinh</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N4TISP7MATHLIB4SinhD0Ev" title="Link to this definition">¶</a><br /></dt>
+<dd><p>Destructor. </p>
+<p>This destructor is set to default </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+
+
+
+
+
+
+  
+    
+  
+  
+
+
+  <aside class="md-source-file">
+    
+      
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="Last update">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
+    </span>
+    Aug 07, 2026
+  </span>
+
+    
+    
+    
+    
+  </aside>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2026, Texas Instruments Incorporated.
+        
+    </div>
+  
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.top", "search.highlight", "toc.follow"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+      
+        <script src="../_static/sphinx_immaterial_theme.32136f45f91ae6956.min.js?v=a7a9472a"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
+        <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    
+  </body>
+</html>

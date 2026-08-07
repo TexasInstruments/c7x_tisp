@@ -1,0 +1,241 @@
+/* sphinx-immaterial overrides for TISP documentation preview.
+   Targets .md-* Material Design selectors (not .wy-* RTD selectors).
+   Companion to theme_overrides.css which handles .wy-* (now harmless). */
+
+/* --- Override Material red to TI Red (PMS 3546C) ------------------------- */
+[data-md-color-primary="red"] {
+  --md-primary-fg-color:        #CC0000;
+  --md-primary-fg-color--light: #e03333;
+  --md-primary-fg-color--dark:  #990000;
+  --md-primary-bg-color:        #ffffff;
+  --md-primary-bg-color--light: rgba(255,255,255,0.7);
+}
+
+/* --- TI logo sizing ------------------------------------------------------- */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg {
+  height: 2.76rem;
+  width: auto;
+  max-width: 220px;
+}
+.md-header__button.md-logo {
+  padding-top:    0;
+  padding-bottom: 0;
+  margin-top:     0;
+  margin-bottom:  0;
+}
+.md-nav__title img {
+  max-width: 150px;
+  height: auto;
+}
+
+/* --- Branch badge --------------------------------------------------------- */
+.md-source__repository .ti-branch {
+  display: inline-block;
+  margin-left: 0.4em;
+  padding: 0 0.4em;
+  font-size: 0.85em;
+  font-weight: 600;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.35);
+  line-height: 1.5;
+}
+.md-source__repository .ti-branch::before {
+  content: "\26A1\00A0";
+  opacity: 0.8;
+}
+
+/* --- C++ API signature token colouring ------------------------------------ */
+.sig.sig-object { color: #24404a; }
+.sig .k, .sig .kd, .sig .kr, .sig .kn, .sig .kc { color: #007c8c; font-weight: 600; }
+.sig .kt { color: #0b6d77; font-weight: 600; }
+.sig .sig-name, .sig .sig-name .n { color: #113b47; font-weight: 700; }
+.sig .n, .sig .nc, .sig .nn { color: #115566; }
+.sig .sig-param, .sig .sig-param .n { color: #6a4a00; font-style: italic; }
+.sig .p, .sig .o, .sig .sig-paren { color: #7891a0; }
+.sig .m, .sig .mi, .sig .mf { color: #b06000; }
+
+/* --- Widen content area --------------------------------------------------- */
+.md-grid { max-width: 76rem; }
+
+/* --- TI brand link colours (red header + teal accent) -------------------- */
+:root,
+[data-md-color-primary="red"],
+[data-md-color-accent] {
+  --md-typeset-a-color:              #007C8C;
+  --md-accent-fg-color:              #00BBCC;
+  --md-accent-fg-color--transparent: rgba(0,187,204,0.10);
+}
+.md-typeset a:hover,
+.md-content a:hover,
+.md-nav__link:hover { color: #115566; }
+
+/* --- Sidebar scrollbars: gray inactive, teal on hover ---------------------- */
+.md-sidebar__scrollwrap { scrollbar-color: #9a9a9a transparent; }
+.md-sidebar__scrollwrap:hover { scrollbar-color: #007C8C transparent; }
+.md-sidebar__scrollwrap::-webkit-scrollbar-thumb {
+  background-color: #9a9a9a;
+}
+.md-sidebar__scrollwrap:hover::-webkit-scrollbar-thumb {
+  background-color: #007C8C;
+}
+.md-sidebar__scrollwrap:hover::-webkit-scrollbar-thumb:hover {
+  background-color: #00606c;
+}
+
+/* --- WORK-IN-PROGRESS banner (same mechanism as audiolib) ---------------
+   Renders a WIP notice at the top of every page's content area via
+   .md-content__inner::before. REMOVE this block once docs are final. */
+.md-content__inner::before {
+  content: "\1F6A7\00A0 Work in progress \2014 documentation under active development; may be incomplete or change without notice.";
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  background: #FFF4E5;
+  color: #7A4100;
+  border-left: 3px solid #CC0000;
+  border-radius: 3px;
+  padding: 10px 14px;
+  margin-bottom: 1.1em;
+  font-size: 0.95rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+
+/* --- Home-page cards ------------------------------------------------------ */
+.ti-home-grid .sd-card {
+  background: #ffffff;
+  border: 1px solid #E0E0E0;
+  border-top: 3px solid #007C8C;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.ti-home-grid .sd-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.13);
+}
+.ti-home-grid .sd-card-title { color: #115566; font-weight: 700; }
+.ti-home-grid .sd-card-title .sd-octicon,
+.ti-home-grid .sd-card-title svg { color: #007C8C; fill: #007C8C; }
+
+/* --- TI-palette headings -------------------------------------------------- */
+.md-typeset h1 { color: #115566; }
+.md-typeset h2 { border-bottom: 2px solid rgba(0,124,140,.2); padding-bottom: .2em; }
+
+/* --- TI Gray (#AAAAAA) + Black — primary brand neutrals ------------------- */
+
+/* h3/h4: subdued TI Gray so hierarchy is clear below teal h1/h2 */
+.md-typeset h3 { color: #555555; }
+.md-typeset h4 { color: #AAAAAA; }
+
+/* Inactive nav items: TI Gray */
+.md-nav__link { color: #555555; }
+
+/* Home-page card description text: TI Gray */
+.ti-home-grid .sd-card-body,
+.ti-home-grid .sd-card-body p { color: #555555; }
+
+/* Horizontal rules: TI secondary light gray */
+.md-typeset hr { border-color: #E0E0E0; }
+
+/* Table header row: TI Dark Teal bg + white text */
+.md-typeset table.docutils th {
+  background: #115566;
+  color: #ffffff;
+}
+
+/* Table row stripe: TI Light Gray tint */
+.md-typeset table.docutils tr:nth-child(even) td {
+  background: rgba(170,170,170,.08);
+}
+
+/* Code inline: slight TI Gray bg so it stands out from body */
+.md-typeset code {
+  background: rgba(170,170,170,.15);
+  color: #115566;
+}
+
+/* --- TI-palette admonitions (full box border, not just left accent) -------- */
+.md-typeset .admonition, .md-typeset details { border-color: #007C8C; }
+/* note / seealso: TI Mid Teal */
+.md-typeset .note.admonition, .md-typeset .seealso.admonition {
+  border: 1px solid #007C8C !important; border-left-width: 4px !important;
+  background: rgba(0,124,140,.06) !important;
+}
+.md-typeset .note.admonition > .admonition-title,
+.md-typeset .seealso.admonition > .admonition-title {
+  background: rgba(0,124,140,.12) !important; color: #007C8C !important; border-color:#007C8C !important;
+}
+.md-typeset .tip.admonition, .md-typeset .hint.admonition {
+  border: 1px solid #00875A !important; border-left-width: 4px !important;
+  background: rgba(0,135,90,.06) !important;
+}
+.md-typeset .tip.admonition > .admonition-title,
+.md-typeset .hint.admonition > .admonition-title {
+  background: rgba(0,135,90,.12) !important; color: #00875A !important; border-color:#00875A !important;
+}
+.md-typeset .important.admonition {
+  border: 1px solid #990000 !important; border-left-width: 4px !important;
+  background: rgba(153,0,0,.06) !important;
+}
+.md-typeset .important.admonition > .admonition-title {
+  background: rgba(153,0,0,.12) !important; color: #990000 !important; border-color:#990000 !important;
+}
+.md-typeset .warning.admonition, .md-typeset .caution.admonition, .md-typeset .danger.admonition {
+  border: 1px solid #CC0000 !important; border-left-width: 4px !important;
+  background: rgba(204,0,0,.05) !important;
+}
+.md-typeset .warning.admonition > .admonition-title,
+.md-typeset .caution.admonition > .admonition-title,
+.md-typeset .danger.admonition > .admonition-title {
+  background: rgba(204,0,0,.12) !important; color: #CC0000 !important; border-color:#CC0000 !important;
+}
+
+/* --- Process Black + TI Red — primary brand colors in content ------------ */
+
+/* Bold/strong text: explicit Process Black */
+.md-typeset strong, .md-typeset b { color: #000000; }
+
+/* Active TOC item: teal (complements teal links) */
+.md-nav__link--active { color: #007C8C !important; font-weight: 600; }
+
+/* Search highlight: TI Red background tint */
+.md-search-result mark { background: rgba(204,0,0,.15); color: #000000; }
+
+/* --- Left nav font size ---------------------------------------------------- */
+.md-nav__link {
+  font-size: 0.84rem;
+}
+.md-nav--secondary .md-nav__link {
+  font-size: 0.80rem;
+}
+/* "Table of Contents" / nav title same size as links */
+.md-nav__title {
+  font-size: 0.84rem;
+}
+
+/* --- Card hover: override sphinx-design blue → TI teal -------------------- */
+.ti-home-grid .sd-card { --sd-color-card-border-hover: #007C8C; }
+.ti-home-grid .sd-card.sd-card-hover:hover {
+  border-color: #007C8C !important;
+}
+.ti-home-grid a.sd-card:focus, .ti-home-grid a.sd-card:focus-visible {
+  outline: 2px solid #007C8C !important; outline-offset: 2px;
+}
+
+/* Admonition body + title font size (immaterial default is quite small) */
+.md-typeset .admonition, .md-typeset details { font-size: 0.72rem; }
+.md-typeset .admonition-title, .md-typeset summary { font-size: 0.74rem; }
+
+/* Admonition icons match their border color (icon is a mask via ::before bg) */
+.md-typeset .note.admonition > .admonition-title::before,
+.md-typeset .seealso.admonition > .admonition-title::before { background-color: #007C8C !important; }
+.md-typeset .tip.admonition > .admonition-title::before,
+.md-typeset .hint.admonition > .admonition-title::before { background-color: #00875A !important; }
+.md-typeset .important.admonition > .admonition-title::before { background-color: #990000 !important; }
+.md-typeset .warning.admonition > .admonition-title::before,
+.md-typeset .caution.admonition > .admonition-title::before,
+.md-typeset .danger.admonition > .admonition-title::before { background-color: #CC0000 !important; }

@@ -1,0 +1,47 @@
+/* TI branding overrides targeting RTD .wy-* selectors.
+   In sphinx-immaterial these selectors don't exist — these rules are inert
+   and kept for reference or future RTD builds.
+   WIP banner and C++ sig colouring have moved to immaterial_overrides.css
+   which uses .md-* Material Design selectors. */
+
+/* Color overrides */
+.wy-nav-top {
+  background-color: #CC0000; /* TI red */
+}
+.wy-side-nav-search {
+  background-color: #FCFCFC; /* Theme White */
+}
+.wy-side-nav-search > .icon {
+  color: #404040 !important; /* Theme Title Text */
+}
+.wy-side-nav-search > .version {
+  color: #404040 !important; /* Theme Title Text */
+}
+/* Content width override */
+.wy-nav-content {
+  max-width: 100% !important;
+}
+/* Version compatibility override */
+.wy-side-nav-search > div.version {
+  margin-top: -.4045em;
+  margin-bottom: .809em;
+  font-weight: 400;
+  color: hsla(0, 0%, 100%, .3);
+}
+/* Table wrapping override */
+.wy-table-responsive table td,
+.wy-table-responsive table th {
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* Logo sizing: the TI wordmark is a wide horizontal SVG (viewBox 800x183).
+   Let it span the sidebar width instead of shrinking to the default logo size. */
+.wy-side-nav-search > a img.logo,
+.wy-side-nav-search .logo {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
