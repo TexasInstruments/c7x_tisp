@@ -99,14 +99,12 @@ def main(args):
 
     # 6. delayNCh
     delaySizes = np.zeros(NUM_CHANNELS_OUT, dtype=np.int32)
-    maxDelay = np.max(delaySizes)
     k5 = audiolib.AUDIOLIB_delayNChannel(
         dType="float",
         mode=0,
         interleave=1,
         numChannels=NUM_CHANNELS_OUT,
         numSamples=BLOCK_SIZE,
-        maxDelay=maxDelay,  # Maximum delay value
         numExecReps=NUM_FRAMES,
         delaySize=delaySizes,
     )

@@ -17,7 +17,6 @@ extern "C" {
 
 typedef struct {
    uint8_t  testPattern; /* 0: constant, 1: sequential, 2: sequential_negative, 3: random etc.*/
-   uint32_t maxDelay;
    uint32_t dataType;
    uint32_t mode;
    void    *staticIn0;

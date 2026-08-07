@@ -77,7 +77,6 @@ TISP::SuperNode::superNodeVec *TISP_delayNChannel_createSuperNode(void          
                                                                   int32_t          interleave,
                                                                   int32_t          blockWidth,
                                                                   int32_t          blockHeight,
-                                                                  uint32_t         maxDelay,
                                                                   uint32_t         dataType,
                                                                   TISP::ErrorCtxt &errorCtx)
 {
@@ -86,7 +85,7 @@ TISP::SuperNode::superNodeVec *TISP_delayNChannel_createSuperNode(void          
       auto k0 = std::make_unique<TISP::AUDIOLIB::DelayNChannel<float>>(
           (float *) pInputBlock0, (float *) pDelaynchannel, (float *) pScratch, (float *) pOutputBlock, blockWidth,
           blockHeight, widthD, heightD, blockWidth * AUDIOLIB_sizeof(dataType), strideDelaynchannel,
-          blockWidth * AUDIOLIB_sizeof(dataType), interleave, mode, pDelaySize, maxDelay, errorCtx);
+          blockWidth * AUDIOLIB_sizeof(dataType), interleave, mode, pDelaySize, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating Delaynchannel<float> node: %s\n", errorCtx.getMessage());
@@ -112,7 +111,7 @@ TISP::SuperNode::superNodeVec *TISP_delayNChannel_createSuperNode(void          
       auto k0 = std::make_unique<TISP::AUDIOLIB::DelayNChannel<double>>(
           (double *) pInputBlock0, (double *) pDelaynchannel, (double *) pScratch, (double *) pOutputBlock, blockWidth,
           blockHeight, widthD, heightD, blockWidth * AUDIOLIB_sizeof(dataType), strideDelaynchannel,
-          blockWidth * AUDIOLIB_sizeof(dataType), interleave, mode, pDelaySize, maxDelay, errorCtx);
+          blockWidth * AUDIOLIB_sizeof(dataType), interleave, mode, pDelaySize, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating Delaynchannel<double> node: %s\n", errorCtx.getMessage());
@@ -204,7 +203,6 @@ int TISP_delayNChannel_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
       size_t outPitch    = currPrm.outPitch;
       size_t interleave  = currPrm.interleave;
       size_t mode        = currPrm.mode;
-      size_t maxDelay    = currPrm.maxDelay;
       size_t datasize    = AUDIOLIB_sizeof(currPrm.dataType);
 
       size_t strideDelay, widthD, heightD;
@@ -216,6 +214,18 @@ int TISP_delayNChannel_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          widthIn  = currPrm.heightIn;
          heightIn = currPrm.widthIn;
       }
+
+      uint32_t  delaySize[MAX_NUM_CHANNELS];
+      uint32_t *pDelaySize = (uint32_t *) currPrm.staticDelaySizeBuffer;
+      uint32_t  ch;
+      size_t    maxDelay = 0;
+      for (ch = 0; ch < currPrm.heightIn; ch++) {
+         delaySize[ch] = pDelaySize[ch];
+         if (pDelaySize[ch] > maxDelay) {
+            maxDelay = pDelaySize[ch];
+         }
+      }
+
       size_t CircularBufBaseMmemSize = 512;
       if (mode == 0) {
          widthD      = maxDelay;
@@ -229,12 +239,6 @@ int TISP_delayNChannel_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          widthD      = maxDelay + currPrm.widthIn;
          heightD     = currPrm.heightIn;
          strideDelay = CircularBufBaseMmemSize * AUDIOLIB_sizeof(currPrm.dataType);
-      }
-      uint32_t  delaySize[MAX_NUM_CHANNELS];
-      uint32_t *pDelaySize = (uint32_t *) currPrm.staticDelaySizeBuffer;
-      uint32_t  ch;
-      for (ch = 0; ch < currPrm.heightIn; ch++) {
-         delaySize[ch] = pDelaySize[ch];
       }
 
       size_t outputSize     = heightIn * outPitch;
@@ -270,7 +274,7 @@ int TISP_delayNChannel_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_delayNChannel_createSuperNode(
              currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), pDelay.get(), pScratch.get(), widthIn,
              heightIn, widthD, heightD, inPitch, outPitch, strideDelay, delaySize, mode, interleave, blockWidth,
-             blockHeight, maxDelay, currPrm.dataType, errorCtx);
+             blockHeight, currPrm.dataType, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -295,7 +299,7 @@ int TISP_delayNChannel_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_delayNChannel_createSuperNode(
                 currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), pDelay.get(), pScratch.get(), widthIn,
                 heightIn, widthD, heightD, inPitch, outPitch, strideDelay, delaySize, mode, interleave, blockWidth,
-                blockHeight, maxDelay, currPrm.dataType, errorCtx);
+                blockHeight, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -330,7 +334,7 @@ int TISP_delayNChannel_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_delayNChannel_createSuperNode(
                 currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), pDelay.get(), pScratch.get(), widthIn,
                 heightIn, widthD, heightD, inPitch, outPitch, strideDelay, delaySize, mode, interleave, blockWidth,
-                blockHeight, maxDelay, currPrm.dataType, errorCtx);
+                blockHeight, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());
