@@ -72,7 +72,6 @@ template <typename T> class Delay final : public VirtualOp {
    size_t _delayBytes;
    size_t _interleave;
    size_t _mode;
-   size_t _delaySize;
 
    TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_delay kernel. */
 
@@ -86,9 +85,9 @@ template <typename T> class Delay final : public VirtualOp {
     *                              Initializes @ref _pX.
     * @param [in]  *pD           : Pointer to the input delay matrix with shape as follows.
     *                            - If mode = '0':
-    *                              - Width = _delaySize; Height = _height.
+    *                              - Width = delaySize; Height = height.
     *                            - If mode = '1':
-    *                              - Width = (_delaySize + _width); Height = _height.
+    *                              - Width = (delaySize + width); Height = height.
     *                              Initializes @ref _pD.
     * @param [in]  *pS           : Pointer to the intermediate scratch memory with the same shape as the input matrix.
     *                              initializes @ref _pS.

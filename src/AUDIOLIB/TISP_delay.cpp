@@ -67,9 +67,6 @@ Delay<T>::Delay(T         *pX,
    if (mode > 1) {
       errorCtx.setInvalidParameterError("Delay constructor", "mode must be either zero or one");
    }
-   if (delaySize == 0) {
-      errorCtx.setInvalidParameterError("Delay constructor", "size of delay matrix must be greater than zero");
-   }
 
    // Only proceed with initialization if all validation checks passed
    if (errorCtx.isSuccess()) {
@@ -82,7 +79,6 @@ Delay<T>::Delay(T         *pX,
       _delayBytes    = delayBytes;
       _interleave    = interleave;
       _mode          = mode;
-      _delaySize     = delaySize;
 
       // Initialize bufParams with node input and output buffer parameters. The delay (pD)
       // and scratch (pS) buffers are internal/owned state, not exposed via getInputAddr(),

@@ -68,19 +68,18 @@ std::unique_ptr<TISP::VirtualOp> TISP_delayNChannel_createKernelObject(void     
                                                                        int32_t          interleave,
                                                                        int32_t          mode,
                                                                        uint32_t        *delaySize,
-                                                                       uint32_t         maxDelay,
                                                                        uint32_t         dataType,
                                                                        TISP::ErrorCtxt &errorCtx)
 {
    if (dataType == AUDIOLIB_FLOAT32) {
       return std::make_unique<TISP::AUDIOLIB::DelayNChannel<float>>(
           (float *) pIn, (float *) pDelay, (float *) pScratch, (float *) pOut, widthIn, heightIn, widthD, heightD,
-          strideIn, strideDelay, strideOut, interleave, mode, delaySize, maxDelay, errorCtx);
+          strideIn, strideDelay, strideOut, interleave, mode, delaySize, errorCtx);
    }
    else if (dataType == AUDIOLIB_FLOAT64) {
       return std::make_unique<TISP::AUDIOLIB::DelayNChannel<double>>(
           (double *) pIn, (double *) pDelay, (double *) pScratch, (double *) pOut, widthIn, heightIn, widthD, heightD,
-          strideIn, strideDelay, strideOut, interleave, mode, delaySize, maxDelay, errorCtx);
+          strideIn, strideDelay, strideOut, interleave, mode, delaySize, errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_delayNChannel_createKernelObject",
@@ -141,7 +140,6 @@ int TISP_delayNChannel_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          size_t strideOut  = currPrm.strideOutElements;
          size_t interleave = currPrm.interleave;
          size_t mode       = currPrm.mode;
-         size_t maxDelay   = currPrm.maxDelay;
          size_t numBlocks  = currPrm.numBlocks;
          size_t widthIn    = currPrm.widthIn;
          size_t heightIn   = currPrm.heightIn;
@@ -158,25 +156,30 @@ int TISP_delayNChannel_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          }
          size_t   heightcn                = heightIn;
          uint32_t CircularBufBaseMmemSize = 512;
-         if (mode == 0) {
-            widthD      = currPrm.maxDelay;
-            heightD     = currPrm.heightIn;
-            strideDelay = (currPrm.maxDelay + currPrm.widthIn) * dataSize;
-         }
-         else {
-            while (CircularBufBaseMmemSize < (currPrm.maxDelay + currPrm.widthIn)) {
-               CircularBufBaseMmemSize *= 2;
-            }
-            widthD      = currPrm.maxDelay + currPrm.widthIn;
-            heightD     = currPrm.heightIn;
-            strideDelay = CircularBufBaseMmemSize * AUDIOLIB_sizeof(currPrm.dataType);
-         }
 
          uint32_t  delaySize[MAX_NUM_CHANNELS];
          uint32_t *pDelaySize = (uint32_t *) currPrm.staticDelaySize;
          uint32_t  ch;
+         size_t    maxDelay = 0;
          for (ch = 0; ch < currPrm.heightIn; ch++) {
             delaySize[ch] = pDelaySize[ch];
+            if (pDelaySize[ch] > maxDelay) {
+               maxDelay = pDelaySize[ch];
+            }
+         }
+
+         if (mode == 0) {
+            widthD      = maxDelay;
+            heightD     = currPrm.heightIn;
+            strideDelay = (maxDelay + currPrm.widthIn) * dataSize;
+         }
+         else {
+            while (CircularBufBaseMmemSize < (maxDelay + currPrm.widthIn)) {
+               CircularBufBaseMmemSize *= 2;
+            }
+            widthD      = maxDelay + currPrm.widthIn;
+            heightD     = currPrm.heightIn;
+            strideDelay = CircularBufBaseMmemSize * AUDIOLIB_sizeof(currPrm.dataType);
          }
 
          eleCount             = 2 * (__C7X_VEC_SIZE_BYTES__ / AUDIOLIB_sizeof(currPrm.dataType));
@@ -240,7 +243,7 @@ int TISP_delayNChannel_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                            static_cast<uint32_t>(heightIn), static_cast<uint32_t>(widthD), static_cast<uint32_t>(heightD),
                            static_cast<int32_t>(strideIn), static_cast<int32_t>(strideDelay), static_cast<int32_t>(strideOut),
                            static_cast<uint32_t>(interleave), static_cast<uint32_t>(mode), static_cast<uint32_t *>(delaySize),
-                           static_cast<uint32_t>(maxDelay), currPrm.dataType, errorCtx);
+                           currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

@@ -31,7 +31,6 @@ def gen_testCaseParams(testParamsFile, currPrm):
     testId = currPrm["ID"]
     dType = currPrm["dType"]
     mode = currPrm["mode"]
-    maxDelay = currPrm["maxDelay"]
     interleave = currPrm["interleave"]
     numChannels = currPrm["numChannels"]
     numSamples = currPrm["numSamples"]
@@ -74,7 +73,6 @@ def gen_testCaseParams(testParamsFile, currPrm):
 
     idatFile.write("{\n")
     idatFile.write("%s, // Test pattern \n" % ((testType)))
-    idatFile.write("%s, // maxDelay \n" % ((maxDelay)))
     idatFile.write("%s, // precision \n" % ((TISP_utils.resolve_AUDIOLIB_dType(dType))))
     idatFile.write("%s, // mode \n" % ((mode)))
     idatFile.write("%s, // Input buffer\n" % ((inputBuff)))
@@ -245,6 +243,10 @@ def gen_test_case_header_file(testCase):
     if maxDelay not in delaySize:
         delaySize[numChannels - 1] = maxDelay
     np.random.shuffle(delaySize)
+
+    # Derive the maximum delay from the generated per-channel delay sizes (replaces the
+    # removed maxDelay kernel parameter) to size the delay buffer.
+    maxDelay = int(np.max(delaySize))
 
     if mode == 0:
         delayBuffSize = numSamples + maxDelay

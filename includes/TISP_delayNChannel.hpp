@@ -72,7 +72,6 @@ template <typename T> class DelayNChannel final : public VirtualOp {
    size_t _delayBytes;    /*!< Pitch in bytes of the delay matrix. */
    size_t _interleave;    /*!< 0 = non-interleaved, 1 = interleaved. */
    size_t _mode;          /*!< 0 = linear delay, 1 = circular delay. */
-   size_t _maxDelay;      /*!< Maximum delay in samples. */
 
    TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_delayNChannel kernel. */
 
@@ -104,7 +103,6 @@ template <typename T> class DelayNChannel final : public VirtualOp {
     *                            - `0`: Linear delay.
     *                            - `1`: Circular delay.
     * @param [in]  *pDelaySize   : Pointer to the array of per-channel delay sizes.
-    * @param [in]  maxDelay      : Maximum delay in samples.
     * @param [in]  errorCtx      : Error context for reporting constructor errors
     * @retval None
     * @throw None
@@ -124,7 +122,6 @@ template <typename T> class DelayNChannel final : public VirtualOp {
                  size_t     interleave,
                  size_t     mode,
                  uint32_t  *pDelaySize,
-                 size_t     maxDelay,
                  ErrorCtxt &errorCtx);
 
    /**
@@ -146,7 +143,6 @@ template <typename T> class DelayNChannel final : public VirtualOp {
     * @param [in]  interleave    : 0 = non-interleaved, 1 = interleaved.
     * @param [in]  mode          : 0 = linear delay, 1 = circular delay.
     * @param [in]  *pDelaySize   : Pointer to the array of per-channel delay sizes.
-    * @param [in]  maxDelay      : Maximum delay in samples.
     * @param [in]  nodeName      : Name of the node; sets @ref _nodeInfo name.
     * @param [in]  nodeId        : ID of the node; sets @ref _nodeInfo ID.
     * @param [in]  errorCtx      : Error context for reporting constructor errors
@@ -169,7 +165,6 @@ template <typename T> class DelayNChannel final : public VirtualOp {
                  size_t      interleave,
                  size_t      mode,
                  uint32_t   *pDelaySize,
-                 size_t      maxDelay,
                  const char *nodeName,
                  uint32_t    nodeId,
                  ErrorCtxt  &errorCtx);

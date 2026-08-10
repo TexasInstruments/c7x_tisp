@@ -28,15 +28,12 @@ DelayNChannel<T>::DelayNChannel(T         *pX,
                                 size_t     interleave,
                                 size_t     mode,
                                 uint32_t  *pDelaySize,
-                                size_t     maxDelay,
                                 ErrorCtxt &errorCtx)
     : _pX(pX), _pD(pD), _pS(pS), _pY(pY)
 {
-
    // Initialize _params with the node parameters
    (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
-                   "width=%zu,height=%zu,widthD=%zu,heightD=%zu,maxDelay=%zu", width, height, widthD, heightD,
-                   maxDelay);
+                   "width=%zu,height=%zu,widthD=%zu,heightD=%zu", width, height, widthD, heightD);
 
    // Input validation checks
    if (pX == nullptr) {
@@ -81,7 +78,6 @@ DelayNChannel<T>::DelayNChannel(T         *pX,
       _delayBytes    = delayBytes;
       _interleave    = interleave;
       _mode          = mode;
-      _maxDelay      = maxDelay;
 
       // Initialize bufParams with node input and output buffer parameters. The delay (pD)
       // and scratch (pS) buffers are internal/owned state, not exposed via getInputAddr(),
@@ -106,7 +102,6 @@ DelayNChannel<T>::DelayNChannel(T         *pX,
       kerInitArgs.funcStyle  = AUDIOLIB_FUNCTION_OPTIMIZED;
       kerInitArgs.interleave = interleave;
       kerInitArgs.mode       = mode;
-      kerInitArgs.maxDelay   = maxDelay;
       uint32_t *pDelay       = pDelaySize;
       uint32_t  ch;
       for (ch = 0; ch < heightD; ch++) {
@@ -173,7 +168,6 @@ DelayNChannel<T>::DelayNChannel(T          *pX,
                                 size_t      interleave,
                                 size_t      mode,
                                 uint32_t   *pDelaySize,
-                                size_t      maxDelay,
                                 const char *nodeName,
                                 uint32_t    nodeId,
                                 ErrorCtxt  &errorCtx)
@@ -191,7 +185,6 @@ DelayNChannel<T>::DelayNChannel(T          *pX,
                     interleave,
                     mode,
                     pDelaySize,
-                    maxDelay,
                     errorCtx
 
       )

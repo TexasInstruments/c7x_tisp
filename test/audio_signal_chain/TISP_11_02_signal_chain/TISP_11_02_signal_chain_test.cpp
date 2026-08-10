@@ -256,8 +256,8 @@ void *create_graph()
                                                  // heightD=NUM_CHANNELS_OUT
           NUM_CHANNELS_OUT * sizeof(float), (DELAY_MAX_DELAY + 1) * sizeof(float),
           NUM_CHANNELS_OUT * sizeof(float), // inPitchBytes, delayBytes, outPitchBytes
-          IS_INTERLEAVED, DELAY_NCH_LINEAR_MODE, (uint32_t *) pDelayNChSizes, DELAY_MAX_DELAY, "DelayNChannel", 5,
-          errorCtx); // interleave=IS_INTERLEAVED, mode=0, pDelaySize, maxDelay=DELAY_MAX_DELAY
+          IS_INTERLEAVED, DELAY_NCH_LINEAR_MODE, (uint32_t *) pDelayNChSizes, "DelayNChannel", 5,
+          errorCtx); // interleave=IS_INTERLEAVED, mode=0, pDelaySize (max delay derived internally)
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k5));
       }
