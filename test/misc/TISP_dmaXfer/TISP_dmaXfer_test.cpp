@@ -43,7 +43,7 @@ static int TISP_dmaXfer_d(uint32_t *pProfile, uint8_t /*LevelOfFeedback*/)
 
    FILE *fpOutputCSV = fopen("TISP_dmaXfer.csv", "w+");
    fprintf(fpOutputCSV,
-           "Kernel, Test ID, W, n, Total Bytes, Init Cycles, Warm Cycles, Pass/Fail\n");
+           "Kernel, Test ID, Mem, W, n, Total Bytes, Init Cycles, Warm Cycles, Pass/Fail\n");
 
    // CLEC / DRU initialisation — must happen once before any DMA transfer
 #if defined(__C7100__) || defined(__C7120__)
@@ -53,38 +53,43 @@ static int TISP_dmaXfer_d(uint32_t *pProfile, uint8_t /*LevelOfFeedback*/)
    App_dmautilsClecInitDru();
 #endif
 
+   for (int vi = 0; vi < N_EXT_VARIANTS; vi++) {
+      uint8_t    *extBase = gExtVariants[vi].extBuf;
+      const char *memTag  = gExtVariants[vi].name;
+
    for (int32_t tpi = 0; tpi < test_cases; tpi++) {
-      currPrm          = prm[tpi];
-      testNum          = currPrm.testID;
-      currentTestFail  = 0;
+      int32_t  run_idx         = vi * test_cases + tpi;
+      currPrm                  = prm[tpi];
+      testNum                  = currPrm.testID;
+      currentTestFail          = 0;
 
       // ── Seed sources + build golden refs for this case ────────────────────
       for (uint32_t t = 0; t < currPrm.n; t++) {
          uint32_t sz = currPrm.sizes[t];
          if (currPrm.dirs[t] == 'S') {
-            // Store L2→DDR: seed L2 source, clear DDR dest, build store ref
+            // Store L2→ext: seed L2 source, clear ext dest, build store ref
             auto *l2Src  = reinterpret_cast<float *>(L2_ADDR(currPrm.l2Slot[t]));
-            auto *ddrDst = reinterpret_cast<float *>(DDR_ADDR(currPrm.ddrSlot[t]));
-            auto *ref    = reinterpret_cast<float *>(REF_STORE_ADDR(currPrm.ddrSlot[t]));
+            auto *extDst = reinterpret_cast<float *>(EXT_ADDR(extBase, currPrm.ddrSlot[t]));
+            auto *ref    = reinterpret_cast<float *>(REF_STORE_EXT_ADDR(currPrm.ddrSlot[t]));
             uint32_t elems = sz / sizeof(float);
             for (uint32_t i = 0; i < elems; i++) {
                l2Src[i] = (float)(testNum * 10000 + t * 1000 + i);
             }
-            memset(ddrDst, 0, sz);
+            memset(extDst, 0, sz);
             dmaXfer_cn(reinterpret_cast<uint8_t *>(l2Src),
                        reinterpret_cast<uint8_t *>(ref), sz);
          }
          else {
-            // Load DDR→L2: seed DDR source, clear L2 dest, build load ref
-            auto *ddrSrc = reinterpret_cast<float *>(DDR_ADDR(currPrm.ddrSlot[t]));
+            // Load ext→L2: seed ext source, clear L2 dest, build load ref
+            auto *extSrc = reinterpret_cast<float *>(EXT_ADDR(extBase, currPrm.ddrSlot[t]));
             auto *l2Dst  = reinterpret_cast<float *>(L2_ADDR(currPrm.l2Slot[t]));
-            auto *ref    = reinterpret_cast<float *>(REF_LOAD_ADDR(currPrm.ddrSlot[t]));
+            auto *ref    = reinterpret_cast<float *>(REF_LOAD_EXT_ADDR(currPrm.ddrSlot[t]));
             uint32_t elems = sz / sizeof(float);
             for (uint32_t i = 0; i < elems; i++) {
-               ddrSrc[i] = (float)(50000 + testNum * 10000 + t * 1000 + i);
+               extSrc[i] = (float)(50000 + testNum * 10000 + t * 1000 + i);
             }
             memset(l2Dst, 0, sz);
-            dmaXfer_cn(reinterpret_cast<uint8_t *>(ddrSrc),
+            dmaXfer_cn(reinterpret_cast<uint8_t *>(extSrc),
                        reinterpret_cast<uint8_t *>(ref), sz);
          }
       }
@@ -96,10 +101,10 @@ static int TISP_dmaXfer_d(uint32_t *pProfile, uint8_t /*LevelOfFeedback*/)
       for (uint32_t t = 0; t < currPrm.n; t++) {
          if (currPrm.dirs[t] == 'S') {
             srcAddrs[t] = L2_ADDR(currPrm.l2Slot[t]);
-            dstAddrs[t] = DDR_ADDR(currPrm.ddrSlot[t]);
+            dstAddrs[t] = EXT_ADDR(extBase, currPrm.ddrSlot[t]);
          }
          else {
-            srcAddrs[t] = DDR_ADDR(currPrm.ddrSlot[t]);
+            srcAddrs[t] = EXT_ADDR(extBase, currPrm.ddrSlot[t]);
             dstAddrs[t] = L2_ADDR(currPrm.l2Slot[t]);
          }
          sizes[t] = currPrm.sizes[t];
@@ -133,7 +138,7 @@ static int TISP_dmaXfer_d(uint32_t *pProfile, uint8_t /*LevelOfFeedback*/)
 #if !defined(HOST_EMULATION)
       for (uint32_t t = 0; t < currPrm.n; t++) {
          void *dst = (currPrm.dirs[t] == 'S')
-            ? (void *)DDR_ADDR(currPrm.ddrSlot[t])
+            ? (void *)EXT_ADDR(extBase, currPrm.ddrSlot[t])
             : (void *)L2_ADDR(currPrm.l2Slot[t]);
          (void) CacheP_inv(dst, currPrm.sizes[t], CacheP_TYPE_ALLD);
       }
@@ -146,12 +151,12 @@ static int TISP_dmaXfer_d(uint32_t *pProfile, uint8_t /*LevelOfFeedback*/)
          void    *got;
          void    *ref;
          if (currPrm.dirs[t] == 'S') {
-            got = DDR_ADDR(currPrm.ddrSlot[t]);
-            ref = REF_STORE_ADDR(currPrm.ddrSlot[t]);
+            got = EXT_ADDR(extBase, currPrm.ddrSlot[t]);
+            ref = REF_STORE_EXT_ADDR(currPrm.ddrSlot[t]);
          }
          else {
             got = L2_ADDR(currPrm.l2Slot[t]);
-            ref = REF_LOAD_ADDR(currPrm.ddrSlot[t]);
+            ref = REF_LOAD_EXT_ADDR(currPrm.ddrSlot[t]);
          }
          status &= TI_compare_mem_2D_float(
             got, ref, 0, static_cast<double>(1e-6f),
@@ -161,22 +166,25 @@ static int TISP_dmaXfer_d(uint32_t *pProfile, uint8_t /*LevelOfFeedback*/)
       fail            = fail || currentTestFail;
 
       // ── Record cycles ─────────────────────────────────────────────────────
-      pProfile[3 * tpi]     = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
-      pProfile[3 * tpi + 1] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
-      pProfile[3 * tpi + 2] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
+      pProfile[3 * run_idx]     = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
+      pProfile[3 * run_idx + 1] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
+      pProfile[3 * run_idx + 2] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
 
       uint32_t totalBytes = 0;
       for (uint32_t t = 0; t < currPrm.n; t++) { totalBytes += currPrm.sizes[t]; }
 
-      snprintf(desc, sizeof(desc), "W%u n=%u, %u B total", currPrm.w, currPrm.n, totalBytes);
+      snprintf(desc, sizeof(desc), "W%u n=%u, %u B total [%s]",
+               currPrm.w, currPrm.n, totalBytes, memTag);
 
       fprintf(fpOutputCSV,
-              "TISP_dmaXfer_W%u, %u, %u, %u, %u, %u, %u, %d\n",
-              currPrm.w, testNum, currPrm.w, currPrm.n, totalBytes,
-              pProfile[3 * tpi], pProfile[3 * tpi + 1], pProfile[3 * tpi + 2], !currentTestFail);
+              "TISP_dmaXfer_W%u_%s, %u, %s, %u, %u, %u, %u, %u, %d\n",
+              currPrm.w, memTag, testNum, memTag, currPrm.w, currPrm.n, totalBytes,
+              pProfile[3 * run_idx], pProfile[3 * run_idx + 1], pProfile[3 * run_idx + 2],
+              !currentTestFail);
 
       TI_profile_add_test(testNum, (int)currPrm.n, 0, 0, currentTestFail, desc);
    }
+   } // vi
 
    fclose(fpOutputCSV);
    return fail;
@@ -204,9 +212,14 @@ int test_main_d()
    TISP_dmaXfer_testParams_t *prm;
    TISP_dmaXfer_getTestParams(&prm, &test_cases_count);
 
-   for (int32_t i = 0; i < test_cases_count; i++) {
-      printf("Test %4d: Init=%8u  Cold=%8u  Warm=%8u\n",
-             prm[i].testID, profile[3 * i], profile[3 * i + 1], profile[3 * i + 2]);
+   for (int vi = 0; vi < N_EXT_VARIANTS; vi++) {
+      const char *memTag = gExtVariants[vi].name;
+      for (int32_t i = 0; i < test_cases_count; i++) {
+         int32_t run_idx = vi * test_cases_count + i;
+         printf("[%s] Test %4d: Init=%8u  Cold=%8u  Warm=%8u\n",
+                memTag, prm[i].testID,
+                profile[3 * run_idx], profile[3 * run_idx + 1], profile[3 * run_idx + 2]);
+      }
    }
 
    if (fail == 0) { printf("\nDMAXfer test: PASS\n"); }

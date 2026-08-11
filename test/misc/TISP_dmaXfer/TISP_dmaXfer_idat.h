@@ -13,7 +13,7 @@ typedef struct {
    uint32_t testID;
    uint32_t n;
    uint32_t sizes[TISP_DMAXFER_MAX_TRANSFERS]; /* bytes per transfer */
-   char     dirs[TISP_DMAXFER_MAX_TRANSFERS];  /* 'S' store L2->DDR, 'L' load DDR->L2 */
+   char     dirs[TISP_DMAXFER_MAX_TRANSFERS];  /* 'S' store L2->ext, 'L' load ext->L2 */
    uint32_t ddrSlot[TISP_DMAXFER_MAX_TRANSFERS];
    uint32_t l2Slot[TISP_DMAXFER_MAX_TRANSFERS];
    uint32_t numReps;
