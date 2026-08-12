@@ -35,7 +35,7 @@ Fir<T>::Fir(T         *pX,
 
     : _pX(pX), _pS(pS), _pH(pH), _pY(pY), _inputSize(inputSize), _filterSize(filterSize), _batchSize(batchSize),
       _stateSize(stateSize), _pitchX(pitchX), _pitchS(pitchS), _pitchH(pitchH), _pitchY(pitchY),
-      _enableNchCoefs(enableNchCoefs), _enableMMA(enableMMA), _enableQ(enableQ), _Q(Q), _historyBufSize(0)
+      _enableNchCoefs(enableNchCoefs), _enableMMA(enableMMA), _enableQ(enableQ), _Q(Q)
 {
 
    // Initialize _params with the node parameters
@@ -99,8 +99,6 @@ Fir<T>::Fir(T         *pX,
       }
 
       if (errorCtx.isSuccess()) {
-
-         _historyBufSize = pitchS * batchSize;
 
          // instantiate appropriate bufparams for all buffers
          DSPLIB_bufParams2D_t bufParamsFilter;
@@ -391,8 +389,15 @@ template <typename T> bool Fir<T>::getParams(uint16_t paramId, void *value, size
 
 template <typename T> void Fir<T>::cleanInternalBuffers() noexcept
 {
-   if (_pS != nullptr && _historyBufSize > 0) {
-      std::memset(_pS, 0, _historyBufSize);
+   if (_pS != nullptr && _batchSize > 0 && _stateSize > 0) {
+      /* Only the first _stateSize elements of each row are live: the kernel indexes at most
+       * outputSize + filterSize - 2 == _stateSize - 1 within a row, and the pre/post block copies in
+       * exec() stay inside that same range. The rest of the row up to _pitchS is padding the kernel
+       * never touches. Clear row by row and leave the padding alone. */
+      for (size_t row = 0; row < _batchSize; row++) {
+         uint8_t *pRow = reinterpret_cast<uint8_t *>(_pS) + (row * _pitchS); // NOLINT(MISRA.PTR.ARITH)
+         std::memset(pRow, 0, _stateSize * sizeof(T));
+      }
    }
 }
 

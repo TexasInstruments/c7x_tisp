@@ -132,7 +132,6 @@ template <typename T> class MultiplexerSmooth final : public VirtualOp {
    size_t   _curentIdx;
    size_t   _prevIdx;
    uint32_t _maxInputs;
-   size_t   _historyBufSize; /*!< Size of history buffer. */
 
    NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
 

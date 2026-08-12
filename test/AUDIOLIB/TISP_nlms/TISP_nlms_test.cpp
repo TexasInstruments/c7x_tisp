@@ -65,14 +65,14 @@ std::unique_ptr<TISP::VirtualOp> TISP_nlms_createKernelObject(void            *p
                                                               void            *pOutI,
                                                               int32_t          width,
                                                               int32_t          height,
+                                                              int32_t          widthS,
+                                                              int32_t          heightS,
                                                               int32_t          filterLength,
                                                               float            stepSize,
-                                                              int32_t          numChannels,
                                                               int32_t          strideIn,
                                                               int32_t          strideOut,
                                                               uint32_t         sampleDataType,
                                                               uint32_t         isInterleave,
-                                                              uint32_t         historyBufSize,
                                                               TISP::ErrorCtxt &errorCtx)
 {
    std::unique_ptr<TISP::VirtualOp> kernel = nullptr;
@@ -80,8 +80,8 @@ std::unique_ptr<TISP::VirtualOp> TISP_nlms_createKernelObject(void            *p
    if (sampleDataType == AUDIOLIB_FLOAT32) {
       kernel = std::make_unique<TISP::AUDIOLIB::Nlms<float>>(
           (float *) pIn0, (float *) pIn1, (float *) pIn2, (float *) pIn3, (float *) pIn4, (float *) pOut,
-          (float *) pInD, (float *) pInDesiredD, (float *) pOutI, width, height, filterLength, stepSize, numChannels,
-          strideIn, strideOut, isInterleave, historyBufSize, errorCtx);
+          (float *) pInD, (float *) pInDesiredD, (float *) pOutI, width, height, widthS, heightS, filterLength,
+          stepSize, strideIn, strideOut, isInterleave, errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_nlms_createKernelObject", "unsupported data type for Nlms kernel");
@@ -181,7 +181,12 @@ int TISP_nlms_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          // This stride is used for alignment and memory allocation
          uint32_t stateStrideBytes = CircularBufBaseMmemSize * AUDIOLIB_sizeof(currPrm.dataType);
          uint32_t stateBufferSize  = currPrm.inChannels * stateStrideBytes;
-         size_t   historyBufSize   = stateBufferSize + stateStrideBytes;
+
+         /* State matrix geometry handed to the node: the row length is the power-of-2 circular
+          * buffer length (which the kernel also uses as the row stride) and there is one row per
+          * channel. This is the extent of stateBufferSize, excluding the alignment slack below. */
+         size_t widthS  = CircularBufBaseMmemSize;
+         size_t heightS = numChannels;
 
          // --- Scratch Buffer Allocation (Accumulators) ---
          // Scratch size for accumulators (e.g., 1 filter length per channel)
@@ -255,10 +260,10 @@ int TISP_nlms_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::ErrorCtxt errorCtx;
             auto            k0 = TISP_nlms_createKernelObject(
                 pIn.get(), pInDesired.get(), pStateBuffer, pScratchBuffer, pCoefficients, pOut.get(), pInD, pInDesiredD,
-                pOutI, static_cast<uint32_t>(widthIn), static_cast<uint32_t>(heightIn),
-                static_cast<uint32_t>(filterLength), static_cast<float>(stepSize), static_cast<uint32_t>(numChannels),
+                pOutI, static_cast<uint32_t>(widthIn), static_cast<uint32_t>(heightIn), static_cast<uint32_t>(widthS),
+                static_cast<uint32_t>(heightS), static_cast<uint32_t>(filterLength), static_cast<float>(stepSize),
                 static_cast<uint32_t>(strideIn), static_cast<uint32_t>(strideOut), currPrm.dataType,
-                static_cast<uint32_t>(isInterleave), static_cast<uint32_t>(historyBufSize), errorCtx);
+                static_cast<uint32_t>(isInterleave), errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

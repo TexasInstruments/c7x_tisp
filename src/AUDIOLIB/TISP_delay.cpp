@@ -24,13 +24,13 @@ Delay<T>::Delay(T         *pX,
                 size_t     widthD,
                 size_t     heightD,
                 size_t     inPitchBytes,
-                size_t     delayBytes,
+                size_t     delayPitchBytes,
                 size_t     outPitchBytes,
                 size_t     interleave,
                 size_t     mode,
                 size_t     delaySize,
                 ErrorCtxt &errorCtx)
-    : _pX(pX), _pD(pD), _pS(pS), _pY(pY), _historyBufSize(0)
+    : _pX(pX), _pD(pD), _pS(pS), _pY(pY), _widthD(0), _heightD(0), _delayPitchBytes(0), _mode(0)
 {
 
    // Initialize _params with the node parameters
@@ -70,17 +70,15 @@ Delay<T>::Delay(T         *pX,
 
    // Only proceed with initialization if all validation checks passed
    if (errorCtx.isSuccess()) {
-      _width         = width;
-      _height        = height;
-      _widthD        = widthD;
-      _heightD       = heightD;
-      _inPitchBytes  = inPitchBytes;
-      _outPitchBytes = outPitchBytes;
-      _delayBytes    = delayBytes;
-      _interleave    = interleave;
-      _mode          = mode;
-
-      _historyBufSize = heightD * delayBytes;
+      _width           = width;
+      _height          = height;
+      _widthD          = widthD;
+      _heightD         = heightD;
+      _inPitchBytes    = inPitchBytes;
+      _outPitchBytes   = outPitchBytes;
+      _delayPitchBytes = delayPitchBytes;
+      _interleave      = interleave;
+      _mode            = mode;
 
       // Initialize bufParams with node input and output buffer parameters. The delay (pD)
       // and scratch (pS) buffers are internal/owned state, not exposed via getInputAddr(),
@@ -125,7 +123,7 @@ Delay<T>::Delay(T         *pX,
          bufParamsDelay.data_type = AUDIOLIB_element_dType<T>::value;
          bufParamsDelay.dim_x     = static_cast<uint32_t>(widthD);
          bufParamsDelay.dim_y     = static_cast<uint32_t>(heightD);
-         bufParamsDelay.stride_y  = static_cast<int32_t>(delayBytes);
+         bufParamsDelay.stride_y  = static_cast<int32_t>(delayPitchBytes);
 
          bufParamsOut.data_type = AUDIOLIB_element_dType<T>::value;
          bufParamsOut.dim_x     = static_cast<uint32_t>(width);
@@ -188,8 +186,22 @@ template <typename T> void Delay<T>::exec() noexcept { AUDIOLIB_delay_exec(_hand
 
 template <typename T> void Delay<T>::cleanInternalBuffers() noexcept
 {
-   if (_pD != nullptr && _historyBufSize > 0) {
-      std::memset(_pD, 0, _historyBufSize);
+   if (_pD != nullptr && _heightD > 0) {
+      if (_mode == 0) {
+         /* Linear delay: the kernel only ever indexes the first _widthD (== delaySize) elements of a
+          * row, so the remainder of the row up to _delayPitchBytes is padding it never touches.
+          * Clear row by row and leave the padding alone. */
+         for (size_t row = 0; row < _heightD; row++) {
+            uint8_t *pRow = reinterpret_cast<uint8_t *>(_pD) + (row * _delayPitchBytes); // NOLINT(MISRA.PTR.ARITH)
+            std::memset(pRow, 0, _widthD * sizeof(T));
+         }
+      }
+      else {
+         /* Circular delay: AUDIOLIB_delay_init derives delayBuffSize from stride_y, so readIdx and
+          * writeIdx wrap over the whole _delayPitchBytes-wide row. The entire row is live circular
+          * buffer - clearing only _widthD would leave stale samples that readIdx walks into. */
+         std::memset(_pD, 0, _heightD * _delayPitchBytes);
+      }
    }
 }
 
@@ -203,7 +215,7 @@ Delay<T>::Delay(T          *pX,
                 size_t      widthD,
                 size_t      heightD,
                 size_t      inPitchBytes,
-                size_t      delayBytes,
+                size_t      delayPitchBytes,
                 size_t      outPitchBytes,
                 size_t      interleave,
                 size_t      mode,
@@ -220,7 +232,7 @@ Delay<T>::Delay(T          *pX,
             widthD,
             heightD,
             inPitchBytes,
-            delayBytes,
+            delayPitchBytes,
             outPitchBytes,
             interleave,
             mode,

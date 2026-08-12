@@ -30,22 +30,23 @@ Nlms<T>::Nlms(T         *pIn,
               T         *pOutD,
               size_t     widthIn,
               size_t     heightIn,
+              size_t     widthS,
+              size_t     heightS,
               size_t     filterLength,
               float      stepSize,
-              size_t     numChannels,
               size_t     inPitchBytes,
               size_t     outPitchBytes,
               size_t     isInterleave,
-              size_t     historyBufSize,
               ErrorCtxt &errorCtx)
     : _pIn(pIn), _pInDesired(pInDesired), _pStateBuffer(pStateBuffer), _pScratchBuffer(pScratchBuffer),
-      _pCoefficients(pCoefficients), _pOut(pOut), _pInD(pInD), _pInDesiredD(pInDesiredD), _pOutI(pOutD)
+      _pCoefficients(pCoefficients), _pOut(pOut), _pInD(pInD), _pInDesiredD(pInDesiredD), _pOutI(pOutD), _widthS(0),
+      _heightS(0)
 {
 
    // Initialize node metadata
    (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
-                   "widthIn=%zu, heightIn=%zu, filterLength=%zu, stepSize=%.4f, numChannels=%zu", widthIn, heightIn,
-                   filterLength, stepSize, numChannels);
+                   "widthIn=%zu, heightIn=%zu, widthS=%zu, heightS=%zu, filterLength=%zu, stepSize=%.4f", widthIn,
+                   heightIn, widthS, heightS, filterLength, stepSize);
 
    // Input validation checks
    if (pIn == nullptr) {
@@ -89,28 +90,46 @@ Nlms<T>::Nlms(T         *pIn,
    if (stepSize == 0) {
       errorCtx.setInvalidParameterError("Nlms constructor", "stepSize must be greater than zero");
    }
-   if (numChannels == 0) {
-      errorCtx.setInvalidParameterError("Nlms constructor", "numChannels must be greater than zero");
-   }
    if (isInterleave > 1) {
       errorCtx.setInvalidParameterError("Nlms constructor", "isInterleave must be either zero or one");
    }
-   if (historyBufSize == 0) {
-      errorCtx.setInvalidParameterError("Nlms constructor", "historyBufSize must be greater than zero");
+
+   /* The circular buffer length is the smallest power of two >= 512 that holds
+    * filterLength + samples-per-channel, the state row stride is fixed at that length, and the row
+    * count comes from bufParamsIn dim_y. A state matrix smaller than that is corrupted by the kernel
+    * during exec(), so reject it here rather than discovering it at run time. */
+   if (isInterleave <= 1 && widthIn > 0 && heightIn > 0 && filterLength > 0) {
+      const size_t totalSamples = (isInterleave == 0) ? widthIn : heightIn;  /* dim_x */
+      const size_t numRows      = (isInterleave == 0) ? heightIn : widthIn;  /* dim_y */
+
+      size_t circBuffSize = 512;
+      while (circBuffSize < (filterLength + totalSamples)) {
+         circBuffSize *= 2;
+      }
+
+      if (widthS < circBuffSize) {
+         errorCtx.setInvalidParameterError("Nlms constructor",
+                                           "widthS is smaller than the circular state length required by the kernel");
+      }
+      if (heightS < numRows) {
+         errorCtx.setInvalidParameterError("Nlms constructor", "heightS is smaller than the number of channels");
+      }
+   }
+   else {
+      /* Nothing to do here - the individual parameter checks above already reported the error */
    }
 
    // Only proceed with initialization if all validation checks passed
    if (errorCtx.isSuccess()) {
       _widthIn       = widthIn;
       _heightIn      = heightIn;
+      _widthS        = widthS;
+      _heightS       = heightS;
       _filterLength  = filterLength;
       _stepSize      = stepSize;
-      _numChannels   = numChannels;
       _inPitchBytes  = inPitchBytes;
       _outPitchBytes = outPitchBytes;
       _isInterleave  = isInterleave;
-
-      _historyBufSize = historyBufSize;
 
       // Initialize bufParams with node input and output buffer parameters. Nlms has two
       // inputs (pIn, pInDesired) of identical geometry and one output (pOut).
@@ -136,7 +155,7 @@ Nlms<T>::Nlms(T         *pIn,
       kerInitArgs.funcStyle    = AUDIOLIB_FUNCTION_OPTIMIZED;
       kerInitArgs.filterLength = filterLength;
       kerInitArgs.stepSize     = stepSize;
-      kerInitArgs.numChannels  = numChannels;
+      kerInitArgs.numChannels = static_cast<uint32_t>((isInterleave == 0) ? heightIn : widthIn);
 
       _handle = make_unique_handle<char>(AUDIOLIB_nlms_getHandleSize(&kerInitArgs));
 
@@ -353,13 +372,13 @@ Nlms<T>::Nlms(T          *pIn,
               T          *pOutD,
               size_t      widthIn,
               size_t      heightIn,
+              size_t      widthS,
+              size_t      heightS,
               size_t      filterLength,
               float       stepSize,
-              size_t      numChannels,
               size_t      inPitchBytes,
               size_t      outPitchBytes,
               size_t      isInterleave,
-              size_t      historyBufSize,
               const char *nodeName,
               uint32_t    nodeId,
               ErrorCtxt  &errorCtx)
@@ -374,13 +393,13 @@ Nlms<T>::Nlms(T          *pIn,
            pOutD,
            widthIn,
            heightIn,
+           widthS,
+           heightS,
            filterLength,
            stepSize,
-           numChannels,
            inPitchBytes,
            outPitchBytes,
            isInterleave,
-           historyBufSize,
            errorCtx)
 {
    (void) pIn;
@@ -394,13 +413,13 @@ Nlms<T>::Nlms(T          *pIn,
    (void) pOutD;
    (void) widthIn;
    (void) heightIn;
+   (void) widthS;
+   (void) heightS;
    (void) filterLength;
    (void) stepSize;
-   (void) numChannels;
    (void) inPitchBytes;
    (void) outPitchBytes;
    (void) isInterleave;
-   (void) historyBufSize;
    _nodeInfo.setName(nodeName);
    _nodeInfo.nodeId = nodeId;
 }
@@ -413,8 +432,12 @@ Nlms<T>::Nlms(T          *pIn,
 
 template <typename T> void Nlms<T>::cleanInternalBuffers() noexcept
 {
-   if (_pStateBuffer != nullptr && _historyBufSize > 0) {
-      std::memset(_pStateBuffer, 0, _historyBufSize);
+   if (_pStateBuffer != nullptr && _widthS > 0 && _heightS > 0) {
+      /* The kernel fixes the state row stride at the circular buffer length, so widthS is both the
+       * row length and the stride and the matrix is contiguous - a single memset covers it. The
+       * constructor already verified widthS/heightS are at least the geometry the kernel derives,
+       * so this clears the whole live region and stays inside the buffer. */
+      std::memset(_pStateBuffer, 0, _heightS * _widthS * sizeof(T));
    }
 }
 

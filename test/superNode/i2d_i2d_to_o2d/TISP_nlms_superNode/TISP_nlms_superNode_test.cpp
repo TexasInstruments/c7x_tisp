@@ -76,7 +76,6 @@ TISP::SuperNode::superNodeVec *TISP_nlms_createSuperNode(void            *pIn,
                                                          int32_t          heightOut,
                                                          int32_t          filterLength,
                                                          float            stepSize,
-                                                         int32_t          numChannels,
                                                          int32_t          inPitch,
                                                          int32_t          outPitch,
                                                          int32_t          blockWidthIn,
@@ -85,7 +84,8 @@ TISP::SuperNode::superNodeVec *TISP_nlms_createSuperNode(void            *pIn,
                                                          int32_t          blockHeightOut,
                                                          uint32_t         dataType,
                                                          uint32_t         isInterleave,
-                                                         uint32_t         historyBufSize,
+                                                         int32_t          widthS,
+                                                         int32_t          heightS,
                                                          TISP::ErrorCtxt &errorCtx)
 {
    TISP::SuperNode::superNodeVec *mySuperNodeVec = nullptr;
@@ -94,8 +94,8 @@ TISP::SuperNode::superNodeVec *TISP_nlms_createSuperNode(void            *pIn,
       auto k0 = std::make_unique<TISP::AUDIOLIB::Nlms<float>>(
           (float *) pInputBlock0, (float *) pInputBlock1, (float *) pStateBlock, (float *) pScratchBlock,
           (float *) pCoefficientsBlock, (float *) pOutputBlock, (float *) pInD, (float *) pInDesiredD, (float *) pOutI,
-          blockWidthIn, blockHeightIn, filterLength, stepSize, numChannels, blockWidthIn * AUDIOLIB_sizeof(dataType),
-          blockWidthIn * AUDIOLIB_sizeof(dataType), isInterleave, historyBufSize, errorCtx);
+          blockWidthIn, blockHeightIn, widthS, heightS, filterLength, stepSize,
+          blockWidthIn * AUDIOLIB_sizeof(dataType), blockWidthIn * AUDIOLIB_sizeof(dataType), isInterleave, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating Nlms<float> node: %s\n", errorCtx.getMessage());
@@ -187,7 +187,6 @@ int TISP_nlms_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
       size_t datasize     = AUDIOLIB_sizeof(currPrm.dataType);
       size_t filterLength = currPrm.filterLength;
       float  stepSize     = currPrm.stepSize;
-      size_t numChannels  = currPrm.inChannels;
       size_t inPitchB     = blockWidth * datasize;
       size_t isInterleave = currPrm.isInterleave;
 
@@ -259,8 +258,8 @@ int TISP_nlms_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_nlms_createSuperNode(
              currPrm.staticIn0, currPrm.staticDesired, pOut, pInputBlock0.get(), pInputBlock1.get(), pStateBuffer.get(),
              pScratchBuffer.get(), pCoefficients.get(), pOutputBlock.get(), pInD, pInDesiredD, pOutI, widthIn, heightIn,
-             widthOut, heightOut, filterLength, stepSize, numChannels, inPitch, outPitch, blockWidth, blockHeight,
-             blockWidthOut, blockHeightOut, currPrm.dataType, isInterleave, stateBufferSize, errorCtx);
+             widthOut, heightOut, filterLength, stepSize, inPitch, outPitch, blockWidth, blockHeight, blockWidthOut,
+             blockHeightOut, currPrm.dataType, isInterleave, CircularBufBaseMmemSize, blockHeight, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -293,9 +292,9 @@ int TISP_nlms_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_nlms_createSuperNode(
                 currPrm.staticIn0, currPrm.staticDesired, pOut, pInputBlock0.get(), pInputBlock1.get(),
                 pStateBuffer.get(), pScratchBuffer.get(), pCoefficients.get(), pOutputBlock.get(), pInD, pInDesiredD,
-                pOutI, widthIn, heightIn, widthOut, heightOut, filterLength, stepSize, numChannels, inPitch, outPitch,
-                blockWidth, blockHeight, blockWidthOut, blockHeightOut, currPrm.dataType, isInterleave, stateBufferSize,
-                errorCtx);
+                pOutI, widthIn, heightIn, widthOut, heightOut, filterLength, stepSize, inPitch, outPitch, blockWidth,
+                blockHeight, blockWidthOut, blockHeightOut, currPrm.dataType, isInterleave, CircularBufBaseMmemSize,
+                blockHeight, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -335,9 +334,9 @@ int TISP_nlms_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_nlms_createSuperNode(
                 currPrm.staticIn0, currPrm.staticDesired, pOut, pInputBlock0.get(), pInputBlock1.get(),
                 pStateBuffer.get(), pScratchBuffer.get(), pCoefficients.get(), pOutputBlock.get(), pInD, pInDesiredD,
-                pOutI, widthIn, heightIn, widthOut, heightOut, filterLength, stepSize, numChannels, inPitch, outPitch,
-                blockWidth, blockHeight, blockWidthOut, blockHeightOut, currPrm.dataType, isInterleave, stateBufferSize,
-                errorCtx);
+                pOutI, widthIn, heightIn, widthOut, heightOut, filterLength, stepSize, inPitch, outPitch, blockWidth,
+                blockHeight, blockWidthOut, blockHeightOut, currPrm.dataType, isInterleave, CircularBufBaseMmemSize,
+                blockHeight, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());

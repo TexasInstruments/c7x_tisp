@@ -117,6 +117,7 @@ Tableinterpolate<T>::Tableinterpolate(T         *pX,
          if (errorCtx.isSuccess()) {
             AUDIOLIB_STATUS initRet = AUDIOLIB_tableInterpolate_init(
                 _handle.get(), &bufParamsIn, &bufParamsTableinterpolate, &bufParamsOut, &kerInitArgs);
+            errorCtx.remapXLIBError(initRet, "AUDIOLIB_tableInterpolate_init");
 #if defined(__C7524__)
             if (tableInterpolateSize >= tableSamples) {
                if (errorCtx.isSuccess()) {

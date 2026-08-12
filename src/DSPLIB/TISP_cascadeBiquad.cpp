@@ -29,7 +29,7 @@ CascadeBiquad<T>::CascadeBiquad(T         *pIn,
                                 bool       enableNChCoeffs,
                                 ErrorCtxt &errorCtx)
     : _pIn(pIn), _pFilterCoeff(pFilterCoeff), _pFilterVar(pFilterVar), _pOut(pOut), _coeffSizeBytes(0),
-      _historyBufSize(0)
+      _stateBufferSize(0)
 
 {
 
@@ -93,8 +93,8 @@ CascadeBiquad<T>::CascadeBiquad(T         *pIn,
       errorCtx.remapXLIBError(status, "DSPLIB_cascadeBiquad_get_coefficientsBufferDesc");
 
       if (errorCtx.isSuccess()) {
-         _coeffSizeBytes = bufParamsFilterCoeff.dim_y * bufParamsFilterCoeff.stride_y;
-         _historyBufSize = bufParamsFilterVar.stride_y * bufParamsFilterVar.dim_y;
+         _coeffSizeBytes  = bufParamsFilterCoeff.dim_y * bufParamsFilterCoeff.stride_y;
+         _stateBufferSize = bufParamsFilterVar.stride_y * bufParamsFilterVar.dim_y;
 
          // Initialize bufParams with node input and output buffer parameters.
          _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
@@ -270,8 +270,8 @@ bool CascadeBiquad<T>::getParams(uint16_t paramId, void *value, size_t *size, Er
 
 template <typename T> void CascadeBiquad<T>::cleanInternalBuffers() noexcept
 {
-   if (_pFilterVar != nullptr && _historyBufSize > 0) {
-      std::memset(_pFilterVar, 0, _historyBufSize);
+   if (_pFilterVar != nullptr && _stateBufferSize > 0) {
+      std::memset(_pFilterVar, 0, _stateBufferSize);
    }
 }
 

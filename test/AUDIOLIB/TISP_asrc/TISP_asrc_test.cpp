@@ -491,7 +491,7 @@ int TISP_asrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                 static_cast<uint32_t>(maxSampleCountPerBlock), static_cast<uint32_t>(asrcStateParams.outputSampleCount),
                 currPrm.sampleDataType, static_cast<uint32_t>(inputSampleRate), static_cast<uint32_t>(outputSampleRate),
                 static_cast<uint32_t>(numChannels), static_cast<uint32_t>(frameModuloFactor),
-                static_cast<uint32_t>(isInterleave), static_cast<int32_t>(nonInterleavedDataBufSize), errorCtx);
+                static_cast<uint32_t>(isInterleave), errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
@@ -599,7 +599,7 @@ int TISP_asrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                    static_cast<uint32_t>(asrcStateParams.outputSampleCount), currPrm.sampleDataType,
                    static_cast<uint32_t>(inputSampleRate), static_cast<uint32_t>(outputSampleRate),
                    static_cast<uint32_t>(numChannels), static_cast<uint32_t>(frameModuloFactor),
-                   static_cast<uint32_t>(isInterleave), static_cast<int32_t>(nonInterleavedDataBufSize), errorCtx);
+                   static_cast<uint32_t>(isInterleave), errorCtx);
 
                if (!errorCtx.isSuccess()) {
                   printf("\nError creating kernel: %s\n", errorCtx.getMessage());
@@ -715,7 +715,7 @@ int TISP_asrc_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                    static_cast<uint32_t>(asrcStateParams.outputSampleCount), currPrm.sampleDataType,
                    static_cast<uint32_t>(inputSampleRate), static_cast<uint32_t>(outputSampleRate),
                    static_cast<uint32_t>(numChannels), static_cast<uint32_t>(frameModuloFactor),
-                   static_cast<uint32_t>(isInterleave), static_cast<int32_t>(nonInterleavedDataBufSize), errorCtx);
+                   static_cast<uint32_t>(isInterleave), errorCtx);
 
                if (!errorCtx.isSuccess()) {
                   printf("\nError creating kernel: %s\n", errorCtx.getMessage());

@@ -84,7 +84,7 @@ template <typename T> class Asrc final : public VirtualOp {
 
    uint32_t _inputSampleCount;
    uint32_t _outputSampleCount;
-   size_t   _historyBufSize; /*!< Size of history buffer. */
+   size_t   _nonInterleavedDataBufSize; /*!< Size of non interleaved data buffer in bytes. */
 
    TISP::HandlePtr<char> _handle;               /*!< Handle to low level AUDIOLIB_asrc kernel. */
    TISP::HandlePtr<char> _matTransHandle;       /*!< Handle to low level DSPLIB_matTrans kernel. */
@@ -125,7 +125,6 @@ template <typename T> class Asrc final : public VirtualOp {
     * @param [in]  isInterleave           : Indicates whether the input matrix data is interleaved:
     *                                     - `0`: Non-interleaved (Rows represent channels, columns represent samples).
     *                                     - `1`: Interleaved (Rows represent samples, columns represent channels).
-    * @param [in]  historyBufSize         : Size of history buffer.
     * @param [in]  errorCtx               : Error context for reporting constructor errors
     * @retval None
     * @throw None
@@ -150,7 +149,6 @@ template <typename T> class Asrc final : public VirtualOp {
         size_t     numChannels,
         size_t     frameModuloFactor,
         size_t     isInterleave,
-        size_t     historyBufSize,
         ErrorCtxt &errorCtx);
 
    /**
@@ -185,7 +183,6 @@ template <typename T> class Asrc final : public VirtualOp {
         size_t      numChannels,
         size_t      frameModuloFactor,
         size_t      isInterleave,
-        size_t      historyBufSize,
         const char *nodeName,
         uint32_t    nodeId,
         ErrorCtxt  &errorCtx);

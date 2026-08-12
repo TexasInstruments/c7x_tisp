@@ -48,7 +48,6 @@ template <typename T> class Fir final : public VirtualOp {
    size_t _filterSize; /*!< Filter size */
    size_t _batchSize;  /*!< Number of channels */
    size_t _stateSize;  /*!< State size */
-   size_t _historyBufSize; /*!< Size of history buffer. */
 
    size_t _pitchX; /*!< Input pitch */
    size_t _pitchS; /*!< State pitch */

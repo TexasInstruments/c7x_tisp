@@ -37,7 +37,8 @@ MultiplexerSmooth<T>::MultiplexerSmooth(T         *pX0,
                                         float      fadeTime,
                                         ErrorCtxt &errorCtx)
     : _pX0(pX0), _pWs(pWs), _pSmoothedSampleBuff(pSmoothedSampleBuff), _pGainFadeIn(pGainFadeIn),
-      _pGainFadeOut(pGainFadeOut), _pY(pY), _maxInputs(maxInputs), _historyBufSize(0)
+      _pGainFadeOut(pGainFadeOut), _pY(pY), _width(0), _height(0), _isInterleave(0), _smoothedSamples(0),
+      _maxInputs(maxInputs)
 {
 
    /* Initialize _params with the node parameters */
@@ -248,8 +249,6 @@ MultiplexerSmooth<T>::MultiplexerSmooth(T         *pX0,
                 _handleCrossFader.get(), &bufParamsCrosFadeIn0, &bufParamsCrosFadeIn1, &bufParamsCrosFadeGain0,
                 &bufParamsCrosFadeGain1, &bufParamsCrosFadeIOut, &kerInitArgs);
             errorCtx.remapXLIBError(status, "AUDIOLIB_crossfade_init");
-
-            _historyBufSize = heightIn * _smoothedSamples * sizeof(T);
 
             if (errorCtx.isSuccess()) {
                cleanInternalBuffers();
@@ -500,8 +499,13 @@ MultiplexerSmooth<T>::MultiplexerSmooth(T          *pX0,
 
 template <typename T> void MultiplexerSmooth<T>::cleanInternalBuffers() noexcept
 {
-   if (_pSmoothedSampleBuff != nullptr && _historyBufSize > 0) {
-      std::memset(_pSmoothedSampleBuff, 0, _historyBufSize);
+   if (_pSmoothedSampleBuff != nullptr && _smoothedSamples > 0) {
+      /* exec() stores the history contiguously (stride == row length, no padding), but with a
+       * layout that depends on interleaving: _smoothedSamples rows of _width elements when
+       * interleaved, _height rows of _smoothedSamples elements otherwise. This is the same element
+       * count as one crossfade block (nSize in exec()), i.e. half of the _pWs workspace. */
+      const size_t eleCount = (_isInterleave != 0) ? (_smoothedSamples * _width) : (_height * _smoothedSamples);
+      std::memset(_pSmoothedSampleBuff, 0, eleCount * sizeof(T));
    }
 }
 
