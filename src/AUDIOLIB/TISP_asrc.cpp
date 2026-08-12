@@ -37,7 +37,7 @@ Asrc<T>::Asrc(T         *pX,
               size_t     isInterleave,
               ErrorCtxt &errorCtx)
     : _pX(pX), _pNonInterleavedData(pNonInterleavedData), _pFiltCoeffs(pFiltCoeffs), _pFilterRembuf(pFilterRembuf),
-      _pY(pY)
+      _pY(pY), _nonInterleavedDataBufSize(0)
 {
 
    /* Initialize _params with the node parameters */
@@ -94,6 +94,24 @@ Asrc<T>::Asrc(T         *pX,
    else {
       _inputSampleCount  = maxSampleCountPerBlock;
       _outputSampleCount = outputSampleCount;
+
+      /* The buffer only exists when the input is interleaved, so for non interleaved input the size stays zero. */
+      if (isInterleave == 1) {
+         const int32_t bufSize = AUDIOLIB_asrc_getNonInterleavedDataBufSize(
+             static_cast<uint8_t>(numChannels), static_cast<uint32_t>(maxSampleCountPerBlock),
+             static_cast<uint32_t>(sampleDataType), static_cast<uint32_t>(isInterleave));
+
+         if (bufSize <= 0) {
+            errorCtx.setInvalidParameterError("Asrc constructor",
+                                              "AUDIOLIB_asrc_getNonInterleavedDataBufSize returned no size");
+         }
+         else {
+            _nonInterleavedDataBufSize = static_cast<size_t>(bufSize);
+         }
+      }
+      else {
+         /* Nothing to do here - non interleaved input needs no intermediate buffer */
+      }
 
       // Initialize bufParams with node input and output buffer parameters
       _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
@@ -165,6 +183,7 @@ Asrc<T>::Asrc(T         *pX,
             /******************************************************************************/
             if (errorCtx.isSuccess()) {
                status = AUDIOLIB_asrc_init(_handle.get(), &bufParamsIn, &bufParamsOut, &kerInitArgs);
+               errorCtx.remapXLIBError(status, "AUDIOLIB_asrc_init");
                if (errorCtx.isSuccess()) {
                   float fsout =
                       static_cast<float>(convertSampleRateToInt(static_cast<sample_rate_t>(outputSampleRate)));
@@ -173,6 +192,10 @@ Asrc<T>::Asrc(T         *pX,
                   status =
                       AUDIOLIB_asrc_set(_handle.get(), AUDIOLIB_ASRC_MODE_RESET, asrcRatio, _pNonInterleavedData, _pX);
                   errorCtx.remapXLIBError(status, "AUDIOLIB_asrc_set");
+
+                  if (errorCtx.isSuccess() && isInterleave == 1) {
+                     cleanInternalBuffers();
+                  }
                }
             }
          }
@@ -339,6 +362,13 @@ Asrc<T>::Asrc(T          *pX,
 {
    _nodeInfo.setName(nodeName);
    _nodeInfo.nodeId = nodeId;
+}
+
+template <typename T> void Asrc<T>::cleanInternalBuffers() noexcept
+{
+   if (_pNonInterleavedData != nullptr && _nonInterleavedDataBufSize > 0) {
+      std::memset(_pNonInterleavedData, 0, _nonInterleavedDataBufSize);
+   }
 }
 
 template class Asrc<float>;

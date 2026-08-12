@@ -364,6 +364,14 @@ template <typename T> class MultiplexerSmooth final : public VirtualOp {
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
    /**
+    * @brief Clean and reset all internal history buffers to zero when smoothedSamples are not equal to zero.
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
+
+   /**
     * @brief Destructor
     *
     * This destructor is set to default

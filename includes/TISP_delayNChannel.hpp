@@ -69,7 +69,7 @@ template <typename T> class DelayNChannel final : public VirtualOp {
    size_t _heightD;       /*!< Height (channels) of the delay matrix. */
    size_t _inPitchBytes;  /*!< Pitch in bytes of the input matrix. */
    size_t _outPitchBytes; /*!< Pitch in bytes of the output matrix. */
-   size_t _delayBytes;    /*!< Pitch in bytes of the delay matrix. */
+   size_t _delayPitchBytes;    /*!< Pitch in bytes of the delay matrix. */
    size_t _interleave;    /*!< 0 = non-interleaved, 1 = interleaved. */
    size_t _mode;          /*!< 0 = linear delay, 1 = circular delay. */
 
@@ -94,7 +94,7 @@ template <typename T> class DelayNChannel final : public VirtualOp {
     * @param [in]  widthD        : Width of delay matrix.
     * @param [in]  heightD       : Height of delay matrix.
     * @param [in]  inPitchBytes  : Pitch of input matrix in bytes.
-    * @param [in]  delayBytes    : Pitch of delay matrix in bytes.
+    * @param [in]  delayPitchBytes    : Pitch of delay matrix in bytes.
     * @param [in]  outPitchBytes : Pitch of output matrix in bytes.
     * @param [in]  interleave    : Indicates whether the input matrix data is interleaved:
     *                            - `0`: Non-interleaved (Rows represent channels, columns represent samples).
@@ -117,7 +117,7 @@ template <typename T> class DelayNChannel final : public VirtualOp {
                  size_t     widthD,
                  size_t     heightD,
                  size_t     inPitchBytes,
-                 size_t     delayBytes,
+                 size_t     delayPitchBytes,
                  size_t     outPitchBytes,
                  size_t     interleave,
                  size_t     mode,
@@ -138,7 +138,7 @@ template <typename T> class DelayNChannel final : public VirtualOp {
     * @param [in]  widthD        : Width of delay matrix.
     * @param [in]  heightD       : Height of delay matrix.
     * @param [in]  inPitchBytes  : Pitch of input matrix in bytes.
-    * @param [in]  delayBytes    : Pitch of delay matrix in bytes.
+    * @param [in]  delayPitchBytes    : Pitch of delay matrix in bytes.
     * @param [in]  outPitchBytes : Pitch of output matrix in bytes.
     * @param [in]  interleave    : 0 = non-interleaved, 1 = interleaved.
     * @param [in]  mode          : 0 = linear delay, 1 = circular delay.
@@ -160,7 +160,7 @@ template <typename T> class DelayNChannel final : public VirtualOp {
                  size_t      widthD,
                  size_t      heightD,
                  size_t      inPitchBytes,
-                 size_t      delayBytes,
+                 size_t      delayPitchBytes,
                  size_t      outPitchBytes,
                  size_t      interleave,
                  size_t      mode,
@@ -270,6 +270,14 @@ template <typename T> class DelayNChannel final : public VirtualOp {
     * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
+
+   /**
+    * @brief Clean and reset all internal state and history buffers to zero
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor

@@ -34,7 +34,7 @@ Ssrc<T>::Ssrc(T         *pX,
               size_t     enableMMA,
               size_t     mmaSize,
               ErrorCtxt &errorCtx)
-    : _pX(pX), _pState(pState), _pFiltCoeffs(pFiltCoeffs), _pY(pY)
+    : _pX(pX), _pState(pState), _pFiltCoeffs(pFiltCoeffs), _pY(pY), _stateBufferSize(0)
 {
    /* Initialize _params with the node parameters */
    (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
@@ -99,6 +99,25 @@ Ssrc<T>::Ssrc(T         *pX,
       _blkCopy2DHandle3   = nullptr;
       _firHandle1         = nullptr;
       _firHandle2         = nullptr;
+
+      /* Interleaved ping-pong circular mode has no separate state buffer (pState is null there), and the query is only
+       * defined for the linear state buffer, so it is skipped in that case and the size stays zero. */
+      if (!((isInterleave == AUDIOLIB_DATA_FORMAT_INTERLEAVED) &&
+            (bufferFormat == AUDIOLIB_SSRC_BUFFER_FORMAT_PING_PONG_CIRCULAR))) {
+         AUDIOLIB_ssrc_bufferParams_t stateParams;
+         AUDIOLIB_STATUS              stateRet = AUDIOLIB_ssrc_getStateBufferParams(
+             static_cast<ssrc_sample_rate_t>(inputSampleRate), static_cast<ssrc_sample_rate_t>(outputSampleRate),
+             static_cast<uint32_t>(inputSampleCount), static_cast<uint8_t>(numChannels),
+             static_cast<uint32_t>(sampleDataType), static_cast<uint8_t>(isInterleave), &stateParams);
+         errorCtx.remapXLIBError(stateRet, "AUDIOLIB_ssrc_getStateBufferParams");
+
+         if (errorCtx.isSuccess()) {
+            _stateBufferSize = stateParams.bufferSize;
+         }
+      }
+      else {
+         /* Nothing to do here - circular mode keeps no separate state buffer */
+      }
 
       // Initialize bufParams with node input and output buffer parameters
       _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
@@ -250,6 +269,10 @@ Ssrc<T>::Ssrc(T         *pX,
                   AUDIOLIB_STATUS setRet =
                       AUDIOLIB_ssrc_set(_handle.get(), static_cast<uint8_t>(AUDIOLIB_SSRC_MODE_RESET), _pX, _pState);
                   errorCtx.remapXLIBError(setRet, "AUDIOLIB_ssrc_set");
+                  if (errorCtx.isSuccess() && (!((isInterleave == AUDIOLIB_DATA_FORMAT_INTERLEAVED) &&
+                                                 (bufferFormat == AUDIOLIB_SSRC_BUFFER_FORMAT_PING_PONG_CIRCULAR)))) {
+                     cleanInternalBuffers();
+                  }
                }
             }
          }
@@ -358,6 +381,13 @@ Ssrc<T>::Ssrc(T          *pX,
    (void) mmaSize;
    _nodeInfo.setName(nodeName);
    _nodeInfo.nodeId = nodeId;
+}
+
+template <typename T> void Ssrc<T>::cleanInternalBuffers() noexcept
+{
+   if (_pState != nullptr && _stateBufferSize > 0) {
+      std::memset(_pState, 0, _stateBufferSize);
+   }
 }
 
 template class Ssrc<float>;

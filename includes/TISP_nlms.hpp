@@ -46,9 +46,10 @@ template <typename T> class Nlms final : public VirtualOp {
 
    size_t _widthIn;
    size_t _heightIn;
+   size_t _widthS;
+   size_t _heightS;
    size_t _filterLength;
    float  _stepSize;
-   size_t _numChannels;
    size_t _inPitchBytes;
    size_t _outPitchBytes;
    size_t _isInterleave;
@@ -79,9 +80,10 @@ template <typename T> class Nlms final : public VirtualOp {
     * @param [out] *pOutD          : Pointer to the interleave output matrix.
     * @param [in]  widthIn         : Width of input matrix.
     * @param [in]  heightIn        : Height of input matrix.
+    * @param [in]  widthS          : Width of state matrix in elements.
+    * @param [in]  heightS         : Height of state matrix in rows.
     * @param [in]  filterLength    : Length of the adaptive filter.
     * @param [in]  stepSize        : Adaptive step size (mu).
-    * @param [in]  numChannels     : Number of audio channels.
     * @param [in]  inPitchBytes    : Pitch of input matrix in bytes.
     * @param [in]  outPitchBytes   : Pitch of output matrix in bytes.
     * @param [in]  isInterleave    : Indicates whether the input matrix data is interleaved:
@@ -104,9 +106,10 @@ template <typename T> class Nlms final : public VirtualOp {
         T         *pOutD,
         size_t     widthIn,
         size_t     heightIn,
+        size_t     widthS,
+        size_t     heightS,
         size_t     filterLength,
         float      stepSize,
-        size_t     numChannels,
         size_t     inPitchBytes,
         size_t     outPitchBytes,
         size_t     isInterleave,
@@ -128,9 +131,10 @@ template <typename T> class Nlms final : public VirtualOp {
     * @param [out] *pOutD          : Pointer to the interleave output matrix.
     * @param [in]  widthIn         : Width of input matrix.
     * @param [in]  heightIn        : Height of input matrix.
+    * @param [in]  widthS          : Width of state matrix in elements.
+    * @param [in]  heightS         : Height of state matrix in rows.
     * @param [in]  filterLength    : Length of the adaptive filter.
     * @param [in]  stepSize        : Adaptive step size (mu).
-    * @param [in]  numChannels     : Number of audio channels.
     * @param [in]  inPitchBytes    : Pitch of input matrix in bytes.
     * @param [in]  outPitchBytes   : Pitch of output matrix in bytes.
     * @param [in]  isInterleave    : Indicates whether the input matrix data is interleaved.
@@ -152,9 +156,10 @@ template <typename T> class Nlms final : public VirtualOp {
         T          *pOutD,
         size_t      widthIn,
         size_t      heightIn,
+        size_t      widthS,
+        size_t      heightS,
         size_t      filterLength,
         float       stepSize,
-        size_t      numChannels,
         size_t      inPitchBytes,
         size_t      outPitchBytes,
         size_t      isInterleave,
@@ -265,6 +270,14 @@ template <typename T> class Nlms final : public VirtualOp {
     * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
+
+   /**
+    * @brief Clean and reset all internal state buffers to zero
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor

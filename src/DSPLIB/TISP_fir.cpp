@@ -186,6 +186,8 @@ Fir<T>::Fir(T         *pX,
                   _sa0ParamsPost.ICNT0 = static_cast<uint32_t>(filterSize - 1U);
                   _sa0ParamsPost.DIM1  = static_cast<int32_t>(pitchS / sizeof(T));
                   _sa0ParamsPost.ICNT1 = static_cast<uint32_t>(batchSize);
+
+                  cleanInternalBuffers();
                }
             }
          }
@@ -331,6 +333,7 @@ template <typename T> bool Fir<T>::setParams(uint16_t paramId, void *value, size
             errorCtx.setInvalidParameterError("Fir::setParams", "Value size smaller than expected for kFilterCoeffs");
          }
          else {
+            cleanInternalBuffers();
             const uint8_t *coeffData = static_cast<const uint8_t *>(value);
             for (size_t c = 0; c < numChannels; c++) {
                uint8_t *dst = reinterpret_cast<uint8_t *>(_pH) + (c * _pitchH);
@@ -382,6 +385,20 @@ template <typename T> bool Fir<T>::getParams(uint16_t paramId, void *value, size
    }
 
    return errorCtx.isSuccess();
+}
+
+template <typename T> void Fir<T>::cleanInternalBuffers() noexcept
+{
+   if (_pS != nullptr && _batchSize > 0 && _stateSize > 0) {
+      /* Only the first _stateSize elements of each row are live: the kernel indexes at most
+       * outputSize + filterSize - 2 == _stateSize - 1 within a row, and the pre/post block copies in
+       * exec() stay inside that same range. The rest of the row up to _pitchS is padding the kernel
+       * never touches. Clear row by row and leave the padding alone. */
+      for (size_t row = 0; row < _batchSize; row++) {
+         uint8_t *pRow = reinterpret_cast<uint8_t *>(_pS) + (row * _pitchS); // NOLINT(MISRA.PTR.ARITH)
+         std::memset(pRow, 0, _stateSize * sizeof(T));
+      }
+   }
 }
 
 template class Fir<float>;

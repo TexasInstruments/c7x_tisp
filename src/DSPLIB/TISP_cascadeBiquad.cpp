@@ -28,7 +28,8 @@ CascadeBiquad<T>::CascadeBiquad(T         *pIn,
                                 size_t     filterVarPitchBytes,
                                 bool       enableNChCoeffs,
                                 ErrorCtxt &errorCtx)
-    : _pIn(pIn), _pFilterCoeff(pFilterCoeff), _pFilterVar(pFilterVar), _pOut(pOut), _coeffSizeBytes(0)
+    : _pIn(pIn), _pFilterCoeff(pFilterCoeff), _pFilterVar(pFilterVar), _pOut(pOut), _coeffSizeBytes(0),
+      _stateBufferSize(0)
 
 {
 
@@ -92,7 +93,8 @@ CascadeBiquad<T>::CascadeBiquad(T         *pIn,
       errorCtx.remapXLIBError(status, "DSPLIB_cascadeBiquad_get_coefficientsBufferDesc");
 
       if (errorCtx.isSuccess()) {
-         _coeffSizeBytes = bufParamsFilterCoeff.dim_y * bufParamsFilterCoeff.stride_y;
+         _coeffSizeBytes  = bufParamsFilterCoeff.dim_y * bufParamsFilterCoeff.stride_y;
+         _stateBufferSize = bufParamsFilterVar.stride_y * bufParamsFilterVar.dim_y;
 
          // Initialize bufParams with node input and output buffer parameters.
          _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
@@ -126,6 +128,9 @@ CascadeBiquad<T>::CascadeBiquad(T         *pIn,
                status = DSPLIB_cascadeBiquad_init(_handle.get(), &bufParamsIn, &bufParamsFilterCoeff,
                                                   &bufParamsFilterVar, &bufParamsOut, &kerInitArgs);
                errorCtx.remapXLIBError(status, "DSPLIB_cascadeBiquad_init");
+               if (errorCtx.isSuccess()) {
+                  cleanInternalBuffers();
+               }
             }
          }
       }
@@ -219,6 +224,7 @@ bool CascadeBiquad<T>::setParams(uint16_t paramId, void *value, size_t size, Err
                                               "Value size smaller than expected for kFilterCoeffs");
          }
          else {
+            cleanInternalBuffers();
             memcpy(_pFilterCoeff, value, _coeffSizeBytes);
          }
          break;
@@ -260,6 +266,13 @@ bool CascadeBiquad<T>::getParams(uint16_t paramId, void *value, size_t *size, Er
    }
 
    return errorCtx.isSuccess();
+}
+
+template <typename T> void CascadeBiquad<T>::cleanInternalBuffers() noexcept
+{
+   if (_pFilterVar != nullptr && _stateBufferSize > 0) {
+      std::memset(_pFilterVar, 0, _stateBufferSize);
+   }
 }
 
 template class CascadeBiquad<float>;

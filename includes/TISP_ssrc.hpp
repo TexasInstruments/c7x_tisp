@@ -74,6 +74,7 @@ template <typename T> class Ssrc final : public VirtualOp {
    T *_pY;          /*!< Pointer to output matrix. */
 
    NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
+   size_t   _stateBufferSize; /*!< Size of state buffer in bytes. */
 
    TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_ssrc kernel. */
 
@@ -311,6 +312,15 @@ template <typename T> class Ssrc final : public VirtualOp {
     * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
+
+   /**
+    * @brief Clean and reset all internal state buffers to zero when data is non-interleaved or when data is interleaved
+    * with linear bufferFormat.
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor

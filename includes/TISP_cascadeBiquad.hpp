@@ -43,6 +43,8 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
    T       *_pOut;         /*!< Pointer to output buffer */
    NodeInfo _nodeInfo;     /*!< Node name, parameters, and ID */
 
+   size_t _stateBufferSize; /*!< Size of state buffer in bytes. */
+
    TISP::HandlePtr<char> _handle; /*!< handle required by DSPLIB_cascadeBiquad kernel */
    size_t _coeffSizeBytes; /*!< Cached size in bytes of the filter coefficients buffer */
 
@@ -273,6 +275,14 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
     * @throw None
     */
    bool getParams(uint16_t paramId, void *value, size_t *size, ErrorCtxt &errorCtx) noexcept override;
+
+   /**
+    * @brief Clean and reset all internal state buffers to zero
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor

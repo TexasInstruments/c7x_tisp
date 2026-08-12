@@ -262,6 +262,21 @@ class VirtualOp {
    virtual void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept = 0;
 
    /**
+    * @brief Clean and reset all internal state and history buffers to zero
+    *
+    * This function should be implemented by any concrete operation class that maintains
+    * internal state buffers or history buffers. It is called to reset the node state
+    * before first execution and when runtime parameters (e.g., filter coefficients) are updated.
+    *
+    * @retval None
+    * @throw None
+    */
+   virtual void cleanInternalBuffers() noexcept
+   {
+      return;
+   };
+
+   /**
     * @brief Virtual destructor
     *
     * This destructor is declared as virtual to ensure proper destruction of derived class objects.

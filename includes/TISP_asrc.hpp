@@ -84,6 +84,7 @@ template <typename T> class Asrc final : public VirtualOp {
 
    uint32_t _inputSampleCount;
    uint32_t _outputSampleCount;
+   size_t   _nonInterleavedDataBufSize; /*!< Size of non interleaved data buffer in bytes. */
 
    TISP::HandlePtr<char> _handle;               /*!< Handle to low level AUDIOLIB_asrc kernel. */
    TISP::HandlePtr<char> _matTransHandle;       /*!< Handle to low level DSPLIB_matTrans kernel. */
@@ -340,6 +341,14 @@ template <typename T> class Asrc final : public VirtualOp {
     * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
+
+   /**
+    * @brief Clean and reset all internal history buffers to zero when the data is interleaved.
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor

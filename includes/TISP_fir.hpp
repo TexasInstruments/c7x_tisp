@@ -288,6 +288,14 @@ template <typename T> class Fir final : public VirtualOp {
    void exec() noexcept override;
 
    /**
+    * @brief Clean and reset all internal state buffers to zero
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
+
+   /**
     * @brief Destructor
     *
     * This destructor is set to default
