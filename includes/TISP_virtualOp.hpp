@@ -16,10 +16,10 @@
 namespace TISP {
 
 // Define a constant for maximum source addresses for a given node
-constexpr int kMaxSrcAddr = 4;
+constexpr int kMaxSrcAddr = 8;
 
 // Define a constant for maximum destination addresses for a given node
-constexpr int kMaxDstAddr = 3;
+constexpr int kMaxDstAddr = 8;
 
 /**
  * @struct setAddr
