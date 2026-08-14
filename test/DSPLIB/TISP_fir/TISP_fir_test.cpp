@@ -184,11 +184,16 @@ int DSPLIB_fir_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                 static_cast<uint32_t>(outPitch * numBlocks), static_cast<bool>(enableNchCoefs),
                 static_cast<bool>(enableMMA), static_cast<bool>(enableQ), static_cast<uint32_t>(Q), errorCtx);
 
+            if (!errorCtx.isSuccess()) {
+               printf("\nError creating kernel: %s\n", errorCtx.getMessage());
+               return -1;
+            }
+
             k0->setParams(static_cast<uint16_t>(TISP::DSPLIB::FirParamId::kBypass), &bypassMode, sizeof(bypassMode),
                           errorCtx);
 
             if (!errorCtx.isSuccess()) {
-               printf("\nError creating kernel: %s\n", errorCtx.getMessage());
+               printf("\nError setting bypass mode: %s\n", errorCtx.getMessage());
                return -1;
             }
 

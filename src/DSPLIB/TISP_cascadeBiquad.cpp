@@ -336,6 +336,7 @@ template <typename T> void CascadeBiquad<T>::cleanInternalBuffers() noexcept
 }
 
 template class CascadeBiquad<float>;
+template class CascadeBiquad<double>;
 
 } // namespace DSPLIB
 } // namespace TISP
