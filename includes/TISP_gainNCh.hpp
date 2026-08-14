@@ -59,7 +59,8 @@ namespace AUDIOLIB {
  *
  */
 enum class GainNChParamId : uint16_t {
-   kGainValue = 0 /**< kGainValue: Gain values to set/get for each channel */
+   kGainValue = 0, /**< kGainValue: Gain values to set/get for each channel */
+   kBypass    = 1  /**< kBypass: uint32_t bypass mode; `0` applies the gain, `1` copies input to output */
 };
 
 template <typename T> class GainNCh final : public VirtualOp {
@@ -70,14 +71,25 @@ template <typename T> class GainNCh final : public VirtualOp {
    T *_pG; /*!< Pointer to input gain array. */
    T *_pY; /*!< Pointer to output matrix. */
 
-   size_t _width;
-   size_t _height;
-   size_t _gHeight;
-   size_t _inPitchBytes;
-   size_t _outPitchBytes;
-   size_t _isInterleave;
+   size_t _width;         /*!< Width of the input matrix. */
+   size_t _height;        /*!< Height of the input matrix. */
+   size_t _gHeight;       /*!< Number of elements in the gain array. */
+   size_t _inPitchBytes;  /*!< Pitch of the input matrix in bytes. */
+   size_t _outPitchBytes; /*!< Pitch of the output matrix in bytes. */
+   size_t _isInterleave;  /*!< `0`: non-interleaved, `1`: interleaved input data. */
+
+   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the gain, `1` copies input to output. */
 
    TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_gainNCh kernel. */
+
+   /**
+    * @brief Copies @ref _height rows of @ref _width elements from @ref _pX to @ref _pY, honouring
+    *        @ref _inPitchBytes and @ref _outPitchBytes.
+    *
+    * @retval None
+    * @throw None
+    */
+   void bypassCopy() noexcept;
 
  public:
    /**

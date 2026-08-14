@@ -154,6 +154,30 @@
 #include "test_data/staticRefCase37.h"
 #endif
 
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 38))
+#include "test_data/staticRefCase38.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 39))
+#include "test_data/staticRefCase39.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 40))
+#include "test_data/staticRefCase40.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 41))
+#include "test_data/staticRefCase41.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 42))
+#include "test_data/staticRefCase42.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 43))
+#include "test_data/staticRefCase43.h"
+#endif
+
 static TISP_gainNCh_testParams_t testParams[] = {
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 1))
     {
@@ -164,6 +188,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         8,                         // inSamples
         2,                         // inChannels
         1,                         // isInterleave
+        0,                         // bypassMode
         2 * sizeof(float),         // strideIn0
         2 * sizeof(float),         // strideOut
         AUDIOLIB_FLOAT32,          // precision
@@ -183,6 +208,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1024,                      // inSamples
         2,                         // inChannels
         1,                         // isInterleave
+        0,                         // bypassMode
         2 * sizeof(float),         // strideIn0
         2 * sizeof(float),         // strideOut
         AUDIOLIB_FLOAT32,          // precision
@@ -202,6 +228,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         2048,                      // inSamples
         2,                         // inChannels
         1,                         // isInterleave
+        0,                         // bypassMode
         2 * sizeof(double),        // strideIn0
         2 * sizeof(double),        // strideOut
         AUDIOLIB_FLOAT64,          // precision
@@ -221,6 +248,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         8,                         // inSamples
         4,                         // inChannels
         1,                         // isInterleave
+        0,                         // bypassMode
         4 * sizeof(float),         // strideIn0
         4 * sizeof(float),         // strideOut
         AUDIOLIB_FLOAT32,          // precision
@@ -240,6 +268,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1024,                      // inSamples
         4,                         // inChannels
         1,                         // isInterleave
+        0,                         // bypassMode
         4 * sizeof(float),         // strideIn0
         4 * sizeof(float),         // strideOut
         AUDIOLIB_FLOAT32,          // precision
@@ -259,6 +288,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         512,                       // inSamples
         4,                         // inChannels
         1,                         // isInterleave
+        0,                         // bypassMode
         4 * sizeof(double),        // strideIn0
         4 * sizeof(double),        // strideOut
         AUDIOLIB_FLOAT64,          // precision
@@ -278,6 +308,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1024,                      // inSamples
         8,                         // inChannels
         1,                         // isInterleave
+        0,                         // bypassMode
         8 * sizeof(float),         // strideIn0
         8 * sizeof(float),         // strideOut
         AUDIOLIB_FLOAT32,          // precision
@@ -297,6 +328,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1024,                      // inSamples
         8,                         // inChannels
         1,                         // isInterleave
+        0,                         // bypassMode
         8 * sizeof(double),        // strideIn0
         8 * sizeof(double),        // strideOut
         AUDIOLIB_FLOAT64,          // precision
@@ -316,6 +348,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1,                                                                      // inSamples
         37,                                                                     // inChannels
         0,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(1 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(1 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                       // precision
@@ -335,6 +368,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         64,                                                                      // inSamples
         64,                                                                      // inChannels
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(64 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(64 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                        // precision
@@ -354,6 +388,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         16,                                                                     // inSamples
         2,                                                                      // inChannels
         0,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                       // precision
@@ -373,6 +408,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         256,                                                                     // inSamples
         4,                                                                       // inChannels
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(256 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(256 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                        // precision
@@ -392,6 +428,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         31,                                                                     // inSamples
         31,                                                                     // inChannels
         0,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(31 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(31 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                       // precision
@@ -411,6 +448,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         64,                                                                     // inSamples
         64,                                                                     // inChannels
         0,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(64 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(64 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                       // precision
@@ -430,6 +468,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         128,                                                                    // inSamples
         2,                                                                      // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(2 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(2 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                       // precision
@@ -449,6 +488,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         256,                                                                    // inSamples
         4,                                                                      // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(4 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(4 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                       // precision
@@ -468,6 +508,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1024,                                                                   // inSamples
         8,                                                                      // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                       // precision
@@ -487,6 +528,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         4096,                                                                   // inSamples
         2,                                                                      // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(2 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(2 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                       // precision
@@ -506,6 +548,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         512,                                                                     // inSamples
         16,                                                                      // inChannels
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                        // precision
@@ -525,6 +568,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         32,                                                                      // inSamples
         32,                                                                      // inChannels
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(32 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(32 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                        // precision
@@ -544,6 +588,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         64,                                                                      // inSamples
         32,                                                                      // inChannels
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(32 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(32 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                        // precision
@@ -563,6 +608,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         64,                                                                      // inSamples
         64,                                                                      // inChannels
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(64 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(64 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                        // precision
@@ -582,6 +628,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         128,                                                                      // inSamples
         128,                                                                      // inChannels
         1,                                                                        // isInterleave
+        0,                                                                        // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(128 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT64,                                                         // precision
@@ -601,6 +648,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1,                                                                     // inSamples
         8,                                                                     // inChannels
         1,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                      // precision
@@ -620,6 +668,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         256,                                                                   // inSamples
         8,                                                                     // inChannels
         1,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                      // precision
@@ -639,6 +688,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         256,                                                                    // inSamples
         16,                                                                     // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                       // precision
@@ -658,6 +708,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1024,                                                                   // inSamples
         16,                                                                     // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                       // precision
@@ -677,6 +728,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         16,                                                                     // inSamples
         32,                                                                     // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(32 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(32 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                       // precision
@@ -696,6 +748,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         32,                                                                     // inSamples
         32,                                                                     // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(32 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(32 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                       // precision
@@ -715,6 +768,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         64,                                                                     // inSamples
         32,                                                                     // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(32 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(32 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                       // precision
@@ -734,6 +788,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         64,                                                                     // inSamples
         64,                                                                     // inChannels
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(64 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(64 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                       // precision
@@ -753,6 +808,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         128,                                                                     // inSamples
         128,                                                                     // inChannels
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                        // precision
@@ -772,6 +828,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1,                                                                     // inSamples
         2,                                                                     // inChannels
         1,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(2 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(2 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                      // precision
@@ -791,6 +848,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1,                                                                     // inSamples
         4,                                                                     // inChannels
         1,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
         AUDIOLIB_FLOAT32,                                                      // precision
@@ -810,6 +868,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         1,                         // inSamples
         1024,                      // inChannels
         0,                         // isInterleave
+        0,                         // bypassMode
         1 * sizeof(float),         // strideIn0
         1 * sizeof(float),         // strideOut
         AUDIOLIB_FLOAT32,          // precision
@@ -829,6 +888,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         2,                         // inSamples
         2048,                      // inChannels
         0,                         // isInterleave
+        0,                         // bypassMode
         2 * sizeof(double),        // strideIn0
         2 * sizeof(double),        // strideOut
         AUDIOLIB_FLOAT64,          // precision
@@ -848,6 +908,7 @@ static TISP_gainNCh_testParams_t testParams[] = {
         4,                         // inSamples
         2048,                      // inChannels
         0,                         // isInterleave
+        0,                         // bypassMode
         4 * sizeof(double),        // strideIn0
         4 * sizeof(double),        // strideOut
         AUDIOLIB_FLOAT64,          // precision
@@ -858,13 +919,133 @@ static TISP_gainNCh_testParams_t testParams[] = {
     },
 #endif
 
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 38))
+    {
+        STATIC,                    // Test pattern
+        staticRefIn0Case38,        // Input buffer
+        staticRefIn1Case38,        // Input gainNCh
+        staticRefOutCase38,        // Output buffer
+        64,                        // inSamples
+        4,                         // inChannels
+        1,                         // isInterleave
+        1,                         // bypassMode
+        4 * sizeof(float),         // strideIn0
+        4 * sizeof(float),         // strideOut
+        AUDIOLIB_FLOAT32,          // precision
+        AUDIOLIB_TEST_OUTPUT_MSMC, // Output data location
+        1,                         // number of reps.
+        1,                         // numBlocks
+        38,                        // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 39))
+    {
+        STATIC,                                                                 // Test pattern
+        staticRefIn0Case39,                                                     // Input buffer
+        staticRefIn1Case39,                                                     // Input gainNCh
+        staticRefOutCase39,                                                     // Output buffer
+        128,                                                                    // inSamples
+        6,                                                                      // inChannels
+        1,                                                                      // isInterleave
+        1,                                                                      // bypassMode
+        AUDIOLIB_CALC_STRIDE(6 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
+        AUDIOLIB_CALC_STRIDE(6 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
+        AUDIOLIB_FLOAT64,                                                       // precision
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
+        1,                                                                      // number of reps.
+        1,                                                                      // numBlocks
+        39,                                                                     // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 40))
+    {
+        STATIC,                    // Test pattern
+        staticRefIn0Case40,        // Input buffer
+        staticRefIn1Case40,        // Input gainNCh
+        staticRefOutCase40,        // Output buffer
+        256,                       // inSamples
+        8,                         // inChannels
+        0,                         // isInterleave
+        1,                         // bypassMode
+        256 * sizeof(float),       // strideIn0
+        256 * sizeof(float),       // strideOut
+        AUDIOLIB_FLOAT32,          // precision
+        AUDIOLIB_TEST_OUTPUT_MSMC, // Output data location
+        1,                         // number of reps.
+        1,                         // numBlocks
+        40,                        // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 41))
+    {
+        STATIC,                                                                 // Test pattern
+        staticRefIn0Case41,                                                     // Input buffer
+        staticRefIn1Case41,                                                     // Input gainNCh
+        staticRefOutCase41,                                                     // Output buffer
+        31,                                                                     // inSamples
+        31,                                                                     // inChannels
+        0,                                                                      // isInterleave
+        1,                                                                      // bypassMode
+        AUDIOLIB_CALC_STRIDE(31 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
+        AUDIOLIB_CALC_STRIDE(31 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
+        AUDIOLIB_FLOAT32,                                                       // precision
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
+        1,                                                                      // number of reps.
+        1,                                                                      // numBlocks
+        41,                                                                     // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 42))
+    {
+        STATIC,                                                                  // Test pattern
+        staticRefIn0Case42,                                                      // Input buffer
+        staticRefIn1Case42,                                                      // Input gainNCh
+        staticRefOutCase42,                                                      // Output buffer
+        60,                                                                      // inSamples
+        16,                                                                      // inChannels
+        0,                                                                       // isInterleave
+        1,                                                                       // bypassMode
+        AUDIOLIB_CALC_STRIDE(60 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn0
+        AUDIOLIB_CALC_STRIDE(60 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
+        AUDIOLIB_FLOAT64,                                                        // precision
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
+        1,                                                                       // number of reps.
+        2,                                                                       // numBlocks
+        42,                                                                      // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 43))
+    {
+        STATIC,                    // Test pattern
+        staticRefIn0Case43,        // Input buffer
+        staticRefIn1Case43,        // Input gainNCh
+        staticRefOutCase43,        // Output buffer
+        1024,                      // inSamples
+        2,                         // inChannels
+        1,                         // isInterleave
+        1,                         // bypassMode
+        2 * sizeof(float),         // strideIn0
+        2 * sizeof(float),         // strideOut
+        AUDIOLIB_FLOAT32,          // precision
+        AUDIOLIB_TEST_OUTPUT_MSMC, // Output data location
+        1,                         // number of reps.
+        3,                         // numBlocks
+        43,                        // test ID
+    },
+#endif
+
 };
 
 /*
  *  Sends the test parameter structure and number of tests
  */
 
-void TISP_gainNCh_getTestParams(TISP_gainNCh_testParams_t** params, int32_t* numTests)
+void TISP_gainNCh_getTestParams(TISP_gainNCh_testParams_t **params, int32_t *numTests)
 {
    *params   = testParams;
    *numTests = sizeof(testParams) / sizeof(TISP_gainNCh_testParams_t);

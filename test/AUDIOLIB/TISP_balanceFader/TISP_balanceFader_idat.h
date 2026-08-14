@@ -31,6 +31,7 @@ typedef struct {
    int32_t  lfeFaderMode;
    int32_t *channelConfig;
    uint8_t  isInterleave;
+   uint32_t bypassMode;
    uint32_t strideIn;
    uint32_t strideOut;
    uint32_t outputDataLocation; // 0 -> HEAP (probably L2SRAM), 1 -> MSMC

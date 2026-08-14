@@ -14,7 +14,7 @@ namespace AUDIOLIB {
 
 /**
  * <b>Runtime Control:</b>
- * The parameters `kThreshold`, `kKneeWidth`, `kAttack`, and `kRelease` can be changed at runtime.
+ * The parameters `kThreshold`, `kKneeWidth`, `kAttack`, `kRelease`, and `kBypass` can be changed at runtime.
  * To update parameters, use `setParams()` with the payload format specified below.
  * Use `getParams()` to retrieve the current parameters.
  *
@@ -45,8 +45,16 @@ namespace AUDIOLIB {
  * typedef struct LimiterReleasePayload
  * {
  *    uint16_t paramId;       // Must be LimiterParamId::kRelease (3)
- *    T        *releaseCoeff; // Array of release coeff values, one per channel (length: _numChannels, Range:
- * [0.0, 1.0]) } LimiterReleasePayload;
+ *    T        *releaseCoeff; // Array of release coeff values, one per channel
+ *                            // (length: _numChannels, Range: [0.0, 1.0])
+ * } LimiterReleasePayload;
+ *
+ * // 5. Bypass Payload (LimiterParamId::kBypass)
+ * typedef struct LimiterBypassPayload
+ * {
+ *    uint16_t paramId;    // Must be LimiterParamId::kBypass (4)
+ *    uint32_t bypassMode; // 0: apply the limiter, 1: copy input to output
+ * } LimiterBypassPayload;
  * @endcode
  */
 /**
@@ -59,7 +67,8 @@ enum class LimiterParamId : uint16_t {
    kThreshold = 0, /**< kThreshold: Threshold values to set/get for each channel */
    kKneeWidth = 1, /**< kKneeWidth: Knee width values to set/get for each channel */
    kAttack    = 2, /**< kAttack: Attack coeff values to set/get for each channel */
-   kRelease   = 3  /**< kRelease: Release coeff values to set/get for each channel */
+   kRelease   = 3, /**< kRelease: Release coeff values to set/get for each channel */
+   kBypass    = 4  /**< kBypass: uint32_t bypass mode; `0` applies the limiter, `1` copies input to output */
 };
 
 /**
@@ -113,37 +122,120 @@ template <typename T> class Limiter final : public VirtualOp {
 
    bool _isInterleaved; /*!< Input/output layout: true = interleaved, false = non-interleaved. */
 
-   TISP::HandlePtr<char> _handle_dB20;        /*!< handle required by AUDIOLIB_dB20 kernel */
-   TISP::HandlePtr<char> _handle_undB20;      /*!< handle required by AUDIOLIB_undB20 kernel */
-   TISP::HandlePtr<char> _handle_mul;         /*!< handle for the internal multiply stage */
-   TISP::HandlePtr<char> _handle_abs;         /*!< handle for the internal abs stage */
+   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the limiter, `1` copies input to output. */
+
+   TISP::HandlePtr<char> _handle_dB20;         /*!< handle required by AUDIOLIB_dB20 kernel */
+   TISP::HandlePtr<char> _handle_undB20;       /*!< handle required by AUDIOLIB_undB20 kernel */
+   TISP::HandlePtr<char> _handle_mul;          /*!< handle for the internal multiply stage */
+   TISP::HandlePtr<char> _handle_abs;          /*!< handle for the internal abs stage */
    TISP::HandlePtr<char> _handle_gainComputer; /*!< handle for the internal gain-computer stage */
 
    // Private functions used in limiter algorithm
+
+   /**
+    * @brief Configures the SE/SA descriptors for the internal absolute-value stage
+    *
+    * @param[in]  handle       : Handle the SE/SA descriptors are written into
+    * @param[in]  bufParamsIn  : Buffer parameters of the input matrix
+    * @param[in]  bufParamsOut : Buffer parameters of the output matrix
+    * @retval     int32_t      : `0` on success
+    * @throw None
+    */
    int32_t
    TISP_limiter_abs_init(void *handle, AUDIOLIB_bufParams2D_t *bufParamsIn, AUDIOLIB_bufParams2D_t *bufParamsOut);
 
+   /**
+    * @brief Configures the SE/SA descriptors for the internal element-wise multiply stage
+    *
+    * @param[in]  handle        : Handle the SE/SA descriptors are written into
+    * @param[in]  bufParamsIn0  : Buffer parameters of the first input matrix
+    * @param[in]  bufParamsIn1  : Buffer parameters of the second input matrix
+    * @param[in]  bufParamsOut  : Buffer parameters of the output matrix
+    * @retval     int32_t       : `0` on success
+    * @throw None
+    */
    int32_t TISP_limiter_mul_init(void                   *handle,
                                  AUDIOLIB_bufParams2D_t *bufParamsIn0,
                                  AUDIOLIB_bufParams2D_t *bufParamsIn1,
                                  AUDIOLIB_bufParams2D_t *bufParamsOut);
 
+   /**
+    * @brief Writes the absolute value of each input sample to the output matrix
+    *
+    * @param[in]  handle : Handle holding the SE/SA descriptors set by @ref TISP_limiter_abs_init
+    * @param[in]  pIn    : Pointer to the input matrix
+    * @param[out] pOut   : Pointer to the output matrix
+    * @retval None
+    * @throw None
+    */
    __INLINE_FUNC(TISP_limiter_abs_exec)
    inline void TISP_limiter_abs_exec(void *handle, T *pIn, T *pOut);
 
+   /**
+    * @brief Writes the element-wise product of two input matrices to the output matrix
+    *
+    * @param[in]  handle : Handle holding the SE/SA descriptors set by @ref TISP_limiter_mul_init
+    * @param[in]  pIn0   : Pointer to the first input matrix
+    * @param[in]  pIn1   : Pointer to the second input matrix
+    * @param[out] pOut   : Pointer to the output matrix
+    * @retval None
+    * @throw None
+    */
    __INLINE_FUNC(TISP_limiter_mul_exec)
    inline void TISP_limiter_mul_exec(void *handle, T *pIn0, T *pIn1, T *pOut);
 
+   /**
+    * @brief Configures the SE/SA descriptors for the internal gain-computer stage
+    *
+    * @param[in]  handle        : Handle the SE/SA descriptors are written into
+    * @param[in]  bufParamsIn   : Buffer parameters of the input matrix
+    * @param[in]  bufParamsGain : Buffer parameters of the per-channel gain vector
+    * @param[in]  bufParamsOut  : Buffer parameters of the output matrix
+    * @retval     int32_t       : `0` on success
+    * @throw None
+    */
    int32_t TISP_limiter_gainComputer_init(void                   *handle,
                                           AUDIOLIB_bufParams2D_t *bufParamsIn,
                                           AUDIOLIB_bufParams1D_t *bufParamsGain,
                                           AUDIOLIB_bufParams2D_t *bufParamsOut);
 
+   /**
+    * @brief Computes the per-sample limiter gain from the dB-domain input
+    *
+    * Applies the knee policy and the attack/release one-pole smoothing, writing the smoothed
+    * gain to the output matrix and the per-channel gain state to the gain vector.
+    *
+    * @param[in]  handle : Handle holding the SE/SA descriptors set by @ref TISP_limiter_gainComputer_init
+    * @param[in]  pIn    : Pointer to the dB-domain input matrix
+    * @param[out] pOut   : Pointer to the output matrix
+    * @param[out] pGain  : Pointer to the per-channel gain vector
+    * @retval None
+    * @throw None
+    */
    __INLINE_FUNC(TISP_limiter_gainComputer_exec)
    inline void TISP_limiter_gainComputer_exec(void *handle, T *pIn, T *pOut, T *pGain);
 
+   /**
+    * @brief Computes the vector reciprocal used by the gain computer
+    *
+    * @tparam     vecType : C7x vector type of the operand
+    * @param[in]  vIn     : Input vector
+    * @retval     vecType : Element-wise reciprocal of @p vIn
+    * @throw None
+    */
    __INLINE_FUNC(TISP_limiter_div_exec)
    template <typename vecType> inline vecType TISP_limiter_div_exec(vecType vIn);
+
+   /**
+    * @brief Copies the input matrix to the output matrix, honouring @ref _pitchX and @ref _pitchY
+    *
+    * The copied geometry follows @ref _isInterleaved: @ref _numChannels columns by
+    * @ref _blockSize rows when interleaved, and the transpose of that otherwise.
+    *
+    * @retval None
+    * @throw None
+    */
+   void bypassCopy() noexcept;
 
  public:
    /**

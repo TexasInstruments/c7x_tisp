@@ -1,675 +1,678 @@
-ID,testType,dataType,biquadForm,dataSize,numChannels,numStages,dataPitch,filterVarPitch,enableNChCoeffs,enableCalcCoeffs,numExecReps,numReps,demoCase,outputDataLocation,testCategory,testAm275Evm,Comment
-1,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-2,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-3,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,3,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-4,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,3,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-5,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-6,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-7,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-8,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-9,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,3,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-10,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,7,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,True,Test > 3-stages
-11,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,7,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,True,Test > 3-stages
-12,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-13,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-14,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-15,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-16,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,16,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,3,True,Test stride
-17,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,3,True,Test stride
-18,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,3,True,Test stride
-19,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,3,True,Test stride
-20,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-21,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,3,16,16,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-22,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,3,32,32,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-23,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,3,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-24,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,3,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-25,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,3,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-26,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,3,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-27,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,3,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-28,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,3,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-29,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,7,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-30,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,7,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-31,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,7,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-32,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,7,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-33,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,7,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-34,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,7,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation
-35,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,1,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-36,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,1,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-37,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,1,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-38,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,1,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-39,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-40,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-41,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-42,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-43,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,1,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-44,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,2,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-45,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,2,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-46,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,2,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-47,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,2,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages
-48,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-49,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-50,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-51,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-52,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,2,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages
-53,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,4,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-54,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,5,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-55,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,6,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-56,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,True,Test > 3-stages
-57,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,9,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,True,Test > 3-stages
-58,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,10,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-59,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,11,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-60,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,12,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-61,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,13,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages
-62,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,1,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-63,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,1,16,16,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-64,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,1,32,32,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-65,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,1,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-66,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,1,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-67,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,1,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-68,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,1,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-69,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,1,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-70,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,1,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-71,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,2,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-72,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,2,16,16,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-73,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,2,32,32,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-74,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,2,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-75,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,2,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-76,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,2,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-77,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,2,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-78,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,2,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-79,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,2,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation
-80,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,4,48,48,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation
-81,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,5,48,48,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation
-82,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,6,48,48,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation
-83,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation
-84,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,9,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation
-85,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,10,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation
-86,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,11,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation
-87,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,12,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation
-88,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,13,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation
-89,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-90,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-91,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,3,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-92,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,3,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-93,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-94,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-95,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-96,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-97,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,3,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-98,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,7,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-99,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,7,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-100,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-101,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-102,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-103,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-104,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,16,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,13,True,Test stride + enableNChCoeffs
-105,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,13,True,Test stride + enableNChCoeffs
-106,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,13,True,Test stride + enableNChCoeffs
-107,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,13,True,Test stride + enableNChCoeffs
-108,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-109,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,3,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-110,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,3,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-111,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,3,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-112,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-113,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-114,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-115,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-116,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,3,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-117,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,7,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-118,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,7,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-119,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-120,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-121,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-122,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs
-123,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,1,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-124,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,1,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-125,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,1,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-126,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,1,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-127,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-128,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-129,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-130,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-131,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,1,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-132,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,2,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-133,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,2,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-134,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,2,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-135,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,2,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs
-136,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-137,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-138,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-139,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-140,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,2,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs
-141,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-142,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-143,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-144,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-145,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,9,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-146,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,10,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-147,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,11,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-148,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,12,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-149,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,13,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-150,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,1,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-151,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,1,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-152,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,1,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-153,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,1,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-154,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-155,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-156,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-157,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-158,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,1,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-159,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,2,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-160,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,2,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-161,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,2,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-162,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,2,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-163,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-164,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-165,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-166,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-167,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,2,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs
-168,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,4,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs
-169,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,5,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs
-170,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,6,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs
-171,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs
-172,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,9,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs
-173,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,10,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs
-174,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,11,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs
-175,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,12,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs
-176,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,13,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs
-177,STATIC,float,DSPLIB_BIQUAD_TIF,63,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-178,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-179,STATIC,float,DSPLIB_BIQUAD_TIF,128,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-180,STATIC,float,DSPLIB_BIQUAD_TIF,256,3,4,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-181,STATIC,float,DSPLIB_BIQUAD_TIF,512,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-182,STATIC,float,DSPLIB_BIQUAD_TIF,512,17,4,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-183,STATIC,float,DSPLIB_BIQUAD_TIF,63,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-184,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-185,STATIC,float,DSPLIB_BIQUAD_TIF,128,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-186,STATIC,float,DSPLIB_BIQUAD_TIF,256,3,5,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-187,STATIC,float,DSPLIB_BIQUAD_TIF,512,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-188,STATIC,float,DSPLIB_BIQUAD_TIF,512,17,5,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-189,STATIC,float,DSPLIB_BIQUAD_TIF,63,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-190,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-191,STATIC,float,DSPLIB_BIQUAD_TIF,128,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-192,STATIC,float,DSPLIB_BIQUAD_TIF,256,3,6,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-193,STATIC,float,DSPLIB_BIQUAD_TIF,512,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-194,STATIC,float,DSPLIB_BIQUAD_TIF,512,17,6,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-195,STATIC,float,DSPLIB_BIQUAD_TIF,63,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-196,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-197,STATIC,float,DSPLIB_BIQUAD_TIF,128,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs
-198,STATIC,float,DSPLIB_BIQUAD_TIF,256,3,8,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-199,STATIC,float,DSPLIB_BIQUAD_TIF,512,12,8,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-200,STATIC,float,DSPLIB_BIQUAD_TIF,512,17,8,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs
-201,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-202,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-203,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,3,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-204,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,3,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-205,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-206,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-207,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-208,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-209,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,3,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-210,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,7,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,True,DF1 + Test > 3-stages
-211,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,7,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,True,DF1 + Test > 3-stages
-212,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-213,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-214,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-215,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-216,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,16,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,103,True,DF1 + Test stride
-217,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,103,True,DF1 + Test stride
-218,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,103,True,DF1 + Test stride
-219,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,103,True,DF1 + Test stride
-220,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,1,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-221,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,1,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-222,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,1,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-223,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,1,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-224,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-225,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-226,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-227,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-228,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,1,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-229,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,2,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-230,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,2,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-231,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,2,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-232,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,2,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages
-233,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-234,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-235,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-236,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-237,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,2,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages
-238,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,4,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-239,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,5,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-240,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,6,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-241,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,8,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,True,DF1 + Test > 3-stages
-242,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,9,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,True,DF1 + Test > 3-stages
-243,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,10,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-244,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,11,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-245,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,12,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-246,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,13,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages
-247,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-248,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-249,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,3,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-250,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,3,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-251,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-252,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-253,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-254,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-255,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,3,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-256,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,7,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-257,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,7,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-258,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-259,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-260,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-261,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-262,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,16,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,113,True,DF1 + Test stride + enableNChCoeffs
-263,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,113,True,DF1 + Test stride + enableNChCoeffs
-264,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,113,True,DF1 + Test stride + enableNChCoeffs
-265,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,113,True,DF1 + Test stride + enableNChCoeffs
-266,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-267,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,3,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-268,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,3,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-269,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,3,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-270,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-271,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-272,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-273,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-274,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,3,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-275,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,7,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-276,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,7,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-277,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-278,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-279,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-280,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs
-281,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,1,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-282,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,1,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-283,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,1,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-284,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,1,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-285,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-286,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-287,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-288,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-289,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,1,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-290,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,2,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-291,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,2,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-292,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,2,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-293,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,2,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs
-294,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-295,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-296,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-297,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-298,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,2,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs
-299,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-300,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-301,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-302,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-303,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,9,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-304,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,10,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-305,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,11,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-306,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,12,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-307,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,13,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-308,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,1,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-309,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,1,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-310,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,1,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-311,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,1,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-312,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-313,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-314,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-315,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-316,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,1,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-317,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,2,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-318,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,2,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-319,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,2,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-320,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,2,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-321,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-322,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-323,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-324,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-325,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,2,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-326,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,4,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-327,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,5,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-328,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,6,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-329,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,8,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-330,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,9,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-331,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,10,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-332,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,11,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-333,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,12,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-334,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,13,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-335,STATIC,float,DSPLIB_BIQUAD_DF1,63,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-336,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-337,STATIC,float,DSPLIB_BIQUAD_DF1,128,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-338,STATIC,float,DSPLIB_BIQUAD_DF1,256,3,4,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-339,STATIC,float,DSPLIB_BIQUAD_DF1,512,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-340,STATIC,float,DSPLIB_BIQUAD_DF1,512,17,4,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-341,STATIC,float,DSPLIB_BIQUAD_DF1,63,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-342,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-343,STATIC,float,DSPLIB_BIQUAD_DF1,128,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-344,STATIC,float,DSPLIB_BIQUAD_DF1,256,3,5,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-345,STATIC,float,DSPLIB_BIQUAD_DF1,512,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-346,STATIC,float,DSPLIB_BIQUAD_DF1,512,17,5,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-347,STATIC,float,DSPLIB_BIQUAD_DF1,63,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-348,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-349,STATIC,float,DSPLIB_BIQUAD_DF1,128,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-350,STATIC,float,DSPLIB_BIQUAD_DF1,256,3,6,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-351,STATIC,float,DSPLIB_BIQUAD_DF1,512,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-352,STATIC,float,DSPLIB_BIQUAD_DF1,512,17,6,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-353,STATIC,float,DSPLIB_BIQUAD_DF1,63,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-354,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-355,STATIC,float,DSPLIB_BIQUAD_DF1,128,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs
-356,STATIC,float,DSPLIB_BIQUAD_DF1,256,3,8,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-357,STATIC,float,DSPLIB_BIQUAD_DF1,512,12,8,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-358,STATIC,float,DSPLIB_BIQUAD_DF1,512,17,8,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs
-359,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-360,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-361,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,3,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-362,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,3,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-363,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-364,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-365,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-366,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-367,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,3,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-368,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,7,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,True,DF2 + Test > 3-stages
-369,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,7,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,True,DF2 + Test > 3-stages
-370,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-371,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-372,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-373,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-374,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,16,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,203,True,DF2 + Test stride
-375,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,203,True,DF2 + Test stride
-376,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,203,True,DF2 + Test stride
-377,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,203,True,DF2 + Test stride
-378,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,1,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-379,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,1,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-380,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,1,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-381,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,1,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-382,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-383,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-384,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-385,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-386,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,1,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-387,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,2,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-388,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,2,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-389,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,2,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-390,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,2,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages
-391,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-392,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-393,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-394,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-395,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,2,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages
-396,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,4,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-397,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,5,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-398,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,6,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-399,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,8,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,True,DF2 + Test > 3-stages
-400,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,9,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,True,DF2 + Test > 3-stages
-401,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,10,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-402,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,11,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-403,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,12,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-404,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,13,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages
-405,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-406,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-407,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,3,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-408,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,3,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-409,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-410,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-411,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-412,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-413,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,3,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-414,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,7,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-415,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,7,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-416,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-417,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-418,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-419,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-420,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,16,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,213,True,DF2 + Test stride + enableNChCoeffs
-421,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,213,True,DF2 + Test stride + enableNChCoeffs
-422,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,213,True,DF2 + Test stride + enableNChCoeffs
-423,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,213,True,DF2 + Test stride + enableNChCoeffs
-424,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-425,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,3,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-426,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,3,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-427,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,3,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-428,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-429,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-430,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-431,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-432,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,3,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-433,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,7,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-434,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,7,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-435,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-436,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-437,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-438,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs
-439,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,1,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-440,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,1,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-441,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,1,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-442,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,1,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-443,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-444,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-445,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-446,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-447,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,1,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-448,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,2,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-449,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,2,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-450,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,2,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-451,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,2,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs
-452,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-453,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-454,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-455,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-456,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,2,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs
-457,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-458,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-459,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-460,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-461,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,9,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-462,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,10,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-463,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,11,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-464,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,12,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-465,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,13,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-466,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,1,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-467,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,1,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-468,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,1,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-469,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,1,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-470,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-471,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-472,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-473,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-474,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,1,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-475,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,2,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-476,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,2,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-477,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,2,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-478,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,2,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-479,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-480,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-481,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-482,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-483,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,2,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-484,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,4,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-485,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,5,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-486,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,6,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-487,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,8,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-488,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,9,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-489,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,10,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-490,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,11,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-491,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,12,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-492,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,13,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-493,STATIC,float,DSPLIB_BIQUAD_DF2,63,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-494,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-495,STATIC,float,DSPLIB_BIQUAD_DF2,128,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-496,STATIC,float,DSPLIB_BIQUAD_DF2,256,3,4,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-497,STATIC,float,DSPLIB_BIQUAD_DF2,512,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-498,STATIC,float,DSPLIB_BIQUAD_DF2,512,17,4,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-499,STATIC,float,DSPLIB_BIQUAD_DF2,63,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-500,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-501,STATIC,float,DSPLIB_BIQUAD_DF2,128,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-502,STATIC,float,DSPLIB_BIQUAD_DF2,256,3,5,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-503,STATIC,float,DSPLIB_BIQUAD_DF2,512,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-504,STATIC,float,DSPLIB_BIQUAD_DF2,512,17,5,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-505,STATIC,float,DSPLIB_BIQUAD_DF2,63,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-506,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-507,STATIC,float,DSPLIB_BIQUAD_DF2,128,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-508,STATIC,float,DSPLIB_BIQUAD_DF2,256,3,6,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-509,STATIC,float,DSPLIB_BIQUAD_DF2,512,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-510,STATIC,float,DSPLIB_BIQUAD_DF2,512,17,6,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-511,STATIC,float,DSPLIB_BIQUAD_DF2,63,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-512,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-513,STATIC,float,DSPLIB_BIQUAD_DF2,128,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs
-514,STATIC,float,DSPLIB_BIQUAD_DF2,256,3,8,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-515,STATIC,float,DSPLIB_BIQUAD_DF2,512,12,8,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-516,STATIC,float,DSPLIB_BIQUAD_DF2,512,17,8,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs
-517,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-518,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-519,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,3,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-520,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,3,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-521,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-522,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-523,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-524,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-525,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,3,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-526,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,7,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,True,TDF2 + Test > 3-stages
-527,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,7,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,True,TDF2 + Test > 3-stages
-528,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-529,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-530,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-531,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-532,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,16,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,303,True,TDF2 + Test stride
-533,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,303,True,TDF2 + Test stride
-534,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,303,True,TDF2 + Test stride
-535,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,303,True,TDF2 + Test stride
-536,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,1,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-537,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,1,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-538,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,1,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-539,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,1,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-540,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-541,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-542,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-543,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-544,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,1,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-545,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,2,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-546,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,2,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-547,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,2,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-548,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,2,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages
-549,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-550,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-551,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-552,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-553,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,2,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages
-554,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,4,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-555,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,5,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-556,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,6,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-557,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,8,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,True,TDF2 + Test > 3-stages
-558,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,9,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,True,TDF2 + Test > 3-stages
-559,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,10,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-560,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,11,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-561,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,12,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-562,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,13,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages
-563,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-564,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-565,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,3,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-566,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,3,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-567,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-568,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-569,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-570,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-571,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,3,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-572,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,7,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-573,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,7,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-574,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-575,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-576,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-577,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-578,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,16,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,313,True,TDF2 + Test stride + enableNChCoeffs
-579,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,313,True,TDF2 + Test stride + enableNChCoeffs
-580,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,313,True,TDF2 + Test stride + enableNChCoeffs
-581,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,313,True,TDF2 + Test stride + enableNChCoeffs
-582,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-583,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,3,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-584,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,3,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-585,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,3,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-586,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-587,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-588,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-589,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-590,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,3,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-591,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,7,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-592,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,7,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-593,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-594,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-595,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-596,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs
-597,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,1,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-598,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,1,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-599,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,1,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-600,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,1,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-601,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-602,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-603,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-604,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-605,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,1,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-606,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,2,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-607,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,2,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-608,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,2,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-609,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,2,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs
-610,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-611,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-612,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-613,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-614,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,2,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs
-615,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-616,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-617,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-618,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-619,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,9,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-620,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,10,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-621,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,11,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-622,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,12,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-623,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,13,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-624,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,1,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-625,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,1,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-626,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,1,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-627,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,1,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-628,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-629,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-630,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-631,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-632,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,1,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-633,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,2,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-634,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,2,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-635,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,2,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-636,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,2,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-637,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-638,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-639,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-640,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-641,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,2,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs
-642,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,4,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-643,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,5,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-644,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,6,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-645,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,8,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-646,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,9,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-647,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,10,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-648,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,11,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-649,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,12,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-650,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,13,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs
-651,STATIC,float,DSPLIB_BIQUAD_TDF2,63,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-652,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-653,STATIC,float,DSPLIB_BIQUAD_TDF2,128,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-654,STATIC,float,DSPLIB_BIQUAD_TDF2,256,3,4,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-655,STATIC,float,DSPLIB_BIQUAD_TDF2,512,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-656,STATIC,float,DSPLIB_BIQUAD_TDF2,512,17,4,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-657,STATIC,float,DSPLIB_BIQUAD_TDF2,63,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-658,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-659,STATIC,float,DSPLIB_BIQUAD_TDF2,128,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-660,STATIC,float,DSPLIB_BIQUAD_TDF2,256,3,5,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-661,STATIC,float,DSPLIB_BIQUAD_TDF2,512,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-662,STATIC,float,DSPLIB_BIQUAD_TDF2,512,17,5,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-663,STATIC,float,DSPLIB_BIQUAD_TDF2,63,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-664,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-665,STATIC,float,DSPLIB_BIQUAD_TDF2,128,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-666,STATIC,float,DSPLIB_BIQUAD_TDF2,256,3,6,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-667,STATIC,float,DSPLIB_BIQUAD_TDF2,512,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-668,STATIC,float,DSPLIB_BIQUAD_TDF2,512,17,6,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-669,STATIC,float,DSPLIB_BIQUAD_TDF2,63,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-670,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-671,STATIC,float,DSPLIB_BIQUAD_TDF2,128,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs
-672,STATIC,float,DSPLIB_BIQUAD_TDF2,256,3,8,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-673,STATIC,float,DSPLIB_BIQUAD_TDF2,512,12,8,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
-674,STATIC,float,DSPLIB_BIQUAD_TDF2,512,17,8,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs
+ID,testType,dataType,biquadForm,dataSize,numChannels,numStages,dataPitch,filterVarPitch,enableNChCoeffs,enableCalcCoeffs,numExecReps,numReps,demoCase,outputDataLocation,testCategory,testAm275Evm,Comment,bypassMode
+1,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+2,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+3,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,3,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+4,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,3,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+5,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+6,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+7,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+8,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+9,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,3,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+10,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,7,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,True,Test > 3-stages,0
+11,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,7,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,True,Test > 3-stages,0
+12,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+13,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+14,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+15,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+16,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,16,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,3,True,Test stride,0
+17,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,3,True,Test stride,0
+18,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,3,True,Test stride,0
+19,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,3,True,Test stride,0
+20,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+21,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,3,16,16,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+22,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,3,32,32,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+23,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,3,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+24,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,3,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+25,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,3,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+26,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,3,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+27,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,3,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+28,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,3,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+29,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,7,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+30,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,7,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+31,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,7,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+32,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,7,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+33,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,7,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+34,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,7,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test target coefficient calculation,0
+35,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,1,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+36,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,1,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+37,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,1,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+38,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,1,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+39,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+40,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+41,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+42,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+43,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,1,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+44,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,2,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+45,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,2,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+46,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,2,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+47,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,2,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,Test <=3 stages,0
+48,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+49,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+50,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+51,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+52,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,2,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,False,Test <=3 stages,0
+53,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,4,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+54,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,5,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+55,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,6,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+56,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,True,Test > 3-stages,0
+57,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,9,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,True,Test > 3-stages,0
+58,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,10,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+59,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,11,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+60,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,12,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+61,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,13,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,2,False,Test > 3-stages,0
+62,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,1,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+63,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,1,16,16,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+64,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,1,32,32,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+65,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,1,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+66,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,1,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+67,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,1,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+68,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,1,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+69,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,1,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+70,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,1,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+71,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,2,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+72,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,2,16,16,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+73,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,2,32,32,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+74,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,2,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+75,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,2,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+76,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,2,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+77,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,2,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+78,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,2,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+79,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,2,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test <=3 stages + target coefficient calculation,0
+80,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,4,48,48,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation,0
+81,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,5,48,48,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation,0
+82,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,6,48,48,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation,0
+83,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation,0
+84,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,9,64,64,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation,0
+85,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,10,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation,0
+86,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,11,128,128,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation,0
+87,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,12,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation,0
+88,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,13,160,160,False,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,4,False,Test > 3-stages + target coefficient calculation,0
+89,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+90,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+91,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,3,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+92,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,3,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+93,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+94,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+95,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+96,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+97,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,3,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+98,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,7,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+99,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,7,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+100,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+101,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+102,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+103,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+104,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,16,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,13,True,Test stride + enableNChCoeffs,0
+105,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,13,True,Test stride + enableNChCoeffs,0
+106,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,13,True,Test stride + enableNChCoeffs,0
+107,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,13,True,Test stride + enableNChCoeffs,0
+108,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+109,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,3,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+110,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,3,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+111,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,3,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+112,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+113,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+114,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+115,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+116,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,3,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+117,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,7,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+118,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,7,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+119,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+120,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+121,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+122,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test target coefficient calculation + enableNChCoeffs,0
+123,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,1,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+124,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,1,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+125,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,1,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+126,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,1,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+127,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+128,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+129,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+130,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+131,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,1,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+132,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,2,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+133,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,2,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+134,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,2,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+135,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,2,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,True,Test <=3 stages + enableNChCoeffs,0
+136,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+137,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+138,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+139,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+140,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,2,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,11,False,Test <=3 stages + enableNChCoeffs,0
+141,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+142,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+143,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+144,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+145,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,9,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+146,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,10,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+147,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,11,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+148,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,12,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+149,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,13,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+150,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,1,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+151,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,1,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+152,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,1,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+153,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,1,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+154,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+155,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+156,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+157,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+158,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,1,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+159,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,2,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+160,STATIC,float,DSPLIB_BIQUAD_TIF,64,4,2,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+161,STATIC,float,DSPLIB_BIQUAD_TIF,64,8,2,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+162,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,2,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+163,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+164,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+165,STATIC,float,DSPLIB_BIQUAD_TIF,256,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+166,STATIC,float,DSPLIB_BIQUAD_TIF,512,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+167,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,2,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+168,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,4,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+169,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,5,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+170,STATIC,float,DSPLIB_BIQUAD_TIF,256,12,6,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+171,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+172,STATIC,float,DSPLIB_BIQUAD_TIF,64,16,9,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+173,STATIC,float,DSPLIB_BIQUAD_TIF,64,32,10,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+174,STATIC,float,DSPLIB_BIQUAD_TIF,128,32,11,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+175,STATIC,float,DSPLIB_BIQUAD_TIF,256,40,12,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+176,STATIC,float,DSPLIB_BIQUAD_TIF,512,40,13,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,14,False,Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+177,STATIC,float,DSPLIB_BIQUAD_TIF,63,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+178,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+179,STATIC,float,DSPLIB_BIQUAD_TIF,128,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+180,STATIC,float,DSPLIB_BIQUAD_TIF,256,3,4,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+181,STATIC,float,DSPLIB_BIQUAD_TIF,512,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+182,STATIC,float,DSPLIB_BIQUAD_TIF,512,17,4,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+183,STATIC,float,DSPLIB_BIQUAD_TIF,63,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+184,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+185,STATIC,float,DSPLIB_BIQUAD_TIF,128,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+186,STATIC,float,DSPLIB_BIQUAD_TIF,256,3,5,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+187,STATIC,float,DSPLIB_BIQUAD_TIF,512,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+188,STATIC,float,DSPLIB_BIQUAD_TIF,512,17,5,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+189,STATIC,float,DSPLIB_BIQUAD_TIF,63,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+190,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+191,STATIC,float,DSPLIB_BIQUAD_TIF,128,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+192,STATIC,float,DSPLIB_BIQUAD_TIF,256,3,6,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+193,STATIC,float,DSPLIB_BIQUAD_TIF,512,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+194,STATIC,float,DSPLIB_BIQUAD_TIF,512,17,6,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+195,STATIC,float,DSPLIB_BIQUAD_TIF,63,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+196,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+197,STATIC,float,DSPLIB_BIQUAD_TIF,128,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,True,Test > 3-stages + enableNChCoeffs,0
+198,STATIC,float,DSPLIB_BIQUAD_TIF,256,3,8,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+199,STATIC,float,DSPLIB_BIQUAD_TIF,512,12,8,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+200,STATIC,float,DSPLIB_BIQUAD_TIF,512,17,8,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,12,False,Test > 3-stages + enableNChCoeffs,0
+201,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+202,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+203,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,3,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+204,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,3,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+205,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+206,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+207,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+208,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+209,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,3,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+210,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,7,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,True,DF1 + Test > 3-stages,0
+211,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,7,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,True,DF1 + Test > 3-stages,0
+212,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+213,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+214,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+215,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+216,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,16,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,103,True,DF1 + Test stride,0
+217,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,103,True,DF1 + Test stride,0
+218,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,103,True,DF1 + Test stride,0
+219,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,103,True,DF1 + Test stride,0
+220,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,1,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+221,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,1,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+222,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,1,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+223,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,1,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+224,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+225,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+226,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+227,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+228,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,1,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+229,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,2,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+230,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,2,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+231,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,2,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+232,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,2,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,True,DF1 + Test <=3 stages,0
+233,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+234,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+235,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+236,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+237,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,2,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,101,False,DF1 + Test <=3 stages,0
+238,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,4,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+239,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,5,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+240,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,6,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+241,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,8,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,True,DF1 + Test > 3-stages,0
+242,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,9,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,True,DF1 + Test > 3-stages,0
+243,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,10,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+244,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,11,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+245,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,12,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+246,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,13,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,102,False,DF1 + Test > 3-stages,0
+247,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+248,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+249,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,3,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+250,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,3,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+251,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+252,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+253,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+254,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+255,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,3,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+256,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,7,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+257,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,7,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+258,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+259,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+260,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+261,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+262,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,16,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,113,True,DF1 + Test stride + enableNChCoeffs,0
+263,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,113,True,DF1 + Test stride + enableNChCoeffs,0
+264,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,113,True,DF1 + Test stride + enableNChCoeffs,0
+265,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,113,True,DF1 + Test stride + enableNChCoeffs,0
+266,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,3,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+267,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,3,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+268,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,3,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+269,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,3,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+270,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+271,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+272,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+273,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+274,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,3,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+275,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,7,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+276,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,7,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+277,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+278,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+279,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+280,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test target coefficient calculation + enableNChCoeffs,0
+281,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,1,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+282,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,1,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+283,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,1,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+284,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,1,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+285,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+286,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+287,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+288,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+289,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,1,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+290,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,2,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+291,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,2,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+292,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,2,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+293,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,2,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,True,DF1 + Test <=3 stages + enableNChCoeffs,0
+294,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+295,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+296,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+297,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+298,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,2,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,111,False,DF1 + Test <=3 stages + enableNChCoeffs,0
+299,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+300,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+301,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+302,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+303,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,9,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+304,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,10,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+305,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,11,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+306,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,12,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+307,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,13,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+308,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,1,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+309,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,1,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+310,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,1,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+311,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,1,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+312,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+313,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+314,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+315,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+316,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,1,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+317,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,2,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+318,STATIC,float,DSPLIB_BIQUAD_DF1,64,4,2,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+319,STATIC,float,DSPLIB_BIQUAD_DF1,64,8,2,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+320,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,2,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+321,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+322,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+323,STATIC,float,DSPLIB_BIQUAD_DF1,256,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+324,STATIC,float,DSPLIB_BIQUAD_DF1,512,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+325,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,2,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+326,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,4,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+327,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,5,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+328,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,6,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+329,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,8,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+330,STATIC,float,DSPLIB_BIQUAD_DF1,64,16,9,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+331,STATIC,float,DSPLIB_BIQUAD_DF1,64,32,10,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+332,STATIC,float,DSPLIB_BIQUAD_DF1,128,32,11,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+333,STATIC,float,DSPLIB_BIQUAD_DF1,256,40,12,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+334,STATIC,float,DSPLIB_BIQUAD_DF1,512,40,13,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,114,False,DF1 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+335,STATIC,float,DSPLIB_BIQUAD_DF1,63,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+336,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+337,STATIC,float,DSPLIB_BIQUAD_DF1,128,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+338,STATIC,float,DSPLIB_BIQUAD_DF1,256,3,4,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+339,STATIC,float,DSPLIB_BIQUAD_DF1,512,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+340,STATIC,float,DSPLIB_BIQUAD_DF1,512,17,4,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+341,STATIC,float,DSPLIB_BIQUAD_DF1,63,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+342,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+343,STATIC,float,DSPLIB_BIQUAD_DF1,128,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+344,STATIC,float,DSPLIB_BIQUAD_DF1,256,3,5,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+345,STATIC,float,DSPLIB_BIQUAD_DF1,512,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+346,STATIC,float,DSPLIB_BIQUAD_DF1,512,17,5,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+347,STATIC,float,DSPLIB_BIQUAD_DF1,63,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+348,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+349,STATIC,float,DSPLIB_BIQUAD_DF1,128,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+350,STATIC,float,DSPLIB_BIQUAD_DF1,256,3,6,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+351,STATIC,float,DSPLIB_BIQUAD_DF1,512,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+352,STATIC,float,DSPLIB_BIQUAD_DF1,512,17,6,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+353,STATIC,float,DSPLIB_BIQUAD_DF1,63,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+354,STATIC,float,DSPLIB_BIQUAD_DF1,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+355,STATIC,float,DSPLIB_BIQUAD_DF1,128,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,True,DF1 + Test > 3-stages + enableNChCoeffs,0
+356,STATIC,float,DSPLIB_BIQUAD_DF1,256,3,8,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+357,STATIC,float,DSPLIB_BIQUAD_DF1,512,12,8,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+358,STATIC,float,DSPLIB_BIQUAD_DF1,512,17,8,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,DF1 + Test > 3-stages + enableNChCoeffs,0
+359,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+360,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+361,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,3,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+362,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,3,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+363,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+364,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+365,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+366,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+367,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,3,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+368,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,7,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,True,DF2 + Test > 3-stages,0
+369,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,7,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,True,DF2 + Test > 3-stages,0
+370,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+371,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+372,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+373,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+374,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,16,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,203,True,DF2 + Test stride,0
+375,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,203,True,DF2 + Test stride,0
+376,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,203,True,DF2 + Test stride,0
+377,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,203,True,DF2 + Test stride,0
+378,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,1,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+379,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,1,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+380,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,1,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+381,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,1,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+382,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+383,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+384,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+385,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+386,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,1,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+387,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,2,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+388,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,2,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+389,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,2,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+390,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,2,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,True,DF2 + Test <=3 stages,0
+391,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+392,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+393,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+394,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+395,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,2,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,201,False,DF2 + Test <=3 stages,0
+396,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,4,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+397,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,5,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+398,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,6,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+399,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,8,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,True,DF2 + Test > 3-stages,0
+400,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,9,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,True,DF2 + Test > 3-stages,0
+401,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,10,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+402,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,11,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+403,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,12,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+404,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,13,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,202,False,DF2 + Test > 3-stages,0
+405,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+406,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+407,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,3,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+408,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,3,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+409,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+410,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+411,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+412,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+413,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,3,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+414,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,7,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+415,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,7,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+416,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+417,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+418,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+419,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+420,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,16,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,213,True,DF2 + Test stride + enableNChCoeffs,0
+421,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,213,True,DF2 + Test stride + enableNChCoeffs,0
+422,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,213,True,DF2 + Test stride + enableNChCoeffs,0
+423,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,213,True,DF2 + Test stride + enableNChCoeffs,0
+424,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,3,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+425,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,3,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+426,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,3,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+427,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,3,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+428,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+429,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+430,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+431,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+432,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,3,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+433,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,7,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+434,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,7,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+435,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+436,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+437,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+438,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test target coefficient calculation + enableNChCoeffs,0
+439,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,1,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+440,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,1,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+441,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,1,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+442,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,1,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+443,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+444,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+445,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+446,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+447,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,1,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+448,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,2,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+449,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,2,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+450,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,2,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+451,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,2,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,True,DF2 + Test <=3 stages + enableNChCoeffs,0
+452,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+453,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+454,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+455,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+456,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,2,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,211,False,DF2 + Test <=3 stages + enableNChCoeffs,0
+457,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+458,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+459,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+460,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+461,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,9,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+462,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,10,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+463,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,11,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+464,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,12,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+465,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,13,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+466,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,1,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+467,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,1,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+468,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,1,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+469,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,1,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+470,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+471,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+472,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+473,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+474,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,1,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+475,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,2,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+476,STATIC,float,DSPLIB_BIQUAD_DF2,64,4,2,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+477,STATIC,float,DSPLIB_BIQUAD_DF2,64,8,2,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+478,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,2,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+479,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+480,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+481,STATIC,float,DSPLIB_BIQUAD_DF2,256,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+482,STATIC,float,DSPLIB_BIQUAD_DF2,512,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+483,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,2,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+484,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,4,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+485,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,5,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+486,STATIC,float,DSPLIB_BIQUAD_DF2,256,12,6,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+487,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,8,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+488,STATIC,float,DSPLIB_BIQUAD_DF2,64,16,9,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+489,STATIC,float,DSPLIB_BIQUAD_DF2,64,32,10,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+490,STATIC,float,DSPLIB_BIQUAD_DF2,128,32,11,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+491,STATIC,float,DSPLIB_BIQUAD_DF2,256,40,12,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+492,STATIC,float,DSPLIB_BIQUAD_DF2,512,40,13,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,214,False,DF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+493,STATIC,float,DSPLIB_BIQUAD_DF2,63,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+494,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+495,STATIC,float,DSPLIB_BIQUAD_DF2,128,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+496,STATIC,float,DSPLIB_BIQUAD_DF2,256,3,4,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+497,STATIC,float,DSPLIB_BIQUAD_DF2,512,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+498,STATIC,float,DSPLIB_BIQUAD_DF2,512,17,4,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+499,STATIC,float,DSPLIB_BIQUAD_DF2,63,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+500,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+501,STATIC,float,DSPLIB_BIQUAD_DF2,128,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+502,STATIC,float,DSPLIB_BIQUAD_DF2,256,3,5,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+503,STATIC,float,DSPLIB_BIQUAD_DF2,512,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+504,STATIC,float,DSPLIB_BIQUAD_DF2,512,17,5,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+505,STATIC,float,DSPLIB_BIQUAD_DF2,63,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+506,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+507,STATIC,float,DSPLIB_BIQUAD_DF2,128,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+508,STATIC,float,DSPLIB_BIQUAD_DF2,256,3,6,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+509,STATIC,float,DSPLIB_BIQUAD_DF2,512,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+510,STATIC,float,DSPLIB_BIQUAD_DF2,512,17,6,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+511,STATIC,float,DSPLIB_BIQUAD_DF2,63,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+512,STATIC,float,DSPLIB_BIQUAD_DF2,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+513,STATIC,float,DSPLIB_BIQUAD_DF2,128,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,True,DF2 + Test > 3-stages + enableNChCoeffs,0
+514,STATIC,float,DSPLIB_BIQUAD_DF2,256,3,8,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+515,STATIC,float,DSPLIB_BIQUAD_DF2,512,12,8,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+516,STATIC,float,DSPLIB_BIQUAD_DF2,512,17,8,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,212,False,DF2 + Test > 3-stages + enableNChCoeffs,0
+517,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+518,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+519,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,3,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+520,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,3,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+521,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+522,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+523,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+524,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,3,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+525,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,3,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+526,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,7,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,True,TDF2 + Test > 3-stages,0
+527,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,7,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,True,TDF2 + Test > 3-stages,0
+528,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+529,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,7,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+530,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+531,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,7,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+532,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,16,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,303,True,TDF2 + Test stride,0
+533,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,303,True,TDF2 + Test stride,0
+534,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,303,True,TDF2 + Test stride,0
+535,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,303,True,TDF2 + Test stride,0
+536,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,1,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+537,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,1,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+538,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,1,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+539,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,1,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+540,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+541,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+542,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+543,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,1,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+544,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,1,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+545,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,2,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+546,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,2,16,16,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+547,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,2,32,32,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+548,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,2,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,True,TDF2 + Test <=3 stages,0
+549,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+550,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+551,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+552,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,2,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+553,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,2,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,301,False,TDF2 + Test <=3 stages,0
+554,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,4,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+555,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,5,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+556,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,6,48,48,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+557,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,8,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,True,TDF2 + Test > 3-stages,0
+558,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,9,64,64,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,True,TDF2 + Test > 3-stages,0
+559,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,10,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+560,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,11,128,128,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+561,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,12,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+562,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,13,160,160,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,302,False,TDF2 + Test > 3-stages,0
+563,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+564,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+565,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,3,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+566,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,3,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+567,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+568,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+569,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+570,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,3,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+571,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,3,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+572,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,7,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+573,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,7,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+574,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+575,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,7,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+576,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+577,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,7,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+578,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,16,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,313,True,TDF2 + Test stride + enableNChCoeffs,0
+579,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,313,True,TDF2 + Test stride + enableNChCoeffs,0
+580,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,313,True,TDF2 + Test stride + enableNChCoeffs,0
+581,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,313,True,TDF2 + Test stride + enableNChCoeffs,0
+582,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,3,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+583,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,3,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+584,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,3,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+585,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,3,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+586,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+587,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+588,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+589,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,3,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+590,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,3,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+591,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,7,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+592,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,7,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+593,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+594,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,7,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+595,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+596,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,7,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test target coefficient calculation + enableNChCoeffs,0
+597,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,1,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+598,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,1,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+599,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,1,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+600,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,1,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+601,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+602,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+603,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+604,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,1,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+605,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,1,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+606,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,2,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+607,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,2,16,16,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+608,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,2,32,32,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+609,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,2,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,True,TDF2 + Test <=3 stages + enableNChCoeffs,0
+610,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+611,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+612,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+613,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,2,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+614,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,2,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,311,False,TDF2 + Test <=3 stages + enableNChCoeffs,0
+615,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+616,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+617,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+618,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+619,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,9,64,64,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+620,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,10,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+621,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,11,128,128,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+622,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,12,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+623,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,13,160,160,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+624,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,1,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+625,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,1,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+626,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,1,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+627,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,1,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+628,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+629,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+630,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+631,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,1,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+632,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,1,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+633,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,2,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+634,STATIC,float,DSPLIB_BIQUAD_TDF2,64,4,2,16,16,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+635,STATIC,float,DSPLIB_BIQUAD_TDF2,64,8,2,32,32,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+636,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,2,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+637,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+638,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+639,STATIC,float,DSPLIB_BIQUAD_TDF2,256,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+640,STATIC,float,DSPLIB_BIQUAD_TDF2,512,32,2,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+641,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,2,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test <=3 stages + target coefficient calculation + enableNChCoeffs,0
+642,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,4,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+643,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,5,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+644,STATIC,float,DSPLIB_BIQUAD_TDF2,256,12,6,48,48,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+645,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,8,8,8,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+646,STATIC,float,DSPLIB_BIQUAD_TDF2,64,16,9,64,64,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+647,STATIC,float,DSPLIB_BIQUAD_TDF2,64,32,10,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+648,STATIC,float,DSPLIB_BIQUAD_TDF2,128,32,11,128,128,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+649,STATIC,float,DSPLIB_BIQUAD_TDF2,256,40,12,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+650,STATIC,float,DSPLIB_BIQUAD_TDF2,512,40,13,160,160,True,True,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,314,False,TDF2 + Test > 3-stages + target coefficient calculation + enableNChCoeffs,0
+651,STATIC,float,DSPLIB_BIQUAD_TDF2,63,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+652,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+653,STATIC,float,DSPLIB_BIQUAD_TDF2,128,2,4,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+654,STATIC,float,DSPLIB_BIQUAD_TDF2,256,3,4,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+655,STATIC,float,DSPLIB_BIQUAD_TDF2,512,12,4,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+656,STATIC,float,DSPLIB_BIQUAD_TDF2,512,17,4,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+657,STATIC,float,DSPLIB_BIQUAD_TDF2,63,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+658,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+659,STATIC,float,DSPLIB_BIQUAD_TDF2,128,2,5,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+660,STATIC,float,DSPLIB_BIQUAD_TDF2,256,3,5,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+661,STATIC,float,DSPLIB_BIQUAD_TDF2,512,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+662,STATIC,float,DSPLIB_BIQUAD_TDF2,512,17,5,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+663,STATIC,float,DSPLIB_BIQUAD_TDF2,63,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+664,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+665,STATIC,float,DSPLIB_BIQUAD_TDF2,128,2,6,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+666,STATIC,float,DSPLIB_BIQUAD_TDF2,256,3,6,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+667,STATIC,float,DSPLIB_BIQUAD_TDF2,512,12,6,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+668,STATIC,float,DSPLIB_BIQUAD_TDF2,512,17,6,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+669,STATIC,float,DSPLIB_BIQUAD_TDF2,63,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+670,STATIC,float,DSPLIB_BIQUAD_TDF2,64,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+671,STATIC,float,DSPLIB_BIQUAD_TDF2,128,2,8,8,8,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,True,TDF2 + Test > 3-stages + enableNChCoeffs,0
+672,STATIC,float,DSPLIB_BIQUAD_TDF2,256,3,8,12,12,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+673,STATIC,float,DSPLIB_BIQUAD_TDF2,512,12,8,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+674,STATIC,float,DSPLIB_BIQUAD_TDF2,512,17,8,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,TDF2 + Test > 3-stages + enableNChCoeffs,0
+675,STATIC,float,DSPLIB_BIQUAD_TIF,64,2,3,8,8,False,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,1,True,bypass mode enabled,1
+676,STATIC,float,DSPLIB_BIQUAD_DF1,256,12,5,48,48,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,112,False,bypass mode enabled,1
+677,STATIC,float,DSPLIB_BIQUAD_TDF2,512,17,8,68,68,True,False,1,1,False,DSPLIB_TEST_OUTPUT_HEAP,312,False,bypass mode enabled,1

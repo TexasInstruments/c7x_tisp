@@ -2702,6 +2702,18 @@
 #include "test_data/staticRefCase674.h"
 #endif
 
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 675))
+#include "test_data/staticRefCase675.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 676))
+#include "test_data/staticRefCase676.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 677))
+#include "test_data/staticRefCase677.h"
+#endif
+
 static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 1) || (TEST_CATEGORY == 1))
     {
@@ -2719,6 +2731,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                           // filterVarPitch
         0,                           // enableNChCoeffs
         0,                           // enableCalcCoeffs
+        0,                           // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,     // Output data location
         1,                           // Number of repetitions
         1,                           // test ID
@@ -2741,6 +2754,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                          // filterVarPitch
         0,                           // enableNChCoeffs
         0,                           // enableCalcCoeffs
+        0,                           // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,     // Output data location
         1,                           // Number of repetitions
         2,                           // test ID
@@ -2763,6 +2777,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                          // filterVarPitch
         0,                           // enableNChCoeffs
         0,                           // enableCalcCoeffs
+        0,                           // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,     // Output data location
         1,                           // Number of repetitions
         3,                           // test ID
@@ -2785,6 +2800,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                          // filterVarPitch
         0,                           // enableNChCoeffs
         0,                           // enableCalcCoeffs
+        0,                           // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,     // Output data location
         1,                           // Number of repetitions
         4,                           // test ID
@@ -2808,6 +2824,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                         // filterVarPitch
         0,                           // enableNChCoeffs
         0,                           // enableCalcCoeffs
+        0,                           // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,     // Output data location
         1,                           // Number of repetitions
         5,                           // test ID
@@ -2831,6 +2848,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                         // filterVarPitch
         0,                           // enableNChCoeffs
         0,                           // enableCalcCoeffs
+        0,                           // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,     // Output data location
         1,                           // Number of repetitions
         6,                           // test ID
@@ -2854,6 +2872,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                         // filterVarPitch
         0,                           // enableNChCoeffs
         0,                           // enableCalcCoeffs
+        0,                           // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,     // Output data location
         1,                           // Number of repetitions
         7,                           // test ID
@@ -2877,6 +2896,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                         // filterVarPitch
         0,                           // enableNChCoeffs
         0,                           // enableCalcCoeffs
+        0,                           // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,     // Output data location
         1,                           // Number of repetitions
         8,                           // test ID
@@ -2900,6 +2920,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                         // filterVarPitch
         0,                           // enableNChCoeffs
         0,                           // enableCalcCoeffs
+        0,                           // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,     // Output data location
         1,                           // Number of repetitions
         9,                           // test ID
@@ -2922,6 +2943,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         10,                           // test ID
@@ -2944,6 +2966,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         11,                           // test ID
@@ -2967,6 +2990,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         12,                           // test ID
@@ -2990,6 +3014,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         13,                           // test ID
@@ -3013,6 +3038,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         14,                           // test ID
@@ -3036,6 +3062,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         15,                           // test ID
@@ -3058,6 +3085,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         16,                           // test ID
@@ -3080,6 +3108,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         17,                           // test ID
@@ -3102,6 +3131,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         18,                           // test ID
@@ -3124,6 +3154,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         19,                           // test ID
@@ -3147,6 +3178,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         20,                           // test ID
@@ -3170,6 +3202,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         21,                           // test ID
@@ -3193,6 +3226,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         22,                           // test ID
@@ -3216,6 +3250,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         23,                           // test ID
@@ -3239,6 +3274,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         24,                           // test ID
@@ -3262,6 +3298,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         25,                           // test ID
@@ -3285,6 +3322,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         26,                           // test ID
@@ -3308,6 +3346,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         27,                           // test ID
@@ -3331,6 +3370,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         28,                           // test ID
@@ -3354,6 +3394,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         29,                           // test ID
@@ -3377,6 +3418,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         30,                           // test ID
@@ -3400,6 +3442,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         31,                           // test ID
@@ -3423,6 +3466,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         32,                           // test ID
@@ -3446,6 +3490,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         33,                           // test ID
@@ -3469,6 +3514,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         34,                           // test ID
@@ -3491,6 +3537,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         35,                           // test ID
@@ -3513,6 +3560,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         36,                           // test ID
@@ -3535,6 +3583,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         37,                           // test ID
@@ -3557,6 +3606,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         38,                           // test ID
@@ -3580,6 +3630,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         39,                           // test ID
@@ -3603,6 +3654,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         40,                           // test ID
@@ -3626,6 +3678,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         41,                           // test ID
@@ -3649,6 +3702,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         42,                           // test ID
@@ -3672,6 +3726,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         43,                           // test ID
@@ -3694,6 +3749,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         44,                           // test ID
@@ -3716,6 +3772,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         45,                           // test ID
@@ -3738,6 +3795,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         46,                           // test ID
@@ -3760,6 +3818,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         47,                           // test ID
@@ -3783,6 +3842,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         48,                           // test ID
@@ -3806,6 +3866,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         49,                           // test ID
@@ -3829,6 +3890,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         50,                           // test ID
@@ -3852,6 +3914,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         51,                           // test ID
@@ -3875,6 +3938,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         52,                           // test ID
@@ -3898,6 +3962,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         53,                           // test ID
@@ -3921,6 +3986,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         54,                           // test ID
@@ -3944,6 +4010,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         55,                           // test ID
@@ -3966,6 +4033,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         56,                           // test ID
@@ -3988,6 +4056,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         57,                           // test ID
@@ -4011,6 +4080,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         58,                           // test ID
@@ -4034,6 +4104,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         59,                           // test ID
@@ -4057,6 +4128,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         60,                           // test ID
@@ -4080,6 +4152,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         61,                           // test ID
@@ -4103,6 +4176,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         62,                           // test ID
@@ -4126,6 +4200,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         63,                           // test ID
@@ -4149,6 +4224,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         64,                           // test ID
@@ -4172,6 +4248,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         65,                           // test ID
@@ -4195,6 +4272,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         66,                           // test ID
@@ -4218,6 +4296,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         67,                           // test ID
@@ -4241,6 +4320,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         68,                           // test ID
@@ -4264,6 +4344,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         69,                           // test ID
@@ -4287,6 +4368,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         70,                           // test ID
@@ -4310,6 +4392,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         71,                           // test ID
@@ -4333,6 +4416,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         72,                           // test ID
@@ -4356,6 +4440,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         73,                           // test ID
@@ -4379,6 +4464,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         74,                           // test ID
@@ -4402,6 +4488,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         75,                           // test ID
@@ -4425,6 +4512,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         76,                           // test ID
@@ -4448,6 +4536,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         77,                           // test ID
@@ -4471,6 +4560,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         78,                           // test ID
@@ -4494,6 +4584,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         79,                           // test ID
@@ -4517,6 +4608,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         80,                           // test ID
@@ -4540,6 +4632,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         81,                           // test ID
@@ -4563,6 +4656,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         82,                           // test ID
@@ -4586,6 +4680,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         83,                           // test ID
@@ -4609,6 +4704,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         84,                           // test ID
@@ -4632,6 +4728,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         85,                           // test ID
@@ -4655,6 +4752,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         86,                           // test ID
@@ -4678,6 +4776,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         87,                           // test ID
@@ -4701,6 +4800,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         0,                            // enableNChCoeffs
         1,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         88,                           // test ID
@@ -4723,6 +4823,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         89,                           // test ID
@@ -4745,6 +4846,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                           // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         90,                           // test ID
@@ -4767,6 +4869,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                           // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         91,                           // test ID
@@ -4789,6 +4892,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         92,                           // test ID
@@ -4812,6 +4916,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         93,                           // test ID
@@ -4835,6 +4940,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         94,                           // test ID
@@ -4858,6 +4964,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         95,                           // test ID
@@ -4881,6 +4988,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                          // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         96,                           // test ID
@@ -4904,6 +5012,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                          // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         97,                           // test ID
@@ -4926,6 +5035,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                            // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         98,                           // test ID
@@ -4948,6 +5058,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                           // filterVarPitch
         1,                            // enableNChCoeffs
         0,                            // enableCalcCoeffs
+        0,                            // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,      // Output data location
         1,                            // Number of repetitions
         99,                           // test ID
@@ -4971,6 +5082,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         100,                           // test ID
@@ -4994,6 +5106,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         101,                           // test ID
@@ -5017,6 +5130,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         102,                           // test ID
@@ -5040,6 +5154,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         103,                           // test ID
@@ -5062,6 +5177,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         104,                           // test ID
@@ -5084,6 +5200,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         105,                           // test ID
@@ -5106,6 +5223,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         106,                           // test ID
@@ -5128,6 +5246,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         107,                           // test ID
@@ -5151,6 +5270,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         108,                           // test ID
@@ -5174,6 +5294,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         109,                           // test ID
@@ -5197,6 +5318,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         110,                           // test ID
@@ -5220,6 +5342,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         111,                           // test ID
@@ -5243,6 +5366,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         112,                           // test ID
@@ -5266,6 +5390,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         113,                           // test ID
@@ -5289,6 +5414,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         114,                           // test ID
@@ -5312,6 +5438,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         115,                           // test ID
@@ -5335,6 +5462,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         116,                           // test ID
@@ -5358,6 +5486,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         117,                           // test ID
@@ -5381,6 +5510,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         118,                           // test ID
@@ -5404,6 +5534,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         119,                           // test ID
@@ -5427,6 +5558,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         120,                           // test ID
@@ -5450,6 +5582,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         121,                           // test ID
@@ -5473,6 +5606,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         122,                           // test ID
@@ -5495,6 +5629,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         123,                           // test ID
@@ -5517,6 +5652,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         124,                           // test ID
@@ -5539,6 +5675,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         125,                           // test ID
@@ -5561,6 +5698,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         126,                           // test ID
@@ -5584,6 +5722,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         127,                           // test ID
@@ -5607,6 +5746,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         128,                           // test ID
@@ -5630,6 +5770,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         129,                           // test ID
@@ -5653,6 +5794,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         130,                           // test ID
@@ -5676,6 +5818,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         131,                           // test ID
@@ -5698,6 +5841,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         132,                           // test ID
@@ -5720,6 +5864,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         133,                           // test ID
@@ -5742,6 +5887,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         134,                           // test ID
@@ -5764,6 +5910,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         135,                           // test ID
@@ -5787,6 +5934,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         136,                           // test ID
@@ -5810,6 +5958,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         137,                           // test ID
@@ -5833,6 +5982,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         138,                           // test ID
@@ -5856,6 +6006,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         139,                           // test ID
@@ -5879,6 +6030,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         140,                           // test ID
@@ -5902,6 +6054,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         141,                           // test ID
@@ -5925,6 +6078,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         142,                           // test ID
@@ -5948,6 +6102,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         143,                           // test ID
@@ -5970,6 +6125,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         144,                           // test ID
@@ -5992,6 +6148,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         145,                           // test ID
@@ -6015,6 +6172,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         146,                           // test ID
@@ -6038,6 +6196,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         147,                           // test ID
@@ -6061,6 +6220,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         148,                           // test ID
@@ -6084,6 +6244,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         149,                           // test ID
@@ -6107,6 +6268,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         150,                           // test ID
@@ -6130,6 +6292,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         151,                           // test ID
@@ -6153,6 +6316,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         152,                           // test ID
@@ -6176,6 +6340,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         153,                           // test ID
@@ -6199,6 +6364,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         154,                           // test ID
@@ -6222,6 +6388,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         155,                           // test ID
@@ -6245,6 +6412,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         156,                           // test ID
@@ -6268,6 +6436,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         157,                           // test ID
@@ -6291,6 +6460,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         158,                           // test ID
@@ -6314,6 +6484,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         159,                           // test ID
@@ -6337,6 +6508,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         160,                           // test ID
@@ -6360,6 +6532,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         161,                           // test ID
@@ -6383,6 +6556,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         162,                           // test ID
@@ -6406,6 +6580,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         163,                           // test ID
@@ -6429,6 +6604,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         164,                           // test ID
@@ -6452,6 +6628,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         165,                           // test ID
@@ -6475,6 +6652,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         166,                           // test ID
@@ -6498,6 +6676,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         167,                           // test ID
@@ -6521,6 +6700,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         168,                           // test ID
@@ -6544,6 +6724,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         169,                           // test ID
@@ -6567,6 +6748,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         170,                           // test ID
@@ -6590,6 +6772,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         171,                           // test ID
@@ -6613,6 +6796,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         172,                           // test ID
@@ -6636,6 +6820,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         173,                           // test ID
@@ -6659,6 +6844,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         174,                           // test ID
@@ -6682,6 +6868,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         175,                           // test ID
@@ -6705,6 +6892,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         176,                           // test ID
@@ -6727,6 +6915,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         177,                           // test ID
@@ -6749,6 +6938,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         178,                           // test ID
@@ -6771,6 +6961,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         179,                           // test ID
@@ -6794,6 +6985,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         180,                           // test ID
@@ -6817,6 +7009,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         181,                           // test ID
@@ -6840,6 +7033,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         182,                           // test ID
@@ -6862,6 +7056,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         183,                           // test ID
@@ -6884,6 +7079,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         184,                           // test ID
@@ -6906,6 +7102,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         185,                           // test ID
@@ -6929,6 +7126,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         186,                           // test ID
@@ -6952,6 +7150,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         187,                           // test ID
@@ -6975,6 +7174,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         188,                           // test ID
@@ -6997,6 +7197,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         189,                           // test ID
@@ -7019,6 +7220,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         190,                           // test ID
@@ -7041,6 +7243,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         191,                           // test ID
@@ -7064,6 +7267,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         192,                           // test ID
@@ -7087,6 +7291,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         193,                           // test ID
@@ -7110,6 +7315,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         194,                           // test ID
@@ -7132,6 +7338,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         195,                           // test ID
@@ -7154,6 +7361,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         196,                           // test ID
@@ -7176,6 +7384,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         197,                           // test ID
@@ -7199,6 +7408,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         198,                           // test ID
@@ -7222,6 +7432,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         199,                           // test ID
@@ -7245,6 +7456,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         200,                           // test ID
@@ -7267,6 +7479,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         201,                        // test ID
@@ -7289,6 +7502,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         202,                        // test ID
@@ -7311,6 +7525,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         203,                        // test ID
@@ -7333,6 +7548,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         204,                        // test ID
@@ -7356,6 +7572,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         205,                        // test ID
@@ -7379,6 +7596,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         206,                        // test ID
@@ -7402,6 +7620,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         207,                        // test ID
@@ -7425,6 +7644,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         208,                        // test ID
@@ -7448,6 +7668,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         209,                        // test ID
@@ -7470,6 +7691,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         210,                        // test ID
@@ -7492,6 +7714,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         211,                        // test ID
@@ -7515,6 +7738,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         212,                        // test ID
@@ -7538,6 +7762,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         213,                        // test ID
@@ -7561,6 +7786,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         214,                        // test ID
@@ -7584,6 +7810,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         215,                        // test ID
@@ -7606,6 +7833,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         216,                        // test ID
@@ -7628,6 +7856,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         217,                        // test ID
@@ -7650,6 +7879,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         218,                        // test ID
@@ -7672,6 +7902,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         219,                        // test ID
@@ -7694,6 +7925,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         220,                        // test ID
@@ -7716,6 +7948,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         221,                        // test ID
@@ -7738,6 +7971,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         222,                        // test ID
@@ -7760,6 +7994,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         223,                        // test ID
@@ -7783,6 +8018,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         224,                        // test ID
@@ -7806,6 +8042,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         225,                        // test ID
@@ -7829,6 +8066,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         226,                        // test ID
@@ -7852,6 +8090,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         227,                        // test ID
@@ -7875,6 +8114,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         228,                        // test ID
@@ -7897,6 +8137,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         229,                        // test ID
@@ -7919,6 +8160,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         230,                        // test ID
@@ -7941,6 +8183,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         231,                        // test ID
@@ -7963,6 +8206,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         232,                        // test ID
@@ -7986,6 +8230,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         233,                        // test ID
@@ -8009,6 +8254,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         234,                        // test ID
@@ -8032,6 +8278,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         235,                        // test ID
@@ -8055,6 +8302,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         236,                        // test ID
@@ -8078,6 +8326,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         237,                        // test ID
@@ -8101,6 +8350,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         238,                        // test ID
@@ -8124,6 +8374,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         239,                        // test ID
@@ -8147,6 +8398,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         240,                        // test ID
@@ -8169,6 +8421,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         241,                        // test ID
@@ -8191,6 +8444,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         242,                        // test ID
@@ -8214,6 +8468,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         243,                        // test ID
@@ -8237,6 +8492,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         244,                        // test ID
@@ -8260,6 +8516,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         245,                        // test ID
@@ -8283,6 +8540,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         246,                        // test ID
@@ -8305,6 +8563,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         247,                           // test ID
@@ -8327,6 +8586,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         248,                           // test ID
@@ -8349,6 +8609,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         249,                           // test ID
@@ -8371,6 +8632,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         250,                           // test ID
@@ -8394,6 +8656,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         251,                           // test ID
@@ -8417,6 +8680,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         252,                           // test ID
@@ -8440,6 +8704,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         253,                           // test ID
@@ -8463,6 +8728,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         254,                           // test ID
@@ -8486,6 +8752,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         255,                           // test ID
@@ -8508,6 +8775,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         256,                           // test ID
@@ -8530,6 +8798,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         257,                           // test ID
@@ -8553,6 +8822,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         258,                           // test ID
@@ -8576,6 +8846,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         259,                           // test ID
@@ -8599,6 +8870,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         260,                           // test ID
@@ -8622,6 +8894,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         261,                           // test ID
@@ -8644,6 +8917,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         262,                           // test ID
@@ -8666,6 +8940,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         263,                           // test ID
@@ -8688,6 +8963,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         264,                           // test ID
@@ -8710,6 +8986,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         265,                           // test ID
@@ -8733,6 +9010,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         266,                           // test ID
@@ -8756,6 +9034,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         267,                           // test ID
@@ -8779,6 +9058,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         268,                           // test ID
@@ -8802,6 +9082,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         269,                           // test ID
@@ -8825,6 +9106,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         270,                           // test ID
@@ -8848,6 +9130,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         271,                           // test ID
@@ -8871,6 +9154,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         272,                           // test ID
@@ -8894,6 +9178,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         273,                           // test ID
@@ -8917,6 +9202,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         274,                           // test ID
@@ -8940,6 +9226,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         275,                           // test ID
@@ -8963,6 +9250,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         276,                           // test ID
@@ -8986,6 +9274,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         277,                           // test ID
@@ -9009,6 +9298,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         278,                           // test ID
@@ -9032,6 +9322,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         279,                           // test ID
@@ -9055,6 +9346,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         280,                           // test ID
@@ -9077,6 +9369,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         281,                           // test ID
@@ -9099,6 +9392,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         282,                           // test ID
@@ -9121,6 +9415,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         283,                           // test ID
@@ -9143,6 +9438,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         284,                           // test ID
@@ -9166,6 +9462,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         285,                           // test ID
@@ -9189,6 +9486,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         286,                           // test ID
@@ -9212,6 +9510,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         287,                           // test ID
@@ -9235,6 +9534,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         288,                           // test ID
@@ -9258,6 +9558,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         289,                           // test ID
@@ -9280,6 +9581,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         290,                           // test ID
@@ -9302,6 +9604,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         291,                           // test ID
@@ -9324,6 +9627,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         292,                           // test ID
@@ -9346,6 +9650,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         293,                           // test ID
@@ -9369,6 +9674,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         294,                           // test ID
@@ -9392,6 +9698,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         295,                           // test ID
@@ -9415,6 +9722,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         296,                           // test ID
@@ -9438,6 +9746,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         297,                           // test ID
@@ -9461,6 +9770,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         298,                           // test ID
@@ -9484,6 +9794,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         299,                           // test ID
@@ -9507,6 +9818,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         300,                           // test ID
@@ -9530,6 +9842,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         301,                           // test ID
@@ -9552,6 +9865,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         302,                           // test ID
@@ -9574,6 +9888,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         303,                           // test ID
@@ -9597,6 +9912,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         304,                           // test ID
@@ -9620,6 +9936,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         305,                           // test ID
@@ -9643,6 +9960,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         306,                           // test ID
@@ -9666,6 +9984,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         307,                           // test ID
@@ -9689,6 +10008,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         308,                           // test ID
@@ -9712,6 +10032,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         309,                           // test ID
@@ -9735,6 +10056,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         310,                           // test ID
@@ -9758,6 +10080,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         311,                           // test ID
@@ -9781,6 +10104,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         312,                           // test ID
@@ -9804,6 +10128,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         313,                           // test ID
@@ -9827,6 +10152,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         314,                           // test ID
@@ -9850,6 +10176,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         315,                           // test ID
@@ -9873,6 +10200,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         316,                           // test ID
@@ -9896,6 +10224,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         317,                           // test ID
@@ -9919,6 +10248,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         318,                           // test ID
@@ -9942,6 +10272,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         319,                           // test ID
@@ -9965,6 +10296,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         320,                           // test ID
@@ -9988,6 +10320,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         321,                           // test ID
@@ -10011,6 +10344,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         322,                           // test ID
@@ -10034,6 +10368,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         323,                           // test ID
@@ -10057,6 +10392,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         324,                           // test ID
@@ -10080,6 +10416,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         325,                           // test ID
@@ -10103,6 +10440,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         326,                           // test ID
@@ -10126,6 +10464,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         327,                           // test ID
@@ -10149,6 +10488,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         328,                           // test ID
@@ -10172,6 +10512,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         329,                           // test ID
@@ -10195,6 +10536,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         330,                           // test ID
@@ -10218,6 +10560,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         331,                           // test ID
@@ -10241,6 +10584,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         332,                           // test ID
@@ -10264,6 +10608,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         333,                           // test ID
@@ -10287,6 +10632,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         334,                           // test ID
@@ -10309,6 +10655,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         335,                           // test ID
@@ -10331,6 +10678,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         336,                           // test ID
@@ -10353,6 +10701,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         337,                           // test ID
@@ -10376,6 +10725,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         338,                           // test ID
@@ -10399,6 +10749,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         339,                           // test ID
@@ -10422,6 +10773,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         340,                           // test ID
@@ -10444,6 +10796,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         341,                           // test ID
@@ -10466,6 +10819,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         342,                           // test ID
@@ -10488,6 +10842,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         343,                           // test ID
@@ -10511,6 +10866,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         344,                           // test ID
@@ -10534,6 +10890,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         345,                           // test ID
@@ -10557,6 +10914,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         346,                           // test ID
@@ -10579,6 +10937,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         347,                           // test ID
@@ -10601,6 +10960,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         348,                           // test ID
@@ -10623,6 +10983,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         349,                           // test ID
@@ -10646,6 +11007,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         350,                           // test ID
@@ -10669,6 +11031,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         351,                           // test ID
@@ -10692,6 +11055,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         352,                           // test ID
@@ -10714,6 +11078,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         353,                           // test ID
@@ -10736,6 +11101,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         354,                           // test ID
@@ -10758,6 +11124,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         355,                           // test ID
@@ -10781,6 +11148,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         356,                           // test ID
@@ -10804,6 +11172,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         357,                           // test ID
@@ -10827,6 +11196,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         358,                           // test ID
@@ -10849,6 +11219,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         359,                        // test ID
@@ -10871,6 +11242,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         360,                        // test ID
@@ -10893,6 +11265,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         361,                        // test ID
@@ -10915,6 +11288,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         362,                        // test ID
@@ -10938,6 +11312,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         363,                        // test ID
@@ -10961,6 +11336,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         364,                        // test ID
@@ -10984,6 +11360,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         365,                        // test ID
@@ -11007,6 +11384,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         366,                        // test ID
@@ -11030,6 +11408,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         367,                        // test ID
@@ -11052,6 +11431,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         368,                        // test ID
@@ -11074,6 +11454,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         369,                        // test ID
@@ -11097,6 +11478,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         370,                        // test ID
@@ -11120,6 +11502,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         371,                        // test ID
@@ -11143,6 +11526,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         372,                        // test ID
@@ -11166,6 +11550,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         373,                        // test ID
@@ -11188,6 +11573,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         374,                        // test ID
@@ -11210,6 +11596,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         375,                        // test ID
@@ -11232,6 +11619,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         376,                        // test ID
@@ -11254,6 +11642,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         377,                        // test ID
@@ -11276,6 +11665,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         378,                        // test ID
@@ -11298,6 +11688,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         379,                        // test ID
@@ -11320,6 +11711,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         380,                        // test ID
@@ -11342,6 +11734,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         381,                        // test ID
@@ -11365,6 +11758,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         382,                        // test ID
@@ -11388,6 +11782,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         383,                        // test ID
@@ -11411,6 +11806,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         384,                        // test ID
@@ -11434,6 +11830,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         385,                        // test ID
@@ -11457,6 +11854,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         386,                        // test ID
@@ -11479,6 +11877,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         387,                        // test ID
@@ -11501,6 +11900,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         388,                        // test ID
@@ -11523,6 +11923,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         389,                        // test ID
@@ -11545,6 +11946,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         390,                        // test ID
@@ -11568,6 +11970,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         391,                        // test ID
@@ -11591,6 +11994,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         392,                        // test ID
@@ -11614,6 +12018,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         393,                        // test ID
@@ -11637,6 +12042,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         394,                        // test ID
@@ -11660,6 +12066,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         395,                        // test ID
@@ -11683,6 +12090,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         396,                        // test ID
@@ -11706,6 +12114,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         397,                        // test ID
@@ -11729,6 +12138,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         398,                        // test ID
@@ -11751,6 +12161,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         399,                        // test ID
@@ -11773,6 +12184,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         400,                        // test ID
@@ -11796,6 +12208,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         401,                        // test ID
@@ -11819,6 +12232,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         402,                        // test ID
@@ -11842,6 +12256,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         403,                        // test ID
@@ -11865,6 +12280,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         404,                        // test ID
@@ -11887,6 +12303,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         405,                           // test ID
@@ -11909,6 +12326,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         406,                           // test ID
@@ -11931,6 +12349,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         407,                           // test ID
@@ -11953,6 +12372,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         408,                           // test ID
@@ -11976,6 +12396,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         409,                           // test ID
@@ -11999,6 +12420,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         410,                           // test ID
@@ -12022,6 +12444,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         411,                           // test ID
@@ -12045,6 +12468,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         412,                           // test ID
@@ -12068,6 +12492,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         413,                           // test ID
@@ -12090,6 +12515,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         414,                           // test ID
@@ -12112,6 +12538,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         415,                           // test ID
@@ -12135,6 +12562,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         416,                           // test ID
@@ -12158,6 +12586,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         417,                           // test ID
@@ -12181,6 +12610,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         418,                           // test ID
@@ -12204,6 +12634,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         419,                           // test ID
@@ -12226,6 +12657,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         420,                           // test ID
@@ -12248,6 +12680,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         421,                           // test ID
@@ -12270,6 +12703,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         422,                           // test ID
@@ -12292,6 +12726,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         423,                           // test ID
@@ -12315,6 +12750,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         424,                           // test ID
@@ -12338,6 +12774,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         425,                           // test ID
@@ -12361,6 +12798,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         426,                           // test ID
@@ -12384,6 +12822,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         427,                           // test ID
@@ -12407,6 +12846,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         428,                           // test ID
@@ -12430,6 +12870,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         429,                           // test ID
@@ -12453,6 +12894,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         430,                           // test ID
@@ -12476,6 +12918,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         431,                           // test ID
@@ -12499,6 +12942,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         432,                           // test ID
@@ -12522,6 +12966,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         433,                           // test ID
@@ -12545,6 +12990,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         434,                           // test ID
@@ -12568,6 +13014,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         435,                           // test ID
@@ -12591,6 +13038,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         436,                           // test ID
@@ -12614,6 +13062,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         437,                           // test ID
@@ -12637,6 +13086,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         438,                           // test ID
@@ -12659,6 +13109,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         439,                           // test ID
@@ -12681,6 +13132,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         440,                           // test ID
@@ -12703,6 +13155,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         441,                           // test ID
@@ -12725,6 +13178,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         442,                           // test ID
@@ -12748,6 +13202,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         443,                           // test ID
@@ -12771,6 +13226,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         444,                           // test ID
@@ -12794,6 +13250,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         445,                           // test ID
@@ -12817,6 +13274,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         446,                           // test ID
@@ -12840,6 +13298,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         447,                           // test ID
@@ -12862,6 +13321,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         448,                           // test ID
@@ -12884,6 +13344,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         449,                           // test ID
@@ -12906,6 +13367,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         450,                           // test ID
@@ -12928,6 +13390,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         451,                           // test ID
@@ -12951,6 +13414,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         452,                           // test ID
@@ -12974,6 +13438,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         453,                           // test ID
@@ -12997,6 +13462,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         454,                           // test ID
@@ -13020,6 +13486,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         455,                           // test ID
@@ -13043,6 +13510,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         456,                           // test ID
@@ -13066,6 +13534,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         457,                           // test ID
@@ -13089,6 +13558,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         458,                           // test ID
@@ -13112,6 +13582,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         459,                           // test ID
@@ -13134,6 +13605,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         460,                           // test ID
@@ -13156,6 +13628,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         461,                           // test ID
@@ -13179,6 +13652,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         462,                           // test ID
@@ -13202,6 +13676,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         463,                           // test ID
@@ -13225,6 +13700,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         464,                           // test ID
@@ -13248,6 +13724,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         465,                           // test ID
@@ -13271,6 +13748,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         466,                           // test ID
@@ -13294,6 +13772,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         467,                           // test ID
@@ -13317,6 +13796,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         468,                           // test ID
@@ -13340,6 +13820,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         469,                           // test ID
@@ -13363,6 +13844,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         470,                           // test ID
@@ -13386,6 +13868,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         471,                           // test ID
@@ -13409,6 +13892,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         472,                           // test ID
@@ -13432,6 +13916,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         473,                           // test ID
@@ -13455,6 +13940,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         474,                           // test ID
@@ -13478,6 +13964,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         475,                           // test ID
@@ -13501,6 +13988,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         476,                           // test ID
@@ -13524,6 +14012,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         477,                           // test ID
@@ -13547,6 +14036,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         478,                           // test ID
@@ -13570,6 +14060,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         479,                           // test ID
@@ -13593,6 +14084,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         480,                           // test ID
@@ -13616,6 +14108,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         481,                           // test ID
@@ -13639,6 +14132,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         482,                           // test ID
@@ -13662,6 +14156,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         483,                           // test ID
@@ -13685,6 +14180,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         484,                           // test ID
@@ -13708,6 +14204,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         485,                           // test ID
@@ -13731,6 +14228,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         486,                           // test ID
@@ -13754,6 +14252,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         487,                           // test ID
@@ -13777,6 +14276,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         488,                           // test ID
@@ -13800,6 +14300,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         489,                           // test ID
@@ -13823,6 +14324,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         490,                           // test ID
@@ -13846,6 +14348,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         491,                           // test ID
@@ -13869,6 +14372,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         492,                           // test ID
@@ -13891,6 +14395,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         493,                           // test ID
@@ -13913,6 +14418,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         494,                           // test ID
@@ -13935,6 +14441,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         495,                           // test ID
@@ -13958,6 +14465,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         496,                           // test ID
@@ -13981,6 +14489,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         497,                           // test ID
@@ -14004,6 +14513,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         498,                           // test ID
@@ -14026,6 +14536,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         499,                           // test ID
@@ -14048,6 +14559,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         500,                           // test ID
@@ -14070,6 +14582,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         501,                           // test ID
@@ -14093,6 +14606,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         502,                           // test ID
@@ -14116,6 +14630,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         503,                           // test ID
@@ -14139,6 +14654,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         504,                           // test ID
@@ -14161,6 +14677,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         505,                           // test ID
@@ -14183,6 +14700,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         506,                           // test ID
@@ -14205,6 +14723,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         507,                           // test ID
@@ -14228,6 +14747,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         508,                           // test ID
@@ -14251,6 +14771,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         509,                           // test ID
@@ -14274,6 +14795,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         510,                           // test ID
@@ -14296,6 +14818,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         511,                           // test ID
@@ -14318,6 +14841,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         512,                           // test ID
@@ -14340,6 +14864,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         513,                           // test ID
@@ -14363,6 +14888,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         514,                           // test ID
@@ -14386,6 +14912,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         515,                           // test ID
@@ -14409,6 +14936,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         516,                           // test ID
@@ -14431,6 +14959,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         517,                        // test ID
@@ -14453,6 +14982,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         518,                        // test ID
@@ -14475,6 +15005,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         519,                        // test ID
@@ -14497,6 +15028,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         520,                        // test ID
@@ -14520,6 +15052,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         521,                        // test ID
@@ -14543,6 +15076,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         522,                        // test ID
@@ -14566,6 +15100,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         523,                        // test ID
@@ -14589,6 +15124,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         524,                        // test ID
@@ -14612,6 +15148,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         525,                        // test ID
@@ -14634,6 +15171,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         526,                        // test ID
@@ -14656,6 +15194,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         527,                        // test ID
@@ -14679,6 +15218,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         528,                        // test ID
@@ -14702,6 +15242,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         529,                        // test ID
@@ -14725,6 +15266,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         530,                        // test ID
@@ -14748,6 +15290,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         531,                        // test ID
@@ -14770,6 +15313,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         532,                        // test ID
@@ -14792,6 +15336,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         533,                        // test ID
@@ -14814,6 +15359,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         534,                        // test ID
@@ -14836,6 +15382,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         535,                        // test ID
@@ -14858,6 +15405,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         536,                        // test ID
@@ -14880,6 +15428,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         537,                        // test ID
@@ -14902,6 +15451,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         538,                        // test ID
@@ -14924,6 +15474,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         539,                        // test ID
@@ -14947,6 +15498,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         540,                        // test ID
@@ -14970,6 +15522,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         541,                        // test ID
@@ -14993,6 +15546,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         542,                        // test ID
@@ -15016,6 +15570,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         543,                        // test ID
@@ -15039,6 +15594,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         544,                        // test ID
@@ -15061,6 +15617,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         545,                        // test ID
@@ -15083,6 +15640,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         546,                        // test ID
@@ -15105,6 +15663,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         547,                        // test ID
@@ -15127,6 +15686,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         548,                        // test ID
@@ -15150,6 +15710,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         549,                        // test ID
@@ -15173,6 +15734,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         550,                        // test ID
@@ -15196,6 +15758,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         551,                        // test ID
@@ -15219,6 +15782,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         552,                        // test ID
@@ -15242,6 +15806,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         553,                        // test ID
@@ -15265,6 +15830,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         554,                        // test ID
@@ -15288,6 +15854,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         555,                        // test ID
@@ -15311,6 +15878,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         556,                        // test ID
@@ -15333,6 +15901,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                          // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         557,                        // test ID
@@ -15355,6 +15924,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                         // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         558,                        // test ID
@@ -15378,6 +15948,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         559,                        // test ID
@@ -15401,6 +15972,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         560,                        // test ID
@@ -15424,6 +15996,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         561,                        // test ID
@@ -15447,6 +16020,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                        // filterVarPitch
         0,                          // enableNChCoeffs
         0,                          // enableCalcCoeffs
+        0,                          // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,    // Output data location
         1,                          // Number of repetitions
         562,                        // test ID
@@ -15469,6 +16043,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         563,                           // test ID
@@ -15491,6 +16066,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         564,                           // test ID
@@ -15513,6 +16089,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         565,                           // test ID
@@ -15535,6 +16112,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         566,                           // test ID
@@ -15558,6 +16136,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         567,                           // test ID
@@ -15581,6 +16160,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         568,                           // test ID
@@ -15604,6 +16184,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         569,                           // test ID
@@ -15627,6 +16208,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         570,                           // test ID
@@ -15650,6 +16232,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         571,                           // test ID
@@ -15672,6 +16255,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         572,                           // test ID
@@ -15694,6 +16278,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         573,                           // test ID
@@ -15717,6 +16302,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         574,                           // test ID
@@ -15740,6 +16326,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         575,                           // test ID
@@ -15763,6 +16350,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         576,                           // test ID
@@ -15786,6 +16374,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         577,                           // test ID
@@ -15808,6 +16397,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         578,                           // test ID
@@ -15830,6 +16420,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         579,                           // test ID
@@ -15852,6 +16443,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         580,                           // test ID
@@ -15874,6 +16466,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         581,                           // test ID
@@ -15897,6 +16490,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         582,                           // test ID
@@ -15920,6 +16514,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         583,                           // test ID
@@ -15943,6 +16538,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         584,                           // test ID
@@ -15966,6 +16562,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         585,                           // test ID
@@ -15989,6 +16586,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         586,                           // test ID
@@ -16012,6 +16610,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         587,                           // test ID
@@ -16035,6 +16634,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         588,                           // test ID
@@ -16058,6 +16658,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         589,                           // test ID
@@ -16081,6 +16682,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         590,                           // test ID
@@ -16104,6 +16706,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         591,                           // test ID
@@ -16127,6 +16730,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         592,                           // test ID
@@ -16150,6 +16754,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         593,                           // test ID
@@ -16173,6 +16778,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         594,                           // test ID
@@ -16196,6 +16802,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         595,                           // test ID
@@ -16219,6 +16826,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         596,                           // test ID
@@ -16241,6 +16849,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         597,                           // test ID
@@ -16263,6 +16872,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         598,                           // test ID
@@ -16285,6 +16895,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         599,                           // test ID
@@ -16307,6 +16918,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         600,                           // test ID
@@ -16330,6 +16942,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         601,                           // test ID
@@ -16353,6 +16966,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         602,                           // test ID
@@ -16376,6 +16990,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         603,                           // test ID
@@ -16399,6 +17014,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         604,                           // test ID
@@ -16422,6 +17038,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         605,                           // test ID
@@ -16444,6 +17061,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         606,                           // test ID
@@ -16466,6 +17084,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         607,                           // test ID
@@ -16488,6 +17107,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         608,                           // test ID
@@ -16510,6 +17130,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         609,                           // test ID
@@ -16533,6 +17154,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         610,                           // test ID
@@ -16556,6 +17178,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         611,                           // test ID
@@ -16579,6 +17202,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         612,                           // test ID
@@ -16602,6 +17226,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         613,                           // test ID
@@ -16625,6 +17250,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         614,                           // test ID
@@ -16648,6 +17274,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         615,                           // test ID
@@ -16671,6 +17298,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         616,                           // test ID
@@ -16694,6 +17322,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         617,                           // test ID
@@ -16716,6 +17345,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         618,                           // test ID
@@ -16738,6 +17368,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         619,                           // test ID
@@ -16761,6 +17392,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         620,                           // test ID
@@ -16784,6 +17416,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         621,                           // test ID
@@ -16807,6 +17440,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         622,                           // test ID
@@ -16830,6 +17464,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         623,                           // test ID
@@ -16853,6 +17488,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         624,                           // test ID
@@ -16876,6 +17512,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         625,                           // test ID
@@ -16899,6 +17536,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         626,                           // test ID
@@ -16922,6 +17560,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         627,                           // test ID
@@ -16945,6 +17584,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         628,                           // test ID
@@ -16968,6 +17608,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         629,                           // test ID
@@ -16991,6 +17632,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         630,                           // test ID
@@ -17014,6 +17656,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         631,                           // test ID
@@ -17037,6 +17680,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         632,                           // test ID
@@ -17060,6 +17704,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         633,                           // test ID
@@ -17083,6 +17728,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         16,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         634,                           // test ID
@@ -17106,6 +17752,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         32,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         635,                           // test ID
@@ -17129,6 +17776,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         636,                           // test ID
@@ -17152,6 +17800,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         637,                           // test ID
@@ -17175,6 +17824,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         638,                           // test ID
@@ -17198,6 +17848,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         639,                           // test ID
@@ -17221,6 +17872,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         640,                           // test ID
@@ -17244,6 +17896,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         641,                           // test ID
@@ -17267,6 +17920,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         642,                           // test ID
@@ -17290,6 +17944,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         643,                           // test ID
@@ -17313,6 +17968,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         644,                           // test ID
@@ -17336,6 +17992,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         645,                           // test ID
@@ -17359,6 +18016,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         64,                            // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         646,                           // test ID
@@ -17382,6 +18040,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         647,                           // test ID
@@ -17405,6 +18064,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         128,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         648,                           // test ID
@@ -17428,6 +18088,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         649,                           // test ID
@@ -17451,6 +18112,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         160,                           // filterVarPitch
         1,                             // enableNChCoeffs
         1,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         650,                           // test ID
@@ -17473,6 +18135,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         651,                           // test ID
@@ -17495,6 +18158,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         652,                           // test ID
@@ -17517,6 +18181,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         653,                           // test ID
@@ -17540,6 +18205,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         654,                           // test ID
@@ -17563,6 +18229,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         655,                           // test ID
@@ -17586,6 +18253,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         656,                           // test ID
@@ -17608,6 +18276,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         657,                           // test ID
@@ -17630,6 +18299,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         658,                           // test ID
@@ -17652,6 +18322,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         659,                           // test ID
@@ -17675,6 +18346,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         660,                           // test ID
@@ -17698,6 +18370,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         661,                           // test ID
@@ -17721,6 +18394,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         662,                           // test ID
@@ -17743,6 +18417,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         663,                           // test ID
@@ -17765,6 +18440,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         664,                           // test ID
@@ -17787,6 +18463,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         665,                           // test ID
@@ -17810,6 +18487,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         666,                           // test ID
@@ -17833,6 +18511,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         667,                           // test ID
@@ -17856,6 +18535,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         668,                           // test ID
@@ -17878,6 +18558,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         669,                           // test ID
@@ -17900,6 +18581,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         670,                           // test ID
@@ -17922,6 +18604,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         8,                             // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         671,                           // test ID
@@ -17945,6 +18628,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         12,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         672,                           // test ID
@@ -17968,6 +18652,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         48,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         673,                           // test ID
@@ -17991,9 +18676,81 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
         68,                            // filterVarPitch
         1,                             // enableNChCoeffs
         0,                             // enableCalcCoeffs
+        0,                             // bypassMode
         DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
         1,                             // Number of repetitions
         674,                           // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 675) || (TEST_CATEGORY == 1))
+    {
+        STATIC,                        // Test pattern
+        staticRefInCase675,            // Input vector
+        staticRefFilterCoefCase675,    // Filter coefficient vector
+        staticRefOutCase675,           // Output vector
+        staticRefFilterCoefOptCase675, // Optimized filter coefficient vector
+        DSPLIB_FLOAT32,                // dataType
+        64,                            // dataSize
+        2,                             // numChannels
+        3,                             // numStages
+        DSPLIB_BIQUAD_TIF,             // biquadForm
+        8,                             // dataPitch
+        8,                             // filterVarPitch
+        0,                             // enableNChCoeffs
+        0,                             // enableCalcCoeffs
+        1,                             // bypassMode
+        DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
+        1,                             // Number of repetitions
+        675,                           // test ID
+    },
+#endif
+
+#if (!defined(EVM_TEST) && (defined(ALL_TEST_CASES) || (TEST_CASE == 676) || (TEST_CATEGORY == 112))) ||               \
+    (defined(EVM_TEST) && (SOC != AM275) && (defined(ALL_TEST_CASES) || (TEST_CASE == 676) || (TEST_CATEGORY == 112)))
+    {
+        STATIC,                        // Test pattern
+        staticRefInCase676,            // Input vector
+        staticRefFilterCoefCase676,    // Filter coefficient vector
+        staticRefOutCase676,           // Output vector
+        staticRefFilterCoefOptCase676, // Optimized filter coefficient vector
+        DSPLIB_FLOAT32,                // dataType
+        256,                           // dataSize
+        12,                            // numChannels
+        5,                             // numStages
+        DSPLIB_BIQUAD_DF1,             // biquadForm
+        48,                            // dataPitch
+        48,                            // filterVarPitch
+        1,                             // enableNChCoeffs
+        0,                             // enableCalcCoeffs
+        1,                             // bypassMode
+        DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
+        1,                             // Number of repetitions
+        676,                           // test ID
+    },
+#endif
+
+#if (!defined(EVM_TEST) && (defined(ALL_TEST_CASES) || (TEST_CASE == 677) || (TEST_CATEGORY == 312))) ||               \
+    (defined(EVM_TEST) && (SOC != AM275) && (defined(ALL_TEST_CASES) || (TEST_CASE == 677) || (TEST_CATEGORY == 312)))
+    {
+        STATIC,                        // Test pattern
+        staticRefInCase677,            // Input vector
+        staticRefFilterCoefCase677,    // Filter coefficient vector
+        staticRefOutCase677,           // Output vector
+        staticRefFilterCoefOptCase677, // Optimized filter coefficient vector
+        DSPLIB_FLOAT32,                // dataType
+        512,                           // dataSize
+        17,                            // numChannels
+        8,                             // numStages
+        DSPLIB_BIQUAD_TDF2,            // biquadForm
+        68,                            // dataPitch
+        68,                            // filterVarPitch
+        1,                             // enableNChCoeffs
+        0,                             // enableCalcCoeffs
+        1,                             // bypassMode
+        DSPLIB_TEST_OUTPUT_HEAP,       // Output data location
+        1,                             // Number of repetitions
+        677,                           // test ID
     },
 #endif
 
@@ -18002,7 +18759,7 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
 /*
  *  Sends the test parameter structure and number of tests
  */
-void DSPLIB_cascadeBiquad_getTestParams(DSPLIB_cascadeBiquad_testParams_t** params, int32_t* numTests)
+void DSPLIB_cascadeBiquad_getTestParams(DSPLIB_cascadeBiquad_testParams_t **params, int32_t *numTests)
 {
    *params   = testParams;
    *numTests = sizeof(testParams) / sizeof(DSPLIB_cascadeBiquad_testParams_t);

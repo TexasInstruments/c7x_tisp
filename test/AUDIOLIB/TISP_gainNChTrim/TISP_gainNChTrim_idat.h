@@ -24,6 +24,7 @@ typedef struct {
    uint32_t widthIn;
    uint32_t heightIn;
    uint32_t isInterleave;
+   uint32_t bypassMode;
    int32_t  strideInElements;
    int32_t  strideOutElements;
    uint32_t dataType;

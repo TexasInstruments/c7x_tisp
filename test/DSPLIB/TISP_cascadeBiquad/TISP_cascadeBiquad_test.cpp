@@ -239,6 +239,15 @@ int DSPLIB_cascadeBiquad_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                return -1;
             }
 
+            uint32_t bypassMode = currPrm.bypassMode;
+            k0->setParams(static_cast<uint16_t>(TISP::DSPLIB::CascadeBiquadParamId::kBypass), &bypassMode,
+                          sizeof(bypassMode), errorCtx);
+
+            if (!errorCtx.isSuccess()) {
+               printf("\nError setting bypass mode: %s\n", errorCtx.getMessage());
+               return -1;
+            }
+
             status_init_opt = DSPLIB_SUCCESS;
             /* if (status_init_opt == DSPLIB_SUCCESS) { */
             /*    TI_profile_start(TI_PROFILE_KERNEL_INIT); */
@@ -355,11 +364,24 @@ int DSPLIB_cascadeBiquad_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 #if DSPLIB_DEBUGPRINT
                   printf("DSPLIB_DEBUGPRINT  DSPLIB_cascadeBiquad_d CP 5\n");
 #endif
-                  TI_profile_start(TI_PROFILE_KERNEL_CN);
-                  DSPLIB_asm(" MARK 8");
-                  status_exec_nat = DSPLIB_cascadeBiquad_exec(handle, pIn.get(), pFilterCoeffCn, pFilterVarCn, pOutCn);
-                  DSPLIB_asm(" MARK 9");
-                  TI_profile_stop();
+                  if (bypassMode != 0U) {
+                     // bypass copies the input to the output, leaving the filter unapplied
+                     size_t   rowBytes = bufParamsOut.dim_x * sizeof(DSPLIB_F32);
+                     uint8_t *pSrcCn   = (uint8_t *) pIn.get();
+                     uint8_t *pDstCn   = (uint8_t *) pOutCn;
+                     for (size_t i = 0; i < bufParamsOut.dim_y; i++) {
+                        memcpy(&pDstCn[i * bufParamsOut.stride_y], &pSrcCn[i * bufParamsIn.stride_y], rowBytes);
+                     }
+                     status_exec_nat = DSPLIB_SUCCESS;
+                  }
+                  else {
+                     TI_profile_start(TI_PROFILE_KERNEL_CN);
+                     DSPLIB_asm(" MARK 8");
+                     status_exec_nat =
+                         DSPLIB_cascadeBiquad_exec(handle, pIn.get(), pFilterCoeffCn, pFilterVarCn, pOutCn);
+                     DSPLIB_asm(" MARK 9");
+                     TI_profile_stop();
+                  }
 #if DSPLIB_DEBUGPRINT
                   printf("DSPLIB_DEBUGPRINT  DSPLIB_cascadeBiquad_d CP 6 status_nat %d pOut %p\n", status_nat,
                          pOut.get());

@@ -108,6 +108,7 @@ int TISP_muteNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          size_t   numBlocks     = currPrm.numBlocks;
          float    fadeTime      = currPrm.fadeTime;
          uint32_t fadeType      = currPrm.fadeType;
+         uint32_t bypassMode    = currPrm.bypassMode;
          int32_t  samplingRate  = currPrm.samplingRate;
          size_t   inSamples     = currPrm.widthIn;
          size_t   inChannels    = currPrm.heightIn;
@@ -176,6 +177,14 @@ int TISP_muteNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
+               return -1;
+            }
+
+            k0->setParams(static_cast<uint16_t>(TISP::AUDIOLIB::MutenchParamId::kBypass), &bypassMode,
+                          sizeof(bypassMode), errorCtx);
+
+            if (!errorCtx.isSuccess()) {
+               printf("\nError setting bypass mode: %s\n", errorCtx.getMessage());
                return -1;
             }
             TI_profile_stop();
@@ -249,11 +258,24 @@ int TISP_muteNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             outputSize = widthIn;
 
-            AUDIOLIB_muteNCh_cn_set((uint32_t *)isMute, fadeType, fadeTime, samplingRate, isInterleaved, inChannels);
-            for (size_t n = 0; n < numBlocks; n++) {
-               AUDIOLIB_muteNCh_cn((void *) ((int8_t *) pIn.get() + n * heightIn * strideIn),
-                                   (void *) ((int8_t *) pOutCn + n * heightIn * strideOut), inSamples, inChannels,
-                                   strideInElements, strideOutElements, isInterleaved, bypassSmoothing, fadeType);
+            if (bypassMode != 0U) {
+               // bypass copies the input to the output, leaving the mute gain unapplied
+               for (size_t n = 0; n < numBlocks; n++) {
+                  int8_t *pSrcCn = (int8_t *) pIn.get() + n * heightIn * strideIn;
+                  int8_t *pDstCn = (int8_t *) pOutCn + n * heightIn * strideOut;
+                  for (size_t i = 0; i < heightIn; i++) {
+                     memcpy(&pDstCn[i * strideOut], &pSrcCn[i * strideIn], widthIn * dataSize);
+                  }
+               }
+            }
+            else {
+               AUDIOLIB_muteNCh_cn_set((uint32_t *) isMute, fadeType, fadeTime, samplingRate, isInterleaved,
+                                       inChannels);
+               for (size_t n = 0; n < numBlocks; n++) {
+                  AUDIOLIB_muteNCh_cn((void *) ((int8_t *) pIn.get() + n * heightIn * strideIn),
+                                      (void *) ((int8_t *) pOutCn + n * heightIn * strideOut), inSamples, inChannels,
+                                      strideInElements, strideOutElements, isInterleaved, bypassSmoothing, fadeType);
+               }
             }
 
             status_nat_vs_opt = TI_TEST_KERNEL_PASS;

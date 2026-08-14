@@ -462,6 +462,22 @@
 #include "test_data/staticRefCase114.h"
 #endif
 
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 115))
+#include "test_data/staticRefCase115.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 116))
+#include "test_data/staticRefCase116.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 117))
+#include "test_data/staticRefCase117.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 118))
+#include "test_data/staticRefCase118.h"
+#endif
+
 static TISP_balanceFader_testParams_t testParams[] = {
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 1))
     {
@@ -480,6 +496,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                     // LFE Fader Mode
         channelConfigCase1,                                                    // Channel Config
         0,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -506,6 +523,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                     // LFE Fader Mode
         channelConfigCase2,                                                    // Channel Config
         1,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(7 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(7 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -532,6 +550,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                     // LFE Fader Mode
         channelConfigCase3,                                                    // Channel Config
         0,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -558,6 +577,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                     // LFE Fader Mode
         channelConfigCase4,                                                    // Channel Config
         1,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(9 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(7 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -584,6 +604,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                      // LFE Fader Mode
         channelConfigCase5,                                                     // Channel Config
         0,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(15 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
@@ -610,6 +631,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                      // LFE Fader Mode
         channelConfigCase6,                                                     // Channel Config
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(12 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(7 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
@@ -636,6 +658,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                     // LFE Fader Mode
         channelConfigCase7,                                                    // Channel Config
         0,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(9 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -662,6 +685,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                     // LFE Fader Mode
         channelConfigCase8,                                                    // Channel Config
         0,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -688,6 +712,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                     // LFE Fader Mode
         channelConfigCase9,                                                    // Channel Config
         1,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(7 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -714,6 +739,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                     // LFE Fader Mode
         channelConfigCase10,                                                   // Channel Config
         0,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -740,6 +766,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                     // LFE Fader Mode
         channelConfigCase11,                                                   // Channel Config
         1,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(9 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -766,6 +793,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                      // LFE Fader Mode
         channelConfigCase12,                                                    // Channel Config
         0,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(15 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
@@ -792,6 +820,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                      // LFE Fader Mode
         channelConfigCase13,                                                    // Channel Config
         1,                                                                      // isInterleave
+        0,                                                                      // bypassMode
         AUDIOLIB_CALC_STRIDE(12 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
@@ -818,6 +847,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                     // LFE Fader Mode
         channelConfigCase14,                                                   // Channel Config
         0,                                                                     // isInterleave
+        0,                                                                     // bypassMode
         AUDIOLIB_CALC_STRIDE(9 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
@@ -844,6 +874,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase15,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -870,6 +901,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase16,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -896,6 +928,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase17,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -922,6 +955,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase18,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -948,6 +982,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase19,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -974,6 +1009,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase20,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1000,6 +1036,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase21,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1026,6 +1063,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase22,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1052,6 +1090,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase23,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1078,6 +1117,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase24,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1104,6 +1144,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase25,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1130,6 +1171,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase26,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1156,6 +1198,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                       // LFE Fader Mode
         channelConfigCase27,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1182,6 +1225,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                       // LFE Fader Mode
         channelConfigCase28,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1208,6 +1252,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         1,                                                                       // LFE Fader Mode
         channelConfigCase29,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1234,6 +1279,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase30,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1260,6 +1306,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase31,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1286,6 +1333,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase32,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1312,6 +1360,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase33,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1338,6 +1387,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase34,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1364,6 +1414,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase35,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1390,6 +1441,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase36,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1416,6 +1468,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase37,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1442,6 +1495,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase38,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1468,6 +1522,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase39,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1494,6 +1549,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase40,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1520,6 +1576,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase41,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1546,6 +1603,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase42,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1572,6 +1630,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase43,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1598,6 +1657,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase44,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1624,6 +1684,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase45,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1650,6 +1711,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase46,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1676,6 +1738,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase47,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1702,6 +1765,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase48,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1728,6 +1792,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase49,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1754,6 +1819,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase50,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1780,6 +1846,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase51,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1806,6 +1873,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase52,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1832,6 +1900,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase53,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1858,6 +1927,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase54,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1884,6 +1954,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase55,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1910,6 +1981,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase56,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1936,6 +2008,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase57,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1962,6 +2035,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase58,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -1988,6 +2062,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase59,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2014,6 +2089,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase60,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2040,6 +2116,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase61,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2066,6 +2143,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase62,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2092,6 +2170,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase63,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2118,6 +2197,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase64,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2144,6 +2224,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase65,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2170,6 +2251,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase66,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2196,6 +2278,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase67,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2222,6 +2305,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase68,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2248,6 +2332,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase69,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2274,6 +2359,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase70,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2300,6 +2386,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase71,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2326,6 +2413,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase72,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2352,6 +2440,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase73,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2378,6 +2467,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase74,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2404,6 +2494,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase75,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2430,6 +2521,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase76,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2456,6 +2548,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase77,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2482,6 +2575,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase78,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2508,6 +2602,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase79,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2534,6 +2629,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase80,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2560,6 +2656,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase81,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2586,6 +2683,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase82,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2612,6 +2710,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase83,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2638,6 +2737,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase84,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2664,6 +2764,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase85,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2690,6 +2791,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase86,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2716,6 +2818,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase87,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2742,6 +2845,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase88,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2768,6 +2872,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase89,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2794,6 +2899,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase90,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2820,6 +2926,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase91,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2846,6 +2953,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase92,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2872,6 +2980,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase93,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2898,6 +3007,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         0,                                                                       // LFE Fader Mode
         channelConfigCase94,                                                     // Channel Config
         1,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2924,6 +3034,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                       // LFE Fader Mode
         channelConfigCase95,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2950,6 +3061,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                       // LFE Fader Mode
         channelConfigCase96,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -2976,6 +3088,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         1,                                                                       // LFE Fader Mode
         channelConfigCase97,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3002,6 +3115,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                       // LFE Fader Mode
         channelConfigCase98,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3028,6 +3142,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                       // LFE Fader Mode
         channelConfigCase99,                                                     // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3054,6 +3169,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         1,                                                                       // LFE Fader Mode
         channelConfigCase100,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3080,6 +3196,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                       // LFE Fader Mode
         channelConfigCase101,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3106,6 +3223,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                       // LFE Fader Mode
         channelConfigCase102,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3132,6 +3250,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         1,                                                                       // LFE Fader Mode
         channelConfigCase103,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3158,6 +3277,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                       // LFE Fader Mode
         channelConfigCase104,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3184,6 +3304,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                       // LFE Fader Mode
         channelConfigCase105,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3210,6 +3331,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         1,                                                                       // LFE Fader Mode
         channelConfigCase106,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3236,6 +3358,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                       // LFE Fader Mode
         channelConfigCase107,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3262,6 +3385,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                       // LFE Fader Mode
         channelConfigCase108,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3288,6 +3412,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         1,                                                                       // LFE Fader Mode
         channelConfigCase109,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3314,6 +3439,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                       // LFE Fader Mode
         channelConfigCase110,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3340,6 +3466,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                       // LFE Fader Mode
         channelConfigCase111,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3366,6 +3493,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         1,                                                                       // LFE Fader Mode
         channelConfigCase112,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3392,6 +3520,7 @@ static TISP_balanceFader_testParams_t testParams[] = {
         2,                                                                       // LFE Fader Mode
         channelConfigCase113,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
@@ -3418,12 +3547,121 @@ static TISP_balanceFader_testParams_t testParams[] = {
         3,                                                                       // LFE Fader Mode
         channelConfigCase114,                                                    // Channel Config
         0,                                                                       // isInterleave
+        0,                                                                       // bypassMode
         AUDIOLIB_CALC_STRIDE(192 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
         AUDIOLIB_CALC_STRIDE(192 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
         AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
         1,                                                                       // number of reps.
         1,                                                                       // numBlocks.
         114,                                                                     // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 115))
+    {
+        STATIC,                                                                // Test Pattern
+        staticRefInCase115,                                                    // staticIn
+        staticRefOutCase115,                                                   // staticOut
+        AUDIOLIB_FLOAT32,                                                      // Sample Data Type
+        7,                                                                     // Samples per channel
+        7,                                                                     // Number of Channels
+        0.5,                                                                   // Balance
+        0.5,                                                                   // Fader
+        0.4,                                                                   // Side Gain Factor
+        0.6,                                                                   // LFE Balance Gain Factor
+        0.2,                                                                   // LFE Fader Gain Factor
+        2,                                                                     // LFE Balance Mode
+        3,                                                                     // LFE Fader Mode
+        channelConfigCase115,                                                  // Channel Config
+        1,                                                                     // isInterleave
+        1,                                                                     // bypassMode
+        AUDIOLIB_CALC_STRIDE(7 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
+        AUDIOLIB_CALC_STRIDE(7 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
+        1,                                                                     // number of reps.
+        1,                                                                     // numBlocks.
+        115,                                                                   // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 116))
+    {
+        STATIC,                                                                  // Test Pattern
+        staticRefInCase116,                                                      // staticIn
+        staticRefOutCase116,                                                     // staticOut
+        AUDIOLIB_FLOAT32,                                                        // Sample Data Type
+        128,                                                                     // Samples per channel
+        8,                                                                       // Number of Channels
+        -1.0,                                                                    // Balance
+        0.0,                                                                     // Fader
+        0.0,                                                                     // Side Gain Factor
+        0.0,                                                                     // LFE Balance Gain Factor
+        0.0,                                                                     // LFE Fader Gain Factor
+        0,                                                                       // LFE Balance Mode
+        0,                                                                       // LFE Fader Mode
+        channelConfigCase116,                                                    // Channel Config
+        1,                                                                       // isInterleave
+        1,                                                                       // bypassMode
+        AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
+        AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOutElements
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
+        1,                                                                       // number of reps.
+        2,                                                                       // numBlocks.
+        116,                                                                     // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 117))
+    {
+        STATIC,                                                                  // Test Pattern
+        staticRefInCase117,                                                      // staticIn
+        staticRefOutCase117,                                                     // staticOut
+        AUDIOLIB_FLOAT32,                                                        // Sample Data Type
+        512,                                                                     // Samples per channel
+        7,                                                                       // Number of Channels
+        -1.0,                                                                    // Balance
+        0.0,                                                                     // Fader
+        0.5,                                                                     // Side Gain Factor
+        0.5,                                                                     // LFE Balance Gain Factor
+        0.0,                                                                     // LFE Fader Gain Factor
+        0,                                                                       // LFE Balance Mode
+        1,                                                                       // LFE Fader Mode
+        channelConfigCase117,                                                    // Channel Config
+        0,                                                                       // isInterleave
+        1,                                                                       // bypassMode
+        AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
+        AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
+        1,                                                                       // number of reps.
+        1,                                                                       // numBlocks.
+        117,                                                                     // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 118))
+    {
+        STATIC,                                                                  // Test Pattern
+        staticRefInCase118,                                                      // staticIn
+        staticRefOutCase118,                                                     // staticOut
+        AUDIOLIB_FLOAT32,                                                        // Sample Data Type
+        192,                                                                     // Samples per channel
+        7,                                                                       // Number of Channels
+        0.0,                                                                     // Balance
+        1.0,                                                                     // Fader
+        0.3,                                                                     // Side Gain Factor
+        0.7,                                                                     // LFE Balance Gain Factor
+        0.0,                                                                     // LFE Fader Gain Factor
+        2,                                                                       // LFE Balance Mode
+        3,                                                                       // LFE Fader Mode
+        channelConfigCase118,                                                    // Channel Config
+        0,                                                                       // isInterleave
+        1,                                                                       // bypassMode
+        AUDIOLIB_CALC_STRIDE(192 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements
+        AUDIOLIB_CALC_STRIDE(192 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOutElements
+        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
+        1,                                                                       // number of reps.
+        1,                                                                       // numBlocks.
+        118,                                                                     // test ID
     },
 #endif
 

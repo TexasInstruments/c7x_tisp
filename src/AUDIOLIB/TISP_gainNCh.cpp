@@ -25,7 +25,7 @@ GainNCh<T>::GainNCh(T         *pX,
                     size_t     outPitchBytes,
                     size_t     isInterleave,
                     ErrorCtxt &errorCtx)
-    : _pX(pX), _pG(pG), _pY(pY)
+    : _pX(pX), _pG(pG), _pY(pY), _bypassMode(0U)
 {
 
    // Initialize _params with the node parameters
@@ -156,7 +156,34 @@ template <typename T> void GainNCh<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mo
    }
 }
 
-template <typename T> void GainNCh<T>::exec() noexcept { AUDIOLIB_gainNCh_exec(_handle.get(), _pX, _pG, _pY); }
+template <typename T> void GainNCh<T>::bypassCopy() noexcept
+{
+   const size_t rowBytes = _width * sizeof(T);
+
+   if (_pX != _pY) {
+      if ((_inPitchBytes == rowBytes) && (_outPitchBytes == rowBytes)) {
+         (void) memcpy(_pY, _pX, rowBytes * _height);
+      }
+      else {
+         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
+         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
+
+         for (size_t i = 0; i < _height; i++) {
+            (void) memcpy(&pDst[i * _outPitchBytes], &pSrc[i * _inPitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         }
+      }
+   }
+}
+
+template <typename T> void GainNCh<T>::exec() noexcept
+{
+   if (_bypassMode != 0U) {
+      bypassCopy();
+   }
+   else {
+      AUDIOLIB_gainNCh_exec(_handle.get(), _pX, _pG, _pY);
+   }
+}
 
 template <typename T>
 GainNCh<T>::GainNCh(T          *pX,
@@ -195,6 +222,22 @@ bool GainNCh<T>::setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt
          }
          break;
       }
+      case GainNChParamId::kBypass: {
+         if (size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("GainNCh::setParams", "Value size smaller than expected for kBypass");
+         }
+         else {
+            uint32_t bypassMode = 0U;
+            memcpy(&bypassMode, value, sizeof(uint32_t));
+            if (bypassMode > 1U) {
+               errorCtx.setInvalidParameterError("GainNCh::setParams", "bypass mode must be either zero or one");
+            }
+            else {
+               _bypassMode = bypassMode;
+            }
+         }
+         break;
+      }
       default:
          errorCtx.setInvalidParameterError("GainNCh::setParams", "Invalid paramId");
          break;
@@ -224,6 +267,16 @@ bool GainNCh<T>::getParams(uint16_t paramId, void *value, size_t *size, ErrorCtx
             memcpy(value, _pG, expectedSize);
          }
          *size = expectedSize;
+         break;
+      }
+      case GainNChParamId::kBypass: {
+         if (*size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("GainNCh::getParams", "Value size smaller than expected");
+         }
+         else {
+            memcpy(value, &_bypassMode, sizeof(uint32_t));
+         }
+         *size = sizeof(uint32_t);
          break;
       }
       default:

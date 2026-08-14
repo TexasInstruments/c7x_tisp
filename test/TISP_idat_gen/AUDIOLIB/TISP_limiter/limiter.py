@@ -313,6 +313,10 @@ class TISP_limiter(Kernel):
                 releaseCoeff=releaseCoeff,
             )
 
+            # bypass copies the input to the output, leaving the limiter gain unapplied
+            if int(testCasesDf.iloc[i]["bypassMode"]):
+                y = x.copy()
+
             # Define the test buffer parameters metadata structure (keep same order as struct definition)
             testCaseBufferStruct = [
                 [

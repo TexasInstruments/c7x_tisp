@@ -12,7 +12,7 @@
 namespace TISP {
 namespace DSPLIB {
 
-//! [DSPLIB_matTrans constructor]
+//! [DSPLIB_cascadeBiquad constructor]
 
 template <typename T>
 CascadeBiquad<T>::CascadeBiquad(T         *pIn,
@@ -28,8 +28,9 @@ CascadeBiquad<T>::CascadeBiquad(T         *pIn,
                                 size_t     filterVarPitchBytes,
                                 bool       enableNChCoeffs,
                                 ErrorCtxt &errorCtx)
-    : _pIn(pIn), _pFilterCoeff(pFilterCoeff), _pFilterVar(pFilterVar), _pOut(pOut), _coeffSizeBytes(0),
-      _stateBufferSize(0)
+    : _pIn(pIn), _pFilterCoeff(pFilterCoeff), _pFilterVar(pFilterVar), _pOut(pOut), _size(size),
+      _numChannels(numChannels), _dataPitchInBytes(dataPitchInBytes), _dataPitchOutBytes(dataPitchOutBytes),
+      _bypassMode(0U), _coeffSizeBytes(0), _stateBufferSize(0)
 
 {
 
@@ -54,9 +55,9 @@ CascadeBiquad<T>::CascadeBiquad(T         *pIn,
       errorCtx.setInvalidParameterError("CascadeBiquad constructor", "size and numChannels must be greater than zero");
    }
    else {
-      /***********************************************************************/
-      /* Initialize data structures required by DSPLIB_matrTrans from DSPLIB */
-      /***********************************************************************/
+      /***************************************************************************/
+      /* Initialize data structures required by DSPLIB_cascadeBiquad from DSPLIB */
+      /***************************************************************************/
 
       DSPLIB_cascadeBiquad_InitArgs kerInitArgs;
       DSPLIB_bufParams2D_t          bufParamsIn;
@@ -204,10 +205,34 @@ CascadeBiquad<T>::CascadeBiquad(T          *pIn,
    _nodeInfo.nodeId = nodeId;
 }
 
+template <typename T> void CascadeBiquad<T>::bypassCopy() noexcept
+{
+   const size_t rowBytes = _numChannels * sizeof(T);
+
+   if (_pIn != _pOut) {
+      if ((_dataPitchInBytes == rowBytes) && (_dataPitchOutBytes == rowBytes)) {
+         (void) memcpy(_pOut, _pIn, rowBytes * _size);
+      }
+      else {
+         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pOut);
+         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pIn);
+
+         for (size_t i = 0; i < _size; i++) {
+            (void) memcpy(&pDst[i * _dataPitchOutBytes], &pSrc[i * _dataPitchInBytes],
+                          rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         }
+      }
+   }
+}
+
 template <typename T> void CascadeBiquad<T>::exec() noexcept
 {
-
-   DSPLIB_cascadeBiquad_exec(_handle.get(), _pIn, _pFilterCoeff, _pFilterVar, _pOut);
+   if (_bypassMode != 0U) {
+      bypassCopy();
+   }
+   else {
+      DSPLIB_cascadeBiquad_exec(_handle.get(), _pIn, _pFilterCoeff, _pFilterVar, _pOut);
+   }
 }
 
 template <typename T>
@@ -226,6 +251,30 @@ bool CascadeBiquad<T>::setParams(uint16_t paramId, void *value, size_t size, Err
          else {
             cleanInternalBuffers();
             memcpy(_pFilterCoeff, value, _coeffSizeBytes);
+         }
+         break;
+      }
+      case CascadeBiquadParamId::kBypass: {
+         if (size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("CascadeBiquad::setParams",
+                                              "Value size smaller than expected for kBypass");
+         }
+         else {
+            uint32_t bypassMode = 0U;
+            memcpy(&bypassMode, value, sizeof(uint32_t));
+            if (bypassMode > 1U) {
+               errorCtx.setInvalidParameterError("CascadeBiquad::setParams", "bypass mode must be either zero or one");
+            }
+            else {
+               /* Leaving bypass: _pFilterVar still holds the delay elements from the last block
+                * processed before bypass was engaged. Because the biquad recursion feeds those back,
+                * a stale state does not merely corrupt a bounded window - it rings, decaying at the
+                * pole radius. Discard it and resume from a cold start. */
+               if ((_bypassMode != 0U) && (bypassMode == 0U)) {
+                  cleanInternalBuffers();
+               }
+               _bypassMode = bypassMode;
+            }
          }
          break;
       }
@@ -259,6 +308,17 @@ bool CascadeBiquad<T>::getParams(uint16_t paramId, void *value, size_t *size, Er
          *size = _coeffSizeBytes;
          break;
       }
+      case CascadeBiquadParamId::kBypass: {
+         if (*size < sizeof(uint32_t)) {
+            errorCtx.setInvalidParameterError("CascadeBiquad::getParams",
+                                              "Provided buffer size is too small for kBypass");
+         }
+         else {
+            memcpy(value, &_bypassMode, sizeof(uint32_t));
+         }
+         *size = sizeof(uint32_t);
+         break;
+      }
       default:
          errorCtx.setInvalidParameterError("CascadeBiquad::getParams", "Invalid paramId");
          break;
@@ -276,6 +336,7 @@ template <typename T> void CascadeBiquad<T>::cleanInternalBuffers() noexcept
 }
 
 template class CascadeBiquad<float>;
+template class CascadeBiquad<double>;
 
 } // namespace DSPLIB
 } // namespace TISP

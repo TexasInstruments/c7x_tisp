@@ -30,6 +30,7 @@ with open("./test_cases_list.csv", "w", newline="") as csvfile:
         "numReps",
         "demoCase",
         "outputDataLocation",
+        "bypassMode",
     ]
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
@@ -69,6 +70,7 @@ with open("./test_cases_list.csv", "w", newline="") as csvfile:
                                 "numReps": 1,
                                 "demoCase": "False",
                                 "outputDataLocation": "DSPLIB_TEST_OUTPUT_HEAP",
+                                "bypassMode": 0,
                             }
                         )
                         id += 1

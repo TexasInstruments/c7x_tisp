@@ -29,6 +29,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     inChannels = currPrm["inChannels"]
     inSamples = currPrm["inSamples"]
     isInterleave = currPrm["isInterleave"]
+    bypassMode = currPrm["bypassMode"]
     strideIn0 = currPrm["strideInElements"]
     strideOut = currPrm["strideOutElements"]
     testType = currPrm["testType"]
@@ -72,6 +73,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write("%s, // inSamples \n" % ((inSamples)))
     idatFile.write("%s, // inChannels \n" % ((inChannels)))
     idatFile.write("%s, // isInterleave \n" % ((isInterleave)))
+    idatFile.write("%s, // bypassMode \n" % ((bypassMode)))
     if alignStride == "FALSE":
         # idatFile.write("%s, // strideIn0 \n" % ((strideIn0)))
         idatFile.write("%s * sizeof(%s), // strideIn0 \n" % ((strideIn0, dType)))
@@ -154,6 +156,7 @@ def process_test_case(testCase):
     testCase["inChannels"] = int(testCase["inChannels"])
     testCase["inSamples"] = int(testCase["inSamples"])
     testCase["isInterleave"] = int(testCase["isInterleave"])
+    testCase["bypassMode"] = int(testCase["bypassMode"])
     testCase["strideIn0"] = int(testCase["strideInElements"])
     testCase["strideOut"] = int(testCase["strideOutElements"])
     testCase["numBlocks"] = int(testCase["numBlocks"])
@@ -183,6 +186,7 @@ def gen_test_case_header_file(testCase):
     inChannels = testCase["inChannels"]
     inSamples = testCase["inSamples"]
     isInterleave = testCase["isInterleave"]
+    bypassMode = testCase["bypassMode"]
     numBlocks = testCase["numBlocks"]
 
     # [minVal, maxVal] = AUDIOLIB_utils.minMaxVal(dType)
@@ -211,13 +215,16 @@ def gen_test_case_header_file(testCase):
         )
 
     in1 = np.tile(in1, numBlocks)
-    if not isInterleave:
-        out = in0 * in1[:, np.newaxis]
-        out = out * MasterGain
-    else:
+    if isInterleave:
         in0 = in0.T
-        out = in0 * in1
-        out = out * MasterGain
+
+    # bypass copies the input to the output, leaving the gain unapplied
+    if bypassMode:
+        out = in0.copy()
+    elif isInterleave:
+        out = in0 * in1 * MasterGain
+    else:
+        out = in0 * in1[:, np.newaxis] * MasterGain
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, in1, MasterGain, out, testCase, headerFileName)

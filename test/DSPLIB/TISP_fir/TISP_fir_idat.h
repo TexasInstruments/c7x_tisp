@@ -33,6 +33,7 @@ typedef struct {
    uint32_t enableMMA;
    uint32_t enableQ;
    uint32_t Q;
+   uint32_t bypassMode;         // 0 -> apply filter, 1 -> copy input to output
    uint32_t outputDataLocation; // 0 -> HEAP (probably L2SRAM), 1 -> MSMC
    uint32_t numReps;
    uint32_t testID;
