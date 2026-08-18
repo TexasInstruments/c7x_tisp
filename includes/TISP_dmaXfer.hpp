@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TISP_common.hpp"
+#include "TISP_dmaRuntime.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -63,9 +64,10 @@ class DMAXfer final : public VirtualOp {
 
 #if !defined(HOST_EMULATION)
    // ── DMA engine resources (target only) ───────────────────────────────────
-   uint8_t                       *_dmaUtilsContext; /*!< DmaUtils context buffer                      */
+   DMARuntime                    *_rt;              /*!< Borrowed runtime — nullptr means standalone   */
+   uint8_t                       *_dmaUtilsContext; /*!< DmaUtils ctx — owned only when _rt==nullptr  */
    uint8_t                      **_pTrMemCh;        /*!< TR memory per channel — array[_nChannels]    */
-   Udma_DrvObjectInt               _udmaDrvObj;     /*!< UDMA driver object                           */
+   Udma_DrvObjectInt               _udmaDrvObj;     /*!< UDMA driver object — used when _rt==nullptr  */
    DmaUtilsAutoInc3d_TransferDim  *_transferDim;    /*!< Transfer descriptors  — array[_n]            */
    int32_t                        *_chId;            /*!< DMA channel IDs       — array[_nChannels]    */
 #endif
@@ -78,7 +80,8 @@ class DMAXfer final : public VirtualOp {
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
    /**
-    * @brief Construct a DMAXfer<W> node.
+    * @brief Construct a standalone DMAXfer<W> node that owns its UDMA driver.
+    *        Use in unit tests and single-node scenarios.
     *
     * @param n         Number of (src, dst, size) transfer pairs.
     * @param srcAddrs  Array of n source addresses.  Pass nullptr for a slot to skip it.
@@ -86,6 +89,22 @@ class DMAXfer final : public VirtualOp {
     * @param sizes     Array of n transfer sizes in bytes.
     */
    DMAXfer(int32_t n, void *const *srcAddrs, void *const *dstAddrs, size_t const *sizes);
+
+   /**
+    * @brief Construct a DMAXfer<W> node that borrows a shared DMARuntime.
+    *        Use in signal chains where multiple DMAXfer nodes share one UDMA
+    *        driver instance (codegen path).
+    *
+    * @param rt         Shared DMARuntime — must outlive this node.
+    * @param nChannels  Number of DRU channels this node uses (1 for W=1, 3 for W=2).
+    * @param chIds      Array of nChannels channel IDs assigned to this node.
+    * @param n          Number of (src, dst, size) transfer pairs.
+    * @param srcAddrs   Array of n source addresses.
+    * @param dstAddrs   Array of n destination addresses.
+    * @param sizes      Array of n transfer sizes in bytes.
+    */
+   DMAXfer(DMARuntime &rt, int32_t nChannels, const int32_t *chIds,
+           int32_t n, void *const *srcAddrs, void *const *dstAddrs, size_t const *sizes);
 
    /**
     * @brief Execute all n transfers, skipping any with nullptr src or dst.

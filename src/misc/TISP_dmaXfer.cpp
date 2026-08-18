@@ -14,7 +14,48 @@ namespace TISP {
 namespace misc {
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Constructor
+// File-scope helper: decompose a flat byte transfer into a 2D DMA descriptor.
+//
+// icnt0 is uint16_t (max 65535).  For sizes > 65535, decompose into 2D:
+//   icnt0 = largest power-of-two ≤ 32768 that evenly divides size
+//   icnt1 = size / icnt0
+// SYNC_2D fires one completion event after all icnt1 rows finish.
+// ─────────────────────────────────────────────────────────────────────────────
+
+#if !defined(HOST_EMULATION)
+static void setupFlat(size_t size, DmaUtilsAutoInc3d_TransferDim *dim)
+{
+   uint16_t icnt0 = 1U;
+   for (uint16_t p = 32768U; p >= 1U; p >>= 1U) {
+      if (size % static_cast<size_t>(p) == 0U) {
+         icnt0 = p;
+         break;
+      }
+   }
+
+   uint16_t icnt1 = static_cast<uint16_t>(size / static_cast<size_t>(icnt0));
+   int32_t  dim1  = static_cast<int32_t>(icnt0);
+
+   dim->sicnt0 = icnt0;
+   dim->dicnt0 = icnt0;
+   dim->sicnt1 = icnt1;
+   dim->dicnt1 = icnt1;
+   dim->sicnt2 = 1U;
+   dim->dicnt2 = 1U;
+   dim->sicnt3 = 1U;
+   dim->dicnt3 = 1U;
+   dim->sdim1  = dim1;
+   dim->ddim1  = dim1;
+   dim->sdim2  = 0;
+   dim->ddim2  = 0;
+   dim->sdim3  = 0;
+   dim->ddim3  = 0;
+}
+#endif
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Standalone constructor — owns UDMA driver (used by unit tests and single-node
+// scenarios).  Each instance runs its own Udma_init / Udma_deinit.
 // ─────────────────────────────────────────────────────────────────────────────
 
 template <int32_t W>
@@ -40,6 +81,8 @@ DMAXfer<W>::DMAXfer(int32_t n, void *const *srcAddrs, void *const *dstAddrs, siz
    _nodeInfo.setName("DMAXfer");
 
 #if !defined(HOST_EMULATION)
+   _rt = nullptr; // standalone — this instance owns the UDMA driver
+
    // W=1: 1 channel reused for all _n transfers (sequential, no DRU channel waste).
    // W>1: _n channels for parallel execution.
    // CLEC initialises 16 DRU channels; validate channel count at runtime.
@@ -74,46 +117,60 @@ DMAXfer<W>::DMAXfer(int32_t n, void *const *srcAddrs, void *const *dstAddrs, siz
       (void) printf("[Error] DMAXfer<%d>: DmaUtils init failed\n", W);
    }
 
-   // Build transfer descriptors for an arbitrarily-large flat byte copy.
-   //
-   // icnt0 is uint16_t, so a single 1D TR can transfer at most 65535 bytes.
-   // For sizes > 65535 we decompose into a 2D transfer:
-   //   icnt0  = largest power-of-two ≤ 65535 that evenly divides size
-   //   icnt1  = size / icnt0  (number of rows)
-   //   dim1   = icnt0  (contiguous rows, no gap)
-   // icnt2/icnt3 remain 1 and dim2/dim3 remain 0.
-   // SYNC_2D fires one completion event after all icnt1 rows finish.
-   auto setupFlat = [](size_t size, DmaUtilsAutoInc3d_TransferDim *dim) {
-      uint16_t icnt0 = 1U;
-      for (uint16_t p = 32768U; p >= 1U; p >>= 1U) {
-         if (size % static_cast<size_t>(p) == 0U) {
-            icnt0 = p;
-            break;
-         }
+   for (int32_t i = 0; i < _n; i++) {
+      setupFlat(sizes[i], &_transferDim[i]);
+   }
+#endif
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Shared-runtime constructor — borrows DMARuntime from the signal chain.
+// No Udma_init / Udma_deinit; channel IDs are assigned by the caller (codegen).
+// ─────────────────────────────────────────────────────────────────────────────
+
+template <int32_t W>
+DMAXfer<W>::DMAXfer(DMARuntime &rt, int32_t nChannels, const int32_t *chIds,
+                    int32_t n, void *const *srcAddrs, void *const *dstAddrs, size_t const *sizes)
+    : _n(n), _nChannels(nChannels), _srcAddrs(new void *[n]), _dstAddrs(new void *[n]), _sizes(new size_t[n])
+{
+   for (int32_t i = 0; i < _n; i++) {
+      _srcAddrs[i] = srcAddrs[i];
+      _dstAddrs[i] = dstAddrs[i];
+      _sizes[i]    = sizes[i];
+   }
+
+   {
+      auto  &buf = _nodeInfo.params;
+      size_t cap = buf.size();
+      size_t pos = 0U;
+      pos += static_cast<size_t>(snprintf(buf.data() + pos, cap - pos, "w=%d,n=%d,ch=%d", W, _n, _nChannels));
+      for (int32_t i = 0; i < _n && pos < cap; i++) {
+         pos += static_cast<size_t>(snprintf(buf.data() + pos, cap - pos, ",size%d=%zu", i, sizes[i]));
       }
+   }
+   _nodeInfo.setName("DMAXfer");
 
-      uint16_t icnt1 = static_cast<uint16_t>(size / static_cast<size_t>(icnt0));
-      int32_t  dim1  = static_cast<int32_t>(icnt0);
+#if !defined(HOST_EMULATION)
+   _rt              = &rt;      // borrow — runtime outlives all DMAXfer nodes in the chain
+   _dmaUtilsContext = nullptr;  // not owned; access via _rt->context()
 
-      dim->sicnt0 = icnt0;
-      dim->dicnt0 = icnt0;
-      dim->sicnt1 = icnt1;
-      dim->dicnt1 = icnt1;
-      dim->sicnt2 = 1U;
-      dim->dicnt2 = 1U;
-      dim->sicnt3 = 1U;
-      dim->dicnt3 = 1U;
-      dim->sdim1  = dim1;
-      dim->ddim1  = dim1;
-      dim->sdim2  = 0;
-      dim->ddim2  = 0;
-      dim->sdim3  = 0;
-      dim->ddim3  = 0;
-   };
+   if (_nChannels > 16) {
+      (void) printf("[Error] DMAXfer<%d>: nChannels=%d exceeds DRU limit (16)\n", W, _nChannels);
+   }
+
+   _pTrMemCh    = new uint8_t *[_nChannels];
+   _transferDim = new DmaUtilsAutoInc3d_TransferDim[_n];
+   _chId        = new int32_t[_nChannels];
+
+   for (int32_t i = 0; i < _nChannels; i++) {
+      _pTrMemCh[i] = static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getTrMemReq(1)));
+      _chId[i]     = chIds[i]; // caller-assigned — may reuse same ch across serialized nodes
+   }
 
    for (int32_t i = 0; i < _n; i++) {
       setupFlat(sizes[i], &_transferDim[i]);
    }
+   // No Udma_init — DMARuntime already initialised the driver
 #endif
 }
 
@@ -127,8 +184,12 @@ template <int32_t W> DMAXfer<W>::~DMAXfer()
    for (int32_t i = 0; i < _nChannels; i++) {
       free(_pTrMemCh[i]);
    }
-   free(_dmaUtilsContext);
-   (void) Udma_deinit(static_cast<Udma_DrvHandle>(&_udmaDrvObj));
+   if (_rt == nullptr) {
+      // Standalone mode: we own both the context buffer and the UDMA driver.
+      free(_dmaUtilsContext);
+      (void) Udma_deinit(static_cast<Udma_DrvHandle>(&_udmaDrvObj));
+   }
+   // Shared mode: DMARuntime owns the context and driver — do not touch them here.
    delete[] _pTrMemCh;
    delete[] _transferDim;
    delete[] _chId;
@@ -145,6 +206,9 @@ template <int32_t W> DMAXfer<W>::~DMAXfer()
 template <int32_t W> void DMAXfer<W>::exec() noexcept
 {
 #if !defined(HOST_EMULATION)
+   // Resolve context: standalone owns _dmaUtilsContext; shared borrows from runtime.
+   uint8_t *ctx = (_rt != nullptr) ? _rt->context() : _dmaUtilsContext;
+
    if (W == 2) {
       // Two-phase: 1-channel evict, then 2-channel parallel loads.
       // transfer[0] = state evict (L2→DDR) on ch0.
@@ -154,21 +218,21 @@ template <int32_t W> void DMAXfer<W>::exec() noexcept
 
       // Phase 1: evict on ch0 — configure, trigger, wait (1 channel)
       (void) dmaUtils<uint8_t>::configure_channel(
-          _dmaUtilsContext, _chId[0], _pTrMemCh, static_cast<uint8_t *>(_srcAddrs[0]),
+          ctx, _chId[0], _pTrMemCh, static_cast<uint8_t *>(_srcAddrs[0]),
           static_cast<uint8_t *>(_dstAddrs[0]), DMAUTILSAUTOINC3D_SYNC_2D, &_transferDim[0]);
-      (void) dmaUtils<float>::trigger_single(_dmaUtilsContext, &_chId[0], 0);
-      dmaUtils<float>::wait_single(_dmaUtilsContext, &_chId[0], 0);
+      (void) dmaUtils<float>::trigger_single(ctx, &_chId[0], 0);
+      dmaUtils<float>::wait_single(ctx, &_chId[0], 0);
 
       // Phase 2: coeff + state loads on ch1, ch2 — configure both, trigger both, wait both
       (void) dmaUtils<uint8_t>::configure_channel(
-          _dmaUtilsContext, _chId[1], _pTrMemCh, static_cast<uint8_t *>(_srcAddrs[1]),
+          ctx, _chId[1], _pTrMemCh, static_cast<uint8_t *>(_srcAddrs[1]),
           static_cast<uint8_t *>(_dstAddrs[1]), DMAUTILSAUTOINC3D_SYNC_2D, &_transferDim[1]);
       (void) dmaUtils<uint8_t>::configure_channel(
-          _dmaUtilsContext, _chId[2], _pTrMemCh, static_cast<uint8_t *>(_srcAddrs[2]),
+          ctx, _chId[2], _pTrMemCh, static_cast<uint8_t *>(_srcAddrs[2]),
           static_cast<uint8_t *>(_dstAddrs[2]), DMAUTILSAUTOINC3D_SYNC_2D, &_transferDim[2]);
-      (void) dmaUtils<float>::trigger_single(_dmaUtilsContext, &_chId[1], 0);
-      (void) dmaUtils<float>::trigger_single(_dmaUtilsContext, &_chId[2], 0);
-      dmaUtils<float>::wait(_dmaUtilsContext, &_chId[1], 2);
+      (void) dmaUtils<float>::trigger_single(ctx, &_chId[1], 0);
+      (void) dmaUtils<float>::trigger_single(ctx, &_chId[2], 0);
+      dmaUtils<float>::wait(ctx, &_chId[1], 2);
    } else {
       // W=1: single channel reused for all _n transfers (configure→trigger→wait per transfer).
       // _chId[0] is the one channel; _transferDim[i] supplies per-transfer src/dst/size.
@@ -177,10 +241,10 @@ template <int32_t W> void DMAXfer<W>::exec() noexcept
             continue;
          }
          (void) dmaUtils<uint8_t>::configure_channel(
-             _dmaUtilsContext, _chId[0], _pTrMemCh, static_cast<uint8_t *>(_srcAddrs[i]),
+             ctx, _chId[0], _pTrMemCh, static_cast<uint8_t *>(_srcAddrs[i]),
              static_cast<uint8_t *>(_dstAddrs[i]), DMAUTILSAUTOINC3D_SYNC_2D, &_transferDim[i]);
-         (void) dmaUtils<float>::trigger_single(_dmaUtilsContext, &_chId[0], 0);
-         dmaUtils<float>::wait_single(_dmaUtilsContext, &_chId[0], 0);
+         (void) dmaUtils<float>::trigger_single(ctx, &_chId[0], 0);
+         dmaUtils<float>::wait_single(ctx, &_chId[0], 0);
       }
    }
 #else
