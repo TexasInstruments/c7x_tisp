@@ -11,9 +11,9 @@
 
 #define CONST_MAX_DB20 6165.09375 // 20 times of 308.2546875;
 
-#define CONST_FLOAT_MIN_DB20 85731573760.0 // 20 times of 42865786880.0
+#define CONST_FLOAT_MIN_DB20 (-758.5955891) // 20*log10(FLT_MIN), FLT_MIN = 1.1754944e-38
 
-#define CONST_DOUBLE_MIN_DB20 3.6870854789e+20
+#define CONST_DOUBLE_MIN_DB20 (-6153.0531114) // 20*log10(DBL_MIN), DBL_MIN = 2.2250739e-308
 
 template <typename dataType>
 void TISP_limiter_dB20_exec_cn(void  *pIn,

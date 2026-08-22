@@ -93,8 +93,8 @@ void *create_graph()
    float *pGainNChTrimOut          = GAIN_NCH_TRIM_OUT_ADDR;
 
    // Limiter pointers
-   float *pLimiterGain         = LIMITER_GAIN_ADDR;
    float *pLimiterScratch      = LIMITER_SCRATCH_ADDR;
+   float *pLimiterGainState    = LIMITER_GAIN_STATE_ADDR;
    float *pLimiterThreshold    = LIMITER_THRESHOLD_ADDR;
    float *pLimiterKneeWidth    = LIMITER_KNEE_WIDTH_ADDR;
    float *pLimiterAttackCoeff  = LIMITER_ATTACK_COEFF_ADDR;
@@ -302,7 +302,7 @@ void *create_graph()
    // 9. Limiter
    if (errorCtx.isSuccess()) {
       auto k8 = TISP::make_unique_node<TISP::AUDIOLIB::Limiter<float>>(
-          pGainNChTrimOut, pLimiterGain, pLimiterScratch, pLimiterOut, pLimiterThreshold, pLimiterKneeWidth,
+          pGainNChTrimOut, pLimiterScratch, pLimiterOut, pLimiterGainState, pLimiterThreshold, pLimiterKneeWidth,
           pLimiterAttackCoeff, pLimiterReleaseCoeff, NUM_CHANNELS_OUT, BLOCK_SIZE, NUM_CHANNELS_OUT * sizeof(float),
           NUM_CHANNELS_OUT * sizeof(float), MUTE_NCH_STRIDE_ELEM * sizeof(float), IS_INTERLEAVED, "Limiter", 8,
           errorCtx); // isInterleaved=IS_INTERLEAVED

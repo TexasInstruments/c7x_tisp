@@ -18,9 +18,9 @@ namespace AUDIOLIB {
 
 template <typename T>
 Limiter<T>::Limiter(T         *pX,
-                    T         *pG,
                     T         *pS,
                     T         *pY,
+                    T         *pGainState,
                     T         *pThreshold_dB,
                     T         *pKneeWidth_dB,
                     T         *pAttackCoeff,
@@ -32,7 +32,8 @@ Limiter<T>::Limiter(T         *pX,
                     size_t     pitchY,
                     bool       isInterleaved,
                     ErrorCtxt &errorCtx)
-    : _pX(pX), _pG(pG), _pS(pS), _pY(pY), _pThreshold_dB(pThreshold_dB), _pKneeWidth_dB(pKneeWidth_dB),
+    : _pX(pX), _pS(pS), _pY(pY), _pGainState(pGainState), _pThreshold_dB(pThreshold_dB),
+      _pKneeWidth_dB(pKneeWidth_dB),
       _pAttackCoeff(pAttackCoeff), _pReleaseCoeff(pReleaseCoeff), _numChannels(numChannels), _blockSize(blockSize),
       _pitchX(pitchX), _pitchS(pitchS), _pitchY(pitchY), _isInterleaved(isInterleaved), _bypassMode(0U)
 {
@@ -45,14 +46,14 @@ Limiter<T>::Limiter(T         *pX,
    if (pX == nullptr) {
       errorCtx.setNullPointerError("Limiter constructor", "input pointer pX is null");
    }
-   else if (pG == nullptr) {
-      errorCtx.setNullPointerError("Limiter constructor", "gain pointer pG is null");
-   }
    else if (pS == nullptr) {
       errorCtx.setNullPointerError("Limiter constructor", "scratch pointer pS is null");
    }
    else if (pY == nullptr) {
       errorCtx.setNullPointerError("Limiter constructor", "output pointer pY is null");
+   }
+   else if (pGainState == nullptr) {
+      errorCtx.setNullPointerError("Limiter constructor", "gain state pointer pGainState is null");
    }
    else if (pThreshold_dB == nullptr) {
       errorCtx.setNullPointerError("Limiter constructor", "threshold pointer pThreshold_dB is null");
@@ -81,7 +82,7 @@ Limiter<T>::Limiter(T         *pX,
       size_t height = (this->_isInterleaved) ? this->_blockSize : this->_numChannels;
 
       // Initialize bufParams with node input and output buffer parameters. Output slot 0 is
-      // the audio buffer pY; output slot 1 is the per-channel gain vector pG (1D, numChannels).
+      // the audio buffer pY; 
       _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
       _nodeInfo.bufParams.isInputInterleave = isInterleaved ? 1 : 0;
       _nodeInfo.bufParams.widthIn[0]        = width;
@@ -93,9 +94,6 @@ Limiter<T>::Limiter(T         *pX,
       _nodeInfo.bufParams.widthOut[0]        = width;
       _nodeInfo.bufParams.heightOut[0]       = height;
       _nodeInfo.bufParams.outPitchBytes[0]   = pitchY;
-      _nodeInfo.bufParams.widthOut[1]        = numChannels;
-      _nodeInfo.bufParams.heightOut[1]       = 1;
-      _nodeInfo.bufParams.outPitchBytes[1]   = numChannels * sizeof(T);
 
       // Define buffer param structures
       AUDIOLIB_bufParams2D_t bufParamsIn;
@@ -180,6 +178,9 @@ Limiter<T>::Limiter(T         *pX,
                                  status = TISP_limiter_mul_init(_handle_mul.get(), &bufParamsIn, &bufParamsScratch,
                                                                 &bufParamsOut);
                                  errorCtx.remapXLIBError(status, "TISP_limiter_mul_init");
+                                 if (errorCtx.isSuccess()) {
+                                    cleanInternalBuffers();
+                                 }
                               }
                            }
                         }
@@ -199,24 +200,12 @@ template <typename T> void *Limiter<T>::getInputAddr(size_t index) const noexcep
 
 template <typename T> void *Limiter<T>::getOutputAddr(size_t index) const noexcept
 {
-   void *result = nullptr;
-   switch (index) {
-   case 0:
-      result = static_cast<void *>(_pY);
-      break;
-   case 1:
-      result = static_cast<void *>(_pG);
-      break;
-   default:
-      result = nullptr;
-      break;
-   }
-   return result;
+   return (index == 0) ? static_cast<void *>(_pY) : nullptr;
 }
 
 template <typename T> size_t Limiter<T>::getNumInputs() const noexcept { return 1; }
 
-template <typename T> size_t Limiter<T>::getNumOutputs() const noexcept { return 2; }
+template <typename T> size_t Limiter<T>::getNumOutputs() const noexcept { return 1; }
 
 //! [TISP::Limiter setAddr]
 template <typename T> void Limiter<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) noexcept
@@ -227,13 +216,11 @@ template <typename T> void Limiter<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mo
 
    if (mode == kAddrModeOut) {
       _pY = static_cast<T *>(addr.dst[0]);
-      _pG = static_cast<T *>(addr.dst[1]);
    }
 
    if (mode == kAddrModeInOut) {
       _pX = static_cast<T *>(addr.src[0]);
       _pY = static_cast<T *>(addr.dst[0]);
-      _pG = static_cast<T *>(addr.dst[1]);
    }
 }
 
@@ -334,6 +321,14 @@ bool Limiter<T>::setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt
                errorCtx.setInvalidParameterError("Limiter::setParams", "bypass mode must be either zero or one");
             }
             else {
+               /* Leaving bypass: the envelope in _pGainState froze at whatever the signal level
+                * was when bypass was engaged, because bypassCopy() never runs the gain computer.
+                * Resuming from it would apply gain reduction derived from unrelated history, and
+                * the one-pole smoother only walks that off at the release rate. Discard it and
+                * resume from rest. */
+               if ((_bypassMode != 0U) && (bypassMode == 0U)) {
+                  cleanInternalBuffers();
+               }
                _bypassMode = bypassMode;
             }
          }
@@ -401,6 +396,13 @@ bool Limiter<T>::getParams(uint16_t paramId, void *value, size_t *size, ErrorCtx
    return errorCtx.isSuccess();
 }
 
+template <typename T> void Limiter<T>::cleanInternalBuffers() noexcept
+{
+    if (_pGainState != nullptr && _numChannels > 0) {
+      std::memset(_pGainState, 0, _numChannels * sizeof(T));
+   }
+}
+
 template <typename T> void Limiter<T>::bypassCopy() noexcept
 {
    const size_t width    = (_isInterleaved) ? _numChannels : _blockSize;
@@ -431,7 +433,7 @@ template <typename T> void Limiter<T>::exec() noexcept
       TISP_limiter_abs_exec(_handle_abs.get(), _pX, _pY);
       AUDIOLIB_dB20_exec(_handle_dB20.get(), _pY, _pS);
 
-      TISP_limiter_gainComputer_exec(_handle_gainComputer.get(), _pS, _pY, _pG);
+      TISP_limiter_gainComputer_exec(_handle_gainComputer.get(), _pS, _pY);
       AUDIOLIB_undB20_exec(_handle_undB20.get(), _pY, _pS);
 
       TISP_limiter_mul_exec(_handle_mul.get(), _pX, _pS, _pY);
@@ -673,8 +675,7 @@ int32_t Limiter<T>::TISP_limiter_gainComputer_init(void                   *handl
    sa0Params.DECDIM1_WIDTH = static_cast<uint32_t>(bufParamsOut->dim_x);
    sa0Params.DECDIM1SD     = __SA_DECDIMSD_DIM0;
 
-   // Fetch 1D attack and release coeff buffers with SA2, SA3; store 1D output gain buffer with SA1 (Use same SA
-   // parameters for address generation pattern)
+   // Fetch 1D attack and release coeff buffers with SA2, SA3 (Use same SA parameters for address generation pattern)
    sa1Params.DIMFMT = __SA_DIMFMT_1D;
    sa1Params.VECLEN = c7x::sa_veclen<vec>::value;
 
@@ -692,7 +693,7 @@ int32_t Limiter<T>::TISP_limiter_gainComputer_init(void                   *handl
 }
 
 __INLINE_FUNC(TISP_limiter_gainComputer_exec)
-template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(void *handle, T *pIn, T *pOut, T *pGain)
+template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(void *handle, T *pIn, T *pOut)
 {
    // Extract SE/SA params
    uint8_t         *handle_gainComputer = static_cast<uint8_t *>(handle);
@@ -709,13 +710,13 @@ template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(voi
    T *pKneeWidthLocal    = static_cast<T *>(this->_pKneeWidth_dB);
    T *pAttackCoeffLocal  = static_cast<T *>(this->_pAttackCoeff);
    T *pReleaseCoeffLocal = static_cast<T *>(this->_pReleaseCoeff);
+   T *pGainStateLocal    = static_cast<T *>(this->_pGainState);
 
    // Update SE1 parameters with correct dimension jump between buffer addresses
    se1Params.DIM1 = static_cast<int32_t>(pKneeWidthLocal - pThresholdLocal);
 
-   T *pInLocal   = static_cast<T *>(pIn);
-   T *pOutLocal  = static_cast<T *>(pOut);
-   T *pGainLocal = static_cast<T *>(pGain);
+   T *pInLocal  = static_cast<T *>(pIn);
+   T *pOutLocal = static_cast<T *>(pOut);
 
    using vec             = typename c7x::make_full_vector<T>::type;
    uint32_t elementCount = c7x::element_count_of<vec>::value;
@@ -738,7 +739,6 @@ template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(voi
    vec vOne          = (vec) 1;   // NOLINT(MISRA.C_CAST)
    vec vHalf         = (vec) 0.5; // NOLINT(MISRA.C_CAST)
    vec vSmoothedGain = vZero;
-   vec vMakeUpGain   = vZero;
    // Iterate through channel blocks
 #pragma COALESCE_LOOP
    for (uint32_t ch = 0; ch < numBlocks; ch++) {
@@ -766,10 +766,38 @@ template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(voi
       vec vSoftKneeEnd            = vThreshold + vKneeWidthHalfBand; // L, S, C
 
       __vpred cmpHardKneePolicy = __cmp_le_pred(vKneeWidth, vZero);
-      __vpred cmpSoftKneePolicy = __negate(cmpHardKneePolicy);
 
-      vSmoothedGain = vZero;
-      vMakeUpGain   = vZero;
+      // Automatic make-up gain is a per-channel CONSTANT: M = -x_sc(0 dB), the static
+      // characteristic evaluated at full scale (MATLAB `limiter`, MakeUpGainMode = 'Auto').
+      // It depends on the threshold and the knee width alone, never on the instantaneous
+      // sample level, so it is computed once here rather than per sample. The three
+      // branches mirror the static characteristic in the sample loop below with vIn
+      // replaced by zero.
+      __vpred cmpHardKneeFullScale     = __cmp_ge_pred(vZero, vThreshold);     // 0 >= T
+      __vpred cmpSoftKneeFullScale     = __cmp_gt_pred(vZero, vSoftKneeEnd);   // 0 >  knee end
+      __vpred cmpSoftKneeNoneFullScale = __cmp_lt_pred(vZero, vSoftKneeStart); // 0 <  knee start
+
+      vec vRatioFullScale  = vZero - vThreshold + vKneeWidthHalfBand;
+      vec vRatio2FullScale = vRatioFullScale * vRatioFullScale;
+
+      // NaN on hard-knee lanes (vInvKneeWidthDoubleBand is 1/0 there); discarded by the
+      // cmpHardKneePolicy select below, exactly as in the sample loop.
+      vec vSoftKneeFullScale = vZero - vRatio2FullScale * vInvKneeWidthDoubleBand;
+
+      vec vHardKneeCharacteristicFullScale = __select(cmpHardKneeFullScale, vThreshold, vZero);
+
+      vec vSoftKneeCharacteristicFullScale =
+          __select(cmpSoftKneeFullScale, vThreshold, __select(cmpSoftKneeNoneFullScale, vZero, vSoftKneeFullScale));
+
+      vec vStaticCharacteristicFullScale =
+          __select(cmpHardKneePolicy, vHardKneeCharacteristicFullScale, vSoftKneeCharacteristicFullScale);
+
+      vec vMakeUpGain = vZero - vStaticCharacteristicFullScale;
+
+      // Resume this channel-block's envelope where the previous exec() left it.
+      __vpred vPredState = c7x::strm_agen<1, vec>::get_vpred();
+      vec    *vAddrState = c7x::strm_agen<1, vec>::get_adv(pGainStateLocal);
+      vSmoothedGain      = __vload_pred(vPredState, vAddrState);
 
 #pragma MUST_ITERATE(1, 65535, )
       for (size_t n = 0; n < height; n++) {
@@ -777,11 +805,11 @@ template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(voi
          // fetch input vector (in decibel)
          vec vIn = c7x::strm_eng<0, vec>::get_adv();
 
-         // Determine knee policy predicate vectors
-         __vpred cmpHardKneeThreshold = __and(__cmp_ge_pred(vIn, vThreshold), cmpHardKneePolicy);
-         __vpred cmpSoftKneeThreshold = __and(__cmp_gt_pred(vIn, vSoftKneeEnd), cmpSoftKneePolicy);
-         __vpred cmpHardKneeNone      = __and(__negate(cmpHardKneeThreshold), cmpHardKneePolicy);
-         __vpred cmpSoftKneeNone      = __and(__cmp_lt_pred(vIn, vSoftKneeStart), cmpSoftKneePolicy);
+         // Determine knee region predicate vectors. The knee policy is applied once at the
+         // join below, so these are not masked with it individually.
+         __vpred cmpHardKneeThreshold = __cmp_ge_pred(vIn, vThreshold);
+         __vpred cmpSoftKneeThreshold = __cmp_gt_pred(vIn, vSoftKneeEnd);
+         __vpred cmpSoftKneeNone      = __cmp_lt_pred(vIn, vSoftKneeStart);
 
          // Calculate soft knee region vector
          vec vRatio  = vIn - vThreshold + vKneeWidthHalfBand;
@@ -789,20 +817,17 @@ template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(voi
 
          vec vSoftKnee = vIn - vRatio2 * vInvKneeWidthDoubleBand;
 
-         // Default static characteristic is soft knee target region
-         vec vStaticCharacteristic = vSoftKnee;
+         // Hard knee: clamp to threshold at or above it, pass through below it
+         vec vHardKneeCharacteristic = __select(cmpHardKneeThreshold, vThreshold, vIn);
 
-         // Soft Knee Above Knee End
-         vStaticCharacteristic = __select(cmpSoftKneeThreshold, vThreshold, vStaticCharacteristic);
+         // Soft knee: threshold above the knee end, pass through below the knee start,
+         // interpolated soft-knee value in between
+         vec vSoftKneeCharacteristic =
+             __select(cmpSoftKneeThreshold, vThreshold, __select(cmpSoftKneeNone, vIn, vSoftKnee));
 
-         // Soft Knee Below Knee Start
-         vStaticCharacteristic = __select(cmpSoftKneeNone, vIn, vStaticCharacteristic);
-
-         // Hard Knee Below Threshold
-         vStaticCharacteristic = __select(cmpHardKneeNone, vIn, vStaticCharacteristic);
-
-         // Hard Knee Above Threshold
-         vStaticCharacteristic = __select(cmpHardKneeThreshold, vThreshold, vStaticCharacteristic);
+         // Select the per-lane knee policy
+         vec vStaticCharacteristic =
+             __select(cmpHardKneePolicy, vHardKneeCharacteristic, vSoftKneeCharacteristic);
 
          // Compute target gain
          vec vTargetGain = vStaticCharacteristic - vIn;
@@ -816,20 +841,17 @@ template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(voi
 
          vSmoothedGain = __select(cmpSmoothingMode, vSmoothedGainAttack, vSmoothedGainRelease);
 
-         // Determine makeup gain
-         __vpred cmpMakeUpGainMode = __cmp_eq_pred(vIn, vZero);
-         vMakeUpGain               = __select(cmpMakeUpGainMode, vSmoothedGain - vStaticCharacteristic, vSmoothedGain);
+         // Apply the constant automatic make-up gain
+         vec vGain = vSmoothedGain + vMakeUpGain;
 
          // Store smoothed gains
          __vpred vPredOut = c7x::strm_agen<0, vec>::get_vpred();
          vec    *vAddrOut = c7x::strm_agen<0, vec>::get_adv(pOutLocal);
-         __vstore_pred(vPredOut, vAddrOut, vMakeUpGain);
+         __vstore_pred(vPredOut, vAddrOut, vGain);
       }
 
-      // Store last of smoothed gains to gain buffer
-      __vpred vPredGain = c7x::strm_agen<1, vec>::get_vpred();
-      vec    *vAddrGain = c7x::strm_agen<1, vec>::get_adv(pGainLocal);
-      __vstore_pred(vPredGain, vAddrGain, vMakeUpGain);
+      // Carry this block's final envelope to the next exec().
+      __vstore_pred(vPredState, vAddrState, vSmoothedGain);
    }
 
    __SE0_CLOSE();
@@ -857,9 +879,9 @@ template <typename T> template <typename vecType> inline vecType Limiter<T>::TIS
 
 template <typename T>
 Limiter<T>::Limiter(T          *pX,
-                    T          *pG,
                     T          *pS,
                     T          *pY,
+                    T          *pGainState,
                     T          *pThreshold_dB,
                     T          *pKneeWidth_dB,
                     T          *pAttackCoeff,
@@ -874,9 +896,9 @@ Limiter<T>::Limiter(T          *pX,
                     uint32_t    nodeId,
                     ErrorCtxt  &errorCtx)
     : Limiter(pX,
-              pG,
               pS,
               pY,
+              pGainState,
               pThreshold_dB,
               pKneeWidth_dB,
               pAttackCoeff,
