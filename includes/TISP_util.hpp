@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "TISP_dataProbe.hpp"  // Node-boundary data probe
 #include "TISP_profiler.hpp" // Include our new profiler
 #include "TISP_superNode.hpp"
 #include "TISP_virtualOp.hpp"
@@ -44,10 +45,14 @@ class execute {
       }
       for (auto const &op : myOpVec) {
 #pragma FORCEINLINE
+         DataProbe::onNodeBoundary(*op, NodeExecPhase::kNodeExecPre);
+#pragma FORCEINLINE
          NodeProfiler::startNode();
          op->exec();
 #pragma FORCEINLINE
          NodeProfiler::stopNode();
+#pragma FORCEINLINE
+         DataProbe::onNodeBoundary(*op, NodeExecPhase::kNodeExecPost);
       }
 
       return;
@@ -63,10 +68,14 @@ class execute {
       }
       for (auto const &op : *myOpVec) {
 #pragma FORCEINLINE
+         DataProbe::onNodeBoundary(*op, NodeExecPhase::kNodeExecPre);
+#pragma FORCEINLINE
          NodeProfiler::startNode();
          op->exec();
 #pragma FORCEINLINE
          NodeProfiler::stopNode();
+#pragma FORCEINLINE
+         DataProbe::onNodeBoundary(*op, NodeExecPhase::kNodeExecPost);
       }
 
       return;
@@ -82,10 +91,14 @@ class execute {
       }
       for (auto const &op : *myOpVec) {
 #pragma FORCEINLINE
+         DataProbe::onNodeBoundary(*op, NodeExecPhase::kNodeExecPre);
+#pragma FORCEINLINE
          NodeProfiler::startNode();
          op->exec();
 #pragma FORCEINLINE
          NodeProfiler::stopNode();
+#pragma FORCEINLINE
+         DataProbe::onNodeBoundary(*op, NodeExecPhase::kNodeExecPost);
       }
 
       return;
