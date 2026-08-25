@@ -636,7 +636,6 @@ class BuildTisp(WestCommand):
                         / "gen_headers.log"
                     )
                     gen_log.parent.mkdir(parents=True, exist_ok=True)
-                    _ncpus = os.cpu_count() or 4
                     _build_cmd = [
                         "cmake",
                         "--build",
@@ -644,9 +643,10 @@ class BuildTisp(WestCommand):
                         "--target",
                         "gen_all_test_case_headers",
                         "--parallel",
+                        str(tisp_jobs),
                     ]
                     if args.throttle:
-                        _build_cmd += ["--", f"-l{_ncpus}"]
+                        _build_cmd += ["--", f"-l{tisp_jobs}"]
                     rc = self._run_chain(
                         [
                             "cmake",

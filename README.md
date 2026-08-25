@@ -148,6 +148,13 @@ pip install west psutil
 build falls back to CPU-count-only limits, which may OOM on machines with
 less than ~2 GB RAM per (soc × platform × build-type) combo.
 
+To pin outer combo parallelism manually (e.g. on machines with heavy
+background load), set `TISP_MAX_WORKERS`:
+
+```bash
+TISP_MAX_WORKERS=2 west build-tisp   # run at most 2 combos in parallel
+```
+
 | Method | When to use |
 |--------|-------------|
 | **West workspace** (recommended) | New setups, CI/CD, repo-first workflow |
