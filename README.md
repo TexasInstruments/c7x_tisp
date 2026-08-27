@@ -136,6 +136,25 @@ tisp/
 TISP depends on four TI external libraries (xlibs): **FFTLIB**, **DSPLIB**,
 **AUDIOLIB**, **MATHLIB**.  Two ways to provide them:
 
+### Python build tooling (`west build-tisp`)
+
+`west build-tisp` requires `west` and optionally `psutil`:
+
+```bash
+pip install west psutil
+```
+
+`psutil` enables memory-aware parallel build throttling — without it the
+build falls back to CPU-count-only limits, which may OOM on machines with
+less than ~2 GB RAM per (soc × platform × build-type) combo.
+
+To pin outer combo parallelism manually (e.g. on machines with heavy
+background load), set `TISP_MAX_WORKERS`:
+
+```bash
+TISP_MAX_WORKERS=2 west build-tisp   # run at most 2 combos in parallel
+```
+
 | Method | When to use |
 |--------|-------------|
 | **West workspace** (recommended) | New setups, CI/CD, repo-first workflow |

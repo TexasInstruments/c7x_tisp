@@ -44,6 +44,17 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from textwrap import dedent
 
+try:
+    import psutil
+    _HAVE_PSUTIL = True
+except ImportError:
+    _HAVE_PSUTIL = False
+
+# Estimated peak RAM consumed by one (soc × platform × build-type) combo:
+# 4 parallel tracks (fftlib, mathlib, dsplib→audiolib, mcu_sdk) × ~500 MB per
+# compiler process peak ≈ 2 GB.  Conservative — adjust if your build is leaner.
+_GB_PER_COMBO = 2.0
+
 from west.commands import WestCommand
 
 # SOC to device mapping for XLIB artifact naming (used by fftlib, mathlib, dsplib, audiolib)
@@ -67,6 +78,42 @@ _mcu_sdk_lock = threading.Lock()  # Protects access to _mcu_sdk_locks
 # Header gen runs once after xlibs are built (xlib artifacts required for cmake configure)
 _headers_lock = threading.Lock()
 _headers_done = False
+
+
+def _detect_paths(topdir):
+    """Detect workspace layout and return (tisp_dir, xlib_dir, mcu_sdk_dir).
+
+    Supports two workspace layouts:
+
+    Native tisp workspace (workspace-tisp):
+      {topdir}/tisp/
+      {topdir}/mcu_plus_sdk/source/
+      {topdir}/mcu_plus_sdk/
+
+    tvm_byoc workspace (workspace-tvm-byoc):
+      {topdir}/packages/mcu_plus_sdk/source/tisp/
+      {topdir}/packages/mcu_plus_sdk/source/
+      {topdir}/packages/mcu_plus_sdk/
+    """
+    top = Path(topdir)
+
+    # Native layout: tisp/ at workspace root is the definitive marker.
+    # _detect_paths() returns the expected mcu_plus_sdk/ path even if it does
+    # not yet exist (e.g., before `west update`).  do_run() validates existence
+    # and emits a clear error so the user knows to run `west update`.
+    native_tisp = top / "tisp"
+    native_sdk = top / "mcu_plus_sdk"
+    if native_tisp.is_dir():
+        return native_tisp, native_sdk / "source", native_sdk
+
+    # tvm_byoc layout: tisp lives inside packages/mcu_plus_sdk/source/
+    pkg_sdk = top / "packages" / "mcu_plus_sdk"
+    pkg_tisp = pkg_sdk / "source" / "tisp"
+    if pkg_tisp.is_dir():
+        return pkg_tisp, pkg_sdk / "source", pkg_sdk
+
+    # Neither found — return native paths so do_run produces the right error message
+    return native_tisp, native_sdk / "source", native_sdk
 
 # ── terminal aesthetics ───────────────────────────────────────────────────────
 
@@ -293,6 +340,13 @@ class BuildTisp(WestCommand):
             "faster on powerful machines (e.g. Threadripper), "
             "may OOM on smaller ones",
         )
+        parser.add_argument(
+            "--mcu-sdk-root",
+            default=None,
+            dest="mcu_sdk_root",
+            help="override auto-detected MCU+ SDK root path "
+            "(use for non-standard or future workspace layouts)",
+        )
         return parser
 
     # ── helpers ───────────────────────────────────────────────────────
@@ -317,42 +371,19 @@ class BuildTisp(WestCommand):
                 return _run(fh)
         return _run(None)
 
-    def _detect_topology(self):
-        """Return (xlib_base, mcu_sdk_path) for the current west workspace.
-
-        Dev topology  (topdir is workspace root):
-          xlib_base = topdir/mcu_plus_sdk/source/
-          mcu_sdk   = topdir/mcu_plus_sdk/
-
-        Release topology (topdir = workspace/mcu_plus_sdk/source/):
-          xlib_base = topdir/
-          mcu_sdk   = topdir/../  (the mcu_plus_sdk clone root)
-        """
-        dev_xlib_base = Path(self.topdir) / "mcu_plus_sdk" / "source"
-        if dev_xlib_base.is_dir():
-            return dev_xlib_base, Path(self.topdir) / "mcu_plus_sdk"
-        if Path(self.topdir).parent.name == "mcu_plus_sdk":
-            return Path(self.topdir), Path(self.topdir).parent
-        self.die(
-            "Cannot detect workspace topology.\n"
-            "  Dev:     <ws>/mcu_plus_sdk/source/ must exist under topdir\n"
-            "  Release: topdir must be inside a directory named 'mcu_plus_sdk'"
-        )
-
     def _build_xlib(
-        self, name, soc, platform, build_type, xlib_base, tisp_dir, env, printer, throttle=True
+        self, name, soc, platform, build_type, jobs, tisp_dir, xlib_dir, env, printer, throttle=True
     ):
         label = f"{I_PKG.strip()} {name:<8}  {soc}/{platform}/{build_type}"
         printer.building(label)
-        xlib_src = xlib_base / name
+        xlib_src = xlib_dir / name
         xlib_build = tisp_dir / "build" / "xlibs" / soc / platform / build_type / name
         preset = f"{build_type}-buildlib-{soc}-{platform}"
         log = tisp_dir / "build" / "logs" / soc / platform / build_type / f"{name}.log"
         log.parent.mkdir(parents=True, exist_ok=True)
-        ncpus = os.cpu_count() or 4
-        build_cmd = ["cmake", "--build", str(xlib_build), "--parallel"]
+        build_cmd = ["cmake", "--build", str(xlib_build), "--parallel", str(jobs)]
         if throttle:
-            build_cmd += ["--", f"-l{ncpus}"]
+            build_cmd += ["--", f"-l{jobs}"]
         rc = self._run_chain(
             ["cmake", "-S", str(xlib_src), "-B", str(xlib_build), "--preset", preset],
             build_cmd,
@@ -365,7 +396,7 @@ class BuildTisp(WestCommand):
         printer.done(label)
 
     def _build_mcu_sdk(
-        self, soc, platform, build_type, jobs, mcu_sdk, tisp_dir, env, printer, throttle=True
+        self, soc, platform, build_type, jobs, tisp_dir, mcu_sdk_dir, env, printer, throttle=True
     ):
         """Build MCU+ SDK libraries using make-based system.
 
@@ -374,7 +405,6 @@ class BuildTisp(WestCommand):
         It serializes builds for the same SOC/device to prevent object file
         conflicts between release/debug builds.
         """
-        mcu_sdk_dir = mcu_sdk
 
         # PC platform: build dmautils host emulation library only.
         # Serialize per-device (same lock key as target) to prevent make races
@@ -419,8 +449,7 @@ class BuildTisp(WestCommand):
                         f"CGT_TI_C7000_PATH = {cgt_root}\n"
                         f"CGT_TI_C7X_HOSTEMU_PATH = {cgt_root}\n"
                     )
-                ncpus = os.cpu_count() or 4
-                make_flags = [f"-j{ncpus}"] + ([] if not throttle else [f"-l{ncpus}"])
+                make_flags = [f"-j{jobs}"] + ([] if not throttle else [f"-l{jobs}"])
                 rc = self._run_chain(
                     ["make", "-f", hostemu_mf, f"PROFILE={profile}"] + make_flags,
                     log=str(log),
@@ -478,8 +507,7 @@ class BuildTisp(WestCommand):
                     f"CGT_TI_C7X_HOSTEMU_PATH = {cgt_root}\n"
                 )
 
-            ncpus = os.cpu_count() or 4
-            make_flags = [f"-j{ncpus}"] + ([] if not throttle else [f"-l{ncpus}"])
+            make_flags = [f"-j{jobs}"] + ([] if not throttle else [f"-l{jobs}"])
             build_env = {
                 **env,
                 "TOOLS_PATH": tools_path,
@@ -521,21 +549,25 @@ class BuildTisp(WestCommand):
 
     # ── per-combo worker ──────────────────────────────────────────────
 
-    def _build_combo(self, soc, platform, build_type, args, tisp_dir, xlib_base, mcu_sdk, printer):
+    def _build_combo(self, soc, platform, build_type, args, max_combo_workers, tisp_dir, xlib_dir, mcu_sdk_dir, printer):
         label = f"{soc}/{platform}/{build_type}"
 
         jobs = args.jobs
+        # Calculate dynamic job/worker limits to enforce overall jobs cap
+        track_jobs = max(1, jobs // (max_combo_workers * 4))
+        inner_workers = min(4, max(1, jobs // max_combo_workers))
+        tisp_jobs = max(1, jobs // max_combo_workers)
 
         env = dict(os.environ)
-        env["MCU_PLUS_SDK_ROOT"] = str(mcu_sdk)
+        env["MCU_PLUS_SDK_ROOT"] = str(mcu_sdk_dir)
 
         def _audiolib_track():
-            self._build_xlib("dsplib", soc, platform, build_type, xlib_base, tisp_dir, env, printer, args.throttle)
-            self._build_xlib("audiolib", soc, platform, build_type, xlib_base, tisp_dir, env, printer, args.throttle)
+            self._build_xlib("dsplib", soc, platform, build_type, track_jobs, tisp_dir, xlib_dir, env, printer, args.throttle)
+            self._build_xlib("audiolib", soc, platform, build_type, track_jobs, tisp_dir, xlib_dir, env, printer, args.throttle)
 
         with ThreadPoolExecutor(
-            max_workers=4
-        ) as pool:  # exactly 4 tracks: fftlib, mathlib, audiolib, mcu_sdk
+            max_workers=inner_workers
+        ) as pool:  # dynamically scaled tracks: fftlib, mathlib, audiolib, mcu_sdk
             futures = {
                 pool.submit(
                     self._build_xlib,
@@ -543,8 +575,9 @@ class BuildTisp(WestCommand):
                     soc,
                     platform,
                     build_type,
-                    xlib_base,
+                    track_jobs,
                     tisp_dir,
+                    xlib_dir,
                     env,
                     printer,
                     args.throttle,
@@ -555,8 +588,9 @@ class BuildTisp(WestCommand):
                     soc,
                     platform,
                     build_type,
-                    xlib_base,
+                    track_jobs,
                     tisp_dir,
+                    xlib_dir,
                     env,
                     printer,
                     args.throttle,
@@ -567,9 +601,9 @@ class BuildTisp(WestCommand):
                     soc,
                     platform,
                     build_type,
-                    jobs,
-                    mcu_sdk,
+                    track_jobs,
                     tisp_dir,
+                    mcu_sdk_dir,
                     env,
                     printer,
                     args.throttle,
@@ -602,7 +636,6 @@ class BuildTisp(WestCommand):
                         / "gen_headers.log"
                     )
                     gen_log.parent.mkdir(parents=True, exist_ok=True)
-                    _ncpus = os.cpu_count() or 4
                     _build_cmd = [
                         "cmake",
                         "--build",
@@ -610,9 +643,10 @@ class BuildTisp(WestCommand):
                         "--target",
                         "gen_all_test_case_headers",
                         "--parallel",
+                        str(tisp_jobs),
                     ]
                     if args.throttle:
-                        _build_cmd += ["--", f"-l{_ncpus}"]
+                        _build_cmd += ["--", f"-l{tisp_jobs}"]
                     rc = self._run_chain(
                         [
                             "cmake",
@@ -657,10 +691,9 @@ class BuildTisp(WestCommand):
             configure.append("--fresh")
         printer.building(tisp_label)
         # Headers already generated once in do_run before parallel builds.
-        ncpus = os.cpu_count() or 4
-        build_cmd = ["cmake", "--build", str(build_dir), "--parallel"]
+        build_cmd = ["cmake", "--build", str(build_dir), "--parallel", str(tisp_jobs)]
         if args.throttle:
-            build_cmd += ["--", f"-l{ncpus}"]
+            build_cmd += ["--", f"-l{tisp_jobs}"]
         rc = self._run_chain(configure, build_cmd, log=log)
         if rc != 0:
             printer.failed(tisp_label, log=log)
@@ -669,7 +702,7 @@ class BuildTisp(WestCommand):
 
     # ── clean ─────────────────────────────────────────────────────────
 
-    def _do_clean(self, combos, tisp_dir, printer):
+    def _do_clean(self, combos, tisp_dir, xlib_dir, printer):
         """Remove cmake build trees and logs for the given combos.
 
         Removes per-combo directories under tisp/build/:
@@ -677,9 +710,9 @@ class BuildTisp(WestCommand):
           xlibs/{soc}/{platform}/{build_type}/    — xlib cmake builds
           logs/{soc}/{platform}/{build_type}/     — log files
 
-        xlib lib/ artifacts (workspace/mcu_plus_sdk/source/*/lib/) are intentionally
-        left alone.  To force a full xlib rebuild, remove them manually:
-          rm -rf mcu_plus_sdk/source/*/lib/
+        xlib lib/ artifacts (<xlib_dir>/*/lib/) are intentionally left alone.
+        To force a full xlib rebuild, remove them manually:
+          rm -rf <xlib_dir>/*/lib/
         """
         printer.section(f"west build-tisp --type clean  —  {len(combos)} combos")
         cleaned = 0
@@ -705,14 +738,31 @@ class BuildTisp(WestCommand):
 
         printer.print(
             f"\n  {C_DIM}Cleaned {cleaned}/{len(combos)} combos.  "
-            f"mcu_plus_sdk/source/ lib/ artifacts untouched — "
-            f"rm -rf mcu_plus_sdk/source/*/lib/ to force-rebuild from source.{C_RESET}\n"
+            f"xlib lib/ artifacts untouched — "
+            f"rm -rf {xlib_dir}/*/lib/ to force-rebuild from source.{C_RESET}\n"
         )
 
     # ── main entry point ──────────────────────────────────────────────
 
     def do_run(self, args, unknown):
-        tisp_dir = Path(self.topdir) / "tisp"
+        tisp_dir, xlib_dir, mcu_sdk_dir = _detect_paths(self.topdir)
+        if args.mcu_sdk_root is not None:
+            new_mcu_sdk_dir = Path(args.mcu_sdk_root)
+            # In the tvm_byoc layout tisp lives inside mcu_plus_sdk/source/,
+            # so recompute tisp_dir when mcu_sdk_dir is overridden.
+            # Path.is_relative_to() requires Python 3.9+; use relative_to() for compat.
+            try:
+                _in_sdk = tisp_dir.is_relative_to(mcu_sdk_dir)
+            except AttributeError:  # Python < 3.9
+                try:
+                    tisp_dir.relative_to(mcu_sdk_dir)
+                    _in_sdk = True
+                except ValueError:
+                    _in_sdk = False
+            if _in_sdk:
+                tisp_dir = new_mcu_sdk_dir / "source" / "tisp"
+            mcu_sdk_dir = new_mcu_sdk_dir
+            xlib_dir = mcu_sdk_dir / "source"
         if not tisp_dir.is_dir():
             self.die(f"tisp/ not found: {tisp_dir}")
 
@@ -730,10 +780,13 @@ class BuildTisp(WestCommand):
         printer = _Printer()
 
         if args.preset_type == "clean":
-            self._do_clean(combos, tisp_dir, printer)
+            self._do_clean(combos, tisp_dir, xlib_dir, printer)
             return
 
-        xlib_base, mcu_sdk = self._detect_topology()
+        if not xlib_dir.is_dir():
+            self.die(f'mcu_plus_sdk/source/ not found at {xlib_dir} — run "west update" first')
+        if not mcu_sdk_dir.is_dir():
+            self.die(f'mcu_plus_sdk/ not found at {mcu_sdk_dir} — run "west update" first')
 
         printer.section(f"west build-tisp  —  {len(combos)} combos")
         print(f"  {C_DIM}workspace : {self.topdir}{C_RESET}")
@@ -746,13 +799,34 @@ class BuildTisp(WestCommand):
 
         t0 = time.monotonic()
         failed = []
-        # Load-average throttling (-l{ncpus}) in each cmake/make call lets the OS
-        # regulate actual parallelism — no need to manually scale jobs per combo.
-        max_workers = min(len(combos), os.cpu_count() or 4)
+        # Cap outer combo parallelism by both CPU count and available RAM.
+        # Each combo runs up to 4 parallel cmake/make tracks; peak ~_GB_PER_COMBO GB per combo.
+        # Load-average throttling (-l{ncpus}) inside each cmake bounds CPU but not RAM,
+        # so memory-aware capping here prevents OOM on machines with <_GB_PER_COMBO GB/combo.
+        #
+        # Note: available memory is sampled once at build start (static cap).  If other
+        # processes consume RAM after the executor launches, the cap will not adapt.
+        # This is an intentional trade-off: re-checking per-combo requires a polling loop
+        # and is unlikely to matter for typical developer machines.  If your system has
+        # heavy background load, set TISP_MAX_WORKERS=N to pin the parallelism manually.
+        ncpus = os.cpu_count() or 4
+        if _HAVE_PSUTIL:
+            avail_gb = psutil.virtual_memory().available / (1024 ** 3)
+            mem_workers = max(1, int(avail_gb / _GB_PER_COMBO))
+        else:
+            mem_workers = ncpus  # fall back to cpu-only limit
+        env_workers = os.environ.get("TISP_MAX_WORKERS")
+        if env_workers is not None:
+            try:
+                max_workers = max(1, int(env_workers))
+            except ValueError:
+                self.die(f"TISP_MAX_WORKERS must be a positive integer, got: {env_workers!r}")
+        else:
+            max_workers = min(len(combos), ncpus, mem_workers)
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = {
                 executor.submit(
-                    self._build_combo, soc, plat, bt, args, tisp_dir, xlib_base, mcu_sdk, printer
+                    self._build_combo, soc, plat, bt, args, max_workers, tisp_dir, xlib_dir, mcu_sdk_dir, printer
                 ): f"{soc}/{plat}/{bt}"
                 for soc, plat, bt in combos
             }
