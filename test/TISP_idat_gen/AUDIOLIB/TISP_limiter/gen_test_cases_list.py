@@ -9,12 +9,24 @@ import csv
 import os
 import itertools
 
+import designed_cases
+
 # Fixed parameters
 TEST_PATTERN = "STATIC"
 OUTPUT_DATA_LOCATION = "AUDIOLIB_TEST_OUTPUT_MSMC"
 NUM_REPS = 1
 DATA_TYPE = "AUDIOLIB_FLOAT32"
 IS_INTERLEAVED = 1
+BYPASS_OFF = 0
+BYPASS_ON = 1
+
+# Bypass cases: the node copies input to output and never runs the gain computer, so these
+# only need to prove the copy respects the geometry. Same three shapes dev uses.
+BYPASS_CASES = [
+    (1, 32),
+    (8, 1024),
+    (16, 567),
+]
 
 # Define the parameters for the test cases
 NUM_CHANNELS = [1, 3, 8, 12, 16]  # Number of channels
@@ -39,6 +51,7 @@ def generate_test_cases_list():
         "pitchS",
         "pitchY",
         "isInterleaved",
+        "bypassMode",
     ]
 
     # Generate test cases
@@ -68,10 +81,83 @@ def generate_test_cases_list():
             pitch_s,
             pitch_y,
             IS_INTERLEAVED,
+            BYPASS_OFF,
         ]
 
         test_cases.append(test_case)
         test_id += 1
+
+    # Append the bypass cases, continuing the geometry-matrix id sequence.
+    for num_channels, block_size in BYPASS_CASES:
+        if IS_INTERLEAVED:
+            pitch_x = pitch_s = pitch_y = 4 * num_channels
+
+        else:
+            pitch_x = pitch_s = pitch_y = 4 * block_size
+
+        test_cases.append(
+            [
+                test_id,
+                TEST_PATTERN,
+                OUTPUT_DATA_LOCATION,
+                NUM_REPS,
+                num_channels,
+                block_size,
+                DATA_TYPE,
+                pitch_x,
+                pitch_s,
+                pitch_y,
+                IS_INTERLEAVED,
+                BYPASS_ON,
+            ]
+        )
+        print(f"  bypass case {test_id}: {num_channels} ch x {block_size}")
+        test_id += 1
+
+    # Append the designed algorithm cases. Their geometry comes from designed_cases.py,
+    # which limiter.py cross-checks against these rows, so the two cannot drift apart.
+    #
+    # The ids in designed_cases.py are fixed, and limiter.py dispatches on them, so they have
+    # to line up with wherever the sequence has got to. Check that here rather than letting a
+    # newly added geometry or bypass case silently collide with a designed case.
+    designed_ids = sorted(designed_cases.DESIGNED_CASES)
+    expected_ids = list(range(test_id, test_id + len(designed_ids)))
+    if designed_ids != expected_ids:
+        raise ValueError(
+            f"designed case ids {designed_ids} are not the next contiguous run {expected_ids}. "
+            f"The geometry matrix and bypass cases now end at id {test_id - 1}; renumber "
+            f"DESIGNED_CASES in designed_cases.py to match."
+        )
+
+    for designed_id in designed_ids:
+        case = designed_cases.DESIGNED_CASES[designed_id]
+        num_channels = case["numChannels"]
+        block_size = case["blockSize"]
+
+        if IS_INTERLEAVED:
+            pitch_x = pitch_s = pitch_y = 4 * num_channels
+
+        else:
+            pitch_x = pitch_s = pitch_y = 4 * block_size
+
+        test_cases.append(
+            [
+                designed_id,
+                TEST_PATTERN,
+                OUTPUT_DATA_LOCATION,
+                NUM_REPS,
+                num_channels,
+                block_size,
+                DATA_TYPE,
+                pitch_x,
+                pitch_s,
+                pitch_y,
+                IS_INTERLEAVED,
+                BYPASS_OFF,
+            ]
+        )
+
+        print(f"  designed case {designed_id}: {case['description']}")
 
     # Write to CSV file
     with open(output_file, "w", newline="") as csvfile:

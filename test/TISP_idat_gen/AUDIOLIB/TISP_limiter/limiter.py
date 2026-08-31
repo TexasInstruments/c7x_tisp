@@ -5,13 +5,15 @@ TISP_limiter class implementation
 import os
 import numpy as np
 import sys
-import random
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(script_dir, "../../"))
 # Import from common module
 from common import Kernel
 from common import AUDIOLIB_utils
+
+sys.path.append(script_dir)
+import designed_cases
 
 # Import AUDIOLIB_idat_gen as audiolib
 # If MCU_PLUS_SDK_ROOT is set, use it; otherwise fall back to relative path (OOB SDK layout)
@@ -50,6 +52,26 @@ class TISP_limiter(Kernel):
         """
         Audio limiter function
 
+        Implements the feed-forward, log-domain limiter of Fig. 7(c) in
+        Giannoulis/Massberg/Reiss, "Digital Dynamic Range Compressor Design - A
+        Tutorial and Analysis" (JAES 60(6), 2012), matching the MATLAB `limiter`
+        System object:
+
+            abs -> dB -> gain computer -> level detector -> +M -> linear -> multiply
+
+        Static characteristic is paper Eq. (4) with 1/R = 0 (limiter), the log-domain
+        detector placement is Eq. (23) / Fig. 7(c), and gain smoothing is the smooth
+        branching peak detector of Eq. (16).
+
+        The constant automatic make-up gain M = -x_sc(0 dB) is NOT from the paper - Eq. (1)
+        only establishes that M is a constant. The rule comes from the MATLAB `limiter`
+        System object with MakeUpGainMode = 'Auto':
+        https://www.mathworks.com/help/audio/ref/limiter-system-object.html
+
+        Note the paper's Section 5 recommends the smooth DECOUPLED detector (Eq. 17) over
+        the branching one used here - its Fig. 9 shows branching has higher THD. Branching
+        is a deliberate MATLAB-parity choice.
+
         Parameters:
         - x: input signal in linear domain (interleaved format)
         - threshold_dB: threshold in dB where limiting is applied (array of size numChannels)
@@ -59,22 +81,23 @@ class TISP_limiter(Kernel):
 
         Returns:
         - y: limited audio signal in linear domain (interleaved format)
-        - gain: gain values applied for input signal of each channel
+        - gainStateOut: per-channel envelope after the last sample, excluding the make-up
+          gain. This is the quantity the node's pGainState buffer holds once the signal
+          has been processed, so it is directly comparable against the kernel's state.
 
         """
 
         # Input is presented in interleaved format
         x_transposed = x.T
 
-        # Initialize output buffers
-        y_transposed = np.zeros((self._numChannels, self._blockSize))
-        gain = np.zeros(self._numChannels)
-
         # Initialize intermediate buffers
         gain_dB = np.zeros((self._numChannels, self._blockSize))
 
-        # Initialize smoothed gain
+        # The envelope always starts from rest: this model sees the whole signal
         smoothedGain_dB = np.zeros(self._numChannels)
+
+        # Envelope after the last sample, per channel (make-up gain excluded)
+        gainStateOut = np.zeros(self._numChannels)
 
         # Complementary values of attack/release coefficients for each channel
         attackCoeffComplement = 1 - attackCoeff
@@ -99,6 +122,36 @@ class TISP_limiter(Kernel):
             releaseCoeffComplement_ch = releaseCoeffComplement[ch]
             smoothedGain_dB_ch = smoothedGain_dB[ch]
 
+            # Automatic make-up gain is a per-channel CONSTANT: M = -x_sc(0 dB), i.e. the
+            # static characteristic evaluated at full scale (MATLAB `limiter`,
+            # MakeUpGainMode='Auto' - see the link in the docstring above). It depends only
+            # on the threshold and the knee width, never on the instantaneous sample level.
+            halfBandKneeWidth_dB_ch = kneeWidth_dB_ch / 2
+
+            # Hard knee
+            if kneeWidth_dB_ch <= 0:
+                if 0 >= threshold_dB_ch:
+                    x_sc_at_0dB = threshold_dB_ch
+                else:
+                    x_sc_at_0dB = 0
+            # Soft knee
+            else:
+                if 0 < threshold_dB_ch - halfBandKneeWidth_dB_ch:
+                    x_sc_at_0dB = 0
+                elif 0 > threshold_dB_ch + halfBandKneeWidth_dB_ch:
+                    x_sc_at_0dB = threshold_dB_ch
+                else:
+                    x_sc_at_0dB = 0 - (
+                        (0 - threshold_dB_ch + halfBandKneeWidth_dB_ch) ** 2
+                    ) / (2 * kneeWidth_dB_ch)
+
+            makeUpGain_dB_ch = -x_sc_at_0dB
+
+            # Loop-invariant: these depend only on this channel's parameters. Hoisted out of
+            # the sample loop, matching the kernel, which computes them once per channel block.
+            kneeStart_dB = threshold_dB_ch - halfBandKneeWidth_dB_ch
+            kneeEnd_dB = threshold_dB_ch + halfBandKneeWidth_dB_ch
+
             for i in range(self._blockSize):
                 x_dB_sample = x_dB[ch, i]
 
@@ -110,17 +163,13 @@ class TISP_limiter(Kernel):
                         x_sc = x_dB_sample
                 # Soft knee
                 else:
-                    halfBandKneeWidth_dB = kneeWidth_dB_ch / 2
-                    kneeStart_dB = threshold_dB_ch - halfBandKneeWidth_dB
-                    kneeEnd_dB = threshold_dB_ch + halfBandKneeWidth_dB
-
                     if x_dB_sample < kneeStart_dB:
                         x_sc = x_dB_sample
                     elif x_dB_sample > kneeEnd_dB:
                         x_sc = threshold_dB_ch
                     else:
                         x_sc = x_dB_sample - (
-                            (x_dB_sample - threshold_dB_ch + halfBandKneeWidth_dB) ** 2
+                            (x_dB_sample - threshold_dB_ch + halfBandKneeWidth_dB_ch) ** 2
                         ) / (2 * kneeWidth_dB_ch)
 
                 # Computed gain
@@ -140,17 +189,14 @@ class TISP_limiter(Kernel):
                         + releaseCoeffComplement_ch * targetGain_dB
                     )
 
-                # Apply automatic make-up gain
-                if x_dB_sample == 0:
-                    gain_makeUp = smoothedGain_dB_ch - x_sc
-                else:
-                    gain_makeUp = smoothedGain_dB_ch
+                # Apply the constant automatic make-up gain
+                gain_makeUp = smoothedGain_dB_ch + makeUpGain_dB_ch
 
                 # Store the gain value for this sample
                 gain_dB[ch, i] = gain_makeUp
 
-            # Store the final smoothed gain for this channel
-            gain[ch] = gain_makeUp
+            # Record the envelope after the last sample (make-up gain excluded)
+            gainStateOut[ch] = smoothedGain_dB_ch
 
         # STAGE 4: Convert gain from dB to linear using the AUDIOLIB_undB20 module
         # Update the undB20 converter parameters for the entire array
@@ -164,7 +210,7 @@ class TISP_limiter(Kernel):
         # Re-interleave data
         y = y_transposed.T
 
-        return y, gain
+        return y, gainStateOut
 
     """ Test Case Processing Functions """
 
@@ -269,43 +315,51 @@ class TISP_limiter(Kernel):
             self._undb20_converter._inChannels = _numChannels
             self._undb20_converter._inSamples = _blockSize
 
-            # generate random sine input signal with given parameters
-            amplitude = np.array(
-                [random.uniform(1.0, 2.5) for _ in range(_numChannels)]
-            )
-            frequency = np.array([random.uniform(2, 20) for _ in range(_numChannels)])
-            phase_shift = np.array(
-                [random.uniform(0, 2 * np.pi) for _ in range(_numChannels)]
-            )
-            threshold_dB = np.round(
-                np.array([np.random.uniform(-20, -3) for _ in range(_numChannels)]), 0
-            )
-            kneeWidth_dB = np.round(
-                np.array([np.random.uniform(0, 15) for _ in range(_numChannels)]), 0
-            )
-            attackCoeff = np.round(
-                np.array([np.random.uniform(0.1, 0.9) for _ in range(_numChannels)]), 1
-            )
-            releaseCoeff = np.round(
-                np.array([np.random.uniform(0.1, 0.9) for _ in range(_numChannels)]), 1
-            )
-            _, x = AUDIOLIB_utils.generate_sine_wave(
-                amplitude=amplitude,
-                num_points=_blockSize,
-                num_channels=_numChannels,
-                frequency=frequency,
-                phase_shift=phase_shift,
-            )
+            if _testId in designed_cases.DESIGNED_CASES:
 
-            # TODO: check inputs for zeros
-            # x = np.ones((_numChannels, _blockSize))
-            x = np.round(x, 6)
+                # Deterministic algorithm case: signal and parameters are designed,
+                # not drawn. See designed_cases.py for what each one pins down.
+                x, threshold_dB, kneeWidth_dB, attackCoeff, releaseCoeff = (
+                    designed_cases.build(_testId, _numChannels, _blockSize)
+                )
+
+            else:
+
+                # Geometry case: random sine, but seeded PER TEST CASE from the testId.
+                # Seeding is what makes the emitted vectors a reference at all - test_data
+                # is gitignored and regenerated per developer per build, so an unseeded
+                # generator leaves nothing to bisect against and makes coverage of the
+                # rarer parameter draws (a knee width that rounds to 0, for instance)
+                # a matter of luck. Keying the seed on testId rather than a global
+                # sequence keeps each case independent of iteration order and of any
+                # cases added before it.
+                rng = np.random.default_rng(_testId)
+
+                amplitude    = rng.uniform(1.0, 2.5, _numChannels)
+                frequency    = rng.uniform(2, 20, _numChannels)
+                phase_shift  = rng.uniform(0, 2 * np.pi, _numChannels)
+                threshold_dB = np.round(rng.uniform(-20, -3, _numChannels), 0)
+                kneeWidth_dB = np.round(rng.uniform(0, 15, _numChannels), 0)
+                attackCoeff  = np.round(rng.uniform(0.1, 0.9, _numChannels), 1)
+                releaseCoeff = np.round(rng.uniform(0.1, 0.9, _numChannels), 1)
+
+                _, x = AUDIOLIB_utils.generate_sine_wave(
+                    amplitude=amplitude,
+                    num_points=_blockSize,
+                    num_channels=_numChannels,
+                    frequency=frequency,
+                    phase_shift=phase_shift,
+                )
+
+                x = np.round(x, 6)
 
             # Interleave the data
             x = x.T
 
-            # Process the signal through the limiter model
-            y, gain = self.exec(
+            # Process the whole block through the limiter model in one call.
+            # gainStateOut is the envelope the node's pGainState buffer must hold once the
+            # block has been processed, which is what makes it comparable to the kernel.
+            y, gainStateOut = self.exec(
                 x=x,
                 threshold_dB=threshold_dB,
                 kneeWidth_dB=kneeWidth_dB,
@@ -313,9 +367,12 @@ class TISP_limiter(Kernel):
                 releaseCoeff=releaseCoeff,
             )
 
-            # bypass copies the input to the output, leaving the limiter gain unapplied
+            # Bypass copies the input to the output, leaving the limiter gain unapplied. The
+            # node's exec() takes the bypassCopy() path and never runs the gain computer, so the
+            # envelope state is left untouched too - hence the zeroed gainStateOut.
             if int(testCasesDf.iloc[i]["bypassMode"]):
                 y = x.copy()
+                gainStateOut = np.zeros(_numChannels)
 
             # Define the test buffer parameters metadata structure (keep same order as struct definition)
             testCaseBufferStruct = [
@@ -334,7 +391,7 @@ class TISP_limiter(Kernel):
                     staticBufferAttribute,
                 ],
                 [
-                    gain,
+                    gainStateOut,
                     f"staticRefGainCase{_testId}",
                     "float",
                     "{:.6f}",
@@ -344,28 +401,28 @@ class TISP_limiter(Kernel):
                     threshold_dB,
                     f"staticRefThresholdCase{_testId}",
                     "float",
-                    "{:.0f}",
+                    "{:.9g}",
                     staticBufferAttribute,
                 ],
                 [
                     kneeWidth_dB,
                     f"staticRefKneeWidthCase{_testId}",
                     "float",
-                    "{:.0f}",
+                    "{:.9g}",
                     staticBufferAttribute,
                 ],
                 [
                     attackCoeff,
                     f"staticRefAttackCoeffCase{_testId}",
                     "float",
-                    "{:.1f}",
+                    "{:.9g}",
                     staticBufferAttribute,
                 ],
                 [
                     releaseCoeff,
                     f"staticRefReleaseCoeffCase{_testId}",
                     "float",
-                    "{:.1f}",
+                    "{:.9g}",
                     staticBufferAttribute,
                 ],
             ]

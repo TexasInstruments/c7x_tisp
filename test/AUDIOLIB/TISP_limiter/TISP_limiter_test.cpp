@@ -61,7 +61,6 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
    uint32_t numReps;
 
    uint32_t testNum;
-   uint64_t archCycles = 0;
    uint64_t estCycles  = 0;
 
    TISP_limiter_testParams_t *prm;
@@ -116,8 +115,8 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          uint32_t bypassMode    = currPrm.bypassMode;
 
          auto pIn           = myL2Heap.allocate64ByteAligned<uint8_t>(inputSize);
-         auto pGain         = myL2Heap.allocate64ByteAligned<uint8_t>(gainSize);
          auto pScratch      = myL2Heap.allocate64ByteAligned<uint8_t>(scratchBufSize);
+         auto pGainState    = myL2Heap.allocate64ByteAligned<uint8_t>(gainSize);
          auto pOut          = myL2Heap.allocate64ByteAligned<uint8_t>(outputSize);
          auto pThreshold_dB = myL2Heap.allocate64ByteAligned<uint8_t>(paramSize);
          auto pKneeWidth_dB = myL2Heap.allocate64ByteAligned<uint8_t>(paramSize);
@@ -129,11 +128,12 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          void *pScratchCn = (void *) (pGainCn + gainSize);
 
          memset(pOutCn, 0, outputSize);
-         memset(pGainCn, 0, gainSize);
+         TISP_limiter_init_cn<float>(pGainCn, numChannels);
          memset(pScratchCn, 0, scratchBufSize);
 
          /* Only run the test if the buffer allocations fit in the heap */
-         if (pIn.get() && pGain.get() && pScratch.get() && pOut.get() && pThreshold_dB.get() && pKneeWidth_dB.get() &&
+         if (pIn.get() && pScratch.get() && pGainState.get() && pOut.get() && pThreshold_dB.get() &&
+             pKneeWidth_dB.get() &&
              pAttackCoeff.get() && pReleaseCoeff.get() && pOutCn && pGainCn) {
 
             if (currPrm.dataType == AUDIOLIB_FLOAT32 || currPrm.dataType == AUDIOLIB_FLOAT64) {
@@ -159,8 +159,8 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             TISP::ErrorCtxt errorCtx;
             auto            k0 = std::make_unique<TISP::AUDIOLIB::Limiter<float>>(
-                (float *) pIn.get(), (float *) pGain.get(), (float *) pScratch.get(), (float *) pOut.get(),
-                (float *) pThreshold_dB.get(), (float *) pKneeWidth_dB.get(), (float *) pAttackCoeff.get(),
+                (float *) pIn.get(), (float *) pScratch.get(), (float *) pOut.get(),
+                (float *) pGainState.get(), (float *) pThreshold_dB.get(), (float *) pKneeWidth_dB.get(), (float *) pAttackCoeff.get(),
                 (float *) pReleaseCoeff.get(), static_cast<uint32_t>(numChannels), static_cast<uint32_t>(blockSize),
                 static_cast<uint32_t>(pitchX), static_cast<uint32_t>(pitchS), static_cast<uint32_t>(pitchY),
                 static_cast<bool>(isInterleaved), errorCtx);
@@ -188,10 +188,11 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             kAddrMode    = TISP::kAddrModeInOut;
             kAddr.src[0] = (uint8_t *) pIn.get();
             kAddr.dst[0] = (uint8_t *) pOut.get();
-            kAddr.dst[1] = (uint8_t *) pGain.get();
 
             k0->setAddr(kAddr, kAddrMode);
 
+            // Envelope persists across exec(), so reset it before each timed run.
+            k0->cleanInternalBuffers();
             TI_profile_start(TI_PROFILE_KERNEL_OPT);
 
             // Execute the kernel
@@ -207,12 +208,13 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                kAddrMode    = TISP::kAddrModeInOut;
                kAddr.src[0] = (uint8_t *) pIn.get();
                kAddr.dst[0] = (uint8_t *) pOut.get();
-               kAddr.dst[1] = (uint8_t *) pGain.get();
 
                TI_profile_clear_cycle_count_single(TI_PROFILE_KERNEL_OPT_WARM);
 
                k0->setAddr(kAddr, kAddrMode);
 
+               // Envelope persists across exec(), so reset it before each timed run.
+               k0->cleanInternalBuffers();
                TI_profile_start(TI_PROFILE_KERNEL_OPT_WARM);
 
                // Execute the kernel
@@ -236,10 +238,11 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             kAddrMode    = TISP::kAddrModeInOut;
             kAddr.src[0] = (uint8_t *) pIn.get();
             kAddr.dst[0] = (uint8_t *) pOut.get();
-            kAddr.dst[1] = (uint8_t *) pGain.get();
             k0->setAddr(kAddr, kAddrMode);
 
             // run warm instruction cache test
+            // Envelope persists across exec(), so reset it before each timed run.
+            k0->cleanInternalBuffers();
             TI_profile_start(TI_PROFILE_KERNEL_OPT_WARMWRB);
 
             // Execute the kernel
@@ -268,37 +271,20 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             status_nat_vs_opt = TI_TEST_KERNEL_PASS;
 
-            printf("Out: Opt vs NatC\n");
             status_nat_vs_opt &= TI_compare_mem_2D_float((void *) pOut.get(), (void *) pOutCn, 0, (double) 1e-2,
                                                          numChannels, blockSize, pitchY, dataSize);
-
-            //             status_nat_vs_opt &= TI_compare_mem_2D_float(
-            //                 (void *) pGain.get(), (void *) pGainCn, 0,
-            //                 (double) 1e-2, numChannels, 1, 0, dataSize);
 
             if (currPrm.staticOut != nullptr) {
                status_ref_vs_opt = TI_TEST_KERNEL_PASS;
 
-               printf("Out: Opt vs Ref\n");
                status_ref_vs_opt &= TI_compare_mem_2D_float((void *) pOut.get(), (void *) currPrm.staticOut, 0,
                                                             (double) 1e-2, numChannels, blockSize, pitchY, dataSize);
 
                // compare python vs natc
                status_ref_vs_nat = TI_TEST_KERNEL_PASS;
 
-               printf("Out: NatC vs Ref\n");
                status_ref_vs_nat &= TI_compare_mem_2D_float((void *) pOutCn, (void *) currPrm.staticOut, 0,
                                                             (double) 1e-2, numChannels, blockSize, pitchY, dataSize);
-
-               if (currPrm.staticGainOut != nullptr) {
-                  //                   status_ref_vs_opt &= TI_compare_mem_2D_float(
-                  //                       (void *) pGain.get(), (void *) currPrm.staticGainOut, 0,
-                  //                       (double) 1e-2, numChannels, 1, 0, dataSize);
-
-                  //                   status_ref_vs_nat &= TI_compare_mem_2D_float(
-                  //                       (void *) pGainCn, (void *) currPrm.staticGainOut, 0,
-                  //                       (double) 1e-2, numChannels, 1, 0, dataSize);
-               }
             }
             else {
                /* Set to pass since it wasn't supposed to run. */
@@ -321,9 +307,6 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             pProfile[3 * tpi + 2] = (int32_t) TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARMWRB);
 
             int32_t warmCycles = pProfile[3 * tpi + 1];
-
-            // performance estimate
-            /* k0->perfEst(&estCycles, &archCycles); */
 
             sprintf(desc, "%s generated input | Num Channels=%d | BlockSize = %d | Interleaved Mode = %d\n",
                     testPatternString, currPrm.numChannels, currPrm.blockSize, currPrm.isInterleaved);

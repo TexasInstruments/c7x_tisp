@@ -55,6 +55,9 @@ namespace AUDIOLIB {
  *    uint16_t paramId;    // Must be LimiterParamId::kBypass (4)
  *    uint32_t bypassMode; // 0: apply the limiter, 1: copy input to output
  * } LimiterBypassPayload;
+ *
+ * Setting kBypass back to 0 discards the gain-smoothing state, because it stopped tracking the
+ * signal while bypass was engaged.
  * @endcode
  */
 /**
@@ -68,7 +71,7 @@ enum class LimiterParamId : uint16_t {
    kKneeWidth = 1, /**< kKneeWidth: Knee width values to set/get for each channel */
    kAttack    = 2, /**< kAttack: Attack coeff values to set/get for each channel */
    kRelease   = 3, /**< kRelease: Release coeff values to set/get for each channel */
-   kBypass    = 4  /**< kBypass: uint32_t bypass mode; `0` applies the limiter, `1` copies input to output */
+   kBypass    = 4  /**< kBypass: `0` applies the limiter, `1` copies input to output */
 };
 
 /**
@@ -104,9 +107,9 @@ template <typename T> class Limiter final : public VirtualOp {
    T       *_pX;       /*!< Pointer to input buffer */
    NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
 
-   T *_pG; /*!< Pointer to address of gain vector */
    T *_pS; /*!< Pointer to address of scratch matrix */
    T *_pY; /*!< Pointer to address of result matrix*/
+   T *_pGainState; /*!< Pointer to address of gain state buffer*/
 
    T *_pThreshold_dB; /*!< Pointer to address of threshold in db vector */
    T *_pKneeWidth_dB; /*!< Pointer to address of kneewidth in db vector */
@@ -203,17 +206,16 @@ template <typename T> class Limiter final : public VirtualOp {
     * @brief Computes the per-sample limiter gain from the dB-domain input
     *
     * Applies the knee policy and the attack/release one-pole smoothing, writing the smoothed
-    * gain to the output matrix and the per-channel gain state to the gain vector.
+    * gain to the output matrix.
     *
     * @param[in]  handle : Handle holding the SE/SA descriptors set by @ref TISP_limiter_gainComputer_init
     * @param[in]  pIn    : Pointer to the dB-domain input matrix
     * @param[out] pOut   : Pointer to the output matrix
-    * @param[out] pGain  : Pointer to the per-channel gain vector
     * @retval None
     * @throw None
     */
    __INLINE_FUNC(TISP_limiter_gainComputer_exec)
-   inline void TISP_limiter_gainComputer_exec(void *handle, T *pIn, T *pOut, T *pGain);
+   inline void TISP_limiter_gainComputer_exec(void *handle, T *pIn, T *pOut);
 
    /**
     * @brief Computes the vector reciprocal used by the gain computer
@@ -229,8 +231,9 @@ template <typename T> class Limiter final : public VirtualOp {
    /**
     * @brief Copies the input matrix to the output matrix, honouring @ref _pitchX and @ref _pitchY
     *
-    * The copied geometry follows @ref _isInterleaved: @ref _numChannels columns by
-    * @ref _blockSize rows when interleaved, and the transpose of that otherwise.
+    * Used when @ref _bypassMode is non-zero. The copied geometry follows @ref _isInterleaved:
+    * @ref _numChannels columns by @ref _blockSize rows when interleaved, and the transpose of
+    * that otherwise.
     *
     * @retval None
     * @throw None
@@ -244,9 +247,9 @@ template <typename T> class Limiter final : public VirtualOp {
     * This constructor is called to create the node
     *
     * @param[in]  *pX      : Pointer to input matrix; initializes @ref _pX
-    * @param[out]  *pG      : Pointer to gain vector; initializes @ref _pG
     * @param[in]  *pS      : Pointer to scratch matrix; initializes @ref _pS
     * @param[out] *pY      : Pointer to output matrix; initializes @ref _pY
+    * @param[in,out] *pGainState : Per-channel gain-smoothing state (length: numChannels). Initializes @ref _pGainState.
 
     * @param[in]  *pThreshold_dB      : Pointer to threshold vector; initializes @ref _pThreshold_dB
     * @param[in]  *pKneeWidth_dB      : Pointer to kneewidth vector; initializes @ref _pKneeWidth_dB
@@ -265,9 +268,9 @@ template <typename T> class Limiter final : public VirtualOp {
     *
     */
    Limiter(T         *pX,
-           T         *pG,
            T         *pS,
            T         *pY,
+           T         *pGainState,
            T         *pThreshold_dB,
            T         *pKneeWidth_dB,
            T         *pAttackCoeff,
@@ -286,9 +289,9 @@ template <typename T> class Limiter final : public VirtualOp {
     * This constructor is a delegator that accepts a node name and ID
     *
     * @param[in]  *pX           : Pointer to input matrix; initializes @ref _pX
-    * @param[out] *pG           : Pointer to gain vector; initializes @ref _pG
     * @param[in]  *pS           : Pointer to scratch matrix; initializes @ref _pS
     * @param[out] *pY           : Pointer to output matrix; initializes @ref _pY
+    * @param[in,out] *pGainState : Per-channel gain-smoothing state (length: numChannels) Initializes @ref _pGainState.
     * @param[in]  *pThreshold_dB : Pointer to threshold vector; initializes @ref _pThreshold_dB
     * @param[in]  *pKneeWidth_dB : Pointer to kneewidth vector; initializes @ref _pKneeWidth_dB
     * @param[in]  *pAttackCoeff  : Pointer to attack coefficient vector; initializes @ref _pAttackCoeff
@@ -307,9 +310,9 @@ template <typename T> class Limiter final : public VirtualOp {
     *
     */
    Limiter(T          *pX,
-           T          *pG,
            T          *pS,
            T          *pY,
+           T          *pGainState,
            T          *pThreshold_dB,
            T          *pKneeWidth_dB,
            T          *pAttackCoeff,
@@ -341,9 +344,8 @@ template <typename T> class Limiter final : public VirtualOp {
     *
     * Buffer Address Mapping:
     * - index 0: _pY (output data matrix) - managed by setAddr()
-    * - index 1: _pG (gain value) - managed by setAddr()
     *
-    * @param[in]  index : Index of the output buffer (0 or 1)
+    * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
     * @throw None
     */
@@ -360,7 +362,7 @@ template <typename T> class Limiter final : public VirtualOp {
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (2: _pY)
+    * @retval    size_t : The number of output buffers (1: _pY)
     * @throw None
     */
    size_t getNumOutputs() const noexcept override;
@@ -475,6 +477,21 @@ template <typename T> class Limiter final : public VirtualOp {
     * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
+
+   /**
+    * @brief Clean and reset all internal state and history buffers to zero
+    *
+    * @details Zeroes the per-channel gain-smoothing state in @ref _pGainState, which is the
+    *          node's only internal state. Called by the constructor once initialization has
+    *          succeeded, so the envelope always starts from rest, and by @ref setParams when
+    *          @ref LimiterParamId::kBypass returns from `1` to `0`, since the envelope froze
+    *          while bypassed. Call it directly to restart a stream without reconstructing the
+    *          node.
+    *
+    * @retval None
+    * @throw None
+    */
+   void cleanInternalBuffers() noexcept override;
 
    /**
     * @brief Destructor
