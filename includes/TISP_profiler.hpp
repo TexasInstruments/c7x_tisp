@@ -45,6 +45,23 @@
 #endif
 
 /**
+ * @struct NodeCycleStats
+ * @brief Aggregated cycle statistics for a single profiled node
+ *
+ * Returned by NodeProfiler::getNodeCycles(). The @c current field is the
+ * instantaneous measurement from the most recent execution, while @c max,
+ * @c avg and @c count accumulate across every execution since the last
+ * NodeProfiler::clear() or NodeProfiler::clearStats() call. They therefore
+ * survive the NodeProfiler::resetCounters() that begins each graph execution.
+ */
+struct NodeCycleStats {
+   uint64_t current; ///< Cycles consumed by the most recent execution of this node
+   uint64_t max;     ///< Largest cycle count observed for this node since the last stats reset
+   uint64_t avg;     ///< Mean cycles per execution (totalCycles / count); 0 when count is 0
+   uint64_t count;   ///< Number of executions folded into @c max and @c avg
+};
+
+/**
  * @class NodeProfiler
  * @brief Performance profiling system for TISP nodes and supernodes
  *
@@ -69,6 +86,17 @@ class NodeProfiler {
    static uint32_t nodeIds[TISP_MAX_NODE_PROFILE_ENTRIES];               ///< IDs for each node
    static uint32_t nodeParentSuperNodeId[TISP_MAX_NODE_PROFILE_ENTRIES]; ///< Which supernode contains this node
    static uint32_t nodeCount;                                            ///< Current number of nodes being tracked
+   ///@}
+
+   /** @name Node cycle statistics accumulated across executions
+    *
+    *  These are deliberately NOT cleared by resetCounters(), so they accumulate
+    *  over every graph execution until clear() or clearStats() is called.
+    */
+   ///@{
+   static uint64_t nodeMaxCycles[TISP_MAX_NODE_PROFILE_ENTRIES];   ///< Largest cycle count observed per node
+   static uint64_t nodeTotalCycles[TISP_MAX_NODE_PROFILE_ENTRIES]; ///< Running sum of cycle counts per node
+   static uint64_t nodeExecCount[TISP_MAX_NODE_PROFILE_ENTRIES];   ///< Number of executions recorded per node
    ///@}
 
    /** @name Supernode tracking arrays and counters */
@@ -140,27 +168,56 @@ class NodeProfiler {
     */
    static inline void startNode()
    {
-      // Embed prepareNode code directly
-      // Use nodeCount as the ID
-      nodeIds[nodeCount] = nodeCount;
-      // Track if this node is inside a supernode
-      nodeParentSuperNodeId[nodeCount] = inSuperNode ? currentSuperNodeId : 0;
+      if (nodeCount < TISP_MAX_NODE_PROFILE_ENTRIES) {
+         // Embed prepareNode code directly
+         // Use nodeCount as the ID
+         nodeIds[nodeCount] = nodeCount;
+         // Track if this node is inside a supernode
+         nodeParentSuperNodeId[nodeCount] = inSuperNode ? currentSuperNodeId : 0;
 
-      nodeStartCycles[nodeCount] = TISP_PROFILE_READ;
+         nodeStartCycles[nodeCount] = TISP_PROFILE_READ;
+      }
+      else {
+         /* Nothing to do here - the node arrays are full */
+      }
    }
 
    /**
     * @brief Stop timing for a node
     *
-    * Captures the end cycle count for the current node, calculates the
-    * elapsed cycles, and increments the node counter.
+    * Captures the end cycle count for the current node, calculates the elapsed
+    * cycles, folds the measurement into this node's running statistics (last,
+    * maximum, total and execution count) and increments the node counter.
     * This is called automatically by the TISP framework after executing a node.
     */
    static inline void stopNode()
    {
-      uint64_t endCycles         = TISP_PROFILE_READ;
-      nodeCycleCounts[nodeCount] = endCycles - nodeStartCycles[nodeCount] - overhead;
-      nodeCount++;
+      uint64_t endCycles = TISP_PROFILE_READ;
+
+      if (nodeCount < TISP_MAX_NODE_PROFILE_ENTRIES) {
+         // Saturate at zero rather than wrapping: a measurement shorter than the
+         // calibrated overhead would otherwise underflow to a huge value and latch
+         // itself permanently into nodeMaxCycles.
+         uint64_t rawCycles = endCycles - nodeStartCycles[nodeCount];
+         uint64_t elapsed   = (rawCycles > overhead) ? (rawCycles - overhead) : 0U;
+
+         nodeCycleCounts[nodeCount] = elapsed;
+
+         if (elapsed > nodeMaxCycles[nodeCount]) {
+            nodeMaxCycles[nodeCount] = elapsed;
+         }
+         else {
+            /* Nothing to do here */
+         }
+
+         nodeTotalCycles[nodeCount] += elapsed;
+         nodeExecCount[nodeCount]++;
+
+         nodeCount++;
+      }
+      else {
+         /* Nothing to do here - the node arrays are full */
+      }
    }
 
    /**
@@ -218,6 +275,9 @@ class NodeProfiler {
       std::memset(nodeCycleCounts, 0, sizeof(nodeCycleCounts));
       std::memset(nodeIds, 0, sizeof(nodeIds));
       std::memset(nodeParentSuperNodeId, 0, sizeof(nodeParentSuperNodeId));
+      std::memset(nodeMaxCycles, 0, sizeof(nodeMaxCycles));
+      std::memset(nodeTotalCycles, 0, sizeof(nodeTotalCycles));
+      std::memset(nodeExecCount, 0, sizeof(nodeExecCount));
       nodeCount = 0;
 
       std::memset(superNodeStartCycles, 0, sizeof(superNodeStartCycles));
@@ -230,10 +290,30 @@ class NodeProfiler {
    }
 
    /**
+    * @brief Clear only the accumulated cycle statistics
+    *
+    * Resets the per-node maximum, total and execution count without disturbing
+    * the node/supernode indices or the
+    * most recent per-node measurement. Use this to start a fresh statistics
+    * window - for example when a host tool asks for the peak load to be re-armed
+    * after a parameter change - without re-initializing the profiler.
+    */
+   static inline void clearStats()
+   {
+      std::memset(nodeMaxCycles, 0, sizeof(nodeMaxCycles));
+      std::memset(nodeTotalCycles, 0, sizeof(nodeTotalCycles));
+      std::memset(nodeExecCount, 0, sizeof(nodeExecCount));
+   }
+
+   /**
     * @brief Reset node counters before executing a graph
     *
     * Resets both node and supernode counters to zero.
     * This allows multiple calls to execute::graph to reuse the same node IDs.
+    *
+    * @remarks This deliberately leaves the accumulated statistics (maximum,
+    *          total, execution count) intact so that they build up across graph
+    *          executions. Use clearStats() or clear() to reset those.
     */
    static inline void resetCounters()
    {
@@ -297,16 +377,103 @@ class NodeProfiler {
    static inline uint32_t getNodeCount() { return nodeCount; }
 
    /**
-    * @brief Get CPU cycles consumed by the node at position i.
+    * @brief Get the cycle statistics for the node at position i.
     *
     * Position i corresponds to opVec[i] — the node at index i in the
     * signal chain vector. Use opVec[i]->getNodeName() to get the name
-    * of the node that produced this cycle count.
+    * of the node that produced these cycle counts.
     *
-    * @param i  Index in [0, getNodeCount()). Out-of-range → undefined.
-    * @return CPU clock cycles consumed by node i's exec() call.
+    * The returned @c current field is the instantaneous measurement from the most
+    * recent execution (the value this function used to return on its own), while
+    * @c max, @c avg and @c count accumulate across every execution since the last
+    * clear() or clearStats() call.
+    *
+    * @param i  Index in [0, getNodeCount()). Out-of-range yields an all-zero result.
+    * @return @ref NodeCycleStats holding current, maximum, mean and execution count.
     */
-   static inline uint64_t getNodeCycles(uint32_t i) { return nodeCycleCounts[i]; }
+   static inline NodeCycleStats getNodeCycles(uint32_t i)
+   {
+      NodeCycleStats stats = {0U, 0U, 0U, 0U};
+
+      if (i < TISP_MAX_NODE_PROFILE_ENTRIES) {
+         stats.current = nodeCycleCounts[i];
+         stats.max     = nodeMaxCycles[i];
+         stats.count   = nodeExecCount[i];
+         stats.avg     = (stats.count > 0U) ? (nodeTotalCycles[i] / stats.count) : 0U;
+      }
+      else {
+         /* Nothing to do here - leave the all-zero result */
+      }
+
+      return stats;
+   }
+
+   /**
+    * @brief Get the cycles consumed by the most recent execution of node i.
+    *
+    * Scalar equivalent of getNodeCycles(i).current, for callers that want a
+    * single value without materializing the statistics struct.
+    *
+    * @param i  Index in [0, getNodeCount()). Out-of-range returns 0.
+    * @return CPU clock cycles consumed by node i's last exec() call.
+    */
+   static inline uint64_t getNodeLastCycles(uint32_t i)
+   {
+      return (i < TISP_MAX_NODE_PROFILE_ENTRIES) ? nodeCycleCounts[i] : 0U;
+   }
+
+   /**
+    * @brief Get the largest cycle count observed for node i.
+    *
+    * @param i  Index in [0, getNodeCount()). Out-of-range returns 0.
+    * @return Peak CPU clock cycles for node i since the last stats reset.
+    */
+   static inline uint64_t getNodeMaxCycles(uint32_t i)
+   {
+      return (i < TISP_MAX_NODE_PROFILE_ENTRIES) ? nodeMaxCycles[i] : 0U;
+   }
+
+   /**
+    * @brief Get the cumulative cycle count for node i.
+    *
+    * @param i  Index in [0, getNodeCount()). Out-of-range returns 0.
+    * @return Sum of every measurement for node i since the last stats reset.
+    */
+   static inline uint64_t getNodeTotalCycles(uint32_t i)
+   {
+      return (i < TISP_MAX_NODE_PROFILE_ENTRIES) ? nodeTotalCycles[i] : 0U;
+   }
+
+   /**
+    * @brief Get the number of recorded executions of node i.
+    *
+    * @param i  Index in [0, getNodeCount()). Out-of-range returns 0.
+    * @return Execution count for node i since the last stats reset.
+    */
+   static inline uint64_t getNodeExecCount(uint32_t i)
+   {
+      return (i < TISP_MAX_NODE_PROFILE_ENTRIES) ? nodeExecCount[i] : 0U;
+   }
+
+   /**
+    * @brief Get the mean cycles per execution for node i.
+    *
+    * @param i  Index in [0, getNodeCount()). Out-of-range returns 0.
+    * @return Total cycles divided by execution count, or 0 if never executed.
+    */
+   static inline uint64_t getNodeAvgCycles(uint32_t i)
+   {
+      uint64_t avgCycles = 0U;
+
+      if ((i < TISP_MAX_NODE_PROFILE_ENTRIES) && (nodeExecCount[i] > 0U)) {
+         avgCycles = nodeTotalCycles[i] / nodeExecCount[i];
+      }
+      else {
+         /* Nothing to do here */
+      }
+
+      return avgCycles;
+   }
 
    /**
     * @brief Get the number of supernodes profiled in the last graph execution.
