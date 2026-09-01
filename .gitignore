@@ -43,3 +43,11 @@ CLAUDE.md
 # macOS metadata
 .DS_Store
 ._*
+
+# Sphinx generated API + perf pages (regenerated from Doxygen XML at build time)
+docs/sphinx/api/
+docs/sphinx/perf/
+
+# Sphinx build output
+**/sphinx_build/
+**/tisp-sphinx-site/

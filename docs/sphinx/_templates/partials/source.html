@@ -1,0 +1,16 @@
+{#-
+  TISP override of sphinx-immaterial's partials/source.html.
+  Adds a hardcoded branch badge ("main") next to the repo name so readers
+  see which branch the docs were generated from. Update the badge text if
+  the docs are ever built from a different ref.
+-#}
+<a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    {% set icon = config.theme.icon.repo or "material/github" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </div>
+  <div class="md-source__repository">
+    {{ config.repo_name }}
+    <span class="ti-branch">main</span>
+  </div>
+</a>

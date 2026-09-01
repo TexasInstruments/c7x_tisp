@@ -18,6 +18,7 @@ namespace TISP {
 
 /**
  * @brief Error codes for DSP operations
+ * @ingroup errorHandling
  */
 enum class ErrorCode : int32_t {
    kNone               = 0, ///< No error
@@ -33,6 +34,7 @@ enum class ErrorCode : int32_t {
 
 /**
  * @brief Error context for node and supernode creation
+ * @ingroup errorHandling
  *
  * This class provides a mechanism for reporting and handling errors during
  * the graph setup phase without using exceptions. It is designed to be used
@@ -332,7 +334,10 @@ class GraphSetupErrorCtxt {
 #endif
 };
 
-// Define a type alias for shorter name
+/**
+ * @brief Convenience alias for GraphSetupErrorCtxt.
+ * @ingroup errorHandling
+ */
 using ErrorCtxt = GraphSetupErrorCtxt;
 
 } // namespace TISP

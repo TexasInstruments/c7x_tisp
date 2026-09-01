@@ -23,7 +23,7 @@ namespace misc {
  *  \class DataConvert
  *  @brief Provides node-level APIs for the block copy kernel
  *  @tparam T        : Supports float
- *  @tparam dmaDir   : Supports @ref TISP::NO_DMA, @ref TISP::DMA_IN, @ref TISP::DMA_OUT, and @ref TISP::DMA_IN_OUT
+ *  @tparam dmaDir   : Supports `NO_DMA`, `DMA_IN`, `DMA_OUT`, and `DMA_IN`_OUT
  */
 
 template <typename dTypeIn, typename dTypeOut> class DataConvert final : public VirtualOp {
@@ -51,11 +51,8 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
 
    /**
     * @brief Optimized function that uses SE/SA to perform block copy; this function is not exposed to user
-    * @param [in]  *_pX    : Pointer to input 2D block
-    * @param [out] *_pY    : Pointer to output 2D block
-    * @param [in]  _width  : Width of input 2D block
-    * @param [in]  _height : Height of input 2D block
-    * @return void
+    * @param [in]  *pX    : Pointer to input 2D block
+    * @param [out] *pY    : Pointer to output 2D block
     */
 
    void exec_ci(dTypeIn *pX, dTypeOut *pY);
@@ -67,7 +64,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     * This function returns the name of the node.
     *
     * @retval const char* The name of the node
-    * @throw None
     */
    const char *getNodeName() const noexcept override { return _nodeInfo.getNodeName(); }
 
@@ -77,7 +73,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     * This function returns the ID of the node.
     *
     * @retval uint32_t The ID of the node
-    * @throw None
     */
    uint32_t getNodeId() const noexcept override { return _nodeInfo.getNodeId(); }
 
@@ -87,7 +82,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     * This function returns a string containing the parameters of the node.
     *
     * @retval const char* The parameters of the node
-    * @throw None
     */
    const char *getNodeParams() const noexcept override { return _nodeInfo.getNodeParams(); }
 
@@ -97,17 +91,18 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     * This function returns reference to node's i/o buffer properties
     *
     * @retval const NodeBufParams& : A constant reference to the NodeBufParams representing node's i/o buffer properties
-    * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
    /**
     * @brief Creates a DataConvert node
-    * @param [in]  pX      : Pointer to input 2D block; initializes @ref _pX
-    * @param [out] pY      : Pointer to output 2D block; initializes @ref _pY
-    * @param [in]  width   : Width of input 2D block; initializes @ref _width
-    * @param [in]  height  : Height of input 2D block; initializes @ref _height
-    * @param [in]  errorCtx : Error context for reporting constructor errors
+    * @param [in]  pX             : Pointer to input 2D block; initializes @ref _pX
+    * @param [out] pY             : Pointer to output 2D block; initializes @ref _pY
+    * @param [in]  width          : Width of input 2D block; initializes @ref _width
+    * @param [in]  height         : Height of input 2D block; initializes @ref _height
+    * @param [in]  strideInBytes  : Stride of input block in bytes
+    * @param [in]  strideOutBytes : Stride of output block in bytes
+    * @param [in]  errorCtx       : Error context for reporting constructor errors
     */
    DataConvert(dTypeIn   *pX,
                dTypeOut  *pY,
@@ -120,19 +115,8 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
    /**
     * @brief Creates a DataConvert node with a name and ID
     *
-    * This constructor is a delegator that accepts a node name and ID
-    *
-    * @param[in]  *pX              : Pointer to input 2D block; initializes @ref _pX
-    * @param[out] *pY              : Pointer to output 2D block; initializes @ref _pY
-    * @param[in]  width            : Width of input 2D block; initializes @ref _width
-    * @param[in]  height           : Height of input 2D block; initializes @ref _height
-    * @param[in]  strideInBytes    : Stride of input in bytes; initializes @ref _strideInBytes
-    * @param[in]  strideOutBytes   : Stride of output in bytes; initializes @ref _strideOutBytes
-    * @param[in]  nodeName         : Name of the node; initializes @ref _nodeInfo
-    * @param[in]  nodeId           : ID of the node; initializes @ref _nodeInfo
-    * @param [in]  errorCtx        : Error context for reporting constructor errors
-    * @retval None
-    * @throw None
+    * Convenience overload -- same as the primary constructor, but also takes
+    * @c nodeName and @c nodeId.
     */
    DataConvert(dTypeIn    *pX,
                dTypeOut   *pY,
@@ -152,7 +136,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
-    * @throw None
     */
    void *getInputAddr(size_t index) const noexcept override;
 
@@ -164,7 +147,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
-    * @throw None
     */
    void *getOutputAddr(size_t index) const noexcept override;
 
@@ -172,7 +154,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     * @brief Get the number of input buffers
     *
     * @retval    size_t : The number of input buffers (1: _pX)
-    * @throw None
     */
    size_t getNumInputs() const noexcept override;
 
@@ -180,7 +161,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     * @brief Get the number of output buffers
     *
     * @retval    size_t : The number of output buffers (1: _pY)
-    * @throw None
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -191,8 +171,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     *
     * @param[in] addrs Structure containing source and destination addresses
     * @param[in] mode Mode of address setting (input, output, or both)
-    * @retval None
-    * @throw None
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
@@ -201,8 +179,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     *
     * This function performs the actual operation.
     *
-    * @retval None
-    * @throw None
     */
    void exec() noexcept override;
 
@@ -211,8 +187,6 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
     *
     * This destructor is set to default
     *
-    * @retval None
-    * @throw None
     */
 
    ~DataConvert() = default;

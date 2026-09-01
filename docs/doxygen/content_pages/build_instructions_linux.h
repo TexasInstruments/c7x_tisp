@@ -157,10 +157,10 @@
   The TISP SDK ships with pre-built libraries under the source tree so you
   can link out of the box without building:
 
-  - \c lib/release/TISP_<device>.lib — pre-built TISP library (target)
-  - \c lib/release/TISP_<device>_x86_64.a — pre-built TISP library (host emulation)
-  - \c lib/release/TISP_test_common_<device>.lib — test common library (target)
-  - \c lib/release/TISP_test_common_<device>_x86_64.a — test common library (host emulation)
+  - \c lib/release/TISP_\<device\>.lib — pre-built TISP library (target)
+  - \c lib/release/TISP_\<device\>_x86_64.a — pre-built TISP library (host emulation)
+  - \c lib/release/TISP_test_common_\<device\>.lib — test common library (target)
+  - \c lib/release/TISP_test_common_\<device\>_x86_64.a — test common library (host emulation)
 
   These are built from the same source and can be used directly for linking
   without running CMake.

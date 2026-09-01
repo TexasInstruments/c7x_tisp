@@ -1,0 +1,91 @@
+# Doxyfile for Sphinx/Breathe XML generation.
+#
+# Purpose: produce Doxygen XML (GENERATE_XML=YES, GENERATE_HTML=NO)
+# for consumption by Breathe in the Sphinx pipeline.
+# Run from the repository root:
+#   doxygen docs/doxygen/doxyfile_sphinx
+# Output lands in build/docs/xml/ (TISP_DOXYGEN_XML default).
+#
+# This file is intentionally minimal -- only the settings that differ
+# from Doxygen defaults or from doxyfile_user_guide are listed.
+
+DOXYFILE_ENCODING      = UTF-8
+
+PROJECT_NAME           = "TISP"
+PROJECT_NUMBER         =
+PROJECT_BRIEF          = "TI Signal Processing C++ Middleware"
+
+# ---------------------------------------------------------------------------
+# Output
+# ---------------------------------------------------------------------------
+OUTPUT_DIRECTORY       = build/docs
+OUTPUT_LANGUAGE        = English
+CREATE_SUBDIRS         = NO
+
+# ---------------------------------------------------------------------------
+# Input
+# ---------------------------------------------------------------------------
+# Parse the public headers and source files that carry group membership tags.
+# The content_pages headers are NOT needed -- narrative content is ported to RST.
+INPUT                  = includes/ \
+                         src/
+
+RECURSIVE              = YES
+
+FILE_PATTERNS          = *.hpp \
+                         *.cpp \
+                         *.h
+
+EXTENSION_MAPPING      = hpp=C++ cpp=C++
+
+INPUT_ENCODING         = UTF-8
+
+# ---------------------------------------------------------------------------
+# Extraction settings
+# ---------------------------------------------------------------------------
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_ANON_NSPACES   = NO
+
+# ---------------------------------------------------------------------------
+# Source listing (not needed for XML-only output)
+# ---------------------------------------------------------------------------
+SOURCE_BROWSER         = NO
+VERBATIM_HEADERS       = NO
+
+# ---------------------------------------------------------------------------
+# Preprocessing
+# ---------------------------------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+# Do not define __C7504__ etc. -- groups are not device-gated
+PREDEFINED             =
+
+# ---------------------------------------------------------------------------
+# Warnings
+# ---------------------------------------------------------------------------
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+
+# ---------------------------------------------------------------------------
+# Output formats: XML only
+# ---------------------------------------------------------------------------
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+GENERATE_RTF           = NO
+GENERATE_MAN           = NO
+GENERATE_DOCBOOK       = NO
+GENERATE_AUTOGEN_DEF   = NO
+
+GENERATE_XML           = YES
+XML_OUTPUT             = xml
+XML_PROGRAMLISTING     = NO
+
+# ---------------------------------------------------------------------------
+# Diagrams (disabled for XML-only builds -- speeds things up)
+# ---------------------------------------------------------------------------
+HAVE_DOT               = NO

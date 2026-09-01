@@ -43,7 +43,6 @@ enum class Types : uint32_t {
  * @details Usable in constant expressions (e.g. buffer-stride math).
  * @param [in] type : Data-type enumerator to size.
  * @retval Number of bytes per element (1 for an unrecognized enumerator).
- * @throw None
  */
 constexpr uint32_t sizeOf(Types type)
 {

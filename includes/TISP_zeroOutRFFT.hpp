@@ -48,7 +48,6 @@ template <typename T> class zeroOutRFFT final : public VirtualOp {
     * @param [in]  _numChannels : Height of 2D block
     * @param [in]  _index       : Start index from which to zero out
     * @param [in]  _length      : Number of elements to zero out
-    * @return void
     */
 
    void exec_ci(T *_pX, size_t _numPoints, size_t _numChannels, size_t _index, size_t _length);
@@ -58,7 +57,6 @@ template <typename T> class zeroOutRFFT final : public VirtualOp {
     * @brief Get the name of the node
     *
     * @retval const char* The name of the node
-    * @throw None
     */
    const char *getNodeName() const noexcept override { return _nodeInfo.getNodeName(); }
 
@@ -66,7 +64,6 @@ template <typename T> class zeroOutRFFT final : public VirtualOp {
     * @brief Get the ID of the node
     *
     * @retval uint32_t The ID of the node
-    * @throw None
     */
    uint32_t getNodeId() const noexcept override { return _nodeInfo.getNodeId(); }
 
@@ -74,7 +71,6 @@ template <typename T> class zeroOutRFFT final : public VirtualOp {
     * @brief Get the parameters of the node
     *
     * @retval const char* The parameters of the node
-    * @throw None
     */
    const char *getNodeParams() const noexcept override { return _nodeInfo.getNodeParams(); }
 
@@ -82,7 +78,6 @@ template <typename T> class zeroOutRFFT final : public VirtualOp {
     * @brief Get the input and output buffer parameters of the node
     *
     * @retval const NodeBufParams& : A constant reference to the NodeBufParams representing node's i/o buffer properties
-    * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
@@ -103,16 +98,12 @@ template <typename T> class zeroOutRFFT final : public VirtualOp {
     *
     * @param[in] addrs Structure containing source and destination addresses
     * @param[in] mode Mode of address setting (input, output, or both)
-    * @retval None
-    * @throw None
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
    /**
     * @brief Execute the operation
     *
-    * @retval None
-    * @throw None
     */
    void exec() noexcept override;
 

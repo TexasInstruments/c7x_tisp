@@ -1,0 +1,10 @@
+# Sphinx documentation toolchain for TISP.
+# Pinned for reproducible Jenkins builds.  Matches the TI processor-sdk-doc
+# stack (sphinx_rtd_theme) plus Breathe for Doxygen C++ API generation.
+# Reuses the same venv as sibling xlib projects (dsplib, fftlib).
+sphinx==7.4.7
+sphinx-immaterial
+breathe==4.35.0
+exhale==0.3.7
+sphinx-design==0.6.1
+sphinx-copybutton==0.5.2

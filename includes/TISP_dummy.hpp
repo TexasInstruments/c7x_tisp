@@ -43,8 +43,6 @@ template <typename T> class Dummy final : public VirtualOp {
     * @param [out] *pY    : Pointer to output 2D block
     * @param [in]  width  : Width of input 2D block
     * @param [in]  height : Height of input 2D block
-    * @retval None
-    * @throw None
     */
 
    void exec_ci(T *pX, T *pY, size_t width, size_t height) noexcept;
@@ -56,7 +54,6 @@ template <typename T> class Dummy final : public VirtualOp {
     * This function returns the name of the node.
     *
     * @retval const char* The name of the node
-    * @throw None
     */
    const char *getNodeName() const noexcept override { return _nodeInfo.getNodeName(); }
 
@@ -66,7 +63,6 @@ template <typename T> class Dummy final : public VirtualOp {
     * This function returns the ID of the node.
     *
     * @retval uint32_t The ID of the node
-    * @throw None
     */
    uint32_t getNodeId() const noexcept override { return _nodeInfo.getNodeId(); }
 
@@ -76,7 +72,6 @@ template <typename T> class Dummy final : public VirtualOp {
     * This function returns a string containing the parameters of the node.
     *
     * @retval const char* The parameters of the node
-    * @throw None
     */
    const char *getNodeParams() const noexcept override { return _nodeInfo.getNodeParams(); }
 
@@ -86,7 +81,6 @@ template <typename T> class Dummy final : public VirtualOp {
     * This function returns reference to node's i/o buffer properties
     *
     * @retval const NodeBufParams& : A constant reference to the NodeBufParams representing node's i/o buffer properties
-    * @throw None
     */
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
@@ -106,13 +100,8 @@ template <typename T> class Dummy final : public VirtualOp {
    /**
     * @brief Creates a Dummy node with a name and ID
     *
-    * This constructor is a delegator that accepts a node name and ID
-    *
-    * @param[in] T *pX, T *pY, size_t width, size_t height
-    * @param[in] nodeName          : Name of the node; initializes @ref _nodeInfo
-    * @param[in] nodeId            : ID of the node; initializes @ref _nodeInfo
-    * @retval None
-    * @throw None
+    * Convenience overload -- same as the primary constructor, but also takes
+    * @c nodeName and @c nodeId.
     */
    Dummy(T *pX, T *pY, size_t width, size_t height, const char *nodeName, uint32_t nodeId);
 
@@ -123,8 +112,6 @@ template <typename T> class Dummy final : public VirtualOp {
     *
     * @param[in] addrs Structure containing source and destination addresses
     * @param[in] mode Mode of address setting (input, output, or both)
-    * @retval None
-    * @throw None
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
@@ -133,8 +120,6 @@ template <typename T> class Dummy final : public VirtualOp {
     *
     * This function performs the actual operation.
     *
-    * @retval None
-    * @throw None
     */
    void exec() noexcept override;
 
@@ -143,8 +128,6 @@ template <typename T> class Dummy final : public VirtualOp {
     *
     * This destructor is set to default
     *
-    * @retval None
-    * @throw None
     */
 
    ~Dummy() = default;
