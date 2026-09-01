@@ -13,6 +13,11 @@ uint32_t NodeProfiler::nodeParentSuperNodeId[TISP_MAX_NODE_PROFILE_ENTRIES] = {
     0};                               ///< Which supernode contains this node
 uint32_t NodeProfiler::nodeCount = 0; ///< Current number of nodes being tracked
 
+// Initialize static members - Node cycle statistics (accumulated across executions)
+uint64_t NodeProfiler::nodeMaxCycles[TISP_MAX_NODE_PROFILE_ENTRIES]   = {0}; ///< Largest cycle count per node
+uint64_t NodeProfiler::nodeTotalCycles[TISP_MAX_NODE_PROFILE_ENTRIES] = {0}; ///< Running sum of cycles per node
+uint64_t NodeProfiler::nodeExecCount[TISP_MAX_NODE_PROFILE_ENTRIES]   = {0}; ///< Executions recorded per node
+
 // Initialize static members - Supernode tracking
 uint64_t NodeProfiler::superNodeStartCycles[TISP_MAX_SUPERNODE_PROFILE_ENTRIES] = {
     0}; ///< Start cycle timestamps for each supernode
@@ -75,7 +80,8 @@ void NodeProfiler::printResults()
          // Find and print all nodes that belong to this supernode
          for (uint32_t j = 0; j < nodeCount; j++) {
             if (nodeParentSuperNodeId[j] == superId) {
-               (void) printf("  - Node ID: %u, Cycles: %lu\n", nodeIds[j], nodeCycleCounts[j]);
+               (void) printf("  - Node ID: %u, Cycles: %lu, Max: %lu, Avg: %lu, Count: %lu\n", nodeIds[j],
+                             nodeCycleCounts[j], nodeMaxCycles[j], getNodeAvgCycles(j), nodeExecCount[j]);
             }
          }
       }
@@ -85,7 +91,8 @@ void NodeProfiler::printResults()
    (void) printf("\nNodes:\n");
    for (uint32_t i = 0; i < nodeCount; i++) {
       if (nodeParentSuperNodeId[i] == 0) {
-         (void) printf("Node ID: %u, Cycles: %lu\n", nodeIds[i], nodeCycleCounts[i]);
+         (void) printf("Node ID: %u, Cycles: %lu, Max: %lu, Avg: %lu, Count: %lu\n", nodeIds[i],
+                       nodeCycleCounts[i], nodeMaxCycles[i], getNodeAvgCycles(i), nodeExecCount[i]);
       }
    }
    (void) printf("-----------------------\n");
@@ -140,8 +147,9 @@ void NodeProfiler::printResults(const TISP::opVec& myOpVec)
          // Find and print all nodes that belong to this supernode
          for (uint32_t j = 0; j < nodeCount && j < myOpVec.size(); j++) {
             if (nodeParentSuperNodeId[j] == superId) {
-               (void) printf("  └─ Node ID: %u, Name: %s, Cycles: %lu\n", nodeIds[j], myOpVec[j]->getNodeName(),
-                             nodeCycleCounts[j]);
+               (void) printf("  └─ Node ID: %u, Name: %s, Cycles: %lu, Max: %lu, Avg: %lu, Count: %lu\n",
+                             nodeIds[j], myOpVec[j]->getNodeName(), nodeCycleCounts[j], nodeMaxCycles[j],
+                             getNodeAvgCycles(j), nodeExecCount[j]);
             }
          }
       }
@@ -151,8 +159,9 @@ void NodeProfiler::printResults(const TISP::opVec& myOpVec)
    (void) printf("\nNodes:\n");
    for (uint32_t i = 0; i < nodeCount && i < myOpVec.size(); i++) {
       if (nodeParentSuperNodeId[i] == 0) {
-         (void) printf("Node ID: %u, Name: %s, Cycles: %lu\n", nodeIds[i], myOpVec[i]->getNodeName(),
-                       nodeCycleCounts[i]);
+         (void) printf("Node ID: %u, Name: %s, Cycles: %lu, Max: %lu, Avg: %lu, Count: %lu\n", nodeIds[i],
+                       myOpVec[i]->getNodeName(), nodeCycleCounts[i], nodeMaxCycles[i], getNodeAvgCycles(i),
+                       nodeExecCount[i]);
       }
    }
    (void) printf("-----------------------\n");
@@ -207,7 +216,8 @@ void NodeProfiler::printResults(const TISP::SuperNode::superNodeVec& mySuperNode
          // Find and print all nodes that belong to this supernode
          for (uint32_t j = 0; j < nodeCount; j++) {
             if (nodeParentSuperNodeId[j] == superId) {
-               (void) printf("  └─ Node ID: %u, Cycles: %lu\n", nodeIds[j], nodeCycleCounts[j]);
+               (void) printf("  └─ Node ID: %u, Cycles: %lu, Max: %lu, Avg: %lu, Count: %lu\n", nodeIds[j],
+                             nodeCycleCounts[j], nodeMaxCycles[j], getNodeAvgCycles(j), nodeExecCount[j]);
             }
          }
       }
@@ -217,7 +227,8 @@ void NodeProfiler::printResults(const TISP::SuperNode::superNodeVec& mySuperNode
    (void) printf("\nNodes:\n");
    for (uint32_t i = 0; i < nodeCount; i++) {
       if (nodeParentSuperNodeId[i] == 0) {
-         (void) printf("Node ID: %u, Cycles: %lu\n", nodeIds[i], nodeCycleCounts[i]);
+         (void) printf("Node ID: %u, Cycles: %lu, Max: %lu, Avg: %lu, Count: %lu\n", nodeIds[i],
+                       nodeCycleCounts[i], nodeMaxCycles[i], getNodeAvgCycles(i), nodeExecCount[i]);
       }
    }
    (void) printf("-----------------------\n");
@@ -562,8 +573,9 @@ bool NodeProfiler::writeJsonResults(const char* filename, const TISP::SuperNode:
  */
 void NodeProfiler::printMemoryUsage()
 {
-   size_t nodeMemory =
-       sizeof(nodeStartCycles) + sizeof(nodeCycleCounts) + sizeof(nodeIds) + sizeof(nodeParentSuperNodeId);
+   size_t nodeMemory = sizeof(nodeStartCycles) + sizeof(nodeCycleCounts) + sizeof(nodeIds) +
+                       sizeof(nodeParentSuperNodeId) + sizeof(nodeMaxCycles) + sizeof(nodeTotalCycles) +
+                       sizeof(nodeExecCount);
    size_t superNodeMemory = sizeof(superNodeStartCycles) + sizeof(superNodeCycleCounts) + sizeof(superNodeIds);
    size_t otherMemory =
        sizeof(overhead) + sizeof(nodeCount) + sizeof(superNodeCount) + sizeof(currentSuperNodeId) + sizeof(inSuperNode);
