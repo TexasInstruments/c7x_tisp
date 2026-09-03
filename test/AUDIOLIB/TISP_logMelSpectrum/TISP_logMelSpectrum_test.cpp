@@ -79,6 +79,7 @@ int TISP_logMelSpectrum_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
    int32_t tpi;
    int32_t currentTestFail;
    int32_t fail = 0;
+   float  *pExpected, snr_ref_vs_opt = 0.0, snr_ref_vs_natc = 0.0, snr_natc_vs_opt = 0.0;
 
    TISP_logMelSpectrum_testParams_t *prm;
    TISP_logMelSpectrum_testParams_t  currPrm;
@@ -88,9 +89,10 @@ int TISP_logMelSpectrum_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
    FILE *fpOutputCSV = fopen("TISP_logMelSpectrum.csv", "w");
    fprintf(fpOutputCSV, "Kernel, Test ID, fftSize, hopSize, numCh, numInputSamples, numMelBins, "
-                        "Windows per clip, EVM cold cycles, cycles/frame, cycles/sample, Pass/Fail\n");
+                        "Windows per clip, EVM cold cycles, cycles/frame, cycles/sample, snr_ref_vs_opt, "
+                        "snr_ref_vs_natc, snr_natc_vs_opt, Pass/Fail\n");
 
-   UnitTestL2Heap myL2Heap(&l2SramHeap[0], L2SRAM_HEAP_SIZE);
+   UnitTestHeap myL2Heap(&l2SramHeap[0], L2SRAM_HEAP_SIZE);
 
    for (tpi = 0; tpi < test_cases; tpi++) {
       currPrm = prm[tpi];
@@ -177,7 +179,7 @@ int TISP_logMelSpectrum_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             /* compare cn vs static python reference for this block */
             if (currPrm.staticOut != NULL) {
-               float  *pExpected  = &currPrm.staticOut[blockIdx * outputSize];
+               pExpected  = &currPrm.staticOut[blockIdx * outputSize];
                int32_t blockStatus = TI_compare_mem_2D_float((void *) pYCn, (void *) pExpected, 0.001,
                                                              (double) powf(2, -10), outputSize, 1,
                                                              outputSize * sizeof(float), sizeof(float));
@@ -228,7 +230,7 @@ int TISP_logMelSpectrum_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             }
 
             if (currPrm.staticOut != NULL) {
-               float *pExpected = &currPrm.staticOut[blockIdx * outputSize];
+               pExpected = &currPrm.staticOut[blockIdx * outputSize];
                if (TI_compare_mem_2D_float((void *) pY.get(), (void *) pExpected, 0.001, (double) powf(2, -10),
                                            outputSize, 1, outputSize * sizeof(float), sizeof(float)) ==
                    TI_TEST_KERNEL_FAIL) {
@@ -248,6 +250,10 @@ int TISP_logMelSpectrum_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          fail = ((fail == 1) || (currentTestFail == 1)) ? 1 : 0;
 
+         snr_ref_vs_opt  = TI_Profile_get_log_snr(pExpected, pY.get(), outputSize, logOffset);
+         snr_ref_vs_natc = TI_Profile_get_log_snr(pExpected, pYCn, outputSize, logOffset);
+         snr_natc_vs_opt = TI_Profile_get_log_snr(pYCn, pY.get(), outputSize, logOffset);
+
          int32_t coldCycles    = (int32_t) TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
          pProfile[3 * tpi]     = coldCycles;
          pProfile[3 * tpi + 1] = coldCycles;
@@ -258,12 +264,16 @@ int TISP_logMelSpectrum_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          float cyclesPerSample =
              (numInputSamples > 0) ? (float) coldCycles / (float) (numInputSamples * numChannels) : 0.0f;
 
-         sprintf(desc, "fftSize=%u hopSize=%u numCh=%u numInputSamples=%u numMelBins=%u numWindows=%u numBlocks=%u",
-                 fftSize, hopSize, numChannels, numInputSamples, numMelBins, numWindows * numChannels, numBlocks);
+         sprintf(desc,
+                 "snr_ref_vs_opt=%.2f snr_ref_vs_natc=%.2f snr_natc_vs_opt=%.2f fftSize=%u hopSize=%u numCh=%u "
+                 "numInputSamples=%u numMelBins=%u numWindows=%u numBlocks=%u",
+                 snr_ref_vs_opt, snr_ref_vs_natc, snr_natc_vs_opt, fftSize, hopSize, numChannels, numInputSamples,
+                 numMelBins, numWindows * numChannels, numBlocks);
 
-         fprintf(fpOutputCSV, "TISP_logMelSpectrum, %u, %u, %u, %u, %u, %u, %u, %d, %.2f, %.2f, %d\n", currPrm.testID,
-                 fftSize, hopSize, numChannels, numInputSamples, numMelBins, numWindows * numChannels, coldCycles,
-                 cyclesPerFrame, cyclesPerSample, !currentTestFail);
+         fprintf(fpOutputCSV, "TISP_logMelSpectrum, %u, %u, %u, %u, %u, %u, %u, %d, %.2f, %.2f, %.2f, %.2f, %.2f, %d\n",
+                 currPrm.testID, fftSize, hopSize, numChannels, numInputSamples, numMelBins, numWindows * numChannels,
+                 coldCycles, cyclesPerFrame, cyclesPerSample, snr_ref_vs_opt, snr_ref_vs_natc, snr_natc_vs_opt,
+                 !currentTestFail);
 
          TI_profile_add_test(currPrm.testID, numChannels * numWindows * numMelBins, 0, 0, currentTestFail, desc);
       }

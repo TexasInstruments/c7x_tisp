@@ -100,12 +100,12 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
    T        _power;           /*!< Magnitude exponent (1.0 or 2.0 typical) */
    T        _logOffset;       /*!< Offset added before log */
 
-   std::unique_ptr<TISP::AUDIOLIB::Stft<T>, L2NodeDeleter>      _stftNode;      /*!< Internal windowing + batched RFFT */
-   std::unique_ptr<TISP::DSPLIB::MatMul<T>, L2NodeDeleter>      _matMulNode;    /*!< Internal mel matmul (MMA) */
-   std::unique_ptr<TISP::DSPLIB::AddConstant<T>, L2NodeDeleter> _addOffsetNode; /*!< Internal +logOffset (broadcast) */
-   std::unique_ptr<TISP::MATHLIB::Log<T>, L2NodeDeleter>        _logNode;       /*!< Internal natural log */
-   std::unique_ptr<TISP::MATHLIB::Log<T>, L2NodeDeleter>        _powLogNode;    /*!< ln() for the general |.|^power path (power != 1,2) */
-   std::unique_ptr<TISP::MATHLIB::Exp<T>, L2NodeDeleter>        _powExpNode;    /*!< exp() for the general |.|^power path (power != 1,2) */
+   std::unique_ptr<TISP::AUDIOLIB::Stft<T>, NodeDeleter>      _stftNode;      /*!< Internal windowing + batched RFFT */
+   std::unique_ptr<TISP::DSPLIB::MatMul<T>, NodeDeleter>      _matMulNode;    /*!< Internal mel matmul (MMA) */
+   std::unique_ptr<TISP::DSPLIB::AddConstant<T>, NodeDeleter> _addOffsetNode; /*!< Internal +logOffset (broadcast) */
+   std::unique_ptr<TISP::MATHLIB::Log<T>, NodeDeleter>        _logNode;       /*!< Internal natural log */
+   std::unique_ptr<TISP::MATHLIB::Log<T>, NodeDeleter>        _powLogNode;    /*!< ln() for the general |.|^power path (power != 1,2) */
+   std::unique_ptr<TISP::MATHLIB::Exp<T>, NodeDeleter>        _powExpNode;    /*!< exp() for the general |.|^power path (power != 1,2) */
 
    __SE_TEMPLATE_v1 _seMagDec  = __gen_SE_TEMPLATE_v1(); /*!< SE0/SE1: 2:1-decimated re/im split for mag2 (C7504/C7524) */
    __SA_TEMPLATE_v1 _saMagFull = __gen_SA_TEMPLATE_v1(); /*!< SA0: full-width real power write (decimation path) */
@@ -146,8 +146,7 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
     * @param [in]  power           : Magnitude exponent (1.0=magnitude, 2.0=power). Initializes @ref _power.
     * @param [in]  logOffset       : Offset added before the log. Initializes @ref _logOffset.
     * @param [in]  errorCtx        : Error context for reporting constructor errors.
-    *
-    * @throw None
+    * 
     */
    LogMelSpectrum(T         *pX,
                   T         *pY,
@@ -167,13 +166,8 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
    /**
     * @brief Creates a LogMelSpectrum node with a name and ID (delegates to the primary constructor).
     *
-    * @param [in]  *pX,*pY,*pWindow,*pMel,*pState,*pScratch : see the primary constructor.
-    * @param [in]  fftSize,hopSize,numChannels,numInputSamples,numMelBins,power,logOffset : see primary.
-    * @param [in]  nodeName        : Name of the node; initializes @ref _nodeInfo.
-    * @param [in]  nodeId          : ID of the node; initializes @ref _nodeInfo.
-    * @param [in]  errorCtx        : Error context for reporting constructor errors.
-    *
-    * @throw None
+    * Convenience overload -- same as the primary constructor, but also takes
+    * @c nodeName and @c nodeId.
     */
    LogMelSpectrum(T          *pX,
                   T          *pY,
@@ -199,13 +193,11 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
     * @note Also rebinds the internal composed Stft (input) and Log (output) nodes
     *       immediately, so the node and its sub-nodes are consistent as soon as
     *       setAddr() returns (no exec() needed to propagate the change).
-    * @throw None
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
    /**
     * @brief Execute the log-mel spectrogram over all channels.
-    * @throw None
     */
    void exec() noexcept override;
 
@@ -218,7 +210,6 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
     * @brief Get an input buffer address (index 0 = pX).
     * @param[in] index : input index (0).
     * @retval void* pointer, or nullptr if index invalid.
-    * @throw None
     */
    void *getInputAddr(size_t index) const noexcept override;
 
@@ -226,30 +217,28 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
     * @brief Get an output buffer address (index 0 = pY).
     * @param[in] index : output index (0).
     * @retval void* pointer, or nullptr if index invalid.
-    * @throw None
     */
    void *getOutputAddr(size_t index) const noexcept override;
 
-   /** @brief Number of input buffers (1). @throw None */
+   /** @brief Number of input buffers (1). */
    size_t getNumInputs() const noexcept override;
 
-   /** @brief Number of output buffers (1). @throw None */
+   /** @brief Number of output buffers (1). */
    size_t getNumOutputs() const noexcept override;
 
-   /** @brief Output frames per exec() call. @throw None */
+   /** @brief Output frames per exec() call. */
    uint32_t getNumWindows() const noexcept;
 
-   /** @brief One-sided FFT bin count feeding the mel matrix. @throw None */
+   /** @brief One-sided FFT bin count feeding the mel matrix. */
    uint32_t getNumSpectrogramBins() const noexcept;
 
-   /** @brief Overlap buffer size. @throw None */
+   /** @brief Overlap buffer size. */
    uint32_t getOverlapBufSize() const noexcept;
 
    /**
     * @brief Output frames per exec() before constructing the node.
     * @param [in] fftSize,hopSize,numInputSamples : geometry.
     * @retval uint32_t frame count.
-    * @throw None
     */
    static uint32_t calcNumWindows(uint32_t fftSize, uint32_t hopSize, uint32_t numInputSamples) noexcept;
 
@@ -257,7 +246,6 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
     * @brief Overlap buffer size before constructing the node.
     * @param [in] fftSize,hopSize,numInputSamples : geometry.
     * @retval uint32_t overlap size in samples (per channel).
-    * @throw None
     */
    static uint32_t calcOverlapBufSize(uint32_t fftSize, uint32_t hopSize, uint32_t numInputSamples) noexcept;
 
@@ -265,7 +253,6 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
     * @brief One-sided FFT bin count (fftSize/2 + 1).
     * @param [in] fftSize : FFT length.
     * @retval uint32_t bin count.
-    * @throw None
     */
    static uint32_t calcNumSpectrogramBins(uint32_t fftSize) noexcept;
 
@@ -273,7 +260,6 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
     * @brief Scratch buffer size (elements of T) before constructing the node.
     * @param [in] fftSize,hopSize,numInputSamples,numMelBins,numChannels : geometry.
     * @retval uint32_t scratch size in elements of T.
-    * @throw None
     */
    static uint32_t calcScratchSize(uint32_t fftSize,
                                    uint32_t hopSize,
@@ -285,7 +271,6 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
     * @brief Total memory (kB) across all LogMelSpectrum buffers.
     * @param [in] fftSize,hopSize,numChannels,numInputSamples,numMelBins : geometry.
     * @retval float total kB.
-    * @throw None
     */
    static float calcTotalMemKB(uint32_t fftSize,
                                uint32_t hopSize,

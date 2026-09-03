@@ -131,6 +131,7 @@ int TISP_logMelSpectrum_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
    uint32_t k    = 0;
    uint32_t testNum;
    uint64_t archCycles = 0;
+   float    snr_ref_vs_opt = 0.0;
 
    TISP_logMelSpectrum_superNode_testParams_t *prm;
    TISP_logMelSpectrum_superNode_testParams_t  currPrm;
@@ -139,9 +140,10 @@ int TISP_logMelSpectrum_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
    TI_profile_init("TISP_logMelSpectrum_superNode");
 
    FILE *fpOutputCSV = fopen("TISP_logMelSpectrum_superNode.csv", "w+");
-   fprintf(fpOutputCSV, "Kernel, Test ID, Data size, Arch cycles, Warm cycles, Warm/Arch cycles, Pass/Fail\n");
+   fprintf(fpOutputCSV,
+           "Kernel, Test ID, Data size, Arch cycles, Warm cycles, Warm/Arch cycles, snr_ref_vs_opt, Pass/Fail\n");
 
-   UnitTestL2Heap myL2Heap(&l2SramHeap[0], L2SRAM_HEAP_SIZE);
+   UnitTestHeap myL2Heap(&l2SramHeap[0], L2SRAM_HEAP_SIZE);
 
 #ifdef HOST_EMULATION
    /* host: DMA utils are stubbed */
@@ -193,6 +195,7 @@ int TISP_logMelSpectrum_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
       size_t outPitch = currPrm.dataPitchOut; /* = numWindows*numMelBins*numBlocks*sizeof(float)    */
 
       size_t outputSize = (size_t) numWindows * numMelBins * numChannels * numBlocks * datasize;
+      size_t outputsize = (size_t) numWindows * numMelBins * numChannels * numBlocks;
 
       /* ping-pong L2 block buffers (2x) + fixed L2 window/mel/state/scratch buffers */
       auto pInBlock  = myL2Heap.allocate64ByteAligned<uint8_t>(2u * numInputSamples * numChannels * datasize);
@@ -279,17 +282,22 @@ int TISP_logMelSpectrum_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          currentTestFail = ((status_ref_vs_opt == TI_TEST_KERNEL_FAIL) || (currentTestFail == 1)) ? 1 : 0;
          fail            = ((fail == 1) || (currentTestFail == 1)) ? 1 : 0;
 
+         snr_ref_vs_opt = TI_Profile_get_log_snr(currPrm.staticOut, pOut, outputsize, logOffset);
+
          pProfile[3 * tpi]     = (int32_t) TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
          pProfile[3 * tpi + 1] = (int32_t) TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
          pProfile[3 * tpi + 2] = (int32_t) TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARMWRB);
 
-         sprintf(desc, "%s generated input | fftSize=%u hop=%u numCh=%u F=%u numMel=%u power=%.1f numBlocks=%u",
-                 testPatternString, fftSize, hopSize, numChannels, numInputSamples, numMelBins, power, numBlocks);
+         sprintf(desc,
+                 "%s generated input | snr_ref_vs_opt=%.2f fftSize=%u hop=%u numCh=%u F=%u numMel=%u power=%.1f "
+                 "numBlocks=%u",
+                 testPatternString, snr_ref_vs_opt, fftSize, hopSize, numChannels, numInputSamples, numMelBins, power,
+                 numBlocks);
 
-         fprintf(fpOutputCSV, "TISP_logMelSpectrum_superNode, %d, %lu, %lu, %lu, %.2f, %d\n", testNum,
+         fprintf(fpOutputCSV, "TISP_logMelSpectrum_superNode, %d, %lu, %lu, %lu, %.2f, %.2f, %d\n", testNum,
                  (unsigned long) (numInputSamples * numChannels * numBlocks), (unsigned long) archCycles,
                  (unsigned long) cycles[TI_PROFILE_KERNEL_OPT_WARM],
-                 ((float) cycles[TI_PROFILE_KERNEL_OPT]) / ((float) archCycles), !currentTestFail);
+                 ((float) cycles[TI_PROFILE_KERNEL_OPT]) / ((float) archCycles), snr_ref_vs_opt, !currentTestFail);
 
          TI_profile_add_test(testNum++, numInputSamples * numChannels * numBlocks, 0, 0, currentTestFail, desc);
       }

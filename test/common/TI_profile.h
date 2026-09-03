@@ -78,6 +78,7 @@ void     TI_profile_clear_cycle_counts(void);
 void     TI_profile_clear_stack_sizes(void);
 void     TI_profile_clear_cycle_count_single(int kernel);
 float    TI_Profile_get_snr(void *pX, void *pY, int outputSize);
+float    TI_Profile_get_log_snr(void *pX, void *pY, int outputSize, float logOffset);
 
 /* Profiling start routine */
 static inline void TI_profile_start(int kernel)
