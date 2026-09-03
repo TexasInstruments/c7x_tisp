@@ -88,7 +88,14 @@ template <typename T> void BlockCopy<T>::exec_ci(T *RESTRICT pX, T *RESTRICT pY,
    // open SA0 to write output samples
    __SA0_OPEN(_sa0Param);
 
-   for (size_t i = 0; i < (width * height) / (c7x::max_simd<T>::value); i++) {
+   /* ceiling division: the final partial vector (when width*height is not a
+    * multiple of the SIMD width) must still be processed. The SE/SA is configured
+    * with ICNT0 = width*height and the store is predicated (get_vpred), so the
+    * tail elements are read/written correctly; only the loop count must round up.
+    * (floor division here previously dropped the last (N % SIMD) elements.) */
+   const size_t simdWidth = static_cast<size_t>(c7x::max_simd<T>::value);
+   const size_t numVecs   = ((width * height) + simdWidth - 1u) / simdWidth;
+   for (size_t i = 0; i < numVecs; i++) {
       __vpred tmp  = c7x::strm_agen<0, vec>::get_vpred();
       vec    *addr = c7x::strm_agen<0, vec>::get_adv(pY);
       __vstore_pred(tmp, addr, c7x::strm_eng<0, vec>::get_adv());
