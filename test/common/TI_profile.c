@@ -425,3 +425,23 @@ void TI_profile_stack_memory(void)
    TI_test_print_string(TI_test_print_buffer);
 #endif
 }
+
+float TI_Profile_get_snr(void *pX, void *pY, int outputSize)
+{
+   /* Testing parameters */
+   float  snr    = 0.0;
+   double sumSqX = 0.0, sumSqY = 0.0;
+   int    ix;
+   float *pRef    = (float *) pX;
+   float *pTarget = (float *) pY;
+   for (ix = 0; ix < outputSize; ix++) {
+      sumSqX = sumSqX + ((float) pRef[ix] * (float) pRef[ix]);
+      sumSqY = sumSqY + ((float) (pRef[ix] - (float) pTarget[ix]) * ((float) pRef[ix] - (float) pTarget[ix]));
+   }
+   if (sumSqX != 0.0f && sumSqY != 0.0f && isfinite(sumSqX) && isfinite(sumSqY)) {
+      /* Normal case: both accumulators are finite and non-zero.
+       * Standard SNR formula: 10 * log10(signal_power / noise_power) */
+      snr = 10.0 * log10(sumSqX / sumSqY);
+   }
+   return snr;
+}
