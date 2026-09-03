@@ -107,6 +107,11 @@ class BaseSuperNode {
       Udma_deinit((Udma_DrvHandle) (&_udmaDrvObj));
    }
 
+   BaseSuperNode(const BaseSuperNode &) = delete;
+   BaseSuperNode &operator=(const BaseSuperNode &) = delete;
+   BaseSuperNode(BaseSuperNode &&) = delete;
+   BaseSuperNode &operator=(BaseSuperNode &&) = delete;
+
 #if defined(HOST_EMULATION)
    Udma_DrvHandle setUdmaDrvHandle();
 #else

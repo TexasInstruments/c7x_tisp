@@ -5,17 +5,25 @@ import argparse
 import matplotlib.pyplot as plt
 from utils import debug_print, generate_spectral_test_signal, plot_signals
 
-# TODO: Add the necessary paths to audiolib and dsplib to fetch idat_gen python packages
-# Get the absolute path to the project root
-project_root = os.path.join(os.environ.get("HOME"), "tisp")
-sys.path.append(os.path.join(project_root, "test"))  # path to tisp test directory
+# Get the absolute path to the project root (this script lives in
+# <root>/test/TISP_idat_gen/audio_signal_chain/11_02_signal_chain/)
+script_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(script_dir, "../../../.."))
 
+sys.path.append(os.path.join(project_root, "test"))  # path to tisp test directory
 sys.path.append(
-    os.path.join(project_root, "external/audiolib/test/")
-)  # path to audiolib test directory
-sys.path.append(
-    os.path.join(project_root, "external/dsplib/test/")
-)  # path to dsplib test directory
+    os.path.join(project_root, "test/TISP_idat_gen")
+)  # path to the common module
+
+# Paths to audiolib and dsplib idat_gen python packages.
+# If MCU_PLUS_SDK_ROOT is set, use it; otherwise fall back to relative path (OOB SDK layout)
+mcu_sdk_root = os.environ.get("MCU_PLUS_SDK_ROOT")
+if mcu_sdk_root:
+    sys.path.append(os.path.join(mcu_sdk_root, "source", "audiolib", "test"))
+    sys.path.append(os.path.join(mcu_sdk_root, "source", "dsplib", "test"))
+else:
+    sys.path.append(os.path.join(project_root, "../audiolib/test"))
+    sys.path.append(os.path.join(project_root, "../dsplib/test"))
 
 sys.path.append(
     os.path.join(project_root, "test/TISP_idat_gen/audio_signal_chain/parametric_eq/")
@@ -176,6 +184,11 @@ def main(args):
         inSamples=NUM_CHANNELS_OUT,
     )
 
+    # Seed the generator so the committed test vectors are reproducible: the test
+    # signal is drawn from np.random, so an unseeded run rewrites the stimulus in
+    # staticCase1.hpp on every regeneration.
+    np.random.seed(0)
+
     # Create test signal based on the selected signal type
     if args.signal_type:
         input_signal = generate_spectral_test_signal(
@@ -335,10 +348,11 @@ def main(args):
     ###################################################
 
     test_case = str(1)
-    header_file_name = (
-        "../../../audio_signal_chain/TISP_11_02_signal_chain/test_data/staticCase"
+    header_file_name = os.path.join(
+        project_root,
+        "test/audio_signal_chain/TISP_11_02_signal_chain/test_data/staticCase"
         + test_case
-        + ".hpp"
+        + ".hpp",
     )
 
     tensor_to_cpp_header = TensorToCppHeader(header_file_name, mode="new")
