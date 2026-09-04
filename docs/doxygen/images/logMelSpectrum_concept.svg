@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 376" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="ah" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L8 3 L0 6 z" fill="#64748b"/>
+    </marker>
+    <linearGradient id="energyBar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#fcfdbf"/>
+      <stop offset="25%" stop-color="#fea873"/>
+      <stop offset="45%" stop-color="#f1605d"/>
+      <stop offset="62%" stop-color="#c43c75"/>
+      <stop offset="78%" stop-color="#8c2981"/>
+      <stop offset="90%" stop-color="#4a1a6b"/>
+      <stop offset="100%" stop-color="#1b1035"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background (explicit, so it renders on any editor theme) -->
+  <rect x="0" y="0" width="900" height="376" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- title -->
+  <text x="450" y="38" text-anchor="middle" font-size="22" font-weight="700" fill="#1f2937">What is a log-mel spectrogram?</text>
+  <text x="450" y="60" text-anchor="middle" font-size="13" fill="#6b7280">A picture of sound &#8212; how much energy sits at each pitch, over time</text>
+
+  <!-- ============ left: waveform ============ -->
+  <rect x="48" y="96" width="232" height="156" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <line x1="56" y1="174" x2="272" y2="174" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+  <path d="M56 174 Q66 160 76 174 Q85 200 95 174 Q105 134 115 174 Q125 226 135 174 Q144 128 154 174 Q164 212 174 174 Q184 144 193 174 Q203 196 213 174 Q223 158 233 174 Q242 184 252 174 Q262 168 272 174"
+        fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="280" y="266" text-anchor="end" font-size="11" fill="#94a3b8">time &#8594;</text>
+  <text x="164" y="286" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Audio waveform</text>
+  <text x="164" y="303" text-anchor="middle" font-size="11" fill="#64748b">amplitude over time (1-D)</text>
+
+  <!-- ============ transform arrow ============ -->
+  <line x1="296" y1="174" x2="372" y2="174" stroke="#64748b" stroke-width="2.5" marker-end="url(#ah)"/>
+  <text x="334" y="158" text-anchor="middle" font-size="12" fill="#374151">STFT &#183; mel &#183; log</text>
+
+  <!-- ============ right: mel spectrogram heatmap ============ -->
+  <text x="380" y="88" text-anchor="start" font-size="11" fill="#475569">&#8593; higher pitch</text>
+
+  <!-- row 0 (y=96) -->
+  <g stroke="#ffffff" stroke-width="0.75">
+  <rect x="380" y="96" width="26" height="26" fill="#1b1035"/><rect x="406" y="96" width="26" height="26" fill="#1b1035"/><rect x="432" y="96" width="26" height="26" fill="#4a1a6b"/><rect x="458" y="96" width="26" height="26" fill="#1b1035"/><rect x="484" y="96" width="26" height="26" fill="#1b1035"/><rect x="510" y="96" width="26" height="26" fill="#4a1a6b"/><rect x="536" y="96" width="26" height="26" fill="#1b1035"/><rect x="562" y="96" width="26" height="26" fill="#1b1035"/><rect x="588" y="96" width="26" height="26" fill="#4a1a6b"/><rect x="614" y="96" width="26" height="26" fill="#1b1035"/><rect x="640" y="96" width="26" height="26" fill="#1b1035"/><rect x="666" y="96" width="26" height="26" fill="#1b1035"/>
+  <!-- row 1 (y=122) -->
+  <rect x="380" y="122" width="26" height="26" fill="#4a1a6b"/><rect x="406" y="122" width="26" height="26" fill="#4a1a6b"/><rect x="432" y="122" width="26" height="26" fill="#8c2981"/><rect x="458" y="122" width="26" height="26" fill="#4a1a6b"/><rect x="484" y="122" width="26" height="26" fill="#8c2981"/><rect x="510" y="122" width="26" height="26" fill="#4a1a6b"/><rect x="536" y="122" width="26" height="26" fill="#8c2981"/><rect x="562" y="122" width="26" height="26" fill="#4a1a6b"/><rect x="588" y="122" width="26" height="26" fill="#4a1a6b"/><rect x="614" y="122" width="26" height="26" fill="#4a1a6b"/><rect x="640" y="122" width="26" height="26" fill="#1b1035"/><rect x="666" y="122" width="26" height="26" fill="#1b1035"/>
+  <!-- row 2 (y=148) -->
+  <rect x="380" y="148" width="26" height="26" fill="#8c2981"/><rect x="406" y="148" width="26" height="26" fill="#c43c75"/><rect x="432" y="148" width="26" height="26" fill="#c43c75"/><rect x="458" y="148" width="26" height="26" fill="#f1605d"/><rect x="484" y="148" width="26" height="26" fill="#c43c75"/><rect x="510" y="148" width="26" height="26" fill="#f1605d"/><rect x="536" y="148" width="26" height="26" fill="#c43c75"/><rect x="562" y="148" width="26" height="26" fill="#c43c75"/><rect x="588" y="148" width="26" height="26" fill="#8c2981"/><rect x="614" y="148" width="26" height="26" fill="#8c2981"/><rect x="640" y="148" width="26" height="26" fill="#4a1a6b"/><rect x="666" y="148" width="26" height="26" fill="#1b1035"/>
+  <!-- row 3 (y=174) -->
+  <rect x="380" y="174" width="26" height="26" fill="#c43c75"/><rect x="406" y="174" width="26" height="26" fill="#f1605d"/><rect x="432" y="174" width="26" height="26" fill="#fea873"/><rect x="458" y="174" width="26" height="26" fill="#fea873"/><rect x="484" y="174" width="26" height="26" fill="#f1605d"/><rect x="510" y="174" width="26" height="26" fill="#fea873"/><rect x="536" y="174" width="26" height="26" fill="#f1605d"/><rect x="562" y="174" width="26" height="26" fill="#f1605d"/><rect x="588" y="174" width="26" height="26" fill="#c43c75"/><rect x="614" y="174" width="26" height="26" fill="#8c2981"/><rect x="640" y="174" width="26" height="26" fill="#4a1a6b"/><rect x="666" y="174" width="26" height="26" fill="#4a1a6b"/>
+  <!-- row 4 (y=200) -->
+  <rect x="380" y="200" width="26" height="26" fill="#f1605d"/><rect x="406" y="200" width="26" height="26" fill="#fea873"/><rect x="432" y="200" width="26" height="26" fill="#fea873"/><rect x="458" y="200" width="26" height="26" fill="#fcfdbf"/><rect x="484" y="200" width="26" height="26" fill="#fea873"/><rect x="510" y="200" width="26" height="26" fill="#fcfdbf"/><rect x="536" y="200" width="26" height="26" fill="#fea873"/><rect x="562" y="200" width="26" height="26" fill="#f1605d"/><rect x="588" y="200" width="26" height="26" fill="#c43c75"/><rect x="614" y="200" width="26" height="26" fill="#8c2981"/><rect x="640" y="200" width="26" height="26" fill="#8c2981"/><rect x="666" y="200" width="26" height="26" fill="#4a1a6b"/>
+  <!-- row 5 (y=226) -->
+  <rect x="380" y="226" width="26" height="26" fill="#fea873"/><rect x="406" y="226" width="26" height="26" fill="#fcfdbf"/><rect x="432" y="226" width="26" height="26" fill="#fcfdbf"/><rect x="458" y="226" width="26" height="26" fill="#fcfdbf"/><rect x="484" y="226" width="26" height="26" fill="#fcfdbf"/><rect x="510" y="226" width="26" height="26" fill="#fcfdbf"/><rect x="536" y="226" width="26" height="26" fill="#fcfdbf"/><rect x="562" y="226" width="26" height="26" fill="#fea873"/><rect x="588" y="226" width="26" height="26" fill="#f1605d"/><rect x="614" y="226" width="26" height="26" fill="#c43c75"/><rect x="640" y="226" width="26" height="26" fill="#8c2981"/><rect x="666" y="226" width="26" height="26" fill="#4a1a6b"/>
+  </g>
+  <rect x="380" y="96" width="312" height="156" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="692" y="268" text-anchor="end" font-size="11" fill="#94a3b8">time &#8594;</text>
+  <text x="536" y="286" text-anchor="middle" font-size="14" font-weight="700" fill="#334155">Log-mel spectrogram</text>
+  <text x="536" y="303" text-anchor="middle" font-size="11" fill="#64748b">brightness = energy at each pitch &amp; time (2-D)</text>
+
+  <!-- colorbar -->
+  <rect x="708" y="96" width="16" height="156" fill="url(#energyBar)" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="730" y="106" text-anchor="start" font-size="10" fill="#64748b">loud</text>
+  <text x="730" y="250" text-anchor="start" font-size="10" fill="#64748b">quiet</text>
+
+  <!-- ============ bottom explanation ============ -->
+  <line x1="48" y1="320" x2="852" y2="320" stroke="#eef2f7" stroke-width="1"/>
+  <text x="450" y="342" text-anchor="middle" font-size="12" fill="#4b5563">The sound is cut into overlapping short frames; each frame&#8217;s frequencies are grouped onto the perceptual <tspan font-weight="700">mel</tspan> scale and log-compressed &#8212;</text>
+  <text x="450" y="360" text-anchor="middle" font-size="12" fill="#4b5563">turning a 1-D waveform into a 2-D time &#215; pitch image that audio models can &#8220;see.&#8221;</text>
+</svg>

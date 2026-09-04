@@ -445,3 +445,25 @@ float TI_Profile_get_snr(void *pX, void *pY, int outputSize)
    }
    return snr;
 }
+
+float TI_Profile_get_log_snr(void *pX, void *pY, int outputSize, float logOffset)
+{
+   /* Testing parameters */
+   float  snr    = 0.0;
+   double sumSqX = 0.0, sumSqY = 0.0;
+   int    ix;
+   float *pRef    = (float *) pX;
+   float *pTarget = (float *) pY;
+   for (ix = 0; ix < outputSize; ix++) {
+      float valRef    = expf((float) pRef[ix]) - logOffset;
+      float valTarget = expf((float) pTarget[ix]) - logOffset;
+      sumSqX          = sumSqX + ((float) valRef * (float) valRef);
+      sumSqY          = sumSqY + ((float) (valRef - (float) valTarget) * ((float) valRef - (float) valTarget));
+   }
+   if (sumSqX != 0.0f && sumSqY != 0.0f && isfinite(sumSqX) && isfinite(sumSqY)) {
+      /* Normal case: both accumulators are finite and non-zero.
+       * Standard SNR formula: 10 * log10(signal_power / noise_power) */
+      snr = 10.0 * log10(sumSqX / sumSqY);
+   }
+   return snr;
+}

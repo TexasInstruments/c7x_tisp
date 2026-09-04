@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1200" height="360" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <text x="600" y="42" text-anchor="middle" font-size="25" font-weight="700" fill="#0f172a">LogMelSpectrum — processing pipeline</text>
+  <text x="600" y="70" text-anchor="middle" font-size="14" fill="#64748b">waveform &#8594; STFT &#8594; |&#183;|^power &#8594; mel filterbank &#8594; +logOffset &#8594; log</text>
+
+  <!-- Stage boxes: y=150 h=110 -->
+  <!-- Input pX -->
+  <rect x="20"  y="150" width="140" height="110" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="90"  y="196" text-anchor="middle" font-size="16" font-weight="700" fill="#92400e">Input pX</text>
+  <text x="90"  y="217" text-anchor="middle" font-size="11" fill="#92400e">waveform</text>
+  <text x="90"  y="233" text-anchor="middle" font-size="10" fill="#a16207">[numCh &#215; numInputSamples]</text>
+
+  <!-- STFT -->
+  <rect x="190" y="150" width="150" height="110" rx="10" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <text x="265" y="192" text-anchor="middle" font-size="16" font-weight="700" fill="#3730a3">STFT</text>
+  <text x="265" y="212" text-anchor="middle" font-size="10.5" fill="#3730a3">window + batched</text>
+  <text x="265" y="227" text-anchor="middle" font-size="10.5" fill="#3730a3">real FFT (onesided)</text>
+  <text x="265" y="247" text-anchor="middle" font-size="9.5" fill="#6366f1">delegated node</text>
+
+  <!-- |.|^power  (in-node, highlighted) -->
+  <rect x="370" y="150" width="160" height="110" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+  <text x="450" y="190" text-anchor="middle" font-size="16" font-weight="700" fill="#166534">|&#183;|^power</text>
+  <text x="450" y="210" text-anchor="middle" font-size="10.5" fill="#166534">power / magnitude</text>
+  <text x="450" y="225" text-anchor="middle" font-size="10.5" fill="#166534">spectrogram</text>
+  <text x="450" y="247" text-anchor="middle" font-size="9.5" font-weight="700" fill="#15803d">IN-NODE (optimized)</text>
+
+  <!-- Mel MatMul -->
+  <rect x="560" y="150" width="150" height="110" rx="10" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <text x="635" y="192" text-anchor="middle" font-size="16" font-weight="700" fill="#3730a3">Mel MatMul</text>
+  <text x="635" y="212" text-anchor="middle" font-size="10.5" fill="#3730a3">filterbank projection</text>
+  <text x="635" y="227" text-anchor="middle" font-size="10.5" fill="#3730a3">(MMA hardware)</text>
+  <text x="635" y="247" text-anchor="middle" font-size="9.5" fill="#6366f1">delegated node</text>
+
+  <!-- +logOffset -->
+  <rect x="740" y="150" width="130" height="110" rx="10" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <text x="805" y="196" text-anchor="middle" font-size="15" font-weight="700" fill="#3730a3">+ logOffset</text>
+  <text x="805" y="216" text-anchor="middle" font-size="10.5" fill="#3730a3">bias before log</text>
+  <text x="805" y="240" text-anchor="middle" font-size="9.5" fill="#6366f1">AddConstant</text>
+
+  <!-- log -->
+  <rect x="900" y="150" width="110" height="110" rx="10" fill="#e0e7ff" stroke="#4f46e5" stroke-width="2"/>
+  <text x="955" y="196" text-anchor="middle" font-size="16" font-weight="700" fill="#3730a3">log</text>
+  <text x="955" y="216" text-anchor="middle" font-size="10.5" fill="#3730a3">natural log</text>
+  <text x="955" y="240" text-anchor="middle" font-size="9.5" fill="#6366f1">MATHLIB Log</text>
+
+  <!-- Output pY -->
+  <rect x="1040" y="150" width="140" height="110" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="1110" y="196" text-anchor="middle" font-size="16" font-weight="700" fill="#92400e">Output pY</text>
+  <text x="1110" y="217" text-anchor="middle" font-size="11" fill="#92400e">log-mel</text>
+  <text x="1110" y="233" text-anchor="middle" font-size="10" fill="#a16207">[numCh &#215; nWin &#215; nMel]</text>
+
+  <!-- arrows -->
+  <line x1="160" y1="205" x2="188" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="340" y1="205" x2="368" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="530" y1="205" x2="558" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="710" y1="205" x2="738" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="870" y1="205" x2="898" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="1010" y1="205" x2="1038" y2="205" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- buffer labels on the data buses -->
+  <text x="355" y="292" text-anchor="middle" font-size="11" font-weight="600" fill="#0f766e">_pComplex</text>
+  <text x="355" y="307" text-anchor="middle" font-size="9.5" fill="#0f766e">interleaved (re,im)</text>
+  <text x="545" y="292" text-anchor="middle" font-size="11" font-weight="600" fill="#b45309">_pPower</text>
+  <text x="545" y="307" text-anchor="middle" font-size="9.5" fill="#b45309">real spectrogram</text>
+  <text x="725" y="292" text-anchor="middle" font-size="11" font-weight="600" fill="#b45309">_pMelSpec</text>
+  <text x="885" y="292" text-anchor="middle" font-size="11" font-weight="600" fill="#b45309">_pMelSpec</text>
+  <text x="885" y="307" text-anchor="middle" font-size="9.5" fill="#b45309">(in place)</text>
+
+  <!-- footnote -->
+  <text x="600" y="340" text-anchor="middle" font-size="12" fill="#64748b">Streaming node: <tspan font-weight="700" fill="#334155">pState</tspan> carries the unconsumed tail across exec() calls. All stages run batched over numChannels &#215; numWindows frames.</text>
+</svg>
