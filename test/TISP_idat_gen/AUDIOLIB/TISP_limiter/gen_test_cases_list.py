@@ -2,7 +2,6 @@
 """
 Script to generate test_cases_list.csv for TISP_limiter
 This script generates combinations of numChannels, blockSize, and pitch sizes
-with isInterleaved always set to true
 """
 
 import csv
@@ -16,7 +15,6 @@ TEST_PATTERN = "STATIC"
 OUTPUT_DATA_LOCATION = "AUDIOLIB_TEST_OUTPUT_MSMC"
 NUM_REPS = 1
 DATA_TYPE = "AUDIOLIB_FLOAT32"
-IS_INTERLEAVED = 1
 BYPASS_OFF = 0
 BYPASS_ON = 1
 
@@ -50,7 +48,6 @@ def generate_test_cases_list():
         "pitchX",
         "pitchS",
         "pitchY",
-        "isInterleaved",
         "bypassMode",
     ]
 
@@ -62,11 +59,7 @@ def generate_test_cases_list():
     for num_channels, block_size in itertools.product(NUM_CHANNELS, BLOCK_SIZES):
         # For each combination, generate different pitch sizes
 
-        if IS_INTERLEAVED:
-            pitch_x = pitch_s = pitch_y = 4 * num_channels
-
-        else:
-            pitch_x = pitch_s = pitch_y = 4 * block_size
+        pitch_x = pitch_s = pitch_y = 4 * num_channels
 
         # Create the test case
         test_case = [
@@ -80,7 +73,6 @@ def generate_test_cases_list():
             pitch_x,
             pitch_s,
             pitch_y,
-            IS_INTERLEAVED,
             BYPASS_OFF,
         ]
 
@@ -89,11 +81,7 @@ def generate_test_cases_list():
 
     # Append the bypass cases, continuing the geometry-matrix id sequence.
     for num_channels, block_size in BYPASS_CASES:
-        if IS_INTERLEAVED:
-            pitch_x = pitch_s = pitch_y = 4 * num_channels
-
-        else:
-            pitch_x = pitch_s = pitch_y = 4 * block_size
+        pitch_x = pitch_s = pitch_y = 4 * num_channels
 
         test_cases.append(
             [
@@ -107,7 +95,6 @@ def generate_test_cases_list():
                 pitch_x,
                 pitch_s,
                 pitch_y,
-                IS_INTERLEAVED,
                 BYPASS_ON,
             ]
         )
@@ -134,11 +121,7 @@ def generate_test_cases_list():
         num_channels = case["numChannels"]
         block_size = case["blockSize"]
 
-        if IS_INTERLEAVED:
-            pitch_x = pitch_s = pitch_y = 4 * num_channels
-
-        else:
-            pitch_x = pitch_s = pitch_y = 4 * block_size
+        pitch_x = pitch_s = pitch_y = 4 * num_channels
 
         test_cases.append(
             [
@@ -152,7 +135,6 @@ def generate_test_cases_list():
                 pitch_x,
                 pitch_s,
                 pitch_y,
-                IS_INTERLEAVED,
                 BYPASS_OFF,
             ]
         )

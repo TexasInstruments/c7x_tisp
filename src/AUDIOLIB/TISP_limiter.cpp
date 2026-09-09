@@ -27,20 +27,19 @@ Limiter<T>::Limiter(T         *pX,
                     T         *pReleaseCoeff,
                     size_t     numChannels,
                     size_t     blockSize,
-                    size_t     pitchX,
+                    size_t     inPitchBytes,
                     size_t     pitchS,
-                    size_t     pitchY,
-                    bool       isInterleaved,
+                    size_t     outPitchBytes,
                     ErrorCtxt &errorCtx)
     : _pX(pX), _pS(pS), _pY(pY), _pGainState(pGainState), _pThreshold_dB(pThreshold_dB),
       _pKneeWidth_dB(pKneeWidth_dB),
       _pAttackCoeff(pAttackCoeff), _pReleaseCoeff(pReleaseCoeff), _numChannels(numChannels), _blockSize(blockSize),
-      _pitchX(pitchX), _pitchS(pitchS), _pitchY(pitchY), _isInterleaved(isInterleaved), _bypassMode(0U)
+      _pitchX(inPitchBytes), _pitchS(pitchS), _pitchY(outPitchBytes), _bypassMode(0U)
 {
 
    // Initialize _params with the node parameters
-   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(), "numChannels=%zu, blockSize=%zu, isInterleaved=%d",
-                   this->_numChannels, this->_blockSize, this->_isInterleaved);
+   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(), "numChannels=%zu, blockSize=%zu",
+                   this->_numChannels, this->_blockSize);
 
    // Input validation checks
    if (pX == nullptr) {
@@ -73,27 +72,24 @@ Limiter<T>::Limiter(T         *pX,
    else if (blockSize == 0) {
       errorCtx.setInvalidParameterError("Limiter constructor", "blockSize must be greater than zero");
    }
-   else if (isInterleaved != true && isInterleaved != false) {
-      errorCtx.setInvalidParameterError("Limiter constructor", "interleave must be either true or false");
-   }
    else {
       // Determine width and height of processing
-      size_t width  = (this->_isInterleaved) ? this->_numChannels : this->_blockSize;
-      size_t height = (this->_isInterleaved) ? this->_blockSize : this->_numChannels;
+      size_t width  = this->_numChannels;
+      size_t height = this->_blockSize;
 
       // Initialize bufParams with node input and output buffer parameters. Output slot 0 is
       // the audio buffer pY; 
       _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isInputInterleave = isInterleaved ? 1 : 0;
+      _nodeInfo.bufParams.isInputInterleave = 1;
       _nodeInfo.bufParams.widthIn[0]        = width;
       _nodeInfo.bufParams.heightIn[0]       = height;
-      _nodeInfo.bufParams.inPitchBytes[0]   = pitchX;
+      _nodeInfo.bufParams.inPitchBytes[0]   = inPitchBytes;
 
       _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isOutputInterleave = isInterleaved ? 1 : 0;
+      _nodeInfo.bufParams.isOutputInterleave = 1;
       _nodeInfo.bufParams.widthOut[0]        = width;
       _nodeInfo.bufParams.heightOut[0]       = height;
-      _nodeInfo.bufParams.outPitchBytes[0]   = pitchY;
+      _nodeInfo.bufParams.outPitchBytes[0]   = outPitchBytes;
 
       // Define buffer param structures
       AUDIOLIB_bufParams2D_t bufParamsIn;
@@ -104,7 +100,7 @@ Limiter<T>::Limiter(T         *pX,
       bufParamsIn.data_type = AUDIOLIB_element_dType<T>::value;
       bufParamsIn.dim_x     = static_cast<uint32_t>(width);
       bufParamsIn.dim_y     = static_cast<uint32_t>(height);
-      bufParamsIn.stride_y  = static_cast<int32_t>(pitchX);
+      bufParamsIn.stride_y  = static_cast<int32_t>(inPitchBytes);
 
       bufParamsScratch.data_type = AUDIOLIB_element_dType<T>::value;
       bufParamsScratch.dim_x     = static_cast<uint32_t>(width);
@@ -117,7 +113,7 @@ Limiter<T>::Limiter(T         *pX,
       bufParamsOut.data_type = AUDIOLIB_element_dType<T>::value;
       bufParamsOut.dim_x     = static_cast<uint32_t>(width);
       bufParamsOut.dim_y     = static_cast<uint32_t>(height);
-      bufParamsOut.stride_y  = static_cast<int32_t>(pitchY);
+      bufParamsOut.stride_y  = static_cast<int32_t>(outPitchBytes);
 
       /******************************************************************************/
       /* Call init function from AUDIOLIB to for limiter to set SE/SA params         */
@@ -405,19 +401,17 @@ template <typename T> void Limiter<T>::cleanInternalBuffers() noexcept
 
 template <typename T> void Limiter<T>::bypassCopy() noexcept
 {
-   const size_t width    = (_isInterleaved) ? _numChannels : _blockSize;
-   const size_t height   = (_isInterleaved) ? _blockSize : _numChannels;
-   const size_t rowBytes = width * sizeof(T);
+   const size_t rowBytes = _numChannels * sizeof(T);
 
    if (_pX != _pY) {
       if ((_pitchX == rowBytes) && (_pitchY == rowBytes)) {
-         (void) memcpy(_pY, _pX, rowBytes * height);
+         (void) memcpy(_pY, _pX, rowBytes * _blockSize);
       }
       else {
          uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
          const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
 
-         for (size_t i = 0; i < height; i++) {
+         for (size_t i = 0; i < _blockSize; i++) {
             (void) memcpy(&pDst[i * _pitchY], &pSrc[i * _pitchX], rowBytes); // NOLINT(MISRA.PTR.ARITH)
          }
       }
@@ -533,11 +527,8 @@ template <typename T> inline void Limiter<T>::TISP_limiter_abs_exec(void *handle
    using vec        = typename c7x::make_full_vector<T>::type;
    uint32_t vecSize = c7x::element_count_of<vec>::value;
 
-   size_t width  = (this->_isInterleaved) ? this->_numChannels : this->_blockSize;
-   size_t height = (this->_isInterleaved) ? this->_blockSize : this->_numChannels;
-
    // flatten 2D structure into 1D
-   uint32_t numBlocks = static_cast<uint32_t>(height * AUDIOLIB_ceilingDiv(width, vecSize));
+   uint32_t numBlocks = static_cast<uint32_t>(this->_blockSize * AUDIOLIB_ceilingDiv(this->_numChannels, vecSize));
 
    // Define local buffer pointers
    T *pInLocal  = pIn;
@@ -579,11 +570,8 @@ template <typename T> inline void Limiter<T>::TISP_limiter_mul_exec(void *handle
    using vec        = typename c7x::make_full_vector<T>::type;
    uint32_t vecSize = c7x::element_count_of<vec>::value;
 
-   size_t width  = (this->_isInterleaved) ? this->_numChannels : this->_blockSize;
-   size_t height = (this->_isInterleaved) ? this->_blockSize : this->_numChannels;
-
    // flatten 2D structure into 1D
-   uint32_t numBlocks = static_cast<uint32_t>(height * AUDIOLIB_ceilingDiv(width, vecSize));
+   uint32_t numBlocks = static_cast<uint32_t>(this->_blockSize * AUDIOLIB_ceilingDiv(this->_numChannels, vecSize));
 
    // Define local buffer pointers
    T *pIn0Local = pIn0;
@@ -721,10 +709,7 @@ template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(voi
    using vec             = typename c7x::make_full_vector<T>::type;
    uint32_t elementCount = c7x::element_count_of<vec>::value;
 
-   size_t width  = (this->_isInterleaved) ? this->_numChannels : this->_blockSize;
-   size_t height = (this->_isInterleaved) ? this->_blockSize : this->_numChannels;
-
-   uint32_t numBlocks = static_cast<uint32_t>(AUDIOLIB_ceilingDiv(width, elementCount));
+   uint32_t numBlocks = static_cast<uint32_t>(AUDIOLIB_ceilingDiv(this->_numChannels, elementCount));
 
    // Open SE/SA
    __SE0_OPEN(pInLocal, se0Params);
@@ -800,7 +785,7 @@ template <typename T> inline void Limiter<T>::TISP_limiter_gainComputer_exec(voi
       vSmoothedGain      = __vload_pred(vPredState, vAddrState);
 
 #pragma MUST_ITERATE(1, 65535, )
-      for (size_t n = 0; n < height; n++) {
+      for (size_t n = 0; n < this->_blockSize; n++) {
 
          // fetch input vector (in decibel)
          vec vIn = c7x::strm_eng<0, vec>::get_adv();
@@ -888,10 +873,9 @@ Limiter<T>::Limiter(T          *pX,
                     T          *pReleaseCoeff,
                     size_t      numChannels,
                     size_t      blockSize,
-                    size_t      pitchX,
+                    size_t      inPitchBytes,
                     size_t      pitchS,
-                    size_t      pitchY,
-                    bool        isInterleaved,
+                    size_t      outPitchBytes,
                     const char *nodeName,
                     uint32_t    nodeId,
                     ErrorCtxt  &errorCtx)
@@ -905,10 +889,9 @@ Limiter<T>::Limiter(T          *pX,
               pReleaseCoeff,
               numChannels,
               blockSize,
-              pitchX,
+              inPitchBytes,
               pitchS,
-              pitchY,
-              isInterleaved,
+              outPitchBytes,
               errorCtx)
 {
    _nodeInfo.setName(nodeName);

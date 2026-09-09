@@ -304,8 +304,8 @@ void *create_graph()
       auto k8 = TISP::make_unique_node<TISP::AUDIOLIB::Limiter<float>>(
           pGainNChTrimOut, pLimiterScratch, pLimiterOut, pLimiterGainState, pLimiterThreshold, pLimiterKneeWidth,
           pLimiterAttackCoeff, pLimiterReleaseCoeff, NUM_CHANNELS_OUT, BLOCK_SIZE, NUM_CHANNELS_OUT * sizeof(float),
-          NUM_CHANNELS_OUT * sizeof(float), MUTE_NCH_STRIDE_ELEM * sizeof(float), IS_INTERLEAVED, "Limiter", 8,
-          errorCtx); // isInterleaved=IS_INTERLEAVED
+          NUM_CHANNELS_OUT * sizeof(float), MUTE_NCH_STRIDE_ELEM * sizeof(float), "Limiter", 8,
+          errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k8));
       }
