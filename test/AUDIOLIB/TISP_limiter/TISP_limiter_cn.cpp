@@ -33,14 +33,13 @@ void TISP_limiter_exec_cn(void  *pIn,
                           size_t blockSize,
                           size_t pitchX,
                           size_t pitchS,
-                          size_t pitchY,
-                          bool   isInterleaved)
+                          size_t pitchY)
 {
 
    // Localize buffers
-   dataType *pInLocal        = (dataType *) pIn; // Interleaved
+   dataType *pInLocal        = (dataType *) pIn;
    dataType *pGainStateLocal = (dataType *) pGainState;
-   dataType *pOutLocal       = (dataType *) pOut; // Interleaved
+   dataType *pOutLocal       = (dataType *) pOut;
    dataType *pScratchLocal   = (dataType *) pScratch;
 
    dataType *pThresholdLocal    = (dataType *) pThreshold_dB;
@@ -222,5 +221,4 @@ template void TISP_limiter_exec_cn<float>(void  *pIn,
                                           size_t blockSize,
                                           size_t pitchX,
                                           size_t pitchS,
-                                          size_t pitchY,
-                                          bool   isInterleaved);
+                                          size_t pitchY);

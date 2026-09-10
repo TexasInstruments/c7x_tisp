@@ -3,7 +3,7 @@
     "title": "TISP Error Codes Reference",
     "version": "1.0",
     "source_file": "includes/TISP_ErrorCtxt.hpp",
-    "last_updated": "26-May-2026"
+    "last_updated": "9-Sept-2026"
   },
   "error_codes": {
     "0": {
@@ -53,12 +53,18 @@
       "hex_value": "0x00000007",
       "description": "Invalid signal chain error",
       "long_description": "The signal chain or graph structure is invalid or malformed."
+    },
+    "8": {
+      "error_name": "TISP_ERROR_DATA_PROBE_BUSY",
+      "hex_value": "0x00000008",
+      "description": "Data probe busy error",
+      "long_description": "Data probing resource is busy. Do not disturb."
     }
   },
   "version_history": {
     "1.0": {
-      "date": "26-May-2026",
-      "changes": "Initial release with 6 error codes from TISP_ErrorCtxt.hpp"
+      "date": "9-Sept-2026",
+      "changes": "Initial release with 9 error codes from TISP_ErrorCtxt.hpp"
     }
   }
 }

@@ -72,7 +72,7 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
    // file IO for benchmarking
    FILE *fpOutputCSV = fopen("TISP_limiter.csv", "w");
    fprintf(fpOutputCSV, "Kernel, Test ID, Test type, "
-                        "Num channels, Block size, Interleaved data mode, Warm cycles, Perf est cycles, Pass/Fail\n");
+                        "Num channels, Block size, Warm cycles, Perf est cycles, Pass/Fail\n");
 
    // creates custom heap object
    UnitTestHeap myL2Heap(&l2SramHeap[0], L2SRAM_HEAP_SIZE);
@@ -111,7 +111,6 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          size_t   pitchX        = currPrm.pitchX;
          size_t   pitchS        = currPrm.pitchS;
          size_t   pitchY        = currPrm.pitchY;
-         bool     isInterleaved = currPrm.isInterleaved;
          uint32_t bypassMode    = currPrm.bypassMode;
 
          auto pIn           = myL2Heap.allocate64ByteAligned<uint8_t>(inputSize);
@@ -162,8 +161,7 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                 (float *) pIn.get(), (float *) pScratch.get(), (float *) pOut.get(),
                 (float *) pGainState.get(), (float *) pThreshold_dB.get(), (float *) pKneeWidth_dB.get(), (float *) pAttackCoeff.get(),
                 (float *) pReleaseCoeff.get(), static_cast<uint32_t>(numChannels), static_cast<uint32_t>(blockSize),
-                static_cast<uint32_t>(pitchX), static_cast<uint32_t>(pitchS), static_cast<uint32_t>(pitchY),
-                static_cast<bool>(isInterleaved), errorCtx);
+                static_cast<uint32_t>(pitchX), static_cast<uint32_t>(pitchS), static_cast<uint32_t>(pitchY), errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
@@ -252,12 +250,10 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             if (bypassMode != 0U) {
                // bypass copies the input to the output, leaving the limiter gain unapplied
-               size_t   copyWidth  = isInterleaved ? numChannels : blockSize;
-               size_t   copyHeight = isInterleaved ? blockSize : numChannels;
                uint8_t *pSrcCn     = (uint8_t *) pIn.get();
                uint8_t *pDstCn     = (uint8_t *) pOutCn;
-               for (size_t i = 0; i < copyHeight; i++) {
-                  memcpy(&pDstCn[i * pitchY], &pSrcCn[i * pitchX], copyWidth * dataSize);
+               for (size_t i = 0; i < blockSize; i++) {
+                  memcpy(&pDstCn[i * pitchY], &pSrcCn[i * pitchX], numChannels * dataSize);
                }
             }
             else {
@@ -266,7 +262,7 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                                            (float *) pOutCn, (float *) pThreshold_dB.get(),
                                            (float *) pKneeWidth_dB.get(), (float *) pAttackCoeff.get(),
                                            (float *) pReleaseCoeff.get(), numChannels, blockSize, pitchX, pitchS,
-                                           pitchY, isInterleaved);
+                                           pitchY);
             }
 
             status_nat_vs_opt = TI_TEST_KERNEL_PASS;
@@ -308,13 +304,13 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             int32_t warmCycles = pProfile[3 * tpi + 1];
 
-            sprintf(desc, "%s generated input | Num Channels=%d | BlockSize = %d | Interleaved Mode = %d\n",
-                    testPatternString, currPrm.numChannels, currPrm.blockSize, currPrm.isInterleaved);
+            sprintf(desc, "%s generated input | Num Channels=%d | BlockSize = %d\n",
+                    testPatternString, currPrm.numChannels, currPrm.blockSize);
 
             // write to CSV, must happen prior to write to screen because
             // TI_profile_formula_add clears values in counters
-            fprintf(fpOutputCSV, "TISP_limiter, %d, %d, %zu, %zu, %d, %d, %lu, %d\n", testNum, currPrm.testPattern,
-                    numChannels, blockSize, currPrm.isInterleaved, warmCycles, estCycles, !currentTestFail);
+            fprintf(fpOutputCSV, "TISP_limiter, %d, %d, %zu, %zu, %d, %lu, %d\n", testNum, currPrm.testPattern,
+                    numChannels, blockSize, warmCycles, estCycles, !currentTestFail);
 
             TI_profile_add_test(testNum++, currPrm.blockSize * currPrm.numChannels, 0, 0, currentTestFail, desc);
          TISP::handleAllocator().reset();

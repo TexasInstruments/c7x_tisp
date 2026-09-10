@@ -123,8 +123,6 @@ template <typename T> class Limiter final : public VirtualOp {
    size_t _pitchS; /*!< Pitch in bytes of the scratch matrix. */
    size_t _pitchY; /*!< Pitch in bytes of the output matrix. */
 
-   bool _isInterleaved; /*!< Input/output layout: true = interleaved, false = non-interleaved. */
-
    uint32_t _bypassMode; /*!< Bypass mode: `0` applies the limiter, `1` copies input to output. */
 
    TISP::HandlePtr<char> _handle_dB20;         /*!< handle required by AUDIOLIB_dB20 kernel */
@@ -231,9 +229,8 @@ template <typename T> class Limiter final : public VirtualOp {
    /**
     * @brief Copies the input matrix to the output matrix, honouring @ref _pitchX and @ref _pitchY
     *
-    * Used when @ref _bypassMode is non-zero. The copied geometry follows @ref _isInterleaved:
-    * @ref _numChannels columns by @ref _blockSize rows when interleaved, and the transpose of
-    * that otherwise.
+    * Used when @ref _bypassMode is non-zero. The copied geometry follows
+    * @ref _numChannels columns by @ref _blockSize rows.
     *
     * @retval None
     * @throw None
@@ -258,10 +255,9 @@ template <typename T> class Limiter final : public VirtualOp {
 
     * @param[in]  numChannels    : number of channels of input matrix
     * @param[in]  blockSize   : block size of input matrix
-    * @param[in]  pitchX  : Pitch of input matrix in bytes
+    * @param[in]  inPitchBytes  : Pitch of input matrix in bytes
     * @param[in]  pitchS  : Pitch of scratch matrix in bytes
-    * @param[in]  pitchY : Pitch of output matrix in bytes
-    * @param[in]  isInterleaved : Input data is interleaved or not.
+    * @param[in]  outPitchBytes : Pitch of output matrix in bytes
     * @param [in]  errorCtx      : Error context for reporting constructor errors
     *
     */
@@ -275,10 +271,9 @@ template <typename T> class Limiter final : public VirtualOp {
            T         *pReleaseCoeff,
            size_t     numChannels,
            size_t     blockSize,
-           size_t     pitchX,
+           size_t     inPitchBytes,
            size_t     pitchS,
-           size_t     pitchY,
-           bool       isInterleaved, /* Default is set to interleaved data format */
+           size_t     outPitchBytes,
            ErrorCtxt &errorCtx);
 
    /**
@@ -297,10 +292,9 @@ template <typename T> class Limiter final : public VirtualOp {
            T          *pReleaseCoeff,
            size_t      numChannels,
            size_t      blockSize,
-           size_t      pitchX,
+           size_t      inPitchBytes,
            size_t      pitchS,
-           size_t      pitchY,
-           bool        isInterleaved,
+           size_t      outPitchBytes,
            const char *nodeName,
            uint32_t    nodeId,
            ErrorCtxt  &errorCtx);

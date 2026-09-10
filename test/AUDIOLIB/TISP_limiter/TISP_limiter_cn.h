@@ -49,5 +49,4 @@ void TISP_limiter_exec_cn(void  *pIn,
                           size_t blockSize,
                           size_t pitchX,
                           size_t pitchS,
-                          size_t pitchY,
-                          bool   isInterleaved);
+                          size_t pitchY);
