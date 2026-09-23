@@ -5,6 +5,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
+#include <vector>
 
 #if !defined(HOST_EMULATION)
 #include "drivers/dmautils/src/dmautils_autoincrement_3d_priv.h"
@@ -30,11 +32,10 @@ namespace misc {
  *  The template parameter W selects the DMA window mode:
  *    W=1 — sequential: configure → trigger → wait per channel (evict-before-load)
  *    W=2 — parallel:   configure all → trigger all → wait all (ping-pong)
- *    W=3 — reserved for future W=3 window scheduling
  *
  *  The number of transfers n is a runtime constructor argument — no fixed
  *  upper bound.  Each of the n (src, dst, size) tuples is transferred when
- *  the node executes.  A transfer is skipped when either pointer is nullptr.
+ *  the node executes.  All source and destination pointers must be non-null.
  *
  *  On HOST_EMULATION the transfers use memcpy. On target, DmaUtilsAutoInc3d
  *  performs the actual DMA using one hardware channel per buffer.
@@ -53,9 +54,10 @@ class DMAXfer final : public VirtualOp {
 
    int32_t  _n;          /*!< Number of transfers (runtime)                              */
    int32_t  _nChannels;  /*!< DRU channels allocated: 1 for W=1, _n for W=2             */
-   void   **_srcAddrs;   /*!< Source addresses  — heap-allocated array[_n]               */
-   void   **_dstAddrs;   /*!< Destination addrs — heap-allocated array[_n]               */
-   size_t  *_sizes;      /*!< Transfer sizes    — heap-allocated array[_n]               */
+   bool     _initOk = true; /*!< False if UDMA or DmaUtils init failed; exec() is a no-op */
+   std::unique_ptr<void*[]>   _srcAddrs; /*!< Source addresses  — array[_n]              */
+   std::unique_ptr<void*[]>   _dstAddrs; /*!< Destination addrs — array[_n]              */
+   std::unique_ptr<size_t[]>  _sizes;    /*!< Transfer sizes    — array[_n]              */
 
    // W=1: sequential — 1 channel reused, configure→trigger→wait per transfer.
    // W=2: two-phase  — ch0 evicts (phase 1), ch1+ch2 load in parallel (phase 2).
@@ -65,11 +67,12 @@ class DMAXfer final : public VirtualOp {
 #if !defined(HOST_EMULATION)
    // ── DMA engine resources (target only) ───────────────────────────────────
    DMARuntime                    *_rt;              /*!< Borrowed runtime — nullptr means standalone   */
-   uint8_t                       *_dmaUtilsContext; /*!< DmaUtils ctx — owned only when _rt==nullptr  */
-   uint8_t                      **_pTrMemCh;        /*!< TR memory per channel — array[_nChannels]    */
+   AlignedBuffer                  _dmaUtilsContext; /*!< DmaUtils ctx — owned only when _rt==nullptr  */
+   std::unique_ptr<uint8_t*[]>    _pTrMemCh;        /*!< Raw pointer view into _pTrMemBufs             */
+   std::vector<AlignedBuffer>     _pTrMemBufs;      /*!< Aligned TR buffers per channel (owned)        */
    Udma_DrvObjectInt               _udmaDrvObj;     /*!< UDMA driver object — used when _rt==nullptr  */
-   DmaUtilsAutoInc3d_TransferDim  *_transferDim;    /*!< Transfer descriptors  — array[_n]            */
-   int32_t                        *_chId;            /*!< DMA channel IDs       — array[_nChannels]    */
+   std::unique_ptr<DmaUtilsAutoInc3d_TransferDim[]> _transferDim; /*!< Transfer descriptors — array[2*_n] */
+   std::unique_ptr<int32_t[]>     _chId;            /*!< DMA channel IDs       — array[_nChannels]    */
 #endif
 
  public:
@@ -79,16 +82,22 @@ class DMAXfer final : public VirtualOp {
    const char          *getNodeParams()   const noexcept override { return _nodeInfo.getNodeParams();   }
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
+   void  *getInputAddr(size_t index)  const noexcept override;
+   void  *getOutputAddr(size_t index) const noexcept override;
+   size_t getNumInputs()              const noexcept override;
+   size_t getNumOutputs()             const noexcept override;
+
    /**
     * @brief Construct a standalone DMAXfer<W> node that owns its UDMA driver.
     *        Use in unit tests and single-node scenarios.
     *
     * @param n         Number of (src, dst, size) transfer pairs.
-    * @param srcAddrs  Array of n source addresses.  Pass nullptr for a slot to skip it.
-    * @param dstAddrs  Array of n destination addresses.  Pass nullptr for a slot to skip it.
+    * @param srcAddrs  Array of n source addresses.  All elements must be non-null.
+    * @param dstAddrs  Array of n destination addresses.  All elements must be non-null.
     * @param sizes     Array of n transfer sizes in bytes.
     */
-   DMAXfer(int32_t n, void *const *srcAddrs, void *const *dstAddrs, size_t const *sizes);
+   DMAXfer(int32_t n, void *const *srcAddrs, void *const *dstAddrs, size_t const *sizes,
+           ErrorCtxt &errorCtx);
 
    /**
     * @brief Construct a DMAXfer<W> node that borrows a shared DMARuntime.
@@ -97,14 +106,18 @@ class DMAXfer final : public VirtualOp {
     *
     * @param rt         Shared DMARuntime — must outlive this node.
     * @param nChannels  Number of DRU channels this node uses (1 for W=1, 3 for W=2).
-    * @param chIds      Array of nChannels channel IDs assigned to this node.
+    * @param chIds      Array of at least nChannels DRU channel IDs (each in [0, 31])
+    *                   assigned to this node.  The caller is responsible for ensuring
+    *                   the array length matches nChannels; this cannot be verified from
+    *                   a raw pointer.  Each element is range-checked at construction.
     * @param n          Number of (src, dst, size) transfer pairs.
     * @param srcAddrs   Array of n source addresses.
     * @param dstAddrs   Array of n destination addresses.
     * @param sizes      Array of n transfer sizes in bytes.
     */
    DMAXfer(DMARuntime &rt, int32_t nChannels, const int32_t *chIds,
-           int32_t n, void *const *srcAddrs, void *const *dstAddrs, size_t const *sizes);
+           int32_t n, void *const *srcAddrs, void *const *dstAddrs, size_t const *sizes,
+           ErrorCtxt &errorCtx);
 
    /**
     * @brief Execute all n transfers, skipping any with nullptr src or dst.
@@ -124,7 +137,6 @@ class DMAXfer final : public VirtualOp {
 // W encodes DMA window mode; n (runtime) controls the number of transfers.
 extern template class DMAXfer<1>;
 extern template class DMAXfer<2>;
-extern template class DMAXfer<3>;
 
 /** @} */
 

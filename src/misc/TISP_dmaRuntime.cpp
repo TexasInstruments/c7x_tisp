@@ -11,7 +11,7 @@ namespace TISP {
 
 namespace misc {
 
-DMARuntime::DMARuntime(uint32_t udmaInstId, int32_t numChannels)
+DMARuntime::DMARuntime(uint32_t udmaInstId, int32_t numChannels, ErrorCtxt &errorCtx)
 {
 #if !defined(HOST_EMULATION)
    _numCh = numChannels;
@@ -24,13 +24,20 @@ DMARuntime::DMARuntime(uint32_t udmaInstId, int32_t numChannels)
 
    uint32_t retVal = Udma_init(hDrv, &initPrms);
    if (retVal != UDMA_SOK) {
-      (void) printf("[Error] DMARuntime: Udma_init failed (instId=%u)\n", udmaInstId);
+      errorCtx.setLibraryError("DMARuntime constructor", "Udma_init failed", static_cast<int32_t>(retVal));
+      _initOk = false;
    }
 
-   _ctx    = static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getContextSize(_numCh)));
-   retVal  = dmaUtils<uint8_t>::init(_ctx, _numCh, hDrv);
-   if (retVal != UDMA_SOK) {
-      (void) printf("[Error] DMARuntime: dmaUtils::init failed\n");
+   _ctx = AlignedBuffer(static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getContextSize(_numCh))));
+   if (_ctx == nullptr) {
+      errorCtx.setLibraryError("DMARuntime constructor", "memalign failed for DmaUtils context", 0);
+      _initOk = false;
+   } else {
+      retVal = dmaUtils<uint8_t>::init(_ctx.get(), _numCh, hDrv);
+      if (retVal != UDMA_SOK) {
+         errorCtx.setLibraryError("DMARuntime constructor", "dmaUtils::init failed", static_cast<int32_t>(retVal));
+         _initOk = false;
+      }
    }
 #else
    (void) udmaInstId;
@@ -41,8 +48,10 @@ DMARuntime::DMARuntime(uint32_t udmaInstId, int32_t numChannels)
 DMARuntime::~DMARuntime()
 {
 #if !defined(HOST_EMULATION)
-   (void) Udma_deinit(static_cast<Udma_DrvHandle>(&_drv));
-   free(_ctx);
+   if (_initOk) {
+      (void) Udma_deinit(static_cast<Udma_DrvHandle>(&_drv));
+   }
+   // _ctx AlignedBuffer frees the aligned context buffer automatically.
 #endif
 }
 

@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <tisp.hpp>
 #include <TISP_dmaXfer.hpp>
+#include <TISP_ErrorCtxt.hpp>
 #if !defined(HOST_EMULATION)
 #include <kernel/dpl/CacheP.h>
 #endif
@@ -52,6 +53,22 @@ static int TISP_dmaXfer_d(uint32_t *pProfile, uint8_t /*LevelOfFeedback*/)
 #elif !defined(HOST_EMULATION)
    App_dmautilsClecInitDru();
 #endif
+
+   // Single shared UDMA driver instance — avoids multiple Udma_init() calls
+   // sharing the same CLEC/DRU resources across per-test-case constructions.
+   // W=2 needs 3 channels (evict + 2 loads); size the context for the peak.
+   TISP::ErrorCtxt rtErrCtx;
+#if !defined(HOST_EMULATION)
+   TISP::misc::DMARuntime rt(UDMA_INST_ID_0, 3, rtErrCtx);
+#else
+   TISP::misc::DMARuntime rt(0u, 3, rtErrCtx);
+#endif
+   if (!rtErrCtx.isSuccess()) {
+      (void) printf("[Error] DMARuntime init failed: %s\n", rtErrCtx.getMessage());
+      return 1;
+   }
+   static const int32_t chIds_w1[] = {0};
+   static const int32_t chIds_w2[] = {0, 1, 2};
 
    for (int vi = 0; vi < N_EXT_VARIANTS; vi++) {
       uint8_t    *extBase = gExtVariants[vi].extBuf;
@@ -111,11 +128,16 @@ static int TISP_dmaXfer_d(uint32_t *pProfile, uint8_t /*LevelOfFeedback*/)
       }
 
       // ── Profile: init (node construction) ────────────────────────────────
+      TISP::ErrorCtxt nodeErrCtx;
       TI_profile_start(TI_PROFILE_KERNEL_INIT);
       TISP::NodePtr k0 = (currPrm.w == 2U)
-         ? TISP::NodePtr(TISP::make_unique_node<TISP::misc::DMAXfer<2>>((int32_t)currPrm.n, srcAddrs, dstAddrs, sizes))
-         : TISP::NodePtr(TISP::make_unique_node<TISP::misc::DMAXfer<1>>((int32_t)currPrm.n, srcAddrs, dstAddrs, sizes));
+         ? TISP::NodePtr(TISP::make_unique_node<TISP::misc::DMAXfer<2>>(rt, 3, chIds_w2, (int32_t)currPrm.n, srcAddrs, dstAddrs, sizes, nodeErrCtx))
+         : TISP::NodePtr(TISP::make_unique_node<TISP::misc::DMAXfer<1>>(rt, 1, chIds_w1, (int32_t)currPrm.n, srcAddrs, dstAddrs, sizes, nodeErrCtx));
       TI_profile_stop();
+      if (!nodeErrCtx.isSuccess()) {
+         (void) printf("[Error] DMAXfer<%u> init failed: %s\n", currPrm.w, nodeErrCtx.getMessage());
+         currentTestFail = 1;
+      }
 
       // ── Profile: cold exec ────────────────────────────────────────────────
       TI_profile_start(TI_PROFILE_KERNEL_OPT);
@@ -212,6 +234,9 @@ int test_main_d()
    TISP_dmaXfer_testParams_t *prm;
    TISP_dmaXfer_getTestParams(&prm, &test_cases_count);
 
+   if (fail == 0) { printf("\nTest Pass!\n"); }
+   else           { printf("\nTest FAIL!\n"); }
+
    for (int vi = 0; vi < N_EXT_VARIANTS; vi++) {
       const char *memTag = gExtVariants[vi].name;
       for (int32_t i = 0; i < test_cases_count; i++) {
@@ -221,9 +246,6 @@ int test_main_d()
                 profile[3 * run_idx], profile[3 * run_idx + 1], profile[3 * run_idx + 2]);
       }
    }
-
-   if (fail == 0) { printf("\nDMAXfer test: PASS\n"); }
-   else           { printf("\nDMAXfer test: FAIL\n"); }
 
    return fail ? 1 : 0;
 }
