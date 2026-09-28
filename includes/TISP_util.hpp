@@ -41,6 +41,9 @@ class execute {
       if (!NodeProfiler::isInSuperNode()) {
 #pragma FORCEINLINE
          NodeProfiler::resetCounters();
+         // Data probe: count the pass and arm.
+#pragma FORCEINLINE
+         DataProbe::onFrameStart();
       }
       for (auto const &op : myOpVec) {
 #pragma FORCEINLINE
@@ -64,6 +67,9 @@ class execute {
       if (!NodeProfiler::isInSuperNode()) {
 #pragma FORCEINLINE
          NodeProfiler::resetCounters();
+         // Data probe: count the pass and arm.
+#pragma FORCEINLINE
+         DataProbe::onFrameStart();
       }
       for (auto const &op : *myOpVec) {
 #pragma FORCEINLINE
@@ -87,6 +93,9 @@ class execute {
       if (!NodeProfiler::isInSuperNode()) {
 #pragma FORCEINLINE
          NodeProfiler::resetCounters();
+         // Data probe: count the pass and arm.
+#pragma FORCEINLINE
+         DataProbe::onFrameStart();
       }
       for (auto const &op : *myOpVec) {
 #pragma FORCEINLINE

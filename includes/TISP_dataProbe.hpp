@@ -7,6 +7,7 @@
 #include "TISP_ErrorCtxt.hpp"
 #include "TISP_types.hpp"
 #include "TISP_virtualOp.hpp"
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
@@ -17,95 +18,87 @@ namespace TISP {
    @brief Node boundary at which a dataProbe is taken.
  */
 enum class NodeExecPhase : uint8_t {
-   kNodeExecPre  = 0U, /**< Immediately before the node's exec(). */
-   kNodeExecPost = 1U  /**< Immediately after the node's exec(). */
+   kNodeExecPre  = 0U, /**< Before the node's exec(). */
+   kNodeExecPost = 1U  /**< After the node's exec(). */
 };
 
 /**
-   @brief Which side of a node the dataProbe reads.
+   @brief Node side the dataProbe reads.
  */
 enum class DataProbePortType : uint8_t {
-   kDataProbePortInput  = 0U, /**< Read one of the node's input buffers. */
-   kDataProbePortOutput = 1U  /**< Read one of the node's output buffers. */
+   kDataProbePortInput  = 0U, /**< Input port. */
+   kDataProbePortOutput = 1U  /**< Output port. */
 };
 
 /**
-   @brief Lifecycle of the single dataProbe session.
+   @brief Most items in one session.
+ */
+constexpr size_t kMaxDataProbeItems = 32U;
 
-   @details The application drives every transition except
-            @ref DataProbeState::kDataProbeReady, which the graph loop performs when
-            it has filled the destination buffer:
+/**
+   @brief What an item captures.
+ */
+enum class DataProbeType : uint8_t {
+   kDataProbeRaw  = 1U, /**< Channel samples, every frameRate-th frame. */
+   kDataProbeRms  = 2U, /**< RMS of the channel over one frame, float32, every frame. */
+   kDataProbePeak = 3U  /**< Peak |x| of the channel over one frame, float32, every frame. */
+};
 
-            @verbatim
-            off --start()--> idle --arm()--> armed --(graph copies)--> ready
-             ^                 ^                                        |
-             |                 +----------------- release() ------------+
-             +--------------------------- stop() -----------------------
-            @endverbatim
+/**
+   @brief Session state.
 
-            @ref DataProbe::start is only accepted from
-            @ref DataProbeState::kDataProbeOff, so a session that is armed, or that
-            holds a frame the application has not consumed yet, is never
-            discarded behind its back.
+   @verbatim
+   off --start()--> idle --(pass starts)--> armed --(all items filled)--> ready --release(nextBase)--> idle
+   stop(): any state --> off
+   @endverbatim
  */
 enum class DataProbeState : uint8_t {
-   kDataProbeOff   = 0U, /**< No session: the graph loop does nothing. */
-   kDataProbeIdle  = 1U, /**< Session configured, no frame requested. */
-   kDataProbeArmed = 2U, /**< One frame requested; the next matching node fills it. */
-   kDataProbeReady = 3U  /**< Destination buffer holds a frame, waiting to be consumed. */
+   kDataProbeOff   = 0U, /**< No session. */
+   kDataProbeIdle  = 1U, /**< Waiting for the next pass. */
+   kDataProbeArmed = 2U, /**< Current pass is being captured. */
+   kDataProbeReady = 3U  /**< Frame captured, held until release(). */
 };
 
 /**
-   @brief Resolved description of one dataProbe session.
+   @brief One captured item.
+ */
+struct DataProbeItem {
+   uint32_t nodeId{0U};          /**< Node ID. */
+   uint16_t offset{0U};          /**< Destination offset from the session base. */
+   uint8_t  portType{0U};        /**< @ref DataProbePortType. */
+   uint8_t  portIndex{0U};       /**< Port index. */
+   uint8_t  channel{0U};         /**< Channel within the port. */
+   DataProbeType type{DataProbeType::kDataProbeRaw}; /**< What the item captures. */
+};
 
-   @details The geometry fields are resolved once, in @ref DataProbe::start, from
-            the node's @ref NodeBufParams. Buffer geometry is fixed after graph
-            construction, so only the port address has to be re-read at each
-            node boundary (the first and last nodes are re-pointed at the
-            McASP ping/pong buffers every frame).
+/**
+   @brief The single dataProbe session.
  */
 struct DataProbeSession {
-   uint32_t          nodeId{0U};                                       /**< Node whose port is probed. */
-   DataProbePortType portType{DataProbePortType::kDataProbePortInput}; /**< Side of the node that is read. */
-   size_t            portIndex{0U};                                    /**< Port index within that side of the node. */
-   NodeExecPhase     phase{NodeExecPhase::kNodeExecPre};                /**< Boundary at which the port is valid. */
-   uint32_t          channel{0U};                                      /**< Channel to extract from the port. */
-   uint8_t          *dest{nullptr};                                    /**< Application-owned destination buffer. */
-   size_t            destBytes{0U};                                    /**< Capacity of @c dest, in bytes. */
-   size_t            numSamples{0U};                                   /**< Samples in one channel of the port. */
-   size_t            elementSize{0U};                                  /**< Bytes per sample. */
-   size_t            pitchBytes{0U};                                   /**< Row stride of the port, in bytes. */
-   size_t            frameBytes{0U};                                   /**< Bytes one dataProbe writes to @c dest. */
-   bool              isInterleave{false};                              /**< Port layout: interleaved or planar. */
-   volatile DataProbeState state{DataProbeState::kDataProbeOff};       /**< Session lifecycle. */
-   volatile size_t         bytesProbed{0U};                            /**< Bytes written by the last dataProbe. */
+   DataProbeItem           items[kMaxDataProbeItems]{};          /**< Items. */
+   uint8_t                *base{nullptr};                        /**< Destination buffer. */
+   uint64_t                frameCount{0U};                       /**< Graph passes since start(). */
+   uint64_t                frameIndex{0U};                       /**< Frame being captured or ready. */
+   uint16_t                frameRate{1U};                        /**< Raw when frameIndex % frameRate == 0. */
+   uint8_t                 numItems{0U};                         /**< Items in use. */
+   uint8_t                 numRawItems{0U};                      /**< Raw items among them. */
+   volatile uint8_t        remaining{0U};                        /**< Items left to fill in this frame. */
+   volatile DataProbeState state{DataProbeState::kDataProbeOff}; /**< Session state. */
 };
 
 /**
    \class DataProbe
-   @brief Graph-side data probe: copies one channel of one node port into a
-          buffer the application owns.
+   @brief Captures node port data inside the graph loop: per item, raw samples,
+          RMS or peak of one channel, into a buffer the caller owns.
 
-   @details A probe has to read a node's port while that buffer still holds the
-            node's own data. Inter-operator buffers are packed by liveness, so a
-            buffer is recycled as soon as its last consumer has run: anything
-            that reads it after the graph completes sees whichever later node
-            last wrote that memory, not the node it asked for. The copy
-            therefore happens inside the graph loop, at the node boundary.
+   @details Ports are captured at the node boundary because inter-node buffers
+            are reused once their last consumer has run. TISP counts graph
+            passes and arms itself; the caller consumes each ready frame and
+            calls @ref release. One session per executable.
 
-            The split of responsibilities is deliberate:
-            - TISP owns the copy: it knows the port address, layout and pitch.
-            - The application owns the destination buffer, the dataProbe cadence
-              (@ref arm), and the transport of the probed frame.
-
-            One frame is copied per @ref arm, so a graph running with no armed
-            request costs one load and one compare per node boundary. All state
-            is header-only: one session exists per executable.
-
-   @note Not reentrant. @ref start / @ref stop / @ref arm / @ref release run in
-         the application's context; @ref onNodeBoundary runs in the audio frame.
-         Both touch @c state, which is a single byte written by only one of the
-         two sides in any given state, so no lock is needed.
+   @note Not reentrant. @ref addItem validates each item against the graph;
+         the caller lays out the destination offsets. RMS / peak support
+         int8, int16, int32 and float32 ports.
  */
 class DataProbe {
  public:
@@ -115,213 +108,214 @@ class DataProbe {
    /**@{*/
 
    /**
-    *  @brief Configure a dataProbe session against a node port of @c myOpVec.
-    *
-    *  @details Validates the request and resolves the port geometry up front so
-    *           that the per-frame path stays a bounded copy. No data is copied
-    *           until the application calls @ref arm.
-    *
-    *  @note Only accepted while no session is configured. Call @ref stop first
-    *        to reconfigure, so that an armed request or a frame the application
-    *        has not consumed yet is never discarded silently.
-    *
-    *  @param [in] &myOpVec    : Graph to probe.
-    *  @param [in] nodeId      : Node ID to probe, as reported by getNodeId().
-    *  @param [in] portType    : Side of the node to read.
-    *  @param [in] portIndex   : Port index within that side of the node.
-    *  @param [in] channel     : Channel to extract from the port.
-    *  @param [in] dest        : Destination buffer, owned by the caller. Must
-    *                            stay valid until @ref stop.
-    *  @param [in] destBytes   : Capacity of @c dest, in bytes.
-    *  @retval ErrorCode::kNone on success, ErrorCode::kDataProbeBusy if a session is
-    *          already configured, otherwise the reason the request was
-    *          rejected. A rejected request leaves the current session, if any,
-    *          untouched.
+    *  @brief Start configuring a session; clears previous items.
+    *  @param [in] base      : Destination buffer, valid until @ref stop.
+    *  @param [in] frameRate : Raw every frameRate-th frame (>= 1).
+    *  @retval ErrorCode::kNone, kNullPointer if base is null, kDataProbeBusy if a
+    *          session is running, or kInvalidParameter if frameRate is 0.
     */
-   static ErrorCode start(const opVec       &myOpVec,
-                          uint32_t           nodeId,
-                          DataProbePortType  portType,
-                          size_t             portIndex,
-                          uint32_t           channel,
-                          void              *dest,
-                          size_t             destBytes) noexcept
+   static ErrorCode configure(void *base, uint16_t frameRate) noexcept
    {
       DataProbeSession &s = session();
 
       ErrorCode status = ErrorCode::kNone;
 
-      if (s.state != DataProbeState::kDataProbeOff) {
-         status = ErrorCode::kDataProbeBusy;
-      }
-
-      if ((status == ErrorCode::kNone) && ((dest == nullptr) || (destBytes == 0U))) {
+      if (base == nullptr) {
          status = ErrorCode::kNullPointer;
       }
-
-      if ((status == ErrorCode::kNone) && (portType != DataProbePortType::kDataProbePortInput)
-          && (portType != DataProbePortType::kDataProbePortOutput)) {
+      else if (s.state != DataProbeState::kDataProbeOff) {
+         status = ErrorCode::kDataProbeBusy;
+      }
+      else if (frameRate == 0U) {
          status = ErrorCode::kInvalidParameter;
       }
-
-      const bool isInput = (portType == DataProbePortType::kDataProbePortInput);
-
-      const VirtualOp *op = nullptr;
-
-      if (status == ErrorCode::kNone) {
-         for (size_t i = 0U; i < myOpVec.size(); ++i) {
-            if (myOpVec[i]->getNodeId() == nodeId) {
-               op = myOpVec[i].get();
-               break;
-            }
-         }
-         if (op == nullptr) {
-            status = ErrorCode::kInvalidObjectId;
-         }
-      }
-
-      size_t numChannels = 0U;
-      size_t numSamples  = 0U;
-      size_t pitchBytes  = 0U;
-      size_t elementSize = 0U;
-      bool   interleave  = false;
-
-      if (status == ErrorCode::kNone) {
-         const NodeBufParams &bufParams = op->getNodeBufParams();
-         const size_t         numPorts  = isInput ? op->getNumInputs() : op->getNumOutputs();
-         // The geometry arrays below are fixed size, so the index has to be
-         // inside the array bound as well as inside the count the node reports.
-         const size_t maxPorts = isInput ? static_cast<size_t>(kMaxSrcAddr) : static_cast<size_t>(kMaxDstAddr);
-
-         if ((portIndex >= numPorts) || (portIndex >= maxPorts)) {
-            status = ErrorCode::kInvalidParameter;
-         }
-         else {
-            if (isInput) {
-               elementSize = static_cast<size_t>(sizeOf(bufParams.inputDataType));
-               pitchBytes  = bufParams.inPitchBytes[portIndex];
-               interleave  = (bufParams.isInputInterleave != 0U);
-               numChannels = interleave ? bufParams.widthIn[portIndex] : bufParams.heightIn[portIndex];
-               numSamples  = interleave ? bufParams.heightIn[portIndex] : bufParams.widthIn[portIndex];
-            }
-            else {
-               elementSize = static_cast<size_t>(sizeOf(bufParams.outputDataType));
-               pitchBytes  = bufParams.outPitchBytes[portIndex];
-               interleave  = (bufParams.isOutputInterleave != 0U);
-               numChannels = interleave ? bufParams.widthOut[portIndex] : bufParams.heightOut[portIndex];
-               numSamples  = interleave ? bufParams.heightOut[portIndex] : bufParams.widthOut[portIndex];
-            }
-
-            if ((channel >= numChannels) || (numSamples == 0U) || (elementSize == 0U)) {
-               status = ErrorCode::kInvalidParameter;
-            }
-            else if ((numSamples * elementSize) > destBytes) {
-               status = ErrorCode::kMemory;
-            }
-            else {
-               // Request accepted.
-            }
-         }
-      }
-
-      if (status == ErrorCode::kNone) {
-         s.nodeId        = nodeId;
-         s.portType      = portType;
-         s.portIndex     = portIndex;
-         // An input port is only intact before the node runs, since a kernel may
-         // write its output over its input; an output port only after.
-         s.phase         = isInput ? NodeExecPhase::kNodeExecPre : NodeExecPhase::kNodeExecPost;
-         s.channel       = channel;
-         s.dest          = static_cast<uint8_t *>(dest);
-         s.destBytes     = destBytes;
-         s.numSamples    = numSamples;
-         s.elementSize   = elementSize;
-         s.pitchBytes    = pitchBytes;
-         s.frameBytes    = numSamples * elementSize;
-         s.isInterleave  = interleave;
-         s.bytesProbed   = 0U;
-         s.state         = DataProbeState::kDataProbeIdle;
+      else {
+         s.numItems    = 0U;
+         s.numRawItems = 0U;
+         s.base        = static_cast<uint8_t *>(base);
+         s.frameRate   = frameRate;
       }
 
       return status;
    }
 
    /**
-    *  @brief Tear the dataProbe session down. The graph loop stops copying and the
-    *         destination buffer may be reused by the caller.
-    *  @return None.
+    *  @brief Validate and add an item, between @ref configure and @ref start.
+    *  @param [in]  &myOpVec  : Graph.
+    *  @param [in]  nodeId    : Node ID.
+    *  @param [in]  portType  : @ref DataProbePortType.
+    *  @param [in]  portIndex : Port index.
+    *  @param [in]  channel   : Channel within the port.
+    *  @param [in]  type      : @ref DataProbeType value.
+    *  @param [in]  offset    : Destination offset from base (any alignment).
+    *  @param [out] &bytes    : Bytes the item writes per frame, set on success.
+    *  @retval ErrorCode::kNone, kInvalidObjectId (unknown node),
+    *          kInvalidParameter (bad port type, port, channel or type, or a
+    *          port with no samples) or
+    *          kMemory (@ref kMaxDataProbeItems in use).
     */
-   static void stop() noexcept
+   static ErrorCode addItem(const opVec &myOpVec,
+                            uint32_t     nodeId,
+                            uint8_t      portType,
+                            uint8_t      portIndex,
+                            uint8_t      channel,
+                            uint8_t      type,
+                            uint16_t     offset,
+                            size_t      &bytes) noexcept
    {
       DataProbeSession &s = session();
-      s.state         = DataProbeState::kDataProbeOff;
-      s.dest          = nullptr;
-      s.bytesProbed   = 0U;
-   }
 
-   /**
-    *  @brief Request one frame: the next matching node boundary fills the
-    *         destination buffer.
-    *
-    *  @details Call this when the application's dataProbe interval elapses. It is
-    *           ignored unless the session is idle, so a frame that has not been
-    *           consumed yet is never overwritten.
-    *  @retval true if the request was accepted.
-    */
-   static bool arm() noexcept
-   {
-      DataProbeSession &s = session();
-      bool              accepted = (s.state == DataProbeState::kDataProbeIdle);
-      if (accepted) {
-         s.state = DataProbeState::kDataProbeArmed;
+      ErrorCode        status       = ErrorCode::kNone;
+      const bool       isInput      = (portType == static_cast<uint8_t>(DataProbePortType::kDataProbePortInput));
+      const VirtualOp *op           = nullptr;
+      Types            dataType     = Types::kInt32;
+      size_t           pitchBytes   = 0U;
+      bool             isInterleave = false;
+      size_t           numChannels  = 0U;
+      size_t           numSamples   = 0U;
+
+      if ((portType > static_cast<uint8_t>(DataProbePortType::kDataProbePortOutput)) ||
+          (type < static_cast<uint8_t>(DataProbeType::kDataProbeRaw)) ||
+          (type > static_cast<uint8_t>(DataProbeType::kDataProbePeak))) {
+         status = ErrorCode::kInvalidParameter;
       }
-      return accepted;
+      else {
+         op = findNode(myOpVec, nodeId);
+         if (op == nullptr) {
+            status = ErrorCode::kInvalidObjectId;
+         }
+         else if (portIndex >= (isInput ? op->getNumInputs() : op->getNumOutputs())) {
+            status = ErrorCode::kInvalidParameter;
+         }
+         else {
+            geometry(op->getNodeBufParams(), isInput, portIndex, dataType, pitchBytes, isInterleave, numChannels,
+                     numSamples);
+            if ((channel >= numChannels) || (numSamples == 0U)) {
+               status = ErrorCode::kInvalidParameter;
+            }
+         }
+      }
+
+      if ((status == ErrorCode::kNone) && (s.numItems >= kMaxDataProbeItems)) {
+         status = ErrorCode::kMemory;
+      }
+
+      if (status == ErrorCode::kNone) {
+         const DataProbeType itemType = static_cast<DataProbeType>(type);
+         bytes = (itemType == DataProbeType::kDataProbeRaw) ? (numSamples * static_cast<size_t>(sizeOf(dataType)))
+                                                            : sizeof(float);
+         DataProbeItem &it = s.items[s.numItems];
+         it.nodeId    = nodeId;
+         it.offset    = offset;
+         it.portType  = portType;
+         it.portIndex = portIndex;
+         it.channel   = channel;
+         it.type      = itemType;
+         ++s.numItems;
+         if (itemType == DataProbeType::kDataProbeRaw) {
+            ++s.numRawItems;
+         }
+      }
+
+      return status;
    }
 
    /**
-    *  @brief Test whether the destination buffer holds a probed frame.
-    *  @retval true if a frame is waiting to be consumed.
+    *  @brief Start capturing; the next graph pass is frame 0.
+    */
+   static void start() noexcept
+   {
+      DataProbeSession &s = session();
+      s.frameCount = 0U;
+      // Last, so the graph loop never sees a half set-up session.
+      s.state      = DataProbeState::kDataProbeIdle;
+   }
+
+   /**
+    *  @brief Stop capturing.
+    */
+   static void stop() noexcept { session().state = DataProbeState::kDataProbeOff; }
+
+   /**
+    *  @retval true if a captured frame is waiting.
     */
    static bool isReady() noexcept { return (session().state == DataProbeState::kDataProbeReady); }
 
    /**
-    *  @brief Bytes written to the destination buffer by the last dataProbe.
-    *  @retval Byte count, valid while @ref isReady returns true.
+    *  @retval Index of the ready frame, in graph passes since @ref start.
     */
-   static size_t bytesProbed() noexcept { return session().bytesProbed; }
+   static uint64_t frameIndex() noexcept { return session().frameIndex; }
 
    /**
-    *  @brief Release the probed frame once the application has consumed it,
-    *         so the next @ref arm can be honoured.
-    *  @return None.
+    *  @retval true if the ready frame includes raw samples.
     */
-   static void release() noexcept
+   static bool rawCaptured() noexcept { return isRawFrame(session()); }
+
+   /**
+    *  @brief Release the ready frame; the next one is captured at nextBase.
+    *  @param [in] nextBase : Destination buffer for the next frame (may be the
+    *                         same buffer). Item offsets are relative to it.
+    *  @retval ErrorCode::kNone, kNullPointer (nextBase is null; the frame stays
+    *          ready) or kInvalidParameter (no ready frame to release).
+    */
+   static ErrorCode release(void *nextBase) noexcept
    {
       DataProbeSession &s = session();
-      if (s.state == DataProbeState::kDataProbeReady) {
+
+      ErrorCode status = ErrorCode::kNone;
+
+      if (nextBase == nullptr) {
+         status = ErrorCode::kNullPointer;
+      }
+      else if (s.state != DataProbeState::kDataProbeReady) {
+         status = ErrorCode::kInvalidParameter;
+      }
+      else {
+         s.base  = static_cast<uint8_t *>(nextBase);
          s.state = DataProbeState::kDataProbeIdle;
       }
-   }
 
-   /**
-    *  @brief Test whether a dataProbe session is configured.
-    *  @retval true between a successful @ref start and the matching @ref stop.
-    */
-   static bool isRunning() noexcept { return (session().state != DataProbeState::kDataProbeOff); }
+      return status;
+   }
 
    /** @} */
 
    /**
-    *  @brief Node boundary hook, called by @ref execute::graph for every node.
+    *  @brief Called by @ref execute::graph before each top-level pass.
     *
-    *  @details Runs in the caller's context, inside the audio frame, so it does
-    *           the minimum amount of work: bail out unless a frame is armed for
-    *           this node at this phase, then a single channel copy. It is called
-    *           outside the profiler start/stop pair so that it does not pollute
-    *           the per-node cycle counts.
-    *
-    *  @param [in] &op    : Node that is about to run, or has just run.
-    *  @param [in] phase  : Boundary this call represents.
-    *  @return None.
+    *  @details Counts the pass and, unless a frame is held, arms it with the
+    *           number of items to fill. Passes while a frame is held are skipped.
+    */
+   static void onFrameStart() noexcept
+   {
+      DataProbeSession &s = session();
+
+      if (s.state == DataProbeState::kDataProbeOff) {
+         return;
+      }
+
+      const uint64_t frame = s.frameCount;
+      s.frameCount         = frame + 1U;
+
+      if (s.state == DataProbeState::kDataProbeReady) {
+         return; // frame still held: skip this pass
+      }
+
+      s.frameIndex = frame;
+
+      // Raw items only have work on raw frames.
+      const uint8_t count = isRawFrame(s) ? s.numItems : static_cast<uint8_t>(s.numItems - s.numRawItems);
+
+      s.remaining = count;
+      // Last, so the node boundaries never see a stale count.
+      s.state     = (count != 0U) ? DataProbeState::kDataProbeArmed : DataProbeState::kDataProbeIdle;
+   }
+
+   /**
+    *  @brief Called by @ref execute::graph before and after each node: fills
+    *         the items of that node and marks the frame ready when all are done.
+    *  @param [in] &op   : Node.
+    *  @param [in] phase : Before or after exec().
     */
    static void onNodeBoundary(const VirtualOp &op, NodeExecPhase phase) noexcept
    {
@@ -330,42 +324,155 @@ class DataProbe {
       if (s.state != DataProbeState::kDataProbeArmed) {
          return;
       }
-      if ((phase != s.phase) || (op.getNodeId() != s.nodeId)) {
-         return;
-      }
 
-      void *portAddress = (s.portType == DataProbePortType::kDataProbePortInput) ? op.getInputAddr(s.portIndex)
-                                                                                 : op.getOutputAddr(s.portIndex);
-      if (portAddress == nullptr) {
-         // Node reports no address for this port: drop the request rather than
-         // leave the session armed against a port that will never resolve.
-         s.state = DataProbeState::kDataProbeIdle;
-         return;
-      }
+      const uint32_t nodeId   = op.getNodeId();
+      const bool     rawFrame = isRawFrame(s);
 
-      const uint8_t *src = static_cast<const uint8_t *>(portAddress);
+      for (size_t i = 0U; i < s.numItems; ++i) {
+         const DataProbeItem &it = s.items[i];
 
-      if (s.isInterleave) {
-         src += (static_cast<size_t>(s.channel) * s.elementSize);
-         for (size_t sample = 0U; sample < s.numSamples; ++sample) {
-            (void) std::memcpy(&s.dest[sample * s.elementSize], &src[sample * s.pitchBytes], s.elementSize);
+         // Inputs are read before exec() (a kernel may overwrite them), outputs after.
+         const bool          isInput = (it.portType == static_cast<uint8_t>(DataProbePortType::kDataProbePortInput));
+         const NodeExecPhase valid   = isInput ? NodeExecPhase::kNodeExecPre : NodeExecPhase::kNodeExecPost;
+         const bool          isRaw   = (it.type == DataProbeType::kDataProbeRaw);
+
+         if ((phase != valid) || (nodeId != it.nodeId) || (isRaw && !rawFrame)) {
+            continue;
          }
-      }
-      else {
-         (void) std::memcpy(s.dest, &src[static_cast<size_t>(s.channel) * s.pitchBytes], s.frameBytes);
+
+         void *portAddress = isInput ? op.getInputAddr(it.portIndex) : op.getOutputAddr(it.portIndex);
+         if (portAddress == nullptr) {
+            s.state = DataProbeState::kDataProbeIdle; // drop this frame
+            return;
+         }
+
+         Types  dataType     = Types::kInt32;
+         size_t pitchBytes   = 0U;
+         bool   isInterleave = false;
+         size_t numChannels  = 0U;
+         size_t numSamples   = 0U;
+         geometry(op.getNodeBufParams(), isInput, it.portIndex, dataType, pitchBytes, isInterleave, numChannels,
+                  numSamples);
+
+         const size_t   es     = static_cast<size_t>(sizeOf(dataType));
+         const size_t   stride = isInterleave ? pitchBytes : es;
+         const uint8_t *chSrc  = static_cast<const uint8_t *>(portAddress)
+                                 + (static_cast<size_t>(it.channel) * (isInterleave ? es : pitchBytes));
+         uint8_t       *dst    = &s.base[it.offset];
+
+         if (!isRaw) {
+            measure(chSrc, stride, numSamples, dataType, it.type, dst);
+         }
+         else if (isInterleave) {
+            for (size_t k = 0U; k < numSamples; ++k) {
+               (void) std::memcpy(&dst[k * es], &chSrc[k * stride], es);
+            }
+         }
+         else {
+            (void) std::memcpy(dst, chSrc, numSamples * es);
+         }
+
+         s.remaining = s.remaining - 1U;
       }
 
-      s.bytesProbed   = s.frameBytes;
-      s.state         = DataProbeState::kDataProbeReady;
+      if (s.remaining == 0U) {
+         s.state = DataProbeState::kDataProbeReady;
+      }
    }
 
  private:
    /**
-    *  @brief Accessor for the single graph-wide dataProbe session.
-    *
-    *  @details Header-only storage: one definition is emitted across all
-    *           translation units that include this header.
-    *  @retval Reference to the session state.
+    *  @retval true if the current frame is a raw frame.
+    */
+   static bool isRawFrame(const DataProbeSession &s) noexcept { return ((s.frameIndex % s.frameRate) == 0U); }
+
+   /**
+    *  @brief Sum of x^2 and max |x| over n samples of type T.
+    */
+   template <typename T>
+   static void accumulate(const uint8_t *src, size_t stride, size_t n, float &sumSq, float &maxAbs) noexcept
+   {
+      float s = 0.0F;
+      float m = 0.0F;
+
+      for (size_t k = 0U; k < n; ++k) {
+         const T     x = *reinterpret_cast<const T *>(&src[k * stride]);
+         const float v = static_cast<float>(x);
+         const float a = std::fabs(v);
+         s += v * v;
+         m = (a > m) ? a : m;   // select, not std::fmax (a library call on C7x)
+      }
+
+      sumSq  = s;
+      maxAbs = m;
+   }
+
+   /**
+    *  @brief Write the RMS or peak of one channel to dst as float32.
+    */
+   static void measure(const uint8_t *src, size_t stride, size_t n, Types t, DataProbeType type, uint8_t *dst) noexcept
+   {
+      float sumSq  = 0.0F;
+      float maxAbs = 0.0F;
+
+      if (t == Types::kInt8) {
+         accumulate<int8_t>(src, stride, n, sumSq, maxAbs);
+      }
+      else if (t == Types::kInt16) {
+         accumulate<int16_t>(src, stride, n, sumSq, maxAbs);
+      }
+      else if (t == Types::kInt32) {
+         accumulate<int32_t>(src, stride, n, sumSq, maxAbs);
+      }
+      else {
+         accumulate<float>(src, stride, n, sumSq, maxAbs);
+      }
+
+      const float value = (type == DataProbeType::kDataProbeRms)
+                             ? std::sqrt(sumSq * (1.0F / static_cast<float>(static_cast<uint32_t>(n))))
+                             : maxAbs;
+      (void) std::memcpy(dst, &value, sizeof(value));
+   }
+
+   /**
+    *  @brief Port geometry from a node's buffer parameters.
+    */
+   static void geometry(const NodeBufParams &bufParams, bool isInput, size_t portIndex, Types &dataType,
+                        size_t &pitchBytes, bool &isInterleave, size_t &numChannels, size_t &numSamples) noexcept
+   {
+      if (isInput) {
+         dataType     = bufParams.inputDataType;
+         pitchBytes   = bufParams.inPitchBytes[portIndex];
+         isInterleave = (bufParams.isInputInterleave != 0U);
+         numChannels  = isInterleave ? bufParams.widthIn[portIndex] : bufParams.heightIn[portIndex];
+         numSamples   = isInterleave ? bufParams.heightIn[portIndex] : bufParams.widthIn[portIndex];
+      }
+      else {
+         dataType     = bufParams.outputDataType;
+         pitchBytes   = bufParams.outPitchBytes[portIndex];
+         isInterleave = (bufParams.isOutputInterleave != 0U);
+         numChannels  = isInterleave ? bufParams.widthOut[portIndex] : bufParams.heightOut[portIndex];
+         numSamples   = isInterleave ? bufParams.heightOut[portIndex] : bufParams.widthOut[portIndex];
+      }
+   }
+
+   /**
+    *  @retval Node with the given ID, or nullptr.
+    */
+   static const VirtualOp *findNode(const opVec &myOpVec, uint32_t nodeId) noexcept
+   {
+      const VirtualOp *op = nullptr;
+      for (size_t i = 0U; i < myOpVec.size(); ++i) {
+         if (myOpVec[i]->getNodeId() == nodeId) {
+            op = myOpVec[i].get();
+            break;
+         }
+      }
+      return op;
+   }
+
+   /**
+    *  @retval The session (header-only static storage).
     */
    static DataProbeSession &session() noexcept
    {
