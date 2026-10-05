@@ -65,6 +65,14 @@ static void delayReference_cn(const float *inFrame, float *outFrame,
    }
 }
 
+static inline void invStateL2()
+{
+#if !defined(HOST_EMULATION)
+   // DMAXfer wrote gDelayStateL2 behind the CPU cache.
+   (void) CacheP_inv(gDelayStateL2, static_cast<int32_t>(TISP_DDT_MAX_STATE_BYTES_TOTAL), CacheP_TYPE_ALLD);
+#endif
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: compute next power of two >= v
 // ─────────────────────────────────────────────────────────────────────────────
@@ -140,9 +148,36 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
       memset(gDelayStateL2,  0, TISP_DDT_MAX_STATE_BYTES_TOTAL);
       memset(gRefRing,       0, TISP_DDT_MAX_RING_BYTES_TOTAL);
 
+#if !defined(HOST_EMULATION)
+      // DelayDru and DMAXfer do no cache maintenance: push CPU-written input/state to
+      // memory and drop stale output lines so the DMA/DRU and the CPU see the same data.
+      (void) CacheP_wb(gInFrameL2,      static_cast<int32_t>(frameElems * sizeof(float)), CacheP_TYPE_ALLD);
+      (void) CacheP_wb(gDelayStateDdr,  static_cast<int32_t>(TISP_DDT_MAX_STATE_BYTES_TOTAL), CacheP_TYPE_ALLD);
+      (void) CacheP_wb(gDelayStateL2,   static_cast<int32_t>(TISP_DDT_MAX_STATE_BYTES_TOTAL), CacheP_TYPE_ALLD);
+      (void) CacheP_inv(gOutFrameL2_A,  static_cast<int32_t>(frameElems * sizeof(float)), CacheP_TYPE_ALLD);
+#endif
+
       // ══════════════════════════════════════════════════════════════════════
       // APPROACH A — DelayDru<float> (DRU circular DDR ring)
       // ══════════════════════════════════════════════════════════════════════
+
+      // UDMA driver is application-owned: init before the node, deinit after it is destroyed.
+      void *pUdmaDrvHandle = nullptr;
+#if !defined(HOST_EMULATION)
+      Udma_DrvObjectInt udmaDrvObjA;
+      {
+         Udma_InitPrms initPrms;
+         UdmaInitPrms_init(UDMA_INST_ID_0, &initPrms);
+         initPrms.instId    = UDMA_INST_ID_0;
+         initPrms.enableUtc = UTRUE;
+         if (Udma_init(&udmaDrvObjA, &initPrms) != UDMA_SOK) {
+            printf("[tpi=%d] Udma_init failed\n", tpi);
+            fail = 1;
+            continue;
+         }
+         pUdmaDrvHandle = &udmaDrvObjA;
+      }
+#endif
 
       // INIT: node construction
       TISP::ErrorCtxt errCtxA;
@@ -154,6 +189,7 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
             delaySamples,
             static_cast<size_t>(frameSamples),
             static_cast<size_t>(numChannels),
+            pUdmaDrvHandle,
             errCtxA));
       TI_profile_stop();
 
@@ -161,6 +197,9 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
          printf("[tpi=%d] DelayDru<float> construction failed: %s\n",
                 tpi, errCtxA.getMessage());
          fail = 1;
+#if !defined(HOST_EMULATION)
+         (void) Udma_deinit(&udmaDrvObjA);
+#endif
          continue;
       }
 
@@ -177,6 +216,11 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
       delayDru->exec();
       TI_profile_stop();
 
+#if !defined(HOST_EMULATION)
+      // DRU wrote gOutFrameL2_A behind the CPU cache; invalidate before validating.
+      (void) CacheP_inv(gOutFrameL2_A, static_cast<int32_t>(frameElems * sizeof(float)), CacheP_TYPE_ALLD);
+#endif
+
       // Save last warm output A for bit-exact check
       static float outA_saved[TISP_DDT_MAX_FRAME_ELEMS];
       memcpy(outA_saved, gOutFrameL2_A, frameElems * sizeof(float));
@@ -185,7 +229,10 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
       pProfile[6 * tpi + 1] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
       pProfile[6 * tpi + 2] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
 
-      delayDru.reset();  // DelayDru destructor / UDMA deinit
+      delayDru.reset();  // DelayDru destructor
+#if !defined(HOST_EMULATION)
+      (void) Udma_deinit(&udmaDrvObjA);
+#endif
 
       // ── CPU reference (run immediately after A while A's cycles are in the
       //    profile buckets so TI_profile_add_test shows Approach A cycles) ──
@@ -270,6 +317,7 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
             TI_profile_clear_cycle_count_single(TI_PROFILE_KERNEL_OPT_WARM);
             TI_profile_start(TI_PROFILE_KERNEL_OPT_WARM);
             dmaXferIn->exec();
+            invStateL2();
             delayNch->exec();
             dmaXferOut->exec();
             TI_profile_stop();
@@ -278,6 +326,7 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
          TI_profile_clear_cycle_count_single(TI_PROFILE_KERNEL_OPT);
          TI_profile_start(TI_PROFILE_KERNEL_OPT);
          dmaXferIn->exec();
+         invStateL2();
          delayNch->exec();
          dmaXferOut->exec();
          TI_profile_stop();

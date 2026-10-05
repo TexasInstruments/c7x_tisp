@@ -95,7 +95,7 @@ template <typename T> class DelayDru final : public VirtualOp {
    // ── DMA engine resources (target only) — single owned DRU channel (id 0) ──
    uint8_t           *_dmaUtilsContext; /*!< DmaUtils ctx sized for 1 channel */
    uint8_t            *_pTrMem;         /*!< TR memory, reused for write-in + every read-out */
-   Udma_DrvObjectInt    _udmaDrvObj;    /*!< Owned UDMA driver object */
+   Udma_DrvHandle       _drvHandle;     /*!< Application-owned UDMA driver handle (not init'd/deinit'd here) */
    int32_t              _chId;          /*!< Owned DRU channel id (always 0) */
 
    // ── Transfer descriptor templates — built ONCE in the constructor (syncType,
@@ -132,7 +132,10 @@ template <typename T> class DelayDru final : public VirtualOp {
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
    /**
-    * @brief Construct a standalone DelayDru<T> node that owns its UDMA driver.
+    * @brief Construct a DelayDru<T> node that uses an application-owned UDMA driver.
+    *
+    * The application must have called @c Udma_init() on the driver object before
+    * constructing the node and must @c Udma_deinit() it after the node is destroyed.
     *
     * @param [in,out] pIn           L2 input frame  [numChannels][frameSamples], planar.
     * @param [out]    pOut          L2 output frame [numChannels][frameSamples], planar.
@@ -141,6 +144,8 @@ template <typename T> class DelayDru final : public VirtualOp {
     * @param [in]     pDelaySamples Per-channel delay in samples [numChannels].
     * @param [in]     frameSamples  Samples per channel per frame.
     * @param [in]     numChannels   Number of channels.
+    * @param [in]     pUdmaDrvHandle Initialised @c Udma_DrvHandle owned by the application
+    *                               (ignored, may be nullptr, on HOST_EMULATION).
     * @param [in,out] errorCtx      Error context for reporting constructor errors.
     */
    DelayDru(T         *pIn,
@@ -149,6 +154,7 @@ template <typename T> class DelayDru final : public VirtualOp {
             uint32_t  *pDelaySamples,
             size_t     frameSamples,
             size_t     numChannels,
+            void      *pUdmaDrvHandle,
             ErrorCtxt &errorCtx);
 
    /**
@@ -163,6 +169,7 @@ template <typename T> class DelayDru final : public VirtualOp {
             uint32_t   *pDelaySamples,
             size_t      frameSamples,
             size_t      numChannels,
+            void       *pUdmaDrvHandle,
             const char *nodeName,
             uint32_t    nodeId,
             ErrorCtxt  &errorCtx);

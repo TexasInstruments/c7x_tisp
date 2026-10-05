@@ -47,9 +47,8 @@ template <typename T> size_t DelayDru<T>::ringBytes(size_t frameSamples, uint32_
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Constructor — owns UDMA driver (standalone; mirrors DMAXfer<1>'s standalone
-// ctor in TISP_dmaXfer.cpp). ALL one-time setup lives here: DmaUtils/UDMA
-// init, TR memory allocation, AND the burst-shaped circular TransferProp
+// Constructor — uses an application-owned UDMA driver handle. ALL one-time
+// setup lives here: DmaUtils init, TR memory allocation, AND the burst-shaped circular TransferProp
 // templates (write-in bulk/tail, read-out bulk/tail). None of this is
 // recomputed in exec() -- only the moving src/dst pointers are refreshed
 // there, per frame.
@@ -62,6 +61,7 @@ DelayDru<T>::DelayDru(T         *pIn,
                       uint32_t  *pDelaySamples,
                       size_t     frameSamples,
                       size_t     numChannels,
+                      void      *pUdmaDrvHandle,
                       ErrorCtxt &errorCtx)
     : _pIn(pIn), _pOut(pOut), _pRingDdr(static_cast<uint8_t *>(pRingDdr)), _delaySamples(nullptr),
       _frameSamples(frameSamples), _numChannels(numChannels), _maxDelay(0), _ringSamplesPerCh(0),
@@ -85,6 +85,13 @@ DelayDru<T>::DelayDru(T         *pIn,
    if (numChannels == 0) {
       errorCtx.setInvalidParameterError("DelayDru constructor", "numChannels must be greater than zero");
    }
+#if !defined(HOST_EMULATION)
+   if (pUdmaDrvHandle == nullptr) {
+      errorCtx.setNullPointerError("DelayDru constructor", "UDMA driver handle pUdmaDrvHandle is null");
+   }
+#else
+   (void) pUdmaDrvHandle;
+#endif
 
    // Only proceed with initialization if all validation checks passed
    if (errorCtx.isSuccess()) {
@@ -134,23 +141,16 @@ DelayDru<T>::DelayDru(T         *pIn,
       _dmaUtilsContext = static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getContextSize(1)));
       _pTrMem          = static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getTrMemReq(1)));
 
-      // Initialise UDMA driver (owned by this node — standalone, like DMAXfer<1>).
-      Udma_InitPrms  initPrms;
-      Udma_DrvHandle drvHandle = static_cast<Udma_DrvHandle>(&_udmaDrvObj);
-      UdmaInitPrms_init(UDMA_INST_ID_0, &initPrms);
-      initPrms.instId    = UDMA_INST_ID_0;
-      initPrms.enableUtc = UTRUE;
-      uint32_t retVal    = Udma_init(drvHandle, &initPrms);
-      if (UDMA_SOK != retVal) {
-         errorCtx.setLibraryError("DelayDru constructor", "UDMA init failed", static_cast<int32_t>(retVal));
-      }
+      // UDMA driver is initialised and owned by the application.
+      _drvHandle = static_cast<Udma_DrvHandle>(pUdmaDrvHandle);
+      uint32_t retVal = UDMA_SOK;
 
-      // Initialise the DmaUtils context for the single owned channel. TRs themselves
+      // Initialise the DmaUtils context for the single channel. TRs themselves
       // are built directly against the raw DmaUtilsAutoInc3d_* API (below) — NOT via
       // dmaUtils<T>::configure_channel(), which hardcodes circSize1=0 / addrMode=LINEAR
       // and therefore cannot express circular addressing.
       if (errorCtx.isSuccess()) {
-         retVal = dmaUtils<uint8_t>::init(_dmaUtilsContext, 1, drvHandle);
+         retVal = dmaUtils<uint8_t>::init(_dmaUtilsContext, 1, _drvHandle);
          if (retVal != UDMA_SOK) {
             errorCtx.setLibraryError("DelayDru constructor", "DmaUtils init failed", static_cast<int32_t>(retVal));
          }
@@ -255,10 +255,11 @@ DelayDru<T>::DelayDru(T          *pIn,
                       uint32_t   *pDelaySamples,
                       size_t      frameSamples,
                       size_t      numChannels,
+                      void       *pUdmaDrvHandle,
                       const char *nodeName,
                       uint32_t    nodeId,
                       ErrorCtxt  &errorCtx)
-    : DelayDru(pIn, pOut, pRingDdr, pDelaySamples, frameSamples, numChannels, errorCtx)
+    : DelayDru(pIn, pOut, pRingDdr, pDelaySamples, frameSamples, numChannels, pUdmaDrvHandle, errorCtx)
 {
    _nodeInfo.setName(nodeName);
    _nodeInfo.nodeId = nodeId;
@@ -330,14 +331,14 @@ template <typename T> void DelayDru<T>::runTr(DmaUtilsAutoInc3d_TransferProp *tp
 template <typename T> void DelayDru<T>::exec() noexcept
 {
 #if !defined(HOST_EMULATION)
-   // Ring is non-cacheable DDR — no cache op needed on it. _pIn/_pOut are cacheable L2SRAM.
-   CacheP_wb(_pIn, static_cast<int32_t>(_frameBytesTotal), CacheP_TYPE_ALL);
-   CacheP_inv(_pOut, static_cast<int32_t>(_frameBytesTotal), CacheP_TYPE_ALL);
-
+   // The DRU reads/writes _pIn/_pOut (L2SRAM) directly and the ring is non-cacheable DDR, so no
+   // cache maintenance is done here. Callers own coherence of _pIn/_pOut with the CPU.
    uint8_t *pInBytes  = reinterpret_cast<uint8_t *>(_pIn);
    uint8_t *pOutBytes = reinterpret_cast<uint8_t *>(_pOut);
 
-   // ---- Write-in: single SYNC_2D TR, all channels, only pointers move per frame. ----
+   // ---- Write-in first: single SYNC_2D TR, all channels. Must precede read-out so delays
+   // shorter than a frame read the current frame's samples; ring >= frame + maxDelay
+   // guarantees it never overwrites samples still to be read. ----
    const size_t writeByteOff = _writeOff * sizeof(T);
    _tpWriteInBulk.ioPointers.srcPtr = pInBytes;
    _tpWriteInBulk.ioPointers.dstPtr = _pRingDdr + writeByteOff;
@@ -398,7 +399,6 @@ template <typename T> DelayDru<T>::~DelayDru()
 #if !defined(HOST_EMULATION)
    free(_pTrMem);
    free(_dmaUtilsContext);
-   (void) Udma_deinit(static_cast<Udma_DrvHandle>(&_udmaDrvObj));
 #endif
    delete[] _chRingSampOff;
    delete[] _delaySamples;
