@@ -5,23 +5,27 @@
 // Two-approach delay comparison test — MATHLIB/dmaXfer profiling pattern.
 // Ported from dmautils_delay_circular_poc/dmautils_delay_circular.c.
 //
-//   Approach A — TISP::misc::DelayDru<float>  (DRU circular, DDR-resident ring).
-//   Approach B — TISP::misc::DMAXfer<1> (state DDR->L2) +
+//   Approach A — TISP::misc::DelayDru<float>  (DRU circular, external-memory ring).
+//   Approach B — TISP::misc::DMAXfer<1> (state ext->L2) +
 //                TISP::AUDIOLIB::DelayNChannel<float> (L2, linear mode) +
-//                TISP::misc::DMAXfer<1> (state L2->DDR).
+//                TISP::misc::DMAXfer<1> (state L2->ext).
+//
+// "External memory" is DDR on AM62D. On AM275 the same test cases run twice:
+// once with the ring/state in OCRAM (.ddrData maps to OCRAM there) and once in
+// HyperRAM (.hyperRamData); see gExtVariants in the memory map.
 //
 // Each approach is profiled (INIT / COLD / WARM) per test case using the
 // TI_profile_* API, exactly mirroring TISP_dmaXfer_test.cpp.  Both approaches
 // are verified bit-exact against a ported CPU reference for every test case.
 //
 // DEVIATION FROM SPEC: on-target the ring (A) and persistent state (B) should
-// live in a non-cacheable DDR region (.ddr_state_nc, MAIR4) for full DRU
+// live in a non-cacheable external region (.ddr_state_nc, MAIR4) for full DRU
 // bandwidth.  The tisp repo has no such linker region; both buffers use the
 // standard cacheable .ddrData section.  This does not affect the required
 // HOST_EMULATION correctness gate.
 
-#include "TISP_delayDru_druDelay_memory_map.hpp"
-#include "TISP_delayDru_druDelay_idat.h"
+#include "TISP_delayDru_memory_map.hpp"
+#include "TISP_delayDru_idat.h"
 #include "TISP_test.h"
 
 #include <cstdio>
@@ -89,18 +93,18 @@ static uint32_t nextPow2(uint32_t v)
 // Main test function — MATHLIB/dmaXfer profiling pattern
 // ─────────────────────────────────────────────────────────────────────────────
 
-static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
+static int TISP_delayDru_d(uint32_t *pProfile,
                                         uint8_t  /*LevelOfFeedback*/)
 {
    int32_t test_cases;
-   TISP_delayDru_druDelay_testParams_t *prm;
-   TISP_delayDru_druDelay_getTestParams(&prm, &test_cases);
+   TISP_delayDru_testParams_t *prm;
+   TISP_delayDru_getTestParams(&prm, &test_cases);
 
-   TI_profile_init("TISP_delayDru_druDelay");
+   TI_profile_init("TISP_delayDru");
 
-   FILE *fpOutputCSV = fopen("TISP_delayDru_druDelay.csv", "w+");
+   FILE *fpOutputCSV = fopen("TISP_delayDru.csv", "w+");
    fprintf(fpOutputCSV,
-           "Kernel, Test ID, numCh, frameSmp, maxDelay, statKB, "
+           "Kernel, Test ID, Mem, numCh, frameSmp, maxDelay, statKB, "
            "Init_A, Warm_A, Init_B, Warm_B, Pass/Fail\n");
 
    // CLEC / DRU initialisation — must happen once before any DMA transfer
@@ -114,8 +118,24 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
    int32_t fail = 0;
    static const uint32_t APPROACH_B_MAX_STATE_BYTES = 700U * 1024U;
 
+   // One UDMA driver + one DmaUtils context (1 channel) shared by every node in every case:
+   // DelayDru borrows the driver handle, the Approach-B DMAXfer nodes borrow the context and
+   // reuse channel 0. Creating a driver/context per node leaks DRU channels across cases.
+#if !defined(HOST_EMULATION)
+   TISP::misc::DMARuntime dmaRt(UDMA_INST_ID_0, 1);
+#else
+   TISP::misc::DMARuntime dmaRt(0U, 1);
+#endif
+   const int32_t          dmaChIds[1] = { 0 };
+
+   for (int vi = 0; vi < N_EXT_VARIANTS; vi++) {
+   uint8_t    *ringExt  = TISP_DDT_ALIGN_UP(gExtVariants[vi].ring, TISP_DDT_MAX_RING_BYTES_PER_CH);
+   float      *stateExt = gExtVariants[vi].state;
+   const char *memTag   = gExtVariants[vi].name;
+
    for (int32_t tpi = 0; tpi < test_cases; tpi++) {
-      TISP_delayDru_druDelay_testParams_t currPrm = prm[tpi];
+      const int32_t runIdx = vi * test_cases + tpi;
+      TISP_delayDru_testParams_t currPrm = prm[tpi];
       int32_t currentTestFail = 0;
 
       const uint32_t numChannels  = currPrm.numChannels;
@@ -143,8 +163,8 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
       }
 
       // ── Clear all state for a fresh start on every test case ─────────────
-      memset(gRingDdr,       0, TISP_DDT_MAX_RING_BYTES_TOTAL);
-      memset(gDelayStateDdr, 0, TISP_DDT_MAX_STATE_BYTES_TOTAL);
+      memset(ringExt,        0, TISP_DDT_MAX_RING_BYTES_TOTAL);
+      memset(stateExt,       0, TISP_DDT_MAX_STATE_BYTES_TOTAL);
       memset(gDelayStateL2,  0, TISP_DDT_MAX_STATE_BYTES_TOTAL);
       memset(gRefRing,       0, TISP_DDT_MAX_RING_BYTES_TOTAL);
 
@@ -152,31 +172,19 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
       // DelayDru and DMAXfer do no cache maintenance: push CPU-written input/state to
       // memory and drop stale output lines so the DMA/DRU and the CPU see the same data.
       (void) CacheP_wb(gInFrameL2,      static_cast<int32_t>(frameElems * sizeof(float)), CacheP_TYPE_ALLD);
-      (void) CacheP_wb(gDelayStateDdr,  static_cast<int32_t>(TISP_DDT_MAX_STATE_BYTES_TOTAL), CacheP_TYPE_ALLD);
+      (void) CacheP_wb(stateExt,       static_cast<int32_t>(TISP_DDT_MAX_STATE_BYTES_TOTAL), CacheP_TYPE_ALLD);
       (void) CacheP_wb(gDelayStateL2,   static_cast<int32_t>(TISP_DDT_MAX_STATE_BYTES_TOTAL), CacheP_TYPE_ALLD);
       (void) CacheP_inv(gOutFrameL2_A,  static_cast<int32_t>(frameElems * sizeof(float)), CacheP_TYPE_ALLD);
 #endif
 
       // ══════════════════════════════════════════════════════════════════════
-      // APPROACH A — DelayDru<float> (DRU circular DDR ring)
+      // APPROACH A — DelayDru<float> (DRU circular external-memory ring)
       // ══════════════════════════════════════════════════════════════════════
 
-      // UDMA driver is application-owned: init before the node, deinit after it is destroyed.
+      // UDMA driver is application-owned: shared from dmaRt for every case.
       void *pUdmaDrvHandle = nullptr;
 #if !defined(HOST_EMULATION)
-      Udma_DrvObjectInt udmaDrvObjA;
-      {
-         Udma_InitPrms initPrms;
-         UdmaInitPrms_init(UDMA_INST_ID_0, &initPrms);
-         initPrms.instId    = UDMA_INST_ID_0;
-         initPrms.enableUtc = UTRUE;
-         if (Udma_init(&udmaDrvObjA, &initPrms) != UDMA_SOK) {
-            printf("[tpi=%d] Udma_init failed\n", tpi);
-            fail = 1;
-            continue;
-         }
-         pUdmaDrvHandle = &udmaDrvObjA;
-      }
+      pUdmaDrvHandle = dmaRt.drvHandle();
 #endif
 
       // INIT: node construction
@@ -185,7 +193,7 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
       TISP::NodePtr delayDru = TISP::NodePtr(
          TISP::make_unique_node<TISP::misc::DelayDru<float>>(
             gInFrameL2, gOutFrameL2_A,
-            static_cast<void *>(gRingDdr),
+            static_cast<void *>(ringExt),
             delaySamples,
             static_cast<size_t>(frameSamples),
             static_cast<size_t>(numChannels),
@@ -193,13 +201,16 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
             errCtxA));
       TI_profile_stop();
 
+      if (!delayDru) {
+         printf("[%s tpi=%d] DelayDru node allocation failed (node arena full: %zu/%zu bytes)\n",
+                memTag, tpi, TISP::nodeAllocator().getBytesUsed(), TISP::nodeAllocator().getBufferSize());
+         fail = 1;
+         continue;
+      }
       if (!errCtxA.isSuccess()) {
          printf("[tpi=%d] DelayDru<float> construction failed: %s\n",
                 tpi, errCtxA.getMessage());
          fail = 1;
-#if !defined(HOST_EMULATION)
-         (void) Udma_deinit(&udmaDrvObjA);
-#endif
          continue;
       }
 
@@ -225,14 +236,11 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
       static float outA_saved[TISP_DDT_MAX_FRAME_ELEMS];
       memcpy(outA_saved, gOutFrameL2_A, frameElems * sizeof(float));
 
-      pProfile[6 * tpi + 0] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
-      pProfile[6 * tpi + 1] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
-      pProfile[6 * tpi + 2] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
+      pProfile[6 * runIdx + 0] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
+      pProfile[6 * runIdx + 1] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
+      pProfile[6 * runIdx + 2] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
 
-      delayDru.reset();  // DelayDru destructor
-#if !defined(HOST_EMULATION)
-      (void) Udma_deinit(&udmaDrvObjA);
-#endif
+      delayDru.reset();  // DelayDru destructor (closes its DRU channel; driver stays with dmaRt)
 
       // ── CPU reference (run immediately after A while A's cycles are in the
       //    profile buckets so TI_profile_add_test shows Approach A cycles) ──
@@ -257,24 +265,25 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
       fail = fail || currentTestFail_A;
 
       char desc[128];
-      snprintf(desc, sizeof(desc), "ch=%u frm=%u maxD=%u stKB=%u [A]",
-               numChannels, frameSamples, maxDelay, stateBytesTotal / 1024U);
+      snprintf(desc, sizeof(desc), "%s ch=%u frm=%u maxD=%u stKB=%u [A]",
+               memTag, numChannels, frameSamples, maxDelay, stateBytesTotal / 1024U);
       // TI_PROFILE_KERNEL_* buckets still hold Approach A values here
       TI_profile_add_test(currPrm.testID, (int)frameElems, 0, 0,
                           currentTestFail_A, desc);
 
       // ══════════════════════════════════════════════════════════════════════
-      // APPROACH B — DMAXfer<1> (state DDR->L2) + DelayNChannel + DMAXfer<1>
+      // APPROACH B — DMAXfer<1> (state ext->L2) + DelayNChannel + DMAXfer<1>
       // ══════════════════════════════════════════════════════════════════════
-      // State DDR is already zero (cleared above); L2 state is also zero.
-      // DMAXfer addresses are local but DMAXfer<1> makes heap copies.
+      // External state is already zero (cleared above); L2 state is also zero.
+      // DMAXfer addresses are local but DMAXfer<1> makes heap copies. Both DMAXfer nodes borrow
+      // dmaRt and run serially on its channel 0.
 
       const bool runApproachB = (stateBytesTotal <= APPROACH_B_MAX_STATE_BYTES);
       if (runApproachB) {
-         void  *stateInSrc[1]  = { static_cast<void *>(gDelayStateDdr) };
+         void  *stateInSrc[1]  = { static_cast<void *>(stateExt) };
          void  *stateInDst[1]  = { static_cast<void *>(gDelayStateL2)  };
          void  *stateOutSrc[1] = { static_cast<void *>(gDelayStateL2)  };
-         void  *stateOutDst[1] = { static_cast<void *>(gDelayStateDdr) };
+         void  *stateOutDst[1] = { static_cast<void *>(stateExt) };
          size_t stateSize[1]   = { static_cast<size_t>(stateBytesTotal) };
 
          // INIT B: construct all three B nodes
@@ -282,7 +291,7 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
          TI_profile_start(TI_PROFILE_KERNEL_INIT);
          TISP::NodePtr dmaXferIn = TISP::NodePtr(
             TISP::make_unique_node<TISP::misc::DMAXfer<1>>(
-               1, stateInSrc, stateInDst, stateSize));
+               dmaRt, 1, dmaChIds, 1, stateInSrc, stateInDst, stateSize));
          TISP::NodePtr delayNch = TISP::NodePtr(
             TISP::make_unique_node<TISP::AUDIOLIB::DelayNChannel<float>>(
                gInFrameL2,
@@ -302,9 +311,16 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
                errCtxB));
          TISP::NodePtr dmaXferOut = TISP::NodePtr(
             TISP::make_unique_node<TISP::misc::DMAXfer<1>>(
-               1, stateOutSrc, stateOutDst, stateSize));
+               dmaRt, 1, dmaChIds, 1, stateOutSrc, stateOutDst, stateSize));
          TI_profile_stop();
 
+         // make_unique_node returns null (without touching errCtx) when the node arena is full.
+         if (!dmaXferIn || !delayNch || !dmaXferOut) {
+            printf("[%s tpi=%d] Approach B node allocation failed (node arena full: %zu/%zu bytes)\n",
+                   memTag, tpi, TISP::nodeAllocator().getBytesUsed(), TISP::nodeAllocator().getBufferSize());
+            fail = 1;
+            continue;
+         }
          if (!errCtxB.isSuccess()) {
             printf("[tpi=%d] DelayNChannel<float> construction failed: %s\n",
                    tpi, errCtxB.getMessage());
@@ -335,13 +351,15 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
          static float outB_saved[TISP_DDT_MAX_FRAME_ELEMS];
          memcpy(outB_saved, gOutFrameL2_B, frameElems * sizeof(float));
 
-         pProfile[6 * tpi + 3] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
-         pProfile[6 * tpi + 4] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
-         pProfile[6 * tpi + 5] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
+         pProfile[6 * runIdx + 3] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
+         pProfile[6 * runIdx + 4] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
+         pProfile[6 * runIdx + 5] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
 
-         dmaXferIn.reset();
-         delayNch.reset();
+         // Release in reverse construction order: the node arena is a bump allocator and only
+         // reclaims the most recent block, so FIFO release leaks dmaXferIn + delayNch every case.
          dmaXferOut.reset();
+         delayNch.reset();
+         dmaXferIn.reset();
 
          // ── Verify B vs reference (reference already computed above after A) ──
          int32_t statusB = TI_compare_mem_2D_float(
@@ -352,22 +370,23 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
          currentTestFail = currentTestFail_A || currentTestFail_B;
          fail = fail || currentTestFail_B;
       } else {
-         pProfile[6 * tpi + 3] = 0U;
-         pProfile[6 * tpi + 4] = 0U;
-         pProfile[6 * tpi + 5] = 0U;
+         pProfile[6 * runIdx + 3] = 0U;
+         pProfile[6 * runIdx + 4] = 0U;
+         pProfile[6 * runIdx + 5] = 0U;
          currentTestFail = currentTestFail_A;
       }
 
       // ── CSV row ───────────────────────────────────────────────────────────
       fprintf(fpOutputCSV,
-              "TISP_delayDru_druDelay, %u, %u, %u, %u, %u, "
+              "TISP_delayDru, %u, %s, %u, %u, %u, %u, "
               "%u, %u, %u, %u, %d\n",
-              currPrm.testID, numChannels, frameSamples, maxDelay,
+              currPrm.testID, memTag, numChannels, frameSamples, maxDelay,
               stateBytesTotal / 1024U,
-              pProfile[6 * tpi + 0], pProfile[6 * tpi + 1],
-              pProfile[6 * tpi + 3], pProfile[6 * tpi + 4],
+              pProfile[6 * runIdx + 0], pProfile[6 * runIdx + 1],
+              pProfile[6 * runIdx + 3], pProfile[6 * runIdx + 4],
               !currentTestFail);
    }
+   } // vi
 
    fclose(fpOutputCSV);
    return fail;
@@ -379,7 +398,7 @@ static int TISP_delayDru_druDelay_d(uint32_t *pProfile,
 
 static int test_main(uint32_t *pProfile)
 {
-   return TISP_delayDru_druDelay_d(pProfile, 0);
+   return TISP_delayDru_d(pProfile, 0);
 }
 
 #ifdef __cplusplus
@@ -392,18 +411,21 @@ int test_main_d()
    int      fail              = test_main(profile);
 
    int32_t test_cases_count;
-   TISP_delayDru_druDelay_testParams_t *prm;
-   TISP_delayDru_druDelay_getTestParams(&prm, &test_cases_count);
+   TISP_delayDru_testParams_t *prm;
+   TISP_delayDru_getTestParams(&prm, &test_cases_count);
 
-   for (int32_t i = 0; i < test_cases_count; i++) {
-      printf("[%d] Test %4d (ch=%u frm=%u maxD=%u stKB=%u): "
+   for (int vi = 0; vi < N_EXT_VARIANTS; vi++) {
+   for (int32_t t = 0; t < test_cases_count; t++) {
+      const int32_t i = vi * test_cases_count + t;
+      printf("[%d] Test %4d [%s] (ch=%u frm=%u maxD=%u stKB=%u): "
              "InitA=%8u  WarmA=%8u  "
              "InitB=%8u  WarmB=%8u\n",
-             i, prm[i].testID,
-             prm[i].numChannels, prm[i].frameSamples, prm[i].maxDelay,
-             (prm[i].numChannels * (prm[i].maxDelay + prm[i].frameSamples) * 4U) / 1024U,
+             i, prm[t].testID, gExtVariants[vi].name,
+             prm[t].numChannels, prm[t].frameSamples, prm[t].maxDelay,
+             (prm[t].numChannels * (prm[t].maxDelay + prm[t].frameSamples) * 4U) / 1024U,
              profile[6 * i + 0], profile[6 * i + 1],
              profile[6 * i + 3], profile[6 * i + 4]);
+   }
    }
 
    if (fail == 0) { printf("\nDelayDru two-approach test: PASS\n"); }

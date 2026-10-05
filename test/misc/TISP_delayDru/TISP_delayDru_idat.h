@@ -17,10 +17,10 @@ typedef struct {
    uint32_t delaySamples[TISP_DDT_MAX_CHANNELS]; /* per-channel delay in samples */
    uint32_t numFrames;
    uint32_t numReps;           /* warm-loop repetition count */
-} TISP_delayDru_druDelay_testParams_t;
+} TISP_delayDru_testParams_t;
 
-void TISP_delayDru_druDelay_getTestParams(
-        TISP_delayDru_druDelay_testParams_t **params,
+void TISP_delayDru_getTestParams(
+        TISP_delayDru_testParams_t **params,
         int32_t                                *numTests);
 
 #ifdef __cplusplus

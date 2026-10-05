@@ -97,6 +97,7 @@ template <typename T> class DelayDru final : public VirtualOp {
    uint8_t            *_pTrMem;         /*!< TR memory, reused for write-in + every read-out */
    Udma_DrvHandle       _drvHandle;     /*!< Application-owned UDMA driver handle (not init'd/deinit'd here) */
    int32_t              _chId;          /*!< Owned DRU channel id (always 0) */
+   bool                 _dmaUtilsInitDone = false; /*!< DmaUtils channel opened, must be closed in the destructor */
 
    // ── Transfer descriptor templates — built ONCE in the constructor (syncType,
    //    dmaDfmt, circProp, and the fixed transferDim counts/dims never change

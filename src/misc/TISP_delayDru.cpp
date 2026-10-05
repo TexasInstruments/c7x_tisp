@@ -153,6 +153,8 @@ DelayDru<T>::DelayDru(T         *pIn,
          retVal = dmaUtils<uint8_t>::init(_dmaUtilsContext, 1, _drvHandle);
          if (retVal != UDMA_SOK) {
             errorCtx.setLibraryError("DelayDru constructor", "DmaUtils init failed", static_cast<int32_t>(retVal));
+         } else {
+            _dmaUtilsInitDone = true;
          }
       }
 
@@ -397,6 +399,9 @@ template <typename T> void DelayDru<T>::cleanInternalBuffers() noexcept
 template <typename T> DelayDru<T>::~DelayDru()
 {
 #if !defined(HOST_EMULATION)
+   if (_dmaUtilsInitDone) {
+      (void) DmaUtilsAutoInc3d_deinit(_dmaUtilsContext);
+   }
    free(_pTrMem);
    free(_dmaUtilsContext);
 #endif
