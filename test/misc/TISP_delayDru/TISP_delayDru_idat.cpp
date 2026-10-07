@@ -83,6 +83,60 @@ static TISP_delayDru_testParams_t testParams[] = {
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
+   {
+      10,                   /* testID */
+      4U,              /* numChannels */
+      240U,             /* frameSamples */
+      720U,                 /* maxDelay */
+      { 180, 360, 540, 720, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      11,                   /* testID */
+      4U,              /* numChannels */
+      240U,             /* frameSamples */
+      1040U,                 /* maxDelay */
+      { 260, 520, 780, 1040, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      12,                   /* testID */
+      4U,              /* numChannels */
+      240U,             /* frameSamples */
+      1360U,                 /* maxDelay */
+      { 340, 680, 1020, 1360, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      13,                   /* testID */
+      4U,              /* numChannels */
+      240U,             /* frameSamples */
+      1680U,                 /* maxDelay */
+      { 420, 840, 1260, 1680, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      14,                   /* testID */
+      4U,              /* numChannels */
+      240U,             /* frameSamples */
+      2320U,                 /* maxDelay */
+      { 580, 1160, 1740, 2320, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      15,                   /* testID */
+      4U,              /* numChannels */
+      240U,             /* frameSamples */
+      2960U,                 /* maxDelay */
+      { 740, 1480, 2220, 2960, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
 };
 
 void TISP_delayDru_getTestParams(

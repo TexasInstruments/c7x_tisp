@@ -5,10 +5,12 @@
 #pragma once
 
 #include "TISP_ErrorCtxt.hpp"
+#include "TISP_dmaRuntime.hpp"
 #include "TISP_virtualOp.hpp"
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 
 #if !defined(HOST_EMULATION)
 #include "drivers/dmautils/src/dmautils_autoincrement_3d_priv.h"
@@ -73,7 +75,7 @@ template <typename T> class DelayDru final : public VirtualOp {
    T        *_pIn;            /*!< L2 input frame  [numChannels][frameSamples], planar */
    T        *_pOut;           /*!< L2 output frame [numChannels][frameSamples], planar */
    uint8_t  *_pRingDdr;       /*!< Caller-allocated ring: numChannels * _ringBytesPerCh bytes */
-   uint32_t *_delaySamples;   /*!< Owned copy of per-channel delay sizes [numChannels] */
+   std::unique_ptr<uint32_t[]> _delaySamples; /*!< Owned copy of per-channel delay sizes [numChannels] */
 
    size_t   _frameSamples;      /*!< Samples per channel per frame */
    size_t   _numChannels;       /*!< Number of channels */
@@ -85,7 +87,7 @@ template <typename T> class DelayDru final : public VirtualOp {
    // ── Values that are fixed once frameSamples/numChannels/ring sizing are
    //    known — computed exactly once in the constructor so exec() never
    //    recomputes them. ──
-   size_t  *_chRingSampOff;   /*!< Per-channel ring base offset, in samples: [c] = c * _ringSamplesPerCh */
+   std::unique_ptr<size_t[]> _chRingSampOff; /*!< Per-channel ring base offset, in samples: [c] = c * _ringSamplesPerCh */
    size_t   _frameBytes;      /*!< frameSamples * sizeof(T) */
    size_t   _frameBytesTotal; /*!< numChannels * _frameBytes */
 
@@ -93,9 +95,9 @@ template <typename T> class DelayDru final : public VirtualOp {
 
 #if !defined(HOST_EMULATION)
    // ── DMA engine resources (target only) — single owned DRU channel (id 0) ──
-   uint8_t           *_dmaUtilsContext; /*!< DmaUtils ctx sized for 1 channel */
-   uint8_t            *_pTrMem;         /*!< TR memory, reused for write-in + every read-out */
-   Udma_DrvHandle       _drvHandle;     /*!< Application-owned UDMA driver handle (not init'd/deinit'd here) */
+   AlignedBuffer        _dmaUtilsContext; /*!< DmaUtils ctx sized for 1 channel */
+   AlignedBuffer        _pTrMem;         /*!< TR memory, reused for write-in + every read-out */
+   Udma_DrvHandle       _drvHandle;      /*!< Application-owned UDMA driver handle (not init'd/deinit'd here) */
    int32_t              _chId;          /*!< Owned DRU channel id (always 0) */
    bool                 _dmaUtilsInitDone = false; /*!< DmaUtils channel opened, must be closed in the destructor */
 

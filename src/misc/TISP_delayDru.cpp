@@ -63,9 +63,9 @@ DelayDru<T>::DelayDru(T         *pIn,
                       size_t     numChannels,
                       void      *pUdmaDrvHandle,
                       ErrorCtxt &errorCtx)
-    : _pIn(pIn), _pOut(pOut), _pRingDdr(static_cast<uint8_t *>(pRingDdr)), _delaySamples(nullptr),
+    : _pIn(pIn), _pOut(pOut), _pRingDdr(static_cast<uint8_t *>(pRingDdr)),
       _frameSamples(frameSamples), _numChannels(numChannels), _maxDelay(0), _ringSamplesPerCh(0),
-      _ringBytesPerCh(0), _writeOff(0), _chRingSampOff(nullptr), _frameBytes(0), _frameBytesTotal(0)
+      _ringBytesPerCh(0), _writeOff(0), _frameBytes(0), _frameBytesTotal(0)
 {
    if (pIn == nullptr) {
       errorCtx.setNullPointerError("DelayDru constructor", "input pointer pIn is null");
@@ -95,7 +95,7 @@ DelayDru<T>::DelayDru(T         *pIn,
 
    // Only proceed with initialization if all validation checks passed
    if (errorCtx.isSuccess()) {
-      _delaySamples = new uint32_t[numChannels];
+      _delaySamples = std::make_unique<uint32_t[]>(numChannels);
       for (size_t ch = 0; ch < numChannels; ch++) {
          _delaySamples[ch] = pDelaySamples[ch];
          if (pDelaySamples[ch] > _maxDelay) {
@@ -110,7 +110,7 @@ DelayDru<T>::DelayDru(T         *pIn,
 
       // Per-channel ring base offset (in samples) -- fixed once ring sizing/numChannels
       // are known, so exec() never recomputes c * _ringSamplesPerCh.
-      _chRingSampOff = new size_t[numChannels];
+      _chRingSampOff = std::make_unique<size_t[]>(numChannels);
       for (size_t c = 0; c < numChannels; c++) {
          _chRingSampOff[c] = c * _ringSamplesPerCh;
       }
@@ -138,8 +138,8 @@ DelayDru<T>::DelayDru(T         *pIn,
 
 #if !defined(HOST_EMULATION)
       _chId            = 0;
-      _dmaUtilsContext = static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getContextSize(1)));
-      _pTrMem          = static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getTrMemReq(1)));
+      _dmaUtilsContext = AlignedBuffer(static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getContextSize(1))));
+      _pTrMem          = AlignedBuffer(static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getTrMemReq(1))));
 
       // UDMA driver is initialised and owned by the application.
       _drvHandle = static_cast<Udma_DrvHandle>(pUdmaDrvHandle);
@@ -149,19 +149,23 @@ DelayDru<T>::DelayDru(T         *pIn,
       // are built directly against the raw DmaUtilsAutoInc3d_* API (below) — NOT via
       // dmaUtils<T>::configure_channel(), which hardcodes circSize1=0 / addrMode=LINEAR
       // and therefore cannot express circular addressing.
+      if (_dmaUtilsContext == nullptr || _pTrMem == nullptr) {
+         errorCtx.setLibraryError("DelayDru constructor", "memalign failed for DmaUtils buffers", 0);
+      }
+
       if (errorCtx.isSuccess()) {
-         retVal = dmaUtils<uint8_t>::init(_dmaUtilsContext, 1, _drvHandle);
+         retVal = dmaUtils<uint8_t>::init(_dmaUtilsContext.get(), 1, _drvHandle);
          if (retVal != UDMA_SOK) {
             errorCtx.setLibraryError("DelayDru constructor", "DmaUtils init failed", static_cast<int32_t>(retVal));
          } else {
-            _dmaUtilsInitDone = true;
+            _dmaUtilsInitDone = true; // signals destructor to call deinit
          }
       }
 
       // Fixed TR-prepare params — channel/trMem/trMemSize/numTRs never change.
       _trPrep.channelId = _chId;
       _trPrep.numTRs    = 1;
-      _trPrep.trMem     = _pTrMem;
+      _trPrep.trMem     = _pTrMem.get();
       _trPrep.trMemSize = DmaUtilsAutoInc3d_getTrMemReq(1);
 
       // ---- Write-in: one SYNC_2D per frame — icnt0=frameBytes, icnt1=numChannels.
@@ -312,14 +316,14 @@ template <typename T> void DelayDru<T>::runTr(DmaUtilsAutoInc3d_TransferProp *tp
       (void) printf("[Error] DelayDru: prepareTr failed (%d)\n", rv);
       return;
    }
-   rv = DmaUtilsAutoInc3d_configure(_dmaUtilsContext, _chId, _pTrMem, 1);
+   rv = DmaUtilsAutoInc3d_configure(_dmaUtilsContext.get(), _chId, _pTrMem.get(), 1);
    if (rv != UDMA_SOK) {
       (void) printf("[Error] DelayDru: configure failed (%d)\n", rv);
       return;
    }
-   (void) DmaUtilsAutoInc3d_trigger(_dmaUtilsContext, _chId);
-   DmaUtilsAutoInc3d_wait(_dmaUtilsContext, _chId);
-   (void) DmaUtilsAutoInc3d_deconfigure(_dmaUtilsContext, _chId, _pTrMem, 1);
+   (void) DmaUtilsAutoInc3d_trigger(_dmaUtilsContext.get(), _chId);
+   DmaUtilsAutoInc3d_wait(_dmaUtilsContext.get(), _chId);
+   (void) DmaUtilsAutoInc3d_deconfigure(_dmaUtilsContext.get(), _chId, _pTrMem.get(), 1);
 }
 #endif
 
@@ -400,13 +404,12 @@ template <typename T> DelayDru<T>::~DelayDru()
 {
 #if !defined(HOST_EMULATION)
    if (_dmaUtilsInitDone) {
-      (void) DmaUtilsAutoInc3d_deinit(_dmaUtilsContext);
+      (void) DmaUtilsAutoInc3d_deinit(_dmaUtilsContext.get());
    }
-   free(_pTrMem);
-   free(_dmaUtilsContext);
+   // _dmaUtilsContext and _pTrMem (AlignedBuffer) release their memalign'd memory
+   // automatically via AlignedDeleter — no explicit free() needed.
 #endif
-   delete[] _chRingSampOff;
-   delete[] _delaySamples;
+   // _delaySamples and _chRingSampOff (unique_ptr) release automatically.
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

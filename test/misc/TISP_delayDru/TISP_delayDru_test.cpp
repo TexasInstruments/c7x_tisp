@@ -7,8 +7,8 @@
 //
 //   Approach A — TISP::misc::DelayDru<float>  (DRU circular, external-memory ring).
 //   Approach B — TISP::misc::DMAXfer<1> (state ext->L2) +
-//                TISP::AUDIOLIB::DelayNChannel<float> (L2, linear mode) +
-//                TISP::misc::DMAXfer<1> (state L2->ext).
+//                TISP::AUDIOLIB::DelayNChannel<float> (L2, circular mode; linear if it
+//                does not fit) + TISP::misc::DMAXfer<1> (state L2->ext).
 //
 // "External memory" is DDR on AM62D. On AM275 the same test cases run twice:
 // once with the ring/state in OCRAM (.ddrData maps to OCRAM there) and once in
@@ -69,14 +69,6 @@ static void delayReference_cn(const float *inFrame, float *outFrame,
    }
 }
 
-static inline void invStateL2()
-{
-#if !defined(HOST_EMULATION)
-   // DMAXfer wrote gDelayStateL2 behind the CPU cache.
-   (void) CacheP_inv(gDelayStateL2, static_cast<int32_t>(TISP_DDT_MAX_STATE_BYTES_TOTAL), CacheP_TYPE_ALLD);
-#endif
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: compute next power of two >= v
 // ─────────────────────────────────────────────────────────────────────────────
@@ -88,6 +80,9 @@ static uint32_t nextPow2(uint32_t v)
    while (p < v) p <<= 1U;
    return p;
 }
+
+// pProfile slots per run: [0..2] A init/opt/warm, [3..5] B init/opt/warm.
+static const int32_t PROF_STRIDE = 6;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Main test function — MATHLIB/dmaXfer profiling pattern
@@ -121,11 +116,16 @@ static int TISP_delayDru_d(uint32_t *pProfile,
    // One UDMA driver + one DmaUtils context (1 channel) shared by every node in every case:
    // DelayDru borrows the driver handle, the Approach-B DMAXfer nodes borrow the context and
    // reuse channel 0. Creating a driver/context per node leaks DRU channels across cases.
+   TISP::ErrorCtxt dmaRtErrCtx;
 #if !defined(HOST_EMULATION)
-   TISP::misc::DMARuntime dmaRt(UDMA_INST_ID_0, 1);
+   TISP::misc::DMARuntime dmaRt(UDMA_INST_ID_0, 1, dmaRtErrCtx);
 #else
-   TISP::misc::DMARuntime dmaRt(0U, 1);
+   TISP::misc::DMARuntime dmaRt(0U, 1, dmaRtErrCtx);
 #endif
+   if (!dmaRtErrCtx.isSuccess()) {
+      printf("DMARuntime init failed: %s\n", dmaRtErrCtx.getMessage());
+      return 1;
+   }
    const int32_t          dmaChIds[1] = { 0 };
 
    for (int vi = 0; vi < N_EXT_VARIANTS; vi++) {
@@ -148,7 +148,6 @@ static int TISP_delayDru_d(uint32_t *pProfile,
       const uint32_t ringSamplesPerCh  = nextPow2(frameSamples + maxDelay);
       const uint32_t delayDimX         = maxDelay + frameSamples;   // AUDIOLIB widthD
       const uint32_t stateBytesTotal   = numChannels * delayDimX * (uint32_t)sizeof(float);
-      const size_t   delayPitchBytes   = (size_t)delayDimX * sizeof(float);
 
       uint32_t delaySamples[TISP_DDT_MAX_CHANNELS];
       memcpy(delaySamples, currPrm.delaySamples,
@@ -236,9 +235,9 @@ static int TISP_delayDru_d(uint32_t *pProfile,
       static float outA_saved[TISP_DDT_MAX_FRAME_ELEMS];
       memcpy(outA_saved, gOutFrameL2_A, frameElems * sizeof(float));
 
-      pProfile[6 * runIdx + 0] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
-      pProfile[6 * runIdx + 1] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
-      pProfile[6 * runIdx + 2] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
+      pProfile[PROF_STRIDE * runIdx + 0] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
+      pProfile[PROF_STRIDE * runIdx + 1] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
+      pProfile[PROF_STRIDE * runIdx + 2] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
 
       delayDru.reset();  // DelayDru destructor (closes its DRU channel; driver stays with dmaRt)
 
@@ -278,40 +277,61 @@ static int TISP_delayDru_d(uint32_t *pProfile,
       // DMAXfer addresses are local but DMAXfer<1> makes heap copies. Both DMAXfer nodes borrow
       // dmaRt and run serially on its channel 0.
 
-      const bool runApproachB = (stateBytesTotal <= APPROACH_B_MAX_STATE_BYTES);
+      // DelayNChannel circular mode (mode=1) reads each delay row with an SE CIRC_CBK0 stream, which
+      // wraps inside a power-of-two block (>= 512 B) aligned to its own size, while the write side
+      // wraps at the row pitch. So the pitch must be exactly a power of two and every row must start
+      // on a pitch boundary, else reads run into / wrap onto a neighbouring channel's row. With a
+      // power-of-two pitch, aligning the buffer base aligns every row.
+      const uint32_t circPitchElems = nextPow2((delayDimX < 128U) ? 128U : delayDimX);
+      const size_t   circPitchBytes = (size_t)circPitchElems * sizeof(float);
+      float         *circStateL2    = reinterpret_cast<float *>(TISP_DDT_ALIGN_UP(gDelayStateL2, circPitchBytes));
+      const size_t   circAlignPad   = static_cast<size_t>(reinterpret_cast<uint8_t *>(circStateL2) -
+                                                          reinterpret_cast<uint8_t *>(gDelayStateL2));
+      const bool     useCircular    =
+         (circAlignPad + numChannels * circPitchBytes) <= TISP_DDT_MAX_STATE_BYTES_TOTAL;
+
+      // Circular whenever the padded, aligned state fits in L2; otherwise fall back to linear (mode=0),
+      // which has no pitch/alignment constraint.
+      const size_t   delayMode       = useCircular ? 1U : 0U;
+      const uint32_t delayPitchElems = useCircular ? circPitchElems : delayDimX;
+      const size_t   delayPitchBytes = (size_t)delayPitchElems * sizeof(float);
+      float         *pStateL2        = useCircular ? circStateL2 : gDelayStateL2;
+      const size_t   stateBytesB     = (size_t)numChannels * delayPitchBytes;
+
+      const bool runApproachB = useCircular || (stateBytesTotal <= APPROACH_B_MAX_STATE_BYTES);
       if (runApproachB) {
          void  *stateInSrc[1]  = { static_cast<void *>(stateExt) };
-         void  *stateInDst[1]  = { static_cast<void *>(gDelayStateL2)  };
-         void  *stateOutSrc[1] = { static_cast<void *>(gDelayStateL2)  };
+         void  *stateInDst[1]  = { static_cast<void *>(pStateL2) };
+         void  *stateOutSrc[1] = { static_cast<void *>(pStateL2) };
          void  *stateOutDst[1] = { static_cast<void *>(stateExt) };
-         size_t stateSize[1]   = { static_cast<size_t>(stateBytesTotal) };
+         size_t stateSize[1]   = { stateBytesB };
 
          // INIT B: construct all three B nodes
          TISP::ErrorCtxt errCtxB;
          TI_profile_start(TI_PROFILE_KERNEL_INIT);
          TISP::NodePtr dmaXferIn = TISP::NodePtr(
             TISP::make_unique_node<TISP::misc::DMAXfer<1>>(
-               dmaRt, 1, dmaChIds, 1, stateInSrc, stateInDst, stateSize));
+               dmaRt, 1, dmaChIds, 1, stateInSrc, stateInDst, stateSize, errCtxB));
          TISP::NodePtr delayNch = TISP::NodePtr(
             TISP::make_unique_node<TISP::AUDIOLIB::DelayNChannel<float>>(
                gInFrameL2,
-               gDelayStateL2,
+               pStateL2,
                gScratchL2,
                gOutFrameL2_B,
                static_cast<size_t>(frameSamples),   // width
                static_cast<size_t>(numChannels),     // height
-               static_cast<size_t>(delayDimX),       // widthD
+               static_cast<size_t>(delayPitchElems), // widthD (whole row is live in circular mode)
                static_cast<size_t>(numChannels),     // heightD
                static_cast<size_t>(frameSamples) * sizeof(float),  // inPitchBytes
-               delayPitchBytes,                      // delayPitchBytes
+               delayPitchBytes,                      // delayPitchBytes (pow2 + aligned in circular)
                static_cast<size_t>(frameSamples) * sizeof(float),  // outPitchBytes
                static_cast<size_t>(0U),              // interleave=0 (non-interleaved)
-               static_cast<size_t>(0U),              // mode=0 (linear delay)
+               delayMode,                            // mode: 1=circular, 0=linear if it doesn't fit
                delaySamples,
                errCtxB));
          TISP::NodePtr dmaXferOut = TISP::NodePtr(
             TISP::make_unique_node<TISP::misc::DMAXfer<1>>(
-               dmaRt, 1, dmaChIds, 1, stateOutSrc, stateOutDst, stateSize));
+               dmaRt, 1, dmaChIds, 1, stateOutSrc, stateOutDst, stateSize, errCtxB));
          TI_profile_stop();
 
          // make_unique_node returns null (without touching errCtx) when the node arena is full.
@@ -333,7 +353,6 @@ static int TISP_delayDru_d(uint32_t *pProfile,
             TI_profile_clear_cycle_count_single(TI_PROFILE_KERNEL_OPT_WARM);
             TI_profile_start(TI_PROFILE_KERNEL_OPT_WARM);
             dmaXferIn->exec();
-            invStateL2();
             delayNch->exec();
             dmaXferOut->exec();
             TI_profile_stop();
@@ -342,7 +361,6 @@ static int TISP_delayDru_d(uint32_t *pProfile,
          TI_profile_clear_cycle_count_single(TI_PROFILE_KERNEL_OPT);
          TI_profile_start(TI_PROFILE_KERNEL_OPT);
          dmaXferIn->exec();
-         invStateL2();
          delayNch->exec();
          dmaXferOut->exec();
          TI_profile_stop();
@@ -351,9 +369,9 @@ static int TISP_delayDru_d(uint32_t *pProfile,
          static float outB_saved[TISP_DDT_MAX_FRAME_ELEMS];
          memcpy(outB_saved, gOutFrameL2_B, frameElems * sizeof(float));
 
-         pProfile[6 * runIdx + 3] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
-         pProfile[6 * runIdx + 4] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
-         pProfile[6 * runIdx + 5] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
+         pProfile[PROF_STRIDE * runIdx + 3] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_INIT);
+         pProfile[PROF_STRIDE * runIdx + 4] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT);
+         pProfile[PROF_STRIDE * runIdx + 5] = (uint32_t)TI_profile_get_cycles(TI_PROFILE_KERNEL_OPT_WARM);
 
          // Release in reverse construction order: the node arena is a bump allocator and only
          // reclaims the most recent block, so FIFO release leaks dmaXferIn + delayNch every case.
@@ -370,9 +388,9 @@ static int TISP_delayDru_d(uint32_t *pProfile,
          currentTestFail = currentTestFail_A || currentTestFail_B;
          fail = fail || currentTestFail_B;
       } else {
-         pProfile[6 * runIdx + 3] = 0U;
-         pProfile[6 * runIdx + 4] = 0U;
-         pProfile[6 * runIdx + 5] = 0U;
+         pProfile[PROF_STRIDE * runIdx + 3] = 0U;
+         pProfile[PROF_STRIDE * runIdx + 4] = 0U;
+         pProfile[PROF_STRIDE * runIdx + 5] = 0U;
          currentTestFail = currentTestFail_A;
       }
 
@@ -382,8 +400,8 @@ static int TISP_delayDru_d(uint32_t *pProfile,
               "%u, %u, %u, %u, %d\n",
               currPrm.testID, memTag, numChannels, frameSamples, maxDelay,
               stateBytesTotal / 1024U,
-              pProfile[6 * runIdx + 0], pProfile[6 * runIdx + 1],
-              pProfile[6 * runIdx + 3], pProfile[6 * runIdx + 4],
+              pProfile[PROF_STRIDE * runIdx + 0], pProfile[PROF_STRIDE * runIdx + 1],
+              pProfile[PROF_STRIDE * runIdx + 3], pProfile[PROF_STRIDE * runIdx + 4],
               !currentTestFail);
    }
    } // vi
@@ -407,12 +425,15 @@ extern "C" {
 
 int test_main_d()
 {
-   uint32_t profile[256 * 6] = {};
+   uint32_t profile[256 * PROF_STRIDE] = {};
    int      fail              = test_main(profile);
 
    int32_t test_cases_count;
    TISP_delayDru_testParams_t *prm;
    TISP_delayDru_getTestParams(&prm, &test_cases_count);
+
+   if (fail == 0) { printf("\nTest Pass!\n"); }
+   else           { printf("\nTest FAIL!\n"); }
 
    for (int vi = 0; vi < N_EXT_VARIANTS; vi++) {
    for (int32_t t = 0; t < test_cases_count; t++) {
@@ -423,13 +444,10 @@ int test_main_d()
              i, prm[t].testID, gExtVariants[vi].name,
              prm[t].numChannels, prm[t].frameSamples, prm[t].maxDelay,
              (prm[t].numChannels * (prm[t].maxDelay + prm[t].frameSamples) * 4U) / 1024U,
-             profile[6 * i + 0], profile[6 * i + 1],
-             profile[6 * i + 3], profile[6 * i + 4]);
+             profile[PROF_STRIDE * i + 0], profile[PROF_STRIDE * i + 1],
+             profile[PROF_STRIDE * i + 3], profile[PROF_STRIDE * i + 4]);
    }
    }
-
-   if (fail == 0) { printf("\nDelayDru two-approach test: PASS\n"); }
-   else           { printf("\nDelayDru two-approach test: FAIL\n"); }
 
    return fail ? 1 : 0;
 }
