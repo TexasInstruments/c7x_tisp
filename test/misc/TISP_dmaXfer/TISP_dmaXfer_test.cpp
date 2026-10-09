@@ -127,6 +127,17 @@ static int TISP_dmaXfer_d(uint32_t *pProfile, uint8_t /*LevelOfFeedback*/)
          sizes[t] = currPrm.sizes[t];
       }
 
+      // ── Write back CPU-seeded sources before DMA ──────────────────────────
+      // Sources are seeded via cached CPU writes; the DRU bypasses L1D and reads
+      // physical memory, so dirty source lines must be flushed first. Harmless for
+      // non-cacheable regions (HyperRAM); required for cacheable OCRAM, otherwise
+      // the DMA reads stale data left by a prior test case.
+#if !defined(HOST_EMULATION)
+      for (uint32_t t = 0; t < currPrm.n; t++) {
+         (void) CacheP_wbInv(srcAddrs[t], (uint32_t)sizes[t], CacheP_TYPE_ALLD);
+      }
+#endif
+
       // ── Profile: init (node construction) ────────────────────────────────
       TISP::ErrorCtxt nodeErrCtx;
       TI_profile_start(TI_PROFILE_KERNEL_INIT);
