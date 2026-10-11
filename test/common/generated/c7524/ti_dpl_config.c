@@ -32,7 +32,7 @@ void putchar_(char character)
 DebugP_ShmLog gDebugShmLog[CSL_CORE_ID_MAX] __attribute__((aligned(128), section(".bss.log_shared_mem")));
 
 /* ----------- MmuP_armv8 ----------- */
-#define CONFIG_MMU_NUM_REGIONS (10u)
+#define CONFIG_MMU_NUM_REGIONS (11u)
 
 MmuP_Config gMmuConfig = {
     .numRegions = CONFIG_MMU_NUM_REGIONS,
@@ -129,6 +129,16 @@ MmuP_RegionConfig gMmuRegionConfig[CONFIG_MMU_NUM_REGIONS] = {
                .userExecute = 0,
                .shareable   = MMUP_SHARABLE_OUTER,
                .attrIndx    = MMUP_ATTRINDX_MAIR4,
+               .global      = 1}},
+    /* HyperRAM at FSS1_DAT_REG1 — non-cached, R/W, no execute */
+    {.vaddr = 0x68000000u,
+     .paddr = 0x68000000u,
+     .size  = 0x4000000u,
+     .attr  = {.accessPerm  = MMUP_ACCESS_PERM_PRIV_RW_USER_NONE,
+               .privExecute = 0,
+               .userExecute = 0,
+               .shareable   = MMUP_SHARABLE_OUTER,
+               .attrIndx    = MMUP_ATTRINDX_MAIR7,
                .global      = 1}},
 };
 

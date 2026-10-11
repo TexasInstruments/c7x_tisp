@@ -101,8 +101,9 @@ MEMORY
 
     C75_0_OCRAM_ENTRY   (RWIX)   : ORIGIN = 0x80200000 LENGTH = 0x00000040
     C75_0_OCRAM   (RWIX)         : ORIGIN = 0x80200040 LENGTH = 0x00400000 - 0x40 - 0x1000
-    C75_0_CIO_MEM                : ORIGIN = 0x80200040 + 0x00400000 - 0x40 - 0x1000 LENGTH = 0x1000 
+    C75_0_CIO_MEM                : ORIGIN = 0x80200040 + 0x00400000 - 0x40 - 0x1000 LENGTH = 0x1000
 
+    HYPERRAM (RW)                : ORIGIN = 0x68000000 LENGTH = 0x04000000  /* 64 MB HyperRAM via FSS1 */
 
 }
 
@@ -131,6 +132,7 @@ SECTIONS
     .ddrData          >       C75_0_OCRAM
     .l2sramData       >       C75_0_L2SRAM
     .staticData       >       C75_0_OCRAM
+    .hyperRamData     >       HYPERRAM ALIGN(128)
 
     .tisp_node_arena   > C75_0_L2SRAM ALIGN(0x80)   /* 128 bytes */
     .tisp_twiddle_arena > C75_0_L2SRAM ALIGN(0x40)  /* 64 bytes  */

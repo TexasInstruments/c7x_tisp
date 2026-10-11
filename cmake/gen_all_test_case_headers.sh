@@ -17,6 +17,7 @@ declare -a kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/DSPLIB/ -
 kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/AUDIOLIB/ -mindepth 1 -maxdepth 1 -type d ! \( -iname "common" -o -iname "__pycache__" \) | grep -o -P '.{0}test/.*' | cut -c 20-))
 kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/MATHLIB/ -mindepth 1 -maxdepth 1 -type d ! \( -iname "common" -o -iname "__pycache__" \) | grep -o -P '.{0}test/.*' | cut -c 20-))
 kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/superNode/ -mindepth 2 -maxdepth 2 -type d ! \( -iname "common" -o -iname "__pycache__" \) | grep -o -P '.{0}test/.*' | cut -c 20-))
+kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/misc/ -mindepth 1 -maxdepth 1 -type d ! \( -iname "common" -o -iname "__pycache__" \) | grep -o -P '.{0}test/.*' | cut -c 20-))
 
 kernels_target+=" superNode/TISP_matMul_superNode"
 
