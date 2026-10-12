@@ -6,12 +6,12 @@
 /* ── Sizing macros (max across all test cases) ──────────────────────────── */
 /* Ring buffer: per-channel size is next_pow2(maxDelay+frameSamples)*4        */
 /* Ring alignment: pRingDdr[c*ch_bytes] must be ch_bytes-aligned for DRU     */
-#define TISP_DDT_MAX_RING_BYTES_PER_CH  262144U
-#define TISP_DDT_MAX_RING_BYTES_TOTAL   2097152U
-#define TISP_DDT_MAX_RING_SAMPLES_TOTAL 524288U  /* = TOTAL/sizeof(float) */
+#define TISP_DDT_MAX_RING_BYTES_PER_CH  524288U
+#define TISP_DDT_MAX_RING_BYTES_TOTAL   4194304U
+#define TISP_DDT_MAX_RING_SAMPLES_TOTAL 1048576U  /* = TOTAL/sizeof(float) */
 #define TISP_DDT_MAX_STATE_BYTES_TOTAL  716800U
 #define TISP_DDT_MAX_STATE_ELEMS        179200U
-#define TISP_DDT_MAX_FRAME_ELEMS        3840U
+#define TISP_DDT_MAX_FRAME_ELEMS        5120U
 
 /* The linker does not honour aligned(TISP_DDT_MAX_RING_BYTES_PER_CH) in OCRAM (the
  * section lands only 32 KB-aligned), and a mis-aligned ring makes the DRU circular

@@ -7,7 +7,7 @@ static TISP_delayDru_testParams_t testParams[] = {
       4U,              /* numChannels */
       240U,             /* frameSamples */
       400U,                 /* maxDelay */
-      { 100, 200, 300, 400, 0, 0, 0, 0 },  /* delaySamples */
+      { 100, 200, 300, 400, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       10U,               /* numFrames */
       10U,                 /* numReps */
    },
@@ -16,7 +16,7 @@ static TISP_delayDru_testParams_t testParams[] = {
       8U,              /* numChannels */
       480U,             /* frameSamples */
       1120U,                 /* maxDelay */
-      { 140, 280, 420, 560, 700, 840, 980, 1120 },  /* delaySamples */
+      { 140, 280, 420, 560, 700, 840, 980, 1120, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
@@ -25,7 +25,7 @@ static TISP_delayDru_testParams_t testParams[] = {
       8U,              /* numChannels */
       480U,             /* frameSamples */
       4320U,                 /* maxDelay */
-      { 540, 1080, 1620, 2160, 2700, 3240, 3780, 4320 },  /* delaySamples */
+      { 540, 1080, 1620, 2160, 2700, 3240, 3780, 4320, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
@@ -34,7 +34,7 @@ static TISP_delayDru_testParams_t testParams[] = {
       8U,              /* numChannels */
       480U,             /* frameSamples */
       9120U,                 /* maxDelay */
-      { 1140, 2280, 3420, 4560, 5700, 6840, 7980, 9120 },  /* delaySamples */
+      { 1140, 2280, 3420, 4560, 5700, 6840, 7980, 9120, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
@@ -43,7 +43,7 @@ static TISP_delayDru_testParams_t testParams[] = {
       8U,              /* numChannels */
       480U,             /* frameSamples */
       15520U,                 /* maxDelay */
-      { 1940, 3880, 5820, 7760, 9700, 11640, 13580, 15520 },  /* delaySamples */
+      { 1940, 3880, 5820, 7760, 9700, 11640, 13580, 15520, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
@@ -52,7 +52,7 @@ static TISP_delayDru_testParams_t testParams[] = {
       8U,              /* numChannels */
       480U,             /* frameSamples */
       21920U,                 /* maxDelay */
-      { 2740, 5480, 8220, 10960, 13700, 16440, 19180, 21920 },  /* delaySamples */
+      { 2740, 5480, 8220, 10960, 13700, 16440, 19180, 21920, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
@@ -61,7 +61,7 @@ static TISP_delayDru_testParams_t testParams[] = {
       8U,              /* numChannels */
       480U,             /* frameSamples */
       25120U,                 /* maxDelay */
-      { 3140, 6280, 9420, 12560, 15700, 18840, 21980, 25120 },  /* delaySamples */
+      { 3140, 6280, 9420, 12560, 15700, 18840, 21980, 25120, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
@@ -70,7 +70,7 @@ static TISP_delayDru_testParams_t testParams[] = {
       8U,              /* numChannels */
       480U,             /* frameSamples */
       32288U,                 /* maxDelay */
-      { 4036, 8072, 12108, 16144, 20180, 24216, 28252, 32288 },  /* delaySamples */
+      { 4036, 8072, 12108, 16144, 20180, 24216, 28252, 32288, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
@@ -79,61 +79,133 @@ static TISP_delayDru_testParams_t testParams[] = {
       8U,              /* numChannels */
       480U,             /* frameSamples */
       65056U,                 /* maxDelay */
-      { 8132, 16264, 24396, 32528, 40660, 48792, 56924, 65056 },  /* delaySamples */
+      { 8132, 16264, 24396, 32528, 40660, 48792, 56924, 65056, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
    {
-      10,                   /* testID */
+      10,                    /* testID */
       4U,              /* numChannels */
       240U,             /* frameSamples */
       720U,                 /* maxDelay */
-      { 180, 360, 540, 720, 0, 0, 0, 0 },  /* delaySamples */
+      { 180, 360, 540, 720, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
    {
-      11,                   /* testID */
+      11,                    /* testID */
       4U,              /* numChannels */
       240U,             /* frameSamples */
       1040U,                 /* maxDelay */
-      { 260, 520, 780, 1040, 0, 0, 0, 0 },  /* delaySamples */
+      { 260, 520, 780, 1040, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
    {
-      12,                   /* testID */
+      12,                    /* testID */
       4U,              /* numChannels */
       240U,             /* frameSamples */
       1360U,                 /* maxDelay */
-      { 340, 680, 1020, 1360, 0, 0, 0, 0 },  /* delaySamples */
+      { 340, 680, 1020, 1360, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
    {
-      13,                   /* testID */
+      13,                    /* testID */
       4U,              /* numChannels */
       240U,             /* frameSamples */
       1680U,                 /* maxDelay */
-      { 420, 840, 1260, 1680, 0, 0, 0, 0 },  /* delaySamples */
+      { 420, 840, 1260, 1680, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
    {
-      14,                   /* testID */
+      14,                    /* testID */
       4U,              /* numChannels */
       240U,             /* frameSamples */
       2320U,                 /* maxDelay */
-      { 580, 1160, 1740, 2320, 0, 0, 0, 0 },  /* delaySamples */
+      { 580, 1160, 1740, 2320, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },
    {
-      15,                   /* testID */
+      15,                    /* testID */
       4U,              /* numChannels */
       240U,             /* frameSamples */
       2960U,                 /* maxDelay */
-      { 740, 1480, 2220, 2960, 0, 0, 0, 0 },  /* delaySamples */
+      { 740, 1480, 2220, 2960, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      16,                    /* testID */
+      8U,              /* numChannels */
+      640U,             /* frameSamples */
+      1120U,                 /* maxDelay */
+      { 140, 280, 420, 560, 700, 840, 980, 1120, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      17,                    /* testID */
+      8U,              /* numChannels */
+      640U,             /* frameSamples */
+      4320U,                 /* maxDelay */
+      { 540, 1080, 1620, 2160, 2700, 3240, 3780, 4320, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      18,                    /* testID */
+      8U,              /* numChannels */
+      640U,             /* frameSamples */
+      9120U,                 /* maxDelay */
+      { 1140, 2280, 3420, 4560, 5700, 6840, 7980, 9120, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      19,                    /* testID */
+      8U,              /* numChannels */
+      640U,             /* frameSamples */
+      15520U,                 /* maxDelay */
+      { 1940, 3880, 5820, 7760, 9700, 11640, 13580, 15520, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      20,                    /* testID */
+      8U,              /* numChannels */
+      640U,             /* frameSamples */
+      21920U,                 /* maxDelay */
+      { 2740, 5480, 8220, 10960, 13700, 16440, 19180, 21920, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      21,                    /* testID */
+      8U,              /* numChannels */
+      640U,             /* frameSamples */
+      25120U,                 /* maxDelay */
+      { 3140, 6280, 9420, 12560, 15700, 18840, 21980, 25120, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      22,                    /* testID */
+      8U,              /* numChannels */
+      640U,             /* frameSamples */
+      32288U,                 /* maxDelay */
+      { 4036, 8072, 12108, 16144, 20180, 24216, 28252, 32288, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
+      20U,               /* numFrames */
+      10U,                 /* numReps */
+   },
+   {
+      23,                    /* testID */
+      8U,              /* numChannels */
+      640U,             /* frameSamples */
+      65056U,                 /* maxDelay */
+      { 8132, 16264, 24396, 32528, 40660, 48792, 56924, 65056, 0, 0, 0, 0, 0, 0, 0, 0 },  /* delaySamples */
       20U,               /* numFrames */
       10U,                 /* numReps */
    },

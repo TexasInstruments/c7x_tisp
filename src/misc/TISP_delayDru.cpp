@@ -140,6 +140,7 @@ DelayDru<T>::DelayDru(T         *pIn,
       _chId            = 0;
       _dmaUtilsContext = AlignedBuffer(static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getContextSize(1))));
       _pTrMem          = AlignedBuffer(static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getTrMemReq(1))));
+      _pTrMemRead      = AlignedBuffer(static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getTrMemReq(1))));
 
       // UDMA driver is initialised and owned by the application.
       _drvHandle = static_cast<Udma_DrvHandle>(pUdmaDrvHandle);
@@ -149,7 +150,7 @@ DelayDru<T>::DelayDru(T         *pIn,
       // are built directly against the raw DmaUtilsAutoInc3d_* API (below) — NOT via
       // dmaUtils<T>::configure_channel(), which hardcodes circSize1=0 / addrMode=LINEAR
       // and therefore cannot express circular addressing.
-      if (_dmaUtilsContext == nullptr || _pTrMem == nullptr) {
+      if (_dmaUtilsContext == nullptr || _pTrMem == nullptr || _pTrMemRead == nullptr) {
          errorCtx.setLibraryError("DelayDru constructor", "memalign failed for DmaUtils buffers", 0);
       }
 
@@ -244,6 +245,29 @@ DelayDru<T>::DelayDru(T         *pIn,
 
          std::memset(&_tpReadOutTail, 0, sizeof(_tpReadOutTail)); // unused; sicnt0==0 skips it in exec()
       }
+
+      // ---- Build each TR ONCE. prepareTr parses the TransferProp (flags, circular
+      // props, icnt/dim) into a CSL_UdmapTR; none of that changes frame-to-frame.
+      // exec() patches only tr->addr/tr->daddr (via runPreparedTr) and resubmits, so
+      // the per-frame prepareTr cost is removed while staying in direct-TR mode.
+      // ioPointers here are placeholders (_pRingDdr is a valid non-null address);
+      // they are overwritten every frame before the TR is triggered.
+      if (errorCtx.isSuccess()) {
+         _tpWriteInBulk.ioPointers.srcPtr = _pRingDdr;
+         _tpWriteInBulk.ioPointers.dstPtr = _pRingDdr;
+         _trPrep.trMem = _pTrMem.get();
+         if (DmaUtilsAutoInc3d_prepareTr(&_trPrep, &_tpWriteInBulk) != UDMA_SOK) {
+            errorCtx.setLibraryError("DelayDru constructor", "prepareTr (write-in) failed", 0);
+         }
+
+         _tpReadOutBulk.ioPointers.srcPtr = _pRingDdr;
+         _tpReadOutBulk.ioPointers.dstPtr = _pRingDdr;
+         _trPrep.trMem = _pTrMemRead.get();
+         if (errorCtx.isSuccess() &&
+             DmaUtilsAutoInc3d_prepareTr(&_trPrep, &_tpReadOutBulk) != UDMA_SOK) {
+            errorCtx.setLibraryError("DelayDru constructor", "prepareTr (read-out) failed", 0);
+         }
+      }
 #endif
 
       cleanInternalBuffers(); // zero the ring, reset _writeOff
@@ -301,29 +325,28 @@ template <typename T> void DelayDru<T>::setAddr(SetAddr_t &addr, SetAddrMode_t m
 
 #if !defined(HOST_EMULATION)
 // ─────────────────────────────────────────────────────────────────────────────
-// runTr — the only work that genuinely cannot be hoisted out of exec(): the
-// driver's TR memory must be rebuilt whenever the transfer's addresses move,
-// so every frame still pays one prepareTr/configure/trigger/wait/deconfigure
-// per descriptor. `tp` carries pre-built structural fields (syncType, circProp,
-// transferDim) from the constructor; only its ioPointers are refreshed by the
-// caller before this runs.
+// runPreparedTr — submit a TR that was already built once in the constructor.
+// Only the source/destination addresses move frame-to-frame, so patch them in
+// place — exactly what prepareTr's setupTr does (tr->addr = src, tr->daddr =
+// dst) for a non-compressed transfer — then configure/trigger/wait/deconfigure.
+// This keeps the low-latency direct-TR path (single-TR atomic submit) and lifts
+// the structural prepareTr re-parse out of the per-frame hot loop.
 // ─────────────────────────────────────────────────────────────────────────────
 
-template <typename T> void DelayDru<T>::runTr(DmaUtilsAutoInc3d_TransferProp *tp) noexcept
+template <typename T> void DelayDru<T>::runPreparedTr(uint8_t *trMem, const void *src, void *dst) noexcept
 {
-   int32_t rv = DmaUtilsAutoInc3d_prepareTr(&_trPrep, tp);
-   if (rv != UDMA_SOK) {
-      (void) printf("[Error] DelayDru: prepareTr failed (%d)\n", rv);
-      return;
-   }
-   rv = DmaUtilsAutoInc3d_configure(_dmaUtilsContext.get(), _chId, _pTrMem.get(), 1);
+   CSL_UdmapTR *tr = reinterpret_cast<CSL_UdmapTR *>(trMem);
+   tr->addr  = reinterpret_cast<uintptr_t>(src);
+   tr->daddr = reinterpret_cast<uintptr_t>(dst);
+
+   int32_t rv = DmaUtilsAutoInc3d_configure(_dmaUtilsContext.get(), _chId, trMem, 1);
    if (rv != UDMA_SOK) {
       (void) printf("[Error] DelayDru: configure failed (%d)\n", rv);
       return;
    }
    (void) DmaUtilsAutoInc3d_trigger(_dmaUtilsContext.get(), _chId);
    DmaUtilsAutoInc3d_wait(_dmaUtilsContext.get(), _chId);
-   (void) DmaUtilsAutoInc3d_deconfigure(_dmaUtilsContext.get(), _chId, _pTrMem.get(), 1);
+   (void) DmaUtilsAutoInc3d_deconfigure(_dmaUtilsContext.get(), _chId, trMem, 1);
 }
 #endif
 
@@ -346,9 +369,7 @@ template <typename T> void DelayDru<T>::exec() noexcept
    // shorter than a frame read the current frame's samples; ring >= frame + maxDelay
    // guarantees it never overwrites samples still to be read. ----
    const size_t writeByteOff = _writeOff * sizeof(T);
-   _tpWriteInBulk.ioPointers.srcPtr = pInBytes;
-   _tpWriteInBulk.ioPointers.dstPtr = _pRingDdr + writeByteOff;
-   runTr(&_tpWriteInBulk);
+   runPreparedTr(_pTrMem.get(), pInBytes, _pRingDdr + writeByteOff);
 
    // ---- Read-out: one SYNC_1D TR per channel, only pointers move per frame. ----
    for (size_t c = 0; c < _numChannels; c++) {
@@ -357,9 +378,7 @@ template <typename T> void DelayDru<T>::exec() noexcept
       uint8_t     *ringBase    = _pRingDdr + (_chRingSampOff[c] * sizeof(T)) + readByteOff;
       uint8_t     *outBase     = pOutBytes + (c * _frameBytes);
 
-      _tpReadOutBulk.ioPointers.srcPtr = ringBase;
-      _tpReadOutBulk.ioPointers.dstPtr = outBase;
-      runTr(&_tpReadOutBulk);
+      runPreparedTr(_pTrMemRead.get(), ringBase, outBase);
    }
 
    _writeOff = (_writeOff + _frameSamples) % _ringSamplesPerCh;

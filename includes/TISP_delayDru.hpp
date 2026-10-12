@@ -96,19 +96,20 @@ template <typename T> class DelayDru final : public VirtualOp {
 #if !defined(HOST_EMULATION)
    // ── DMA engine resources (target only) — single owned DRU channel (id 0) ──
    AlignedBuffer        _dmaUtilsContext; /*!< DmaUtils ctx sized for 1 channel */
-   AlignedBuffer        _pTrMem;         /*!< TR memory, reused for write-in + every read-out */
+   AlignedBuffer        _pTrMem;         /*!< Pre-built write-in TR (addr/daddr patched per frame) */
+   AlignedBuffer        _pTrMemRead;     /*!< Pre-built read-out TR, reused for every channel (addr/daddr patched per frame) */
    Udma_DrvHandle       _drvHandle;      /*!< Application-owned UDMA driver handle (not init'd/deinit'd here) */
    int32_t              _chId;          /*!< Owned DRU channel id (always 0) */
    bool                 _dmaUtilsInitDone = false; /*!< DmaUtils channel opened, must be closed in the destructor */
 
    // ── Transfer descriptor templates — built ONCE in the constructor (syncType,
    //    dmaDfmt, circProp, and the fixed transferDim counts/dims never change
-   //    frame-to-frame). exec() only refreshes ioPointers.srcPtr/dstPtr (which
-   //    move with _writeOff / setAddr) before prepareTr/configure/trigger/wait/
-   //    deconfigure -- the driver's TR memory must still be rebuilt whenever
-   //    the transfer's addresses move, but no field of these structs is
-   //    recomputed per frame. ──
-   DmaUtilsAutoInc3d_TrPrepareParam _trPrep; /*!< Fixed: channelId/trMem/trMemSize/numTRs=1 */
+   //    frame-to-frame). The constructor runs prepareTr ONCE per template into
+   //    _pTrMem / _pTrMemRead; exec() then only patches the two moving address
+   //    fields (tr->addr / tr->daddr) in that pre-built TR memory and submits,
+   //    so the structural prepareTr parse is lifted out of the per-frame hot
+   //    loop while staying in the low-latency direct-TR path. ──
+   DmaUtilsAutoInc3d_TrPrepareParam _trPrep; /*!< Used only for the one-time ctor prepareTr: channelId/trMemSize/numTRs=1 */
 
    // Write-in: one SYNC_2D TR, icnt0=frameBytes, icnt1=numChannels, circDir=DST,
    // circSize1=ringBytesPerCh. No burst tiling: a bulk+tail split is unsafe under CIRC1
@@ -123,9 +124,11 @@ template <typename T> class DelayDru final : public VirtualOp {
    DmaUtilsAutoInc3d_TransferProp _tpReadOutBulk;
    DmaUtilsAutoInc3d_TransferProp _tpReadOutTail; /*!< unused: kept zeroed, sicnt0==0 => skipped in exec() */
 
-   /*!< Run one prepared descriptor: prepareTr -> configure -> trigger -> wait -> deconfigure
-        on the single owned channel (id 0). `tp` must have ioPointers already filled in. */
-   void runTr(DmaUtilsAutoInc3d_TransferProp *tp) noexcept;
+   /*!< Submit one pre-built TR on the single owned channel (id 0): patch the
+        source/destination addresses in place (tr->addr/tr->daddr), then
+        configure -> trigger -> wait -> deconfigure. `trMem` is one of the
+        constructor-prepared buffers (_pTrMem / _pTrMemRead). */
+   void runPreparedTr(uint8_t *trMem, const void *src, void *dst) noexcept;
 #endif
 
  public:
