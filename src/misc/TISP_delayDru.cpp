@@ -115,10 +115,14 @@ DelayDru<T>::DelayDru(T         *pIn,
          _chRingSampOff[c] = c * _ringSamplesPerCh;
       }
 
-      // Initialize _params with the node parameters
+      // Initialize _params with the node parameters.
+      // Mirrors DelayNChannel's "width=,height=,widthD=,heightD=" schema so a host
+      // GUI that queried a delay_n_channel node (and now sees it DRU-offloaded)
+      // continues to parse the same keys. width/height describe the per-frame I/O
+      // buffer; widthD/heightD describe the delay (ring) buffer.
       (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
-                      "ch=%zu,frame=%zu,ringSamp=%zu,maxDelay=%u",
-                      numChannels, frameSamples, _ringSamplesPerCh, _maxDelay);
+                      "width=%zu,height=%zu,widthD=%zu,heightD=%zu",
+                      frameSamples, numChannels, _ringSamplesPerCh, numChannels);
       _nodeInfo.setName("DelayDru");
 
       // Initialize bufParams with node input and output buffer parameters. The DDR

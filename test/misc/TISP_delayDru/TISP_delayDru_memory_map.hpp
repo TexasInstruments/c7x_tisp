@@ -21,6 +21,14 @@
 #define TISP_DDT_ALIGN_UP(p, a) \
    (reinterpret_cast<uint8_t *>((reinterpret_cast<uintptr_t>(p) + ((a) - 1U)) & ~static_cast<uintptr_t>((a) - 1U)))
 
+/* One pool per external-memory region: used alternately as the DRU ring (A/C)
+ * or the Approach-B state. Ring and state are never live at the same time in
+ * a single test iteration (A/C → B → ... strictly sequential), so overlaying
+ * them in one buffer saves ~700 KB in OCRAM (previously gRing* + gDelayState*).
+ * The ring needs TISP_DDT_MAX_RING_BYTES_PER_CH alignment, handled at runtime
+ * via TISP_DDT_ALIGN_UP; the state view uses the raw pool base.
+ */
+
 #if defined(HOST_EMULATION)
 
 static float   gInFrameL2    [TISP_DDT_MAX_FRAME_ELEMS];
@@ -28,9 +36,10 @@ static float   gOutFrameL2_A [TISP_DDT_MAX_FRAME_ELEMS];
 static float   gOutFrameL2_B [TISP_DDT_MAX_FRAME_ELEMS];
 static float   gScratchL2    [TISP_DDT_MAX_FRAME_ELEMS];
 static float   gDelayStateL2 [TISP_DDT_MAX_STATE_ELEMS];
-static uint8_t gRingExt      [TISP_DDT_RING_ALLOC_BYTES];
-static float   gDelayStateExt[TISP_DDT_MAX_STATE_ELEMS];
+static uint8_t gExtDdr       [TISP_DDT_RING_ALLOC_BYTES];
 static float   gRefRing      [TISP_DDT_MAX_RING_SAMPLES_TOTAL];
+
+#define TISP_DDT_DDR_POOL_BYTES  TISP_DDT_RING_ALLOC_BYTES
 
 #else
 
@@ -46,31 +55,36 @@ static float gScratchL2[TISP_DDT_MAX_FRAME_ELEMS];
 __attribute__((section(".l2sramData"), aligned(64)))
 static float gDelayStateL2[TISP_DDT_MAX_STATE_ELEMS];
 
-/* External memory holding the DelayDru ring and the Approach-B state.
- * The ring must be aligned to ringBytesPerCh for DRU circular masking.
+/* External memory pool(s) holding the DelayDru ring (A/C) or Approach-B state (B).
  * DEVIATION: ideally non-cacheable (.ddr_state_nc/MAIR4); using the standard
  * data sections as a pragmatic placeholder. */
 #if defined(SOC_AM275X)
 
-/* AM275: .ddrData is OCRAM (cmake/linkers/C7524/lnk.cmd); run every case on
- * OCRAM and on HyperRAM. The CPU-only reference ring stays in HyperRAM. */
+/* AM275: .ddrData is OCRAM (cmake/linkers/C7524/lnk.cmd), ~4 MB total on this
+ * SOC and shared with .text/.const/.cinit/MMU tables — the actual free hole is
+ * ~3.6 MB. Cap the DelayDru OCRAM pool at 2 MB (fits every current test case
+ * with ~500 KB headroom); any case whose ringBytesTotal exceeds the cap is
+ * skipped at runtime on OCRAM and still runs on HyperRAM. The pool is
+ * over-allocated by TISP_DDT_MAX_RING_BYTES_PER_CH so TISP_DDT_ALIGN_UP in the
+ * test (which aligns by that global macro) never walks past the buffer. */
+#define TISP_DDT_OCRAM_RING_BYTES_TOTAL       (2U * 1024U * 1024U)  /* 2 MB cap: fits all 15 tests */
+#define TISP_DDT_OCRAM_POOL_BYTES             (TISP_DDT_OCRAM_RING_BYTES_TOTAL + \
+                                               TISP_DDT_MAX_RING_BYTES_PER_CH)
+#define TISP_DDT_HYPER_POOL_BYTES             TISP_DDT_RING_ALLOC_BYTES
+
 __attribute__((section(".ddrData"), aligned(128)))
-static uint8_t gRingOcram[TISP_DDT_RING_ALLOC_BYTES];
-__attribute__((section(".ddrData"), aligned(128)))
-static float gDelayStateOcram[TISP_DDT_MAX_STATE_ELEMS];
+static uint8_t gExtOcram[TISP_DDT_OCRAM_POOL_BYTES];
 __attribute__((section(".hyperRamData"), aligned(128)))
-static uint8_t gRingHyper[TISP_DDT_RING_ALLOC_BYTES];
-__attribute__((section(".hyperRamData"), aligned(128)))
-static float gDelayStateHyper[TISP_DDT_MAX_STATE_ELEMS];
+static uint8_t gExtHyper[TISP_DDT_HYPER_POOL_BYTES];
 __attribute__((section(".hyperRamData"), aligned(128)))
 static float gRefRing[TISP_DDT_MAX_RING_SAMPLES_TOTAL];
 
 #else
 
+#define TISP_DDT_DDR_POOL_BYTES  TISP_DDT_RING_ALLOC_BYTES
+
 __attribute__((section(".ddrData"), aligned(128)))
-static uint8_t gRingExt[TISP_DDT_RING_ALLOC_BYTES];
-__attribute__((section(".ddrData"), aligned(128)))
-static float gDelayStateExt[TISP_DDT_MAX_STATE_ELEMS];
+static uint8_t gExtDdr[TISP_DDT_DDR_POOL_BYTES];
 __attribute__((section(".ddrData"), aligned(128)))
 static float gRefRing[TISP_DDT_MAX_RING_SAMPLES_TOTAL];
 
@@ -78,14 +92,31 @@ static float gRefRing[TISP_DDT_MAX_RING_SAMPLES_TOTAL];
 
 #endif
 
-typedef struct { uint8_t *ring; float *state; const char *name; } TispDelayDruExtVariant;
+/* Per-variant external pool. `pool` is used alternately as the DRU ring (A/C)
+ * or the Approach-B state, never both at once. `poolBytes` sizes a one-shot
+ * reset memset over the whole buffer. `ringCapBytes` caps the ring region to
+ * stay within a tight pool (0 == uncapped). Cases whose ringBytesTotal
+ * exceeds ringCapBytes are skipped at runtime on that variant only.
+ * `cpuExtDirect` is true when CPU/SE loads can run directly against this pool
+ * (OCRAM, DDR). Approach C streams DelayNChannel state out of the external
+ * pool via SE and must be skipped on regions the SE path cannot address
+ * (HyperRAM on AM275). */
+typedef struct {
+   uint8_t    *pool;
+   uint32_t    poolBytes;
+   const char *name;
+   uint32_t    ringCapBytes;
+   bool        cpuExtDirect;
+} TispDelayDruExtVariant;
 
 #if defined(HOST_EMULATION) || !defined(SOC_AM275X)
-static TispDelayDruExtVariant gExtVariants[] = { {gRingExt, gDelayStateExt, "DDR"} };
+static TispDelayDruExtVariant gExtVariants[] = {
+   {gExtDdr, TISP_DDT_DDR_POOL_BYTES, "DDR", 0U, true},
+};
 #else
 static TispDelayDruExtVariant gExtVariants[] = {
-    {gRingOcram, gDelayStateOcram, "OCRAM"},
-    {gRingHyper, gDelayStateHyper, "HyperRAM"},
+   {gExtOcram, TISP_DDT_OCRAM_POOL_BYTES, "OCRAM",    TISP_DDT_OCRAM_RING_BYTES_TOTAL, true},
+   {gExtHyper, TISP_DDT_HYPER_POOL_BYTES, "HyperRAM", 0U,                              false},
 };
 #endif
 #define N_EXT_VARIANTS ((int)(sizeof(gExtVariants) / sizeof(gExtVariants[0])))

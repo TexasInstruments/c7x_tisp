@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define TISP_DDT_MAX_CHANNELS 16U
+#define TISP_DDT_MAX_CHANNELS 8U
 
 #ifdef __cplusplus
 extern "C" {
