@@ -26,6 +26,7 @@
 #include "TISP_dcSource.hpp"
 #include "TISP_deinterleave.hpp"
 #include "TISP_delay.hpp"
+#include "TISP_delayDru.hpp"
 #include "TISP_delayNChannel.hpp"
 #include "TISP_div.hpp"
 #include "TISP_exp.hpp"
