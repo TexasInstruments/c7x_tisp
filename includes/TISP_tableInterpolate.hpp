@@ -51,11 +51,11 @@ template <typename T> class Tableinterpolate final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_tableInterpolate kernel.
     *
-    * @param [in]  *pX                  : Pointer to the input array.
+    * @param [in]  pX                   : Pointer to the input array.
     *                                     Initializes @ref _pX.
-    * @param [in]  *pG                  : Pointer to the table buffer.
+    * @param [in]  pG                   : Pointer to the table buffer.
     *                                     Initializes @ref _pG.
-    * @param [out] *pY                  : Pointer to the output array.
+    * @param [out] pY                   : Pointer to the output array.
     *                                     Initializes @ref _pY.
     * @param [in]  srcsamples           : Width of input array.
     * @param [in]  tableSamples         : Width of table buffer.

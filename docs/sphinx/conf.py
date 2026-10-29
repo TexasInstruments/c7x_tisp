@@ -216,6 +216,9 @@ def _caption_to_slug(caption):
 # non-node-lib category is listed directly in api/index).
 _FRAMEWORK_SINGLE_STEMS = {"errorHandling"}  # listed directly in api/index
 
+# Single group pages whose classes live in their own namespace.
+_GROUP_NAMESPACES = {"SUPERNODE": "TISP::SuperNode"}
+
 
 def _generate_api_pages(xml_directory, api_directory):
     """Emit api/index.rst + per-page RST files for all Doxygen groups.
@@ -275,6 +278,11 @@ def _generate_api_pages(xml_directory, api_directory):
             with open(page_file, "w", encoding="utf-8") as fh:
                 fh.write(f"{title}\n{underline}\n\n")
                 opts = "" if name in _NO_MEMBERS_GROUPS else "\n   :members:"
+                if name in _GROUP_NAMESPACES:
+                    # Declare the namespace so C++ xrefs to it (e.g. the base
+                    # class TISP::SuperNode::BaseSuperNode) resolve.
+                    fh.write(f".. doxygennamespace:: {_GROUP_NAMESPACES[name]}\n"
+                             "   :desc-only:\n\n")
                 fh.write(f".. doxygengroup:: {name}{opts}\n")
             group_pages[name] = [name]
 

@@ -71,11 +71,11 @@ template <typename T> class Gain final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_gain kernel.
     *
-    * @param [in]  *pX           : Pointer to the input matrix.
+    * @param [in]  pX            : Pointer to the input matrix.
     *                              Initializes @ref _pX.
-    * @param [in]  *pG           : Pointer to the input gain value.
+    * @param [in]  pG            : Pointer to the input gain value.
     *                              Initializes @ref _pG.
-    * @param [out] *pY           : Pointer to the output matrix.
+    * @param [out] pY            : Pointer to the output matrix.
     *                              Initializes @ref _pY.
     * @param [in]  width         : Width of input matrix.
     * @param [in]  height        : Height of input matrix.

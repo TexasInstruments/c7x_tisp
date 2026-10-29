@@ -40,9 +40,9 @@ template <typename T> class Sin final : public VirtualOp {
     *
     * This constructor initializes a node for the MATHLIB_sin kernel.
     *
-    * @param [in]  *pIn  : Pointer to the input array.
+    * @param [in]  pIn   : Pointer to the input array.
     *                      Initializes @ref _pIn.
-    * @param [out] *pOut : Pointer to the output array.
+    * @param [out] pOut  : Pointer to the output array.
     *                      Initializes @ref _pOut.
     * @param [in]  size  : Length of input array.
     *                      Initializes _size.

@@ -144,12 +144,12 @@ template <typename T> class MultiplexerSmooth final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_multiplexerSmooth kernel.
     *
-    * @param [in]  *pX0                : Pointer to the input matrix.
-    * @param [in]  *pSmoothedSampleBuff: Pointer to buffer holding data from previous input buffer.
-    * @param [in]  *pGainFadeIn        : Pointer to sin gain buffer.
-    * @param [in]  *pGainFadeOut       : Pointer to cos gain buffer.
-    * @param [out] *pY                 : Pointer to the output matrix.
-    * @param [out] *pWs                : Pointer to the workspace memory. Size should be (SmoothedSamples * nChannels)
+    * @param [in]  pX0                 : Pointer to the input matrix.
+    * @param [in]  pSmoothedSampleBuff : Pointer to buffer holding data from previous input buffer.
+    * @param [in]  pGainFadeIn         : Pointer to sin gain buffer.
+    * @param [in]  pGainFadeOut        : Pointer to cos gain buffer.
+    * @param [out] pY                  : Pointer to the output matrix.
+    * @param [out] pWs                 : Pointer to the workspace memory. Size should be (SmoothedSamples * nChannels)
     * * 2.
     * @param [in]  maxInputs           : Maximum input sources in pX0.
     * @param [in]  widthIn             : Width of input matrix.

@@ -75,8 +75,8 @@ template <typename T> class Sqr final : public VirtualOp {
     *
     * This constructor is called to create the node
     *
-    * @param[in]  *pX      : Pointer to input vector; initializes @ref _pX
-    * @param[out] *pY      : Pointer to output vector; initializes @ref _pY
+    * @param[in]  pX       : Pointer to input vector; initializes @ref _pX
+    * @param[out] pY       : Pointer to output vector; initializes @ref _pY
     * @param[in]  size     : Length of the vector; initializes @ref _size
     * @param [in]  errorCtx        : Error context for reporting constructor errors
     *

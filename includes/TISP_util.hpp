@@ -31,7 +31,7 @@ class execute {
    /**
     *  @brief This function takes in alias of the opeVec (list of nodes) and iterates through all the nodes calling the
     *         exec function pertaining to that node
-    *  @param [in] &myOpVec : Object to list of nodes
+    *  @param [in] myOpVec  : Object to list of nodes
     *
     */
    static void graph(const opVec &myOpVec)
@@ -123,7 +123,7 @@ class execute {
    /**
     *  @brief This function takes in alias of the superNodeVec (list of supernodes) and iterates through all the
     *         supernodes calling the exec function pertaining to that supernode
-    *  @param [in] &mySuperNodeVec : Object to list of supernodes
+    *  @param [in] mySuperNodeVec  : Object to list of supernodes
     *
     */
    static void graph(const SuperNode::superNodeVec &mySuperNodeVec)

@@ -74,9 +74,9 @@ template <typename T> class Undb10 final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_undB10 kernel.
     *
-    * @param [in]  *pX            : Pointer to the input matrix.
+    * @param [in]  pX             : Pointer to the input matrix.
     *                               Initializes @ref _pX.
-    * @param [out] *pY            : Pointer to the output matrix.
+    * @param [out] pY             : Pointer to the output matrix.
     *                               Initializes @ref _pY.
     * @param [in]  width        : Width of input matrix.
     * @param [in]  height       : Height of input matrix.

@@ -31,8 +31,8 @@ template <typename T> class Sinh final : public VirtualOp {
  public:
    /**
     * @brief Creates an sinh node
-    * @param [in]  *pIn  : Pointer to input matrix; initializes @ref _pIn
-    * @param [out] *pOut : Pointer to output matrix; initializes @ref _pOut
+    * @param [in]  pIn   : Pointer to input matrix; initializes @ref _pIn
+    * @param [out] pOut  : Pointer to output matrix; initializes @ref _pOut
     * @param [in]  size  : length of matrix; initializes @ref _size
     * @param [in]  errorCtx : Error context for reporting constructor errors
     *

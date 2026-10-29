@@ -16,6 +16,10 @@
 #include <vector>
 
 namespace TISP {
+/**
+ * @namespace TISP::SuperNode
+ * @brief Supernode classes that tile 2D data through L2SRAM using DMA.
+ */
 namespace SuperNode {
 
 // Define a constant for maximum source addresses for a given node
@@ -156,11 +160,11 @@ template <typename dTypeIn, typename dTypeOut> class I2dToO2d final : public Bas
  public:
    /**
     * @brief Supernode constructor to create a 2D input to 2D output DMA supernode.
-    * @param [in]  &myOpVec    : Operator vector with list of nodes to be executed inside the supernode
-    * @param [in]  *pIn        : Input pointer in DDR space
-    * @param [out] *pOut       : Output pointer in DDR space
-    * @param [in]  *pInBlock   : Input pointer in L2 space
-    * @param [out] *pOutBlock  : Output pointer in L2 space
+    * @param [in]  myOpVec     : Operator vector with list of nodes to be executed inside the supernode
+    * @param [in]  pIn         : Input pointer in DDR space
+    * @param [out] pOut        : Output pointer in DDR space
+    * @param [in]  pInBlock    : Input pointer in L2 space
+    * @param [out] pOutBlock   : Output pointer in L2 space
     * @param [in]  width       : Width of 2D block in DDR
     * @param [in]  height      : height of 2D block in DDR
     * @param [in]  blockWidth  : Width of 2D block in L2
@@ -200,7 +204,7 @@ template <typename dTypeIn, typename dTypeOut> class I2dToO2d final : public Bas
 };
 
 /**
- *  \class I2dToO2dG
+ *  \class I2dToO2dDiffDims
  *  @brief Provides the supernode style when input data is transferred in 2D form and output is transferred out in 2D
  *         form.
  * @details Unlike the input, the output buffer may have different dimensions
@@ -233,11 +237,11 @@ template <typename dTypeIn, typename dTypeOut> class I2dToO2dDiffDims final : pu
  public:
    /**
     * @brief Supernode constructor to create a 2D input to 2D output DMA supernode.
-    * @param [in]  &myOpVec       : Operator vector with list of nodes to be executed inside the supernode
-    * @param [in]  *pIn           : Input pointer in DDR space
-    * @param [out] *pOut          : Output pointer in DDR space
-    * @param [in]  *pInBlock      : Input pointer in L2 space
-    * @param [out] *pOutBlock     : Output pointer in L2 space
+    * @param [in]  myOpVec        : Operator vector with list of nodes to be executed inside the supernode
+    * @param [in]  pIn            : Input pointer in DDR space
+    * @param [out] pOut           : Output pointer in DDR space
+    * @param [in]  pInBlock       : Input pointer in L2 space
+    * @param [out] pOutBlock      : Output pointer in L2 space
     * @param [in]  widthIn        : Width of 2D input block in DDR
     * @param [in]  heightIn       : height of 2D input block in DDR
     * @param [in]  widthOut       : Width of output 2D block in DDR
@@ -327,13 +331,13 @@ template <typename dTypeIn, typename dTypeOut> class i2d_to_o2dMatMul final : pu
  public:
    /**
     * @brief Supernode constructor to create a 2D input to 2D output DMA supernode.
-    * @param [in]  &_myOpVec    : Operator vector with list of nodes to be executed inside the supernode
-    * @param [in]  *_pInA        : Input pointer for matrix A in DDR space
-    * @param [in]  *_pInB        : Input pointer for matrix B in DDR space
-    * @param [out] *_pOut       : Output pointer in DDR space
-    * @param [in]  *_pInBlockA  : Input pointer for matrix A in L2 space
-    * @param [in]  *_pInBlockB  : Input pointer for matrix B in L2 space
-    * @param [out] *_pOutBlock  : Output pointer in L2 space
+    * @param [in]  _myOpVec     : Operator vector with list of nodes to be executed inside the supernode
+    * @param [in]  _pInA         : Input pointer for matrix A in DDR space
+    * @param [in]  _pInB         : Input pointer for matrix B in DDR space
+    * @param [out] _pOut        : Output pointer in DDR space
+    * @param [in]  _pInBlockA   : Input pointer for matrix A in L2 space
+    * @param [in]  _pInBlockB   : Input pointer for matrix B in L2 space
+    * @param [out] _pOutBlock   : Output pointer in L2 space
     * @param [in]  _widthA       : Width of 2D block for matrix A in DDR
     * @param [in]  _heightA      : height of 2D block for matrix A in DDR
     * @param [in]  _widthB       : Width of 2D block for matrix B in DDR
@@ -419,11 +423,11 @@ template <typename dTypeIn, typename dTypeOut> class I2dToO2dTranspose final : p
  public:
    /**
     * @brief Supernode constructor to create a 2D input to 2D output (tranposed) DMA supernode.
-    * @param [in]  &myOpVec    : Operator vector with list of nodes to be executed inside the supernode
-    * @param [in]  *pIn        : Input pointer in DDR space
-    * @param [out] *pOut       : Output pointer in DDR space
-    * @param [in]  *pInBlock   : Input pointer in L2 space
-    * @param [out] *pOutBlock  : Output pointer in L2 space
+    * @param [in]  myOpVec     : Operator vector with list of nodes to be executed inside the supernode
+    * @param [in]  pIn         : Input pointer in DDR space
+    * @param [out] pOut        : Output pointer in DDR space
+    * @param [in]  pInBlock    : Input pointer in L2 space
+    * @param [out] pOutBlock   : Output pointer in L2 space
     * @param [in]  width       : Width of 2D block in DDR
     * @param [in]  height      : height of 2D block in DDR
     * @param [in]  blockWidth  : Width of 2D block in L2
@@ -522,13 +526,13 @@ template <typename dTypeIn, typename dTypeOut> class I2dI2dToO2d final : public 
  public:
    /**
     * @brief Supernode constructor to create a 2D input to 2D output DMA supernode.
-    * @param [in]  &_myOpVec    : Operator vector with list of nodes to be executed inside the supernode
-    * @param [in]  *_pInA        : Input pointer for matrix A in DDR space
-    * @param [in]  *_pInB        : Input pointer for matrix B in DDR space
-    * @param [out] *_pOut       : Output pointer in DDR space
-    * @param [in]  *_pInBlockA  : Input pointer for matrix A in L2 space
-    * @param [in]  *_pInBlockB  : Input pointer for matrix B in L2 space
-    * @param [out] *_pOutBlock  : Output pointer in L2 space
+    * @param [in]  _myOpVec     : Operator vector with list of nodes to be executed inside the supernode
+    * @param [in]  _pInA         : Input pointer for matrix A in DDR space
+    * @param [in]  _pInB         : Input pointer for matrix B in DDR space
+    * @param [out] _pOut        : Output pointer in DDR space
+    * @param [in]  _pInBlockA   : Input pointer for matrix A in L2 space
+    * @param [in]  _pInBlockB   : Input pointer for matrix B in L2 space
+    * @param [out] _pOutBlock   : Output pointer in L2 space
     * @param [in]  _widthA       : Width of 2D block for matrix A in DDR
     * @param [in]  _heightA      : height of 2D block for matrix A in DDR
     * @param [in]  _widthB       : Width of 2D block for matrix B in DDR
@@ -660,15 +664,15 @@ template <typename dTypeIn, typename dTypeOut> class I2dI2dToO2dO2d final : publ
  public:
    /**
     * @brief Supernode constructor to create a 2D input to 2D output DMA supernode.
-    * @param [in]  &_myOpVec     : Operator vector with list of nodes to be executed inside the supernode
-    * @param [in]  *_pInA        : Input pointer for matrix A in DDR space
-    * @param [in]  *_pInB        : Input pointer for matrix B in DDR space
-    * @param [out] *_pOutA       : Output pointer for matrix A in DDR space
-    * @param [out] *_pOutB       : Output pointer for matrix B in DDR space
-    * @param [in]  *_pInBlockA   : Input pointer for matrix A in L2 space
-    * @param [in]  *_pInBlockB   : Input pointer for matrix B in L2 space
-    * @param [out] *_pOutBlockA  : Output pointer matrix A in L2 space
-    * @param [out] *_pOutBlockB  : Output pointer matrix B in L2 space
+    * @param [in]  _myOpVec      : Operator vector with list of nodes to be executed inside the supernode
+    * @param [in]  _pInA         : Input pointer for matrix A in DDR space
+    * @param [in]  _pInB         : Input pointer for matrix B in DDR space
+    * @param [out] _pOutA        : Output pointer for matrix A in DDR space
+    * @param [out] _pOutB        : Output pointer for matrix B in DDR space
+    * @param [in]  _pInBlockA    : Input pointer for matrix A in L2 space
+    * @param [in]  _pInBlockB    : Input pointer for matrix B in L2 space
+    * @param [out] _pOutBlockA   : Output pointer matrix A in L2 space
+    * @param [out] _pOutBlockB   : Output pointer matrix B in L2 space
     * @param [in]  _widthA       : Width of 2D block for matrix A in DDR
     * @param [in]  _heightA      : height of 2D block for matrix A in DDR
     * @param [in]  _widthB       : Width of 2D block for matrix B in DDR

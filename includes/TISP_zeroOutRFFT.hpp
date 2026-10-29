@@ -43,7 +43,7 @@ template <typename T> class zeroOutRFFT final : public VirtualOp {
 
    /**
     * @brief Optimized function that uses SE/SA to zero out RFFT bins; this function is not exposed to user
-    * @param [in]  *_pX         : Pointer to input/output 2D block (zeroed in place)
+    * @param [in]  _pX          : Pointer to input/output 2D block (zeroed in place)
     * @param [in]  _numPoints   : Width of 2D block
     * @param [in]  _numChannels : Height of 2D block
     * @param [in]  _index       : Start index from which to zero out
@@ -83,11 +83,11 @@ template <typename T> class zeroOutRFFT final : public VirtualOp {
 
    /**
     * @brief Creates a zeroOutRFFT node
-    * @param [in]  *_pX        : Pointer to input 2D block; initializes @ref pX
+    * @param [in]  _pX         : Pointer to input 2D block; initializes @ref pX
     * @param [in]  _numPoints  : Width of input 2D block; initializes @ref numPoints
     * @param [in]  _numChannels: Height of input 2D block; initializes @ref numChannels
     * @param [in]  _index      : Start index from which to zero out; initializes @ref index
-    * @param [in]  *_length    : Pointer to per-channel zero-out length; initializes @ref length
+    * @param [in]  _length     : Pointer to per-channel zero-out length; initializes @ref length
     *
     */
 

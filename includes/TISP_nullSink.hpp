@@ -39,7 +39,7 @@ template <typename T> class Nullsink final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_nullSink kernel.
     *
-    * @param [in]  *pX           : Pointer to the input matrix.
+    * @param [in]  pX            : Pointer to the input matrix.
     *                              Initializes @ref _pX.
     * @param [in]  errorCtx      : Error context for reporting constructor errors
     *

@@ -39,11 +39,11 @@ template <typename T> class Div final : public VirtualOp {
     *
     * This constructor initializes a node for the MATHLIB_div kernel.
     *
-    * @param [in]  *pIn0  : Pointer to the input array 0.
+    * @param [in]  pIn0   : Pointer to the input array 0.
     *                      Initializes @ref _pIn0.
-    * @param [in]  *pIn1  : Pointer to the input array 1.
+    * @param [in]  pIn1   : Pointer to the input array 1.
     *                      Initializes @ref _pIn1.
-    * @param [out] *pOut : Pointer to the output array.
+    * @param [out] pOut  : Pointer to the output array.
     *                      Initializes @ref _pOut.
     * @param [in]  size  : Length of input array.
     *                      Initializes _size.
