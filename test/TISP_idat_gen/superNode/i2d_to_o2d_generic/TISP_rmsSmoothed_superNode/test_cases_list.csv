@@ -1,0 +1,9 @@
+ID,dType,widthIn,heightIn,inPitch,outPitch,blockWidth,blockHeight,testPattern,isInterleave,alignStride,AM275 SOC,samplingRate,smoothingTime
+1,float,128,64,128,8,16,64,STATIC,0,TRUE,yes,48000,100
+2,double,128,32,128,8,16,32,STATIC,0,FALSE,no,48000,0
+3,float,256,16,256,8,32,16,STATIC,0,TRUE,no,16000,10
+4,double,256,8,256,16,16,8,STATIC,0,FALSE,no,44100,1000
+5,float,512,8,512,8,64,8,STATIC,0,TRUE,no,48000,50
+6,double,512,4,512,16,32,4,STATIC,0,FALSE,no,96000,5
+7,float,1024,2,1024,16,64,2,STATIC,0,TRUE,no,8000,250
+8,double,1024,1,1024,8,128,1,STATIC,0,FALSE,no,48000,10000
