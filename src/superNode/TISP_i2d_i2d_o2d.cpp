@@ -194,3 +194,5 @@ template class TISP::SuperNode::I2dI2dToO2d<int16_t, int16_t>;
 template class TISP::SuperNode::I2dI2dToO2d<uint16_t, uint16_t>;
 template class TISP::SuperNode::I2dI2dToO2d<int32_t, int32_t>;
 template class TISP::SuperNode::I2dI2dToO2d<uint32_t, uint32_t>;
+template class TISP::SuperNode::I2dI2dToO2d<uint8_t, uint8_t>;
+template class TISP::SuperNode::I2dI2dToO2d<uint64_t, uint64_t>;
