@@ -24,6 +24,7 @@
 #include "TISP_dB20.hpp"
 #include "TISP_dataConvert.hpp"
 #include "TISP_dcSource.hpp"
+#include "TISP_deEmphasis.hpp"
 #include "TISP_deinterleave.hpp"
 #include "TISP_delay.hpp"
 #include "TISP_delayDru.hpp"
