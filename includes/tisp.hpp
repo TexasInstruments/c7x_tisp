@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../src/FFTLIB/TISP_twiddle_lut.hpp"
+#include "TISP_absoluteValue.hpp"
 #include "TISP_acos.hpp"
 #include "TISP_addConstant.hpp"
 #include "TISP_addNCh.hpp"
