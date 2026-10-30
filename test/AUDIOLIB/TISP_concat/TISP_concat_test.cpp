@@ -54,22 +54,16 @@ __attribute__((section(".ddrData"), aligned(64))) int8_t  ddrBuffer[2048 * 1024]
 
 int16_t volatile volatileSum = 0; // use volatile to keep compiler from removing this operation
 
-std::unique_ptr<TISP::VirtualOp> TISP_concat_createKernelObject(TISP::TISP_BufDesc2D *concatInput,
-                                                                void                 *pOut,
-                                                                uint32_t              numInputs,
-                                                                uint32_t              inSamples,
-                                                                uint8_t               isInterleave,
-                                                                size_t                outPitchBytes,
-                                                                uint32_t              sampleDataType,
-                                                                TISP::ErrorCtxt      &errorCtx)
+std::unique_ptr<TISP::VirtualOp> TISP_concat_createKernelObject(const TISP::TISP_BufDescList *pInputs,
+                                                                const TISP::TISP_BufDescList *pOutputs,
+                                                                uint32_t                      sampleDataType,
+                                                                TISP::ErrorCtxt              &errorCtx)
 {
    if (sampleDataType == AUDIOLIB_FLOAT32) {
-      return std::make_unique<TISP::AUDIOLIB::Concat<float>>(concatInput, numInputs, (float *) pOut, outPitchBytes,
-                                                             inSamples, isInterleave, errorCtx);
+      return std::make_unique<TISP::AUDIOLIB::Concat<float>>(pInputs, pOutputs, "Concat", 0, errorCtx);
    }
    else if (sampleDataType == AUDIOLIB_FLOAT64) {
-      return std::make_unique<TISP::AUDIOLIB::Concat<double>>(concatInput, numInputs, (double *) pOut, outPitchBytes,
-                                                              inSamples, isInterleave, errorCtx);
+      return std::make_unique<TISP::AUDIOLIB::Concat<double>>(pInputs, pOutputs, "Concat", 0, errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_concat_createKernelObject", "unsupported data type for Concat kernel");
@@ -164,14 +158,22 @@ int TISP_concat_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             inputArrayVoid[i] = inputBuffers[i].get();
          }
 
-         // Build inputs descriptor array
+         // Build input and output descriptors
+         const TISP::Types dataTypeTisp =
+             (currPrm.dataType == AUDIOLIB_FLOAT64) ? TISP::Types::kFloat64 : TISP::Types::kFloat32;
          std::vector<TISP::TISP_BufDesc2D> concatInputs(numInputs);
          for (size_t i = 0; i < numInputs; i++) {
-            concatInputs[i].pBuf     = inputBuffers[i].get();
-            concatInputs[i].width    = currPrm.isInterleave ? inChannelsArr[i] : inSamples;
-            concatInputs[i].height   = currPrm.isInterleave ? inSamples : inChannelsArr[i];
-            concatInputs[i].stride_y = static_cast<int32_t>(inPitchBytesArr[i]);
+            concatInputs[i].pBuf         = inputBuffers[i].get();
+            concatInputs[i].dataType     = dataTypeTisp;
+            concatInputs[i].width        = currPrm.isInterleave ? inChannelsArr[i] : inSamples;
+            concatInputs[i].height       = currPrm.isInterleave ? inSamples : inChannelsArr[i];
+            concatInputs[i].pitchBytes   = inPitchBytesArr[i];
+            concatInputs[i].isInterleave = static_cast<uint8_t>(currPrm.isInterleave);
          }
+         const TISP::TISP_BufDesc2D concatOutput = {
+             pOut.get(), dataTypeTisp, width, height, strideOut, static_cast<uint8_t>(currPrm.isInterleave)};
+         const TISP::TISP_BufDescList inputList  = {concatInputs.data(), numInputs};
+         const TISP::TISP_BufDescList outputList = {&concatOutput, 1U};
 
          /* Only run the test if the buffer allocations fit in the heap */
          if (inputArrayVoid && pOut.get() && pOutCn) {
@@ -189,10 +191,7 @@ int TISP_concat_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
             TISP::ErrorCtxt errorCtx;
-            auto            k0 = TISP_concat_createKernelObject(
-                concatInputs.data(), pOut.get(), static_cast<uint32_t>(numInputs),
-                static_cast<uint32_t>(inSamples), static_cast<uint8_t>(currPrm.isInterleave),
-                strideOut, currPrm.dataType, errorCtx);
+            auto            k0 = TISP_concat_createKernelObject(&inputList, &outputList, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

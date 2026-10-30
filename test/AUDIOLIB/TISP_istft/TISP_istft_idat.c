@@ -740,170 +740,170 @@ static TISP_istft_testParams_t testParams[] = {
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 29))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase29,  // *staticIn
-        (float *) staticRefOutCase29, // *staticOut
-        640,                          // fftSize
-        640,                          // windowLength
-        150,                          // hopSize
-        2,                            // numChannels
-        3,                            // numWindows
-        0,                            // onesided
-        2,                            // windowType (hamming)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        29,                           // testID
-        2,                            // numBlocks
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase29,                      // *staticIn
+    (float *) staticRefOutCase29,                     // *staticOut
+    640,                                              // fftSize
+    640,                                              // windowLength
+    150,                                              // hopSize
+    2,                                                // numChannels
+    3,                                                // numWindows
+    0,                                                // onesided
+    2,                                                // windowType (hamming)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    29,                                               // testID
+    2,                                                // numBlocks
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 30))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase30,  // *staticIn
-        (float *) staticRefOutCase30, // *staticOut
-        120,                          // fftSize
-        120,                          // windowLength
-        30,                           // hopSize
-        1,                            // numChannels
-        4,                            // numWindows
-        0,                            // onesided
-        3,                            // windowType (blackman)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        30,                           // testID
-        4,                            // numBlocks
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase30,                      // *staticIn
+    (float *) staticRefOutCase30,                     // *staticOut
+    120,                                              // fftSize
+    120,                                              // windowLength
+    30,                                               // hopSize
+    1,                                                // numChannels
+    4,                                                // numWindows
+    0,                                                // onesided
+    3,                                                // windowType (blackman)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    30,                                               // testID
+    4,                                                // numBlocks
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 31))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase31,  // *staticIn
-        (float *) staticRefOutCase31, // *staticOut
-        320,                          // fftSize
-        320,                          // windowLength
-        80,                           // hopSize
-        3,                            // numChannels
-        2,                            // numWindows
-        1,                            // onesided
-        3,                            // windowType (blackman)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        31,                           // testID
-        4,                            // numBlocks
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase31,                      // *staticIn
+    (float *) staticRefOutCase31,                     // *staticOut
+    320,                                              // fftSize
+    320,                                              // windowLength
+    80,                                               // hopSize
+    3,                                                // numChannels
+    2,                                                // numWindows
+    1,                                                // onesided
+    3,                                                // windowType (blackman)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    31,                                               // testID
+    4,                                                // numBlocks
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 32))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase32,  // *staticIn
-        (float *) staticRefOutCase32, // *staticOut
-        240,                          // fftSize
-        240,                          // windowLength
-        60,                           // hopSize
-        1,                            // numChannels
-        2,                            // numWindows
-        0,                            // onesided
-        4,                            // windowType (blackman_harris)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        32,                           // testID
-        2,                            // numBlocks
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase32,                      // *staticIn
+    (float *) staticRefOutCase32,                     // *staticOut
+    240,                                              // fftSize
+    240,                                              // windowLength
+    60,                                               // hopSize
+    1,                                                // numChannels
+    2,                                                // numWindows
+    0,                                                // onesided
+    4,                                                // windowType (blackman_harris)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    32,                                               // testID
+    2,                                                // numBlocks
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 33))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase33,  // *staticIn
-        (float *) staticRefOutCase33, // *staticOut
-        600,                          // fftSize
-        600,                          // windowLength
-        150,                          // hopSize
-        4,                            // numChannels
-        4,                            // numWindows
-        1,                            // onesided
-        5,                            // windowType (bartlett)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        33,                           // testID
-        2,                            // numBlocks
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase33,                      // *staticIn
+    (float *) staticRefOutCase33,                     // *staticOut
+    600,                                              // fftSize
+    600,                                              // windowLength
+    150,                                              // hopSize
+    4,                                                // numChannels
+    4,                                                // numWindows
+    1,                                                // onesided
+    5,                                                // windowType (bartlett)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    33,                                               // testID
+    2,                                                // numBlocks
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 34))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase34,  // *staticIn
-        (float *) staticRefOutCase34, // *staticOut
-        1800,                         // fftSize
-        1800,                         // windowLength
-        500,                          // hopSize
-        1,                            // numChannels
-        2,                            // numWindows
-        1,                            // onesided
-        6,                            // windowType (sqrt(hann))
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        34,                           // testID
-        4,                            // numBlocks
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase34,                      // *staticIn
+    (float *) staticRefOutCase34,                     // *staticOut
+    1800,                                             // fftSize
+    1800,                                             // windowLength
+    500,                                              // hopSize
+    1,                                                // numChannels
+    2,                                                // numWindows
+    1,                                                // onesided
+    6,                                                // windowType (sqrt(hann))
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    34,                                               // testID
+    4,                                                // numBlocks
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 35))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase35,  // *staticIn
-        (float *) staticRefOutCase35, // *staticOut
-        648,                          // fftSize
-        648,                          // windowLength
-        54,                           // hopSize
-        2,                            // numChannels
-        2,                            // numWindows
-        0,                            // onesided
-        1,                            // windowType (hann)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        35,                           // testID
-        4,                            // numBlocks
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase35,                      // *staticIn
+    (float *) staticRefOutCase35,                     // *staticOut
+    648,                                              // fftSize
+    648,                                              // windowLength
+    54,                                               // hopSize
+    2,                                                // numChannels
+    2,                                                // numWindows
+    0,                                                // onesided
+    1,                                                // windowType (hann)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    35,                                               // testID
+    4,                                                // numBlocks
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 36))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase36,  // *staticIn
-        (float *) staticRefOutCase36, // *staticOut
-        1000,                         // fftSize
-        1000,                         // windowLength
-        200,                          // hopSize
-        1,                            // numChannels
-        2,                            // numWindows
-        0,                            // onesided
-        1,                            // windowType (hann)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        36,                           // testID
-        2,                            // numBlocks
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase36,                      // *staticIn
+    (float *) staticRefOutCase36,                     // *staticOut
+    1000,                                             // fftSize
+    1000,                                             // windowLength
+    200,                                              // hopSize
+    1,                                                // numChannels
+    2,                                                // numWindows
+    0,                                                // onesided
+    1,                                                // windowType (hann)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    36,                                               // testID
+    2,                                                // numBlocks
     },
 #endif
 
@@ -913,7 +913,7 @@ static TISP_istft_testParams_t testParams[] = {
  *  Sends the test parameter structure and number of tests
  */
 void
-TISP_istft_getTestParams (TISP_istft_testParams_t **params, int32_t *numTests)
+TISP_istft_getTestParams (TISP_istft_testParams_t ** params, int32_t * numTests)
 {
    *params = testParams;
    *numTests = sizeof (testParams) / sizeof (TISP_istft_testParams_t);

@@ -23,13 +23,8 @@ namespace DSPLIB {
  *  @brief Provides node-level APIs for the DSPLIB_CascadeBiquad kernel from DSPLIB.
  *  @tparam T        : Supports float and double
  *
- *  @details This node applies a cascade of second-order (biquad) sections to each channel of the
- *  input buffer pIn and writes the filtered values to the output buffer pOut. The sections are
- *  applied in series, the output of one stage feeding the next. Input and output are interleaved:
- *  each row holds one sample across all channels. The per-channel filter state is carried in
- *  pFilterVar across calls, so blocks must be presented in order. The coefficient buffer
- *  pFilterCoeff is shared by all channels unless `enableNChCoeffs` is set, and its layout depends
- *  on the selected `biquadForm` (DF1, DF2, or TDF2).
+ *  @details Applies a cascade of biquad sections to each channel of an interleaved input block.
+ *           The state buffer carries the per-channel filter variables across blocks.
  */
 
 /**
@@ -40,36 +35,52 @@ namespace DSPLIB {
  *
  */
 enum class CascadeBiquadParamId : uint16_t {
-   kFilterCoeffs = 0, /**< kFilterCoeffs: Filter coefficients block */
-   kBypass       = 1  /**< kBypass: uint32_t bypass mode; `0` applies the filter, `1` copies input to output */
+   kBypass       = 0, /**< kBypass: uint32_t bypass mode; `0` applies the filter, `1` copies input to output */
+   kFilterCoeffs = 1, /**< kFilterCoeffs: Filter coefficients block, in the layout of the coefficient buffer */
+   kAll          = 2  /**< kAll: all tunable params as one @ref CascadeBiquadTunableParams payload */
+};
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref CascadeBiquad node.
+ *
+ * @details Required; selects the filter structure, which also sets the layout of the coefficient buffer
+ *          (see DSPLIB_cascadeBiquad_get_coefficientsBufferDesc).
+ */
+struct CascadeBiquadConfig {
+   size_t   numStages       = 0U;    /*!< Number of biquad stages. */
+   uint32_t biquadForm      = 0U;    /*!< Biquad form (DSPLIB_BIQUAD_DF1, DSPLIB_BIQUAD_DF2, ...). */
+   bool     enableNChCoeffs = false; /*!< `true`: one coefficient set per channel, `false`: one set for all. */
+};
+
+/**
+ * @brief Tunable parameters of the @ref CascadeBiquad node, with their default values.
+ *
+ * @details Initial values of the runtime parameters, and the @ref CascadeBiquadParamId::kAll payload of
+ *          @ref CascadeBiquad::setParams / @ref CascadeBiquad::getParams.
+ *
+ * @tparam T : Node element type (float or double).
+ */
+template <typename T> struct CascadeBiquadTunableParams {
+   T       *pCoeffs    = nullptr; /*!< Caller-owned coefficient buffer in kernel layout; required, must outlive
+                                       the node. */
+   uint32_t bypassMode = 0U;      /*!< `0`: apply the filter, `1`: copy input to output. */
 };
 
 template <typename T> class CascadeBiquad final : public VirtualOp {
 
-   T       *_pIn;          /*!< Pointer to input buffer */
-   T       *_pFilterCoeff; /*!< Pointer to filter coefficients */
-   T       *_pFilterVar;   /*!< Pointer to state buffer */
-   T       *_pOut;         /*!< Pointer to output buffer */
-   NodeInfo _nodeInfo;     /*!< Node name, parameters, and ID */
+   NodeInfo       _nodeInfo;       /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;             /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;            /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _state;          /*!< State buffer descriptor (filter variables) */
+   T             *_coeffs;         /*!< Caller-owned coefficient buffer, used live by exec and setParams */
+   size_t         _coeffSizeBytes; /*!< Size in bytes of the coefficient buffer */
+   uint32_t       _bypassMode;     /*!< Bypass mode: `0` applies the filter, `1` copies input to output */
 
-   size_t _size;              /*!< Number of samples per channel. */
-   size_t _numChannels;       /*!< Number of channels. */
-   size_t _dataPitchInBytes;  /*!< Pitch of the input buffer in bytes. */
-   size_t _dataPitchOutBytes; /*!< Pitch of the output buffer in bytes. */
-
-   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the filter, `1` copies input to output. */
-
-   TISP::HandlePtr<char> _handle;          /*!< handle required by DSPLIB_cascadeBiquad kernel */
-   size_t                _coeffSizeBytes;  /*!< Cached size in bytes of the filter coefficients buffer */
-   size_t                _stateBufferSize; /*!< Cached size in bytes of the state buffer @ref _pFilterVar */
+   TISP::HandlePtr<char> _handle; /*!< Handle to low level DSPLIB_cascadeBiquad kernel */
 
    /**
-    * @brief Copies @ref _size rows of @ref _numChannels elements from @ref _pIn to @ref _pOut,
-    *        honouring @ref _dataPitchInBytes and @ref _dataPitchOutBytes
-    *
-    * Used by the bypass path. The state buffer @ref _pFilterVar is not advanced while bypass is
-    * enabled, so @ref cleanInternalBuffers() is invoked when bypass is disengaged to discard the
-    * now-stale filter history.
+    * @brief Copies the input buffer described by @ref _in to the output buffer described by @ref _out,
+    *        row by row, honouring both row pitches.
     *
     * @retval None
     * @throw None
@@ -78,71 +89,38 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
 
  public:
    /**
-    * @brief Creates a DSPLIB_CascadeBiquad node
+    * @brief Creates a DSPLIB_cascadeBiquad node.
     *
-    * This constructor is called to create the node
+    * @details Validates the buffer descriptors and initializes the DSPLIB_cascadeBiquad kernel. Rows are samples
+    *          and columns are channels; the state buffer is cleared.
     *
-    * @param[in]  *pIn              : Pointer to input buffer; initializes _pIn
-    * @param[in]  *pFilterCoeff     : Pointer to filter coefficient buffer; initializes _pFilterCoeff
-    * @param[in]  *pFilterVar       : Pointer for node to hold state buffer; initializes _pFilterVar
-    * @param[out] *pOut             : Pointer to output buffer; initializes _pOut
-    * @param[in]  size              : Number of samples per channel; initializes _size
-    * @param[in]  numChannels       : Number of channels; initializes _numChannels
-    * @param[in]  numStages         : Number of biquad stages in the cascade; initializes _numStages
-    * @param[in]  biquadForm        : One of the following; initializes _biquadForm
-    *                                 - DSPLIB_BIQUAD_DF1
-    *                                 - DSPLIB_BIQUAD_DF2
-    *                                 - DSPLIB_BIQUAD_TDF2
-    * @param[in]  dataPitchInBytes  : Pitch of input buffer in bytes; initializes _dataPitchInBytes
-    * @param[in]  dataPitchOutBytes : Pitch of output buffer in bytes; initializes _dataPitchOutBytes
-    * @param[in]  filterVarPitchBytes : Pitch of the state buffer in bytes; initializes _filterVarPitchBytes
-    * @param[in]  enableNChCoeffs   : Every channel has its own set of filter coefficients (T/F);
-    * @param [in]  errorCtx          : Error context for reporting constructor errors
+    * @param [in] pInputs               : Input buffer descriptors; exactly one interleaved buffer. Its @c pBuf is the
+    *                                    initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs              : Output buffer descriptors; exactly one interleaved buffer.
+    * @param [in] pStates               : State buffer descriptors; exactly one buffer with one column per channel and
+    *                                    `numStages` x (state variables per stage) rows.
+    * @param [in] pConfig          : Construction-time parameters; required.
+    * @param [in] pDefaultTunableParams : Initial tunable parameters; required, with a non-null @c pCoeffs.
+    * @param [in] nodeName              : Name of the node
+    * @param [in] nodeId                : ID of the node
+    * @param [in] errorCtx              : Error context for reporting constructor errors
     *
+    * @throw None
     */
-
-   CascadeBiquad(T         *pIn,
-                 T         *pFilterCoeff,
-                 T         *pFilterVar,
-                 T         *pOut,
-                 size_t     size,
-                 size_t     numChannels,
-                 size_t     numStages,
-                 uint32_t   biquadForm,
-                 size_t     dataPitchInBytes,
-                 size_t     dataPitchOutBytes,
-                 size_t     filterVarPitchBytes,
-                 bool       enableNChCoeffs,
-                 ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a DSPLIB_CascadeBiquad node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-
-   CascadeBiquad(T          *pIn,
-                 T          *pFilterCoeff,
-                 T          *pFilterVar,
-                 T          *pOut,
-                 size_t      size,
-                 size_t      numChannels,
-                 size_t      numStages,
-                 uint32_t    biquadForm,
-                 size_t      dataPitchInBytes,
-                 size_t      dataPitchOutBytes,
-                 size_t      filterVarPitchBytes,
-                 bool        enableNChCoeffs,
-                 const char *nodeName,
-                 uint32_t    nodeId,
-                 ErrorCtxt  &errorCtx);
+   CascadeBiquad(const TISP_BufDescList              *pInputs,
+                 const TISP_BufDescList              *pOutputs,
+                 const TISP_BufDescList              *pStates,
+                 const CascadeBiquadConfig      *pConfig,
+                 const CascadeBiquadTunableParams<T> *pDefaultTunableParams,
+                 const char                          *nodeName,
+                 uint32_t                             nodeId,
+                 ErrorCtxt                           &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pIn (input data matrix) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -153,7 +131,7 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pOut (output data matrix) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -163,14 +141,14 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pIn)
+    * @retval    size_t : The number of input buffers (1: input buffer)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pOut)
+    * @retval    size_t : The number of output buffers (1: output buffer)
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -179,8 +157,8 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
     *
     * This function sets the source and destination addresses for the operation.
     *
-    * @param[in] addrs Structure containing source and destination addresses
-    * @param[in] mode Mode of address setting (input, output, or both)
+    * @param [in] addrs  : Structure containing source and destination addresses
+    * @param [in] mode   : Mode of address setting (input, output, or both)
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
@@ -190,7 +168,6 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
     * This function performs the actual operation.
     *
     */
-
    void exec() noexcept override;
 
    /**
@@ -277,10 +254,8 @@ template <typename T> class CascadeBiquad final : public VirtualOp {
    /**
     * @brief Destructor
     *
-    * This destructor is set to default
-    *
+    * This destructor is set to default.
     */
-
    ~CascadeBiquad() = default;
 };
 

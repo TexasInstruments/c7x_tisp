@@ -178,1246 +178,1360 @@
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 1))
-__attribute__((unused)) static void *staticOutPtrsCase1[] = {
-    (void *) staticRefOut0Case1, (void *) staticRefOut1Case1, (void *) staticRefOut2Case1, (void *) staticRefOut3Case1,
-    (void *) staticRefOut4Case1, (void *) staticRefOut5Case1, (void *) staticRefOut6Case1, (void *) staticRefOut7Case1};
+__attribute__((unused))
+     static void *staticOutPtrsCase1[] = {
+        (void *) staticRefOut0Case1, (void *) staticRefOut1Case1, (void *) staticRefOut2Case1, (void *) staticRefOut3Case1,
+        (void *) staticRefOut4Case1, (void *) staticRefOut5Case1, (void *) staticRefOut6Case1, (void *) staticRefOut7Case1
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase1[] = {3, 3, 3, 3, 3, 3, 3, 3};
+__attribute__((unused))
+     static uint32_t outChannelsCase1[] = { 3, 3, 3, 3, 3, 3, 3, 3 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 2))
-__attribute__((unused)) static void *staticOutPtrsCase2[] = {(void *) staticRefOut0Case2, (void *) staticRefOut1Case2};
+__attribute__((unused))
+     static void *staticOutPtrsCase2[] = { (void *) staticRefOut0Case2, (void *) staticRefOut1Case2 };
 
-__attribute__((unused)) static uint32_t outChannelsCase2[] = {8, 8};
+__attribute__((unused))
+     static uint32_t outChannelsCase2[] = { 8, 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 3))
-__attribute__((unused)) static void *staticOutPtrsCase3[] = {
-    (void *) staticRefOut0Case3, (void *) staticRefOut1Case3, (void *) staticRefOut2Case3, (void *) staticRefOut3Case3,
-    (void *) staticRefOut4Case3, (void *) staticRefOut5Case3, (void *) staticRefOut6Case3, (void *) staticRefOut7Case3};
+__attribute__((unused))
+     static void *staticOutPtrsCase3[] = {
+        (void *) staticRefOut0Case3, (void *) staticRefOut1Case3, (void *) staticRefOut2Case3, (void *) staticRefOut3Case3,
+        (void *) staticRefOut4Case3, (void *) staticRefOut5Case3, (void *) staticRefOut6Case3, (void *) staticRefOut7Case3
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase3[] = {1, 1, 1, 1, 1, 1, 1, 1};
+__attribute__((unused))
+     static uint32_t outChannelsCase3[] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 4))
-__attribute__((unused)) static void *staticOutPtrsCase4[] = {(void *) staticRefOut0Case4};
+__attribute__((unused))
+     static void *staticOutPtrsCase4[] = { (void *) staticRefOut0Case4 };
 
-__attribute__((unused)) static uint32_t outChannelsCase4[] = {16};
+__attribute__((unused))
+     static uint32_t outChannelsCase4[] = { 16 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 5))
-__attribute__((unused)) static void *staticOutPtrsCase5[] = {(void *) staticRefOut0Case5};
+__attribute__((unused))
+     static void *staticOutPtrsCase5[] = { (void *) staticRefOut0Case5 };
 
-__attribute__((unused)) static uint32_t outChannelsCase5[] = {16};
+__attribute__((unused))
+     static uint32_t outChannelsCase5[] = { 16 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 6))
-__attribute__((unused)) static void *staticOutPtrsCase6[] = {(void *) staticRefOut0Case6, (void *) staticRefOut1Case6};
+__attribute__((unused))
+     static void *staticOutPtrsCase6[] = { (void *) staticRefOut0Case6, (void *) staticRefOut1Case6 };
 
-__attribute__((unused)) static uint32_t outChannelsCase6[] = {8, 8};
+__attribute__((unused))
+     static uint32_t outChannelsCase6[] = { 8, 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 7))
-__attribute__((unused)) static void *staticOutPtrsCase7[] = {(void *) staticRefOut0Case7};
+__attribute__((unused))
+     static void *staticOutPtrsCase7[] = { (void *) staticRefOut0Case7 };
 
-__attribute__((unused)) static uint32_t outChannelsCase7[] = {16};
+__attribute__((unused))
+     static uint32_t outChannelsCase7[] = { 16 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 8))
-__attribute__((unused)) static void *staticOutPtrsCase8[] = {(void *) staticRefOut0Case8, (void *) staticRefOut1Case8};
+__attribute__((unused))
+     static void *staticOutPtrsCase8[] = { (void *) staticRefOut0Case8, (void *) staticRefOut1Case8 };
 
-__attribute__((unused)) static uint32_t outChannelsCase8[] = {4, 4};
+__attribute__((unused))
+     static uint32_t outChannelsCase8[] = { 4, 4 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 9))
-__attribute__((unused)) static void *staticOutPtrsCase9[] = {(void *) staticRefOut0Case9, (void *) staticRefOut1Case9};
+__attribute__((unused))
+     static void *staticOutPtrsCase9[] = { (void *) staticRefOut0Case9, (void *) staticRefOut1Case9 };
 
-__attribute__((unused)) static uint32_t outChannelsCase9[] = {2, 2};
+__attribute__((unused))
+     static uint32_t outChannelsCase9[] = { 2, 2 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 10))
-__attribute__((unused)) static void *staticOutPtrsCase10[] = {(void *) staticRefOut0Case10,
-                                                              (void *) staticRefOut1Case10};
+__attribute__((unused))
+     static void *staticOutPtrsCase10[] = { (void *) staticRefOut0Case10,
+        (void *) staticRefOut1Case10
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase10[] = {8, 8};
+__attribute__((unused))
+     static uint32_t outChannelsCase10[] = { 8, 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 11))
-__attribute__((unused)) static void *staticOutPtrsCase11[] = {(void *) staticRefOut0Case11};
+__attribute__((unused))
+     static void *staticOutPtrsCase11[] = { (void *) staticRefOut0Case11 };
 
-__attribute__((unused)) static uint32_t outChannelsCase11[] = {16};
+__attribute__((unused))
+     static uint32_t outChannelsCase11[] = { 16 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 12))
-__attribute__((unused)) static void *staticOutPtrsCase12[] = {(void *) staticRefOut0Case12,
-                                                              (void *) staticRefOut1Case12};
+__attribute__((unused))
+     static void *staticOutPtrsCase12[] = { (void *) staticRefOut0Case12,
+        (void *) staticRefOut1Case12
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase12[] = {1, 1};
+__attribute__((unused))
+     static uint32_t outChannelsCase12[] = { 1, 1 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 13))
-__attribute__((unused)) static void *staticOutPtrsCase13[] = {(void *) staticRefOut0Case13,
-                                                              (void *) staticRefOut1Case13};
+__attribute__((unused))
+     static void *staticOutPtrsCase13[] = { (void *) staticRefOut0Case13,
+        (void *) staticRefOut1Case13
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase13[] = {2, 2};
+__attribute__((unused))
+     static uint32_t outChannelsCase13[] = { 2, 2 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 14))
-__attribute__((unused)) static void *staticOutPtrsCase14[] = {
-    (void *) staticRefOut0Case14, (void *) staticRefOut1Case14, (void *) staticRefOut2Case14,
-    (void *) staticRefOut3Case14, (void *) staticRefOut4Case14, (void *) staticRefOut5Case14,
-    (void *) staticRefOut6Case14, (void *) staticRefOut7Case14};
+__attribute__((unused))
+     static void *staticOutPtrsCase14[] = {
+        (void *) staticRefOut0Case14, (void *) staticRefOut1Case14, (void *) staticRefOut2Case14,
+        (void *) staticRefOut3Case14, (void *) staticRefOut4Case14, (void *) staticRefOut5Case14,
+        (void *) staticRefOut6Case14, (void *) staticRefOut7Case14
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase14[] = {2, 2, 2, 2, 2, 2, 2, 2};
+__attribute__((unused))
+     static uint32_t outChannelsCase14[] = { 2, 2, 2, 2, 2, 2, 2, 2 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 15))
-__attribute__((unused)) static void *staticOutPtrsCase15[] = {(void *) staticRefOut0Case15};
+__attribute__((unused))
+     static void *staticOutPtrsCase15[] = { (void *) staticRefOut0Case15 };
 
-__attribute__((unused)) static uint32_t outChannelsCase15[] = {8};
+__attribute__((unused))
+     static uint32_t outChannelsCase15[] = { 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 16))
-__attribute__((unused)) static void *staticOutPtrsCase16[] = {(void *) staticRefOut0Case16,
-                                                              (void *) staticRefOut1Case16};
+__attribute__((unused))
+     static void *staticOutPtrsCase16[] = { (void *) staticRefOut0Case16,
+        (void *) staticRefOut1Case16
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase16[] = {8, 8};
+__attribute__((unused))
+     static uint32_t outChannelsCase16[] = { 8, 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 17))
-__attribute__((unused)) static void *staticOutPtrsCase17[] = {(void *) staticRefOut0Case17};
+__attribute__((unused))
+     static void *staticOutPtrsCase17[] = { (void *) staticRefOut0Case17 };
 
-__attribute__((unused)) static uint32_t outChannelsCase17[] = {8};
+__attribute__((unused))
+     static uint32_t outChannelsCase17[] = { 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 18))
-__attribute__((unused)) static void *staticOutPtrsCase18[] = {
-    (void *) staticRefOut0Case18, (void *) staticRefOut1Case18, (void *) staticRefOut2Case18,
-    (void *) staticRefOut3Case18};
+__attribute__((unused))
+     static void *staticOutPtrsCase18[] = {
+        (void *) staticRefOut0Case18, (void *) staticRefOut1Case18, (void *) staticRefOut2Case18,
+        (void *) staticRefOut3Case18
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase18[] = {4, 4, 4, 4};
+__attribute__((unused))
+     static uint32_t outChannelsCase18[] = { 4, 4, 4, 4 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 19))
-__attribute__((unused)) static void *staticOutPtrsCase19[] = {(void *) staticRefOut0Case19};
+__attribute__((unused))
+     static void *staticOutPtrsCase19[] = { (void *) staticRefOut0Case19 };
 
-__attribute__((unused)) static uint32_t outChannelsCase19[] = {16};
+__attribute__((unused))
+     static uint32_t outChannelsCase19[] = { 16 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 20))
-__attribute__((unused)) static void *staticOutPtrsCase20[] = {(void *) staticRefOut0Case20,
-                                                              (void *) staticRefOut1Case20};
+__attribute__((unused))
+     static void *staticOutPtrsCase20[] = { (void *) staticRefOut0Case20,
+        (void *) staticRefOut1Case20
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase20[] = {8, 8};
+__attribute__((unused))
+     static uint32_t outChannelsCase20[] = { 8, 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 21))
-__attribute__((unused)) static void *staticOutPtrsCase21[] = {(void *) staticRefOut0Case21,
-                                                              (void *) staticRefOut1Case21};
+__attribute__((unused))
+     static void *staticOutPtrsCase21[] = { (void *) staticRefOut0Case21,
+        (void *) staticRefOut1Case21
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase21[] = {8, 8};
+__attribute__((unused))
+     static uint32_t outChannelsCase21[] = { 8, 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 22))
-__attribute__((unused)) static void *staticOutPtrsCase22[] = {(void *) staticRefOut0Case22,
-                                                              (void *) staticRefOut1Case22};
+__attribute__((unused))
+     static void *staticOutPtrsCase22[] = { (void *) staticRefOut0Case22,
+        (void *) staticRefOut1Case22
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase22[] = {4, 4};
+__attribute__((unused))
+     static uint32_t outChannelsCase22[] = { 4, 4 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 23))
-__attribute__((unused)) static void *staticOutPtrsCase23[] = {(void *) staticRefOut0Case23,
-                                                              (void *) staticRefOut1Case23};
+__attribute__((unused))
+     static void *staticOutPtrsCase23[] = { (void *) staticRefOut0Case23,
+        (void *) staticRefOut1Case23
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase23[] = {2, 2};
+__attribute__((unused))
+     static uint32_t outChannelsCase23[] = { 2, 2 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 24))
-__attribute__((unused)) static void *staticOutPtrsCase24[] = {(void *) staticRefOut0Case24};
+__attribute__((unused))
+     static void *staticOutPtrsCase24[] = { (void *) staticRefOut0Case24 };
 
-__attribute__((unused)) static uint32_t outChannelsCase24[] = {16};
+__attribute__((unused))
+     static uint32_t outChannelsCase24[] = { 16 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 25))
-__attribute__((unused)) static void *staticOutPtrsCase25[] = {(void *) staticRefOut0Case25};
+__attribute__((unused))
+     static void *staticOutPtrsCase25[] = { (void *) staticRefOut0Case25 };
 
-__attribute__((unused)) static uint32_t outChannelsCase25[] = {16};
+__attribute__((unused))
+     static uint32_t outChannelsCase25[] = { 16 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 26))
-__attribute__((unused)) static void *staticOutPtrsCase26[] = {(void *) staticRefOut0Case26,
-                                                              (void *) staticRefOut1Case26};
+__attribute__((unused))
+     static void *staticOutPtrsCase26[] = { (void *) staticRefOut0Case26,
+        (void *) staticRefOut1Case26
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase26[] = {1, 1};
+__attribute__((unused))
+     static uint32_t outChannelsCase26[] = { 1, 1 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 27))
-__attribute__((unused)) static void *staticOutPtrsCase27[] = {(void *) staticRefOut0Case27};
+__attribute__((unused))
+     static void *staticOutPtrsCase27[] = { (void *) staticRefOut0Case27 };
 
-__attribute__((unused)) static uint32_t outChannelsCase27[] = {4};
+__attribute__((unused))
+     static uint32_t outChannelsCase27[] = { 4 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 28))
-__attribute__((unused)) static void *staticOutPtrsCase28[] = {
-    (void *) staticRefOut0Case28, (void *) staticRefOut1Case28, (void *) staticRefOut2Case28,
-    (void *) staticRefOut3Case28, (void *) staticRefOut4Case28, (void *) staticRefOut5Case28,
-    (void *) staticRefOut6Case28, (void *) staticRefOut7Case28};
+__attribute__((unused))
+     static void *staticOutPtrsCase28[] = {
+        (void *) staticRefOut0Case28, (void *) staticRefOut1Case28, (void *) staticRefOut2Case28,
+        (void *) staticRefOut3Case28, (void *) staticRefOut4Case28, (void *) staticRefOut5Case28,
+        (void *) staticRefOut6Case28, (void *) staticRefOut7Case28
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase28[] = {1, 1, 1, 1, 1, 1, 1, 1};
+__attribute__((unused))
+     static uint32_t outChannelsCase28[] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 29))
-__attribute__((unused)) static void *staticOutPtrsCase29[] = {
-    (void *) staticRefOut0Case29, (void *) staticRefOut1Case29, (void *) staticRefOut2Case29};
+__attribute__((unused))
+     static void *staticOutPtrsCase29[] = {
+        (void *) staticRefOut0Case29, (void *) staticRefOut1Case29, (void *) staticRefOut2Case29
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase29[] = {4, 4, 4};
+__attribute__((unused))
+     static uint32_t outChannelsCase29[] = { 4, 4, 4 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 30))
-__attribute__((unused)) static void *staticOutPtrsCase30[] = {
-    (void *) staticRefOut0Case30, (void *) staticRefOut1Case30, (void *) staticRefOut2Case30,
-    (void *) staticRefOut3Case30, (void *) staticRefOut4Case30};
+__attribute__((unused))
+     static void *staticOutPtrsCase30[] = {
+        (void *) staticRefOut0Case30, (void *) staticRefOut1Case30, (void *) staticRefOut2Case30,
+        (void *) staticRefOut3Case30, (void *) staticRefOut4Case30
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase30[] = {3, 3, 3, 3, 3};
+__attribute__((unused))
+     static uint32_t outChannelsCase30[] = { 3, 3, 3, 3, 3 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 31))
-__attribute__((unused)) static void *staticOutPtrsCase31[] = {(void *) staticRefOut0Case31,
-                                                              (void *) staticRefOut1Case31};
+__attribute__((unused))
+     static void *staticOutPtrsCase31[] = { (void *) staticRefOut0Case31,
+        (void *) staticRefOut1Case31
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase31[] = {6, 6};
+__attribute__((unused))
+     static uint32_t outChannelsCase31[] = { 6, 6 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 32))
-__attribute__((unused)) static void *staticOutPtrsCase32[] = {
-    (void *) staticRefOut0Case32, (void *) staticRefOut1Case32, (void *) staticRefOut2Case32,
-    (void *) staticRefOut3Case32, (void *) staticRefOut4Case32, (void *) staticRefOut5Case32,
-    (void *) staticRefOut6Case32, (void *) staticRefOut7Case32};
+__attribute__((unused))
+     static void *staticOutPtrsCase32[] = {
+        (void *) staticRefOut0Case32, (void *) staticRefOut1Case32, (void *) staticRefOut2Case32,
+        (void *) staticRefOut3Case32, (void *) staticRefOut4Case32, (void *) staticRefOut5Case32,
+        (void *) staticRefOut6Case32, (void *) staticRefOut7Case32
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase32[] = {1, 1, 1, 1, 1, 1, 1, 1};
+__attribute__((unused))
+     static uint32_t outChannelsCase32[] = { 1, 1, 1, 1, 1, 1, 1, 1 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 33))
-__attribute__((unused)) static void *staticOutPtrsCase33[] = {(void *) staticRefOut0Case33,
-                                                              (void *) staticRefOut1Case33};
+__attribute__((unused))
+     static void *staticOutPtrsCase33[] = { (void *) staticRefOut0Case33,
+        (void *) staticRefOut1Case33
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase33[] = {4, 4};
+__attribute__((unused))
+     static uint32_t outChannelsCase33[] = { 4, 4 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 34))
-__attribute__((unused)) static void *staticOutPtrsCase34[] = {
-    (void *) staticRefOut0Case34, (void *) staticRefOut1Case34, (void *) staticRefOut2Case34};
+__attribute__((unused))
+     static void *staticOutPtrsCase34[] = {
+        (void *) staticRefOut0Case34, (void *) staticRefOut1Case34, (void *) staticRefOut2Case34
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase34[] = {4, 4, 4};
+__attribute__((unused))
+     static uint32_t outChannelsCase34[] = { 4, 4, 4 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 35))
-__attribute__((unused)) static void *staticOutPtrsCase35[] = {(void *) staticRefOut0Case35,
-                                                              (void *) staticRefOut1Case35};
+__attribute__((unused))
+     static void *staticOutPtrsCase35[] = { (void *) staticRefOut0Case35,
+        (void *) staticRefOut1Case35
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase35[] = {8, 8};
+__attribute__((unused))
+     static uint32_t outChannelsCase35[] = { 8, 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 36))
-__attribute__((unused)) static void *staticOutPtrsCase36[] = {(void *) staticRefOut0Case36,
-                                                              (void *) staticRefOut1Case36};
+__attribute__((unused))
+     static void *staticOutPtrsCase36[] = { (void *) staticRefOut0Case36,
+        (void *) staticRefOut1Case36
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase36[] = {6, 6};
+__attribute__((unused))
+     static uint32_t outChannelsCase36[] = { 6, 6 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 37))
-__attribute__((unused)) static void *staticOutPtrsCase37[] = {(void *) staticRefOut0Case37};
+__attribute__((unused))
+     static void *staticOutPtrsCase37[] = { (void *) staticRefOut0Case37 };
 
-__attribute__((unused)) static uint32_t outChannelsCase37[] = {8};
+__attribute__((unused))
+     static uint32_t outChannelsCase37[] = { 8 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 38))
-__attribute__((unused)) static void *staticOutPtrsCase38[] = {(void *) staticRefOut0Case38,
-                                                              (void *) staticRefOut1Case38};
+__attribute__((unused))
+     static void *staticOutPtrsCase38[] = { (void *) staticRefOut0Case38,
+        (void *) staticRefOut1Case38
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase38[] = {4, 2};
+__attribute__((unused))
+     static uint32_t outChannelsCase38[] = { 4, 2 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 39))
-__attribute__((unused)) static void *staticOutPtrsCase39[] = {
-    (void *) staticRefOut0Case39, (void *) staticRefOut1Case39, (void *) staticRefOut2Case39};
+__attribute__((unused))
+     static void *staticOutPtrsCase39[] = {
+        (void *) staticRefOut0Case39, (void *) staticRefOut1Case39, (void *) staticRefOut2Case39
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase39[] = {8, 4, 4};
+__attribute__((unused))
+     static uint32_t outChannelsCase39[] = { 8, 4, 4 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 40))
-__attribute__((unused)) static void *staticOutPtrsCase40[] = {
-    (void *) staticRefOut0Case40, (void *) staticRefOut1Case40, (void *) staticRefOut2Case40};
+__attribute__((unused))
+     static void *staticOutPtrsCase40[] = {
+        (void *) staticRefOut0Case40, (void *) staticRefOut1Case40, (void *) staticRefOut2Case40
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase40[] = {2, 1, 3};
+__attribute__((unused))
+     static uint32_t outChannelsCase40[] = { 2, 1, 3 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 41))
-__attribute__((unused)) static void *staticOutPtrsCase41[] = {(void *) staticRefOut0Case41,
-                                                              (void *) staticRefOut1Case41};
+__attribute__((unused))
+     static void *staticOutPtrsCase41[] = { (void *) staticRefOut0Case41,
+        (void *) staticRefOut1Case41
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase41[] = {5, 3};
+__attribute__((unused))
+     static uint32_t outChannelsCase41[] = { 5, 3 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 42))
-__attribute__((unused)) static void *staticOutPtrsCase42[] = {
-    (void *) staticRefOut0Case42, (void *) staticRefOut1Case42, (void *) staticRefOut2Case42,
-    (void *) staticRefOut3Case42, (void *) staticRefOut4Case42, (void *) staticRefOut5Case42,
-    (void *) staticRefOut6Case42, (void *) staticRefOut7Case42};
+__attribute__((unused))
+     static void *staticOutPtrsCase42[] = {
+        (void *) staticRefOut0Case42, (void *) staticRefOut1Case42, (void *) staticRefOut2Case42,
+        (void *) staticRefOut3Case42, (void *) staticRefOut4Case42, (void *) staticRefOut5Case42,
+        (void *) staticRefOut6Case42, (void *) staticRefOut7Case42
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase42[] = {1, 2, 2, 1, 3, 2, 1, 1};
+__attribute__((unused))
+     static uint32_t outChannelsCase42[] = { 1, 2, 2, 1, 3, 2, 1, 1 };
 
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 43))
-__attribute__((unused)) static void *staticOutPtrsCase43[] = {(void *) staticRefOut0Case43,
-                                                              (void *) staticRefOut1Case43};
+__attribute__((unused))
+     static void *staticOutPtrsCase43[] = { (void *) staticRefOut0Case43,
+        (void *) staticRefOut1Case43
+     };
 
-__attribute__((unused)) static uint32_t outChannelsCase43[] = {6, 2};
+__attribute__((unused))
+     static uint32_t outChannelsCase43[] = { 6, 2 };
 
 #endif
 
 static TISP_split_testParams_t testParams[] = {
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 1))
-    {
-        STATIC,                       // Test pattern
-        staticRefInCase1,             // Input buffer
-        (void **) staticOutPtrsCase1, // Output buffer
-        16,                           // inSamples (S = 16 samples per channel)
-        24,                           // totalInputChannels (C_total = 24 channels from input)
-        outChannelsCase1,             // outChannels (pointer to per-output channel array)
-        8,                            // numOutputs
-        AUDIOLIB_CALC_STRIDE(24 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(3 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        1,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase1,                                 // Input buffer
+    (void **) staticOutPtrsCase1,                     // Output buffer
+    16,                                               // inSamples (S = 16 samples per channel)
+    24,                                               // totalInputChannels (C_total = 24 channels from input)
+    outChannelsCase1,                                 // outChannels (pointer to per-output channel array)
+    8,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (24 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (3 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    1,                                                // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 2))
-    {
-        STATIC,                       // Test pattern
-        staticRefInCase2,             // Input buffer
-        (void **) staticOutPtrsCase2, // Output buffer
-        128,                          // inSamples (S = 128 samples per channel)
-        16,                           // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase2,             // outChannels (pointer to per-output channel array)
-        2,                            // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        2,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase2,                                 // Input buffer
+    (void **) staticOutPtrsCase2,                     // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase2,                                 // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    2,                                                // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 3))
-    {
-        STATIC,                       // Test pattern
-        staticRefInCase3,             // Input buffer
-        (void **) staticOutPtrsCase3, // Output buffer
-        512,                          // inSamples (S = 512 samples per channel)
-        8,                            // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase3,             // outChannels (pointer to per-output channel array)
-        8,                            // numOutputs
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(1 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                      // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
-        1,                                                                     // number of reps.
-        3,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase3,                                 // Input buffer
+    (void **) staticOutPtrsCase3,                     // Output buffer
+    512,                                              // inSamples (S = 512 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase3,                                 // outChannels (pointer to per-output channel array)
+    8,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideIn
+    AUDIOLIB_CALC_STRIDE (1 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    3,                                                // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 4))
-    {
-        STATIC,                       // Test pattern
-        staticRefInCase4,             // Input buffer
-        (void **) staticOutPtrsCase4, // Output buffer
-        128,                          // inSamples (S = 128 samples per channel)
-        16,                           // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase4,             // outChannels (pointer to per-output channel array)
-        1,                            // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        4,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase4,                                 // Input buffer
+    (void **) staticOutPtrsCase4,                     // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase4,                                 // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    4,                                                // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 5))
-    {
-        STATIC,                       // Test pattern
-        staticRefInCase5,             // Input buffer
-        (void **) staticOutPtrsCase5, // Output buffer
-        1024,                         // inSamples (S = 1024 samples per channel)
-        16,                           // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase5,             // outChannels (pointer to per-output channel array)
-        1,                            // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        5,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase5,                                 // Input buffer
+    (void **) staticOutPtrsCase5,                     // Output buffer
+    1024,                                             // inSamples (S = 1024 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase5,                                 // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    5,                                                // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 6))
-    {
-        STATIC,                       // Test pattern
-        staticRefInCase6,             // Input buffer
-        (void **) staticOutPtrsCase6, // Output buffer
-        10,                           // inSamples (S = 10 samples per channel)
-        16,                           // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase6,             // outChannels (pointer to per-output channel array)
-        2,                            // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        6,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase6,                                 // Input buffer
+    (void **) staticOutPtrsCase6,                     // Output buffer
+    10,                                               // inSamples (S = 10 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase6,                                 // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    6,                                                // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 7))
-    {
-        STATIC,                       // Test pattern
-        staticRefInCase7,             // Input buffer
-        (void **) staticOutPtrsCase7, // Output buffer
-        128,                          // inSamples (S = 128 samples per channel)
-        16,                           // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase7,             // outChannels (pointer to per-output channel array)
-        1,                            // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        7,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase7,                                 // Input buffer
+    (void **) staticOutPtrsCase7,                     // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase7,                                 // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    7,                                                // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 8))
-    {
-        STATIC,                       // Test pattern
-        staticRefInCase8,             // Input buffer
-        (void **) staticOutPtrsCase8, // Output buffer
-        1024,                         // inSamples (S = 1024 samples per channel)
-        8,                            // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase8,             // outChannels (pointer to per-output channel array)
-        2,                            // numOutputs
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                      // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
-        1,                                                                     // number of reps.
-        8,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase8,                                 // Input buffer
+    (void **) staticOutPtrsCase8,                     // Output buffer
+    1024,                                             // inSamples (S = 1024 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase8,                                 // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideIn
+    AUDIOLIB_CALC_STRIDE (4 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    8,                                                // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 9))
-    {
-        STATIC,                       // Test pattern
-        staticRefInCase9,             // Input buffer
-        (void **) staticOutPtrsCase9, // Output buffer
-        10,                           // inSamples (S = 10 samples per channel)
-        4,                            // totalInputChannels (C_total = 4 channels from input)
-        outChannelsCase9,             // outChannels (pointer to per-output channel array)
-        2,                            // numOutputs
-        AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(2 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                      // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
-        1,                                                                     // number of reps.
-        9,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase9,                                 // Input buffer
+    (void **) staticOutPtrsCase9,                     // Output buffer
+    10,                                               // inSamples (S = 10 samples per channel)
+    4,                                                // totalInputChannels (C_total = 4 channels from input)
+    outChannelsCase9,                                 // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (4 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideIn
+    AUDIOLIB_CALC_STRIDE (2 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    9,                                                // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 10))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase10,             // Input buffer
-        (void **) staticOutPtrsCase10, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase10,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        10,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase10,                                // Input buffer
+    (void **) staticOutPtrsCase10,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase10,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    10,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 11))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase11,             // Input buffer
-        (void **) staticOutPtrsCase11, // Output buffer
-        1024,                          // inSamples (S = 1024 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase11,             // outChannels (pointer to per-output channel array)
-        1,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        11,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase11,                                // Input buffer
+    (void **) staticOutPtrsCase11,                    // Output buffer
+    1024,                                             // inSamples (S = 1024 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase11,                                // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    11,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 12))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase12,             // Input buffer
-        (void **) staticOutPtrsCase12, // Output buffer
-        10,                            // inSamples (S = 10 samples per channel)
-        2,                             // totalInputChannels (C_total = 2 channels from input)
-        outChannelsCase12,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(2 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(1 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                      // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
-        1,                                                                     // number of reps.
-        12,                                                                    // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase12,                                // Input buffer
+    (void **) staticOutPtrsCase12,                    // Output buffer
+    10,                                               // inSamples (S = 10 samples per channel)
+    2,                                                // totalInputChannels (C_total = 2 channels from input)
+    outChannelsCase12,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (2 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideIn
+    AUDIOLIB_CALC_STRIDE (1 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    12,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 13))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase13,             // Input buffer
-        (void **) staticOutPtrsCase13, // Output buffer
-        256,                           // inSamples (S = 256 samples per channel)
-        4,                             // totalInputChannels (C_total = 4 channels from input)
-        outChannelsCase13,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(4 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(2 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                      // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
-        1,                                                                     // number of reps.
-        13,                                                                    // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase13,                                // Input buffer
+    (void **) staticOutPtrsCase13,                    // Output buffer
+    256,                                              // inSamples (S = 256 samples per channel)
+    4,                                                // totalInputChannels (C_total = 4 channels from input)
+    outChannelsCase13,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (4 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideIn
+    AUDIOLIB_CALC_STRIDE (2 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    13,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 14))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase14,             // Input buffer
-        (void **) staticOutPtrsCase14, // Output buffer
-        127,                           // inSamples (S = 127 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase14,             // outChannels (pointer to per-output channel array)
-        8,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(2 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        14,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase14,                                // Input buffer
+    (void **) staticOutPtrsCase14,                    // Output buffer
+    127,                                              // inSamples (S = 127 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase14,                                // outChannels (pointer to per-output channel array)
+    8,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (2 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    14,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 15))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase15,             // Input buffer
-        (void **) staticOutPtrsCase15, // Output buffer
-        10,                            // inSamples (S = 10 samples per channel)
-        8,                             // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase15,             // outChannels (pointer to per-output channel array)
-        1,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        15,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase15,                                // Input buffer
+    (void **) staticOutPtrsCase15,                    // Output buffer
+    10,                                               // inSamples (S = 10 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase15,                                // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    15,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 16))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase16,             // Input buffer
-        (void **) staticOutPtrsCase16, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase16,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
-        AUDIOLIB_FLOAT64,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        16,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase16,                                // Input buffer
+    (void **) staticOutPtrsCase16,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase16,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    16,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 17))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase17,             // Input buffer
-        (void **) staticOutPtrsCase17, // Output buffer
-        512,                           // inSamples (S = 512 samples per channel)
-        8,                             // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase17,             // outChannels (pointer to per-output channel array)
-        1,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        17,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase17,                                // Input buffer
+    (void **) staticOutPtrsCase17,                    // Output buffer
+    512,                                              // inSamples (S = 512 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase17,                                // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    17,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 18))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase18,             // Input buffer
-        (void **) staticOutPtrsCase18, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase18,             // outChannels (pointer to per-output channel array)
-        4,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(4 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
-        AUDIOLIB_FLOAT64,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        18,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase18,                                // Input buffer
+    (void **) staticOutPtrsCase18,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase18,                                // outChannels (pointer to per-output channel array)
+    4,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (4 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    18,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 19))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase19,             // Input buffer
-        (void **) staticOutPtrsCase19, // Output buffer
-        1024,                          // inSamples (S = 1024 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase19,             // outChannels (pointer to per-output channel array)
-        1,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        19,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase19,                                // Input buffer
+    (void **) staticOutPtrsCase19,                    // Output buffer
+    1024,                                             // inSamples (S = 1024 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase19,                                // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    19,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 20))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase20,             // Input buffer
-        (void **) staticOutPtrsCase20, // Output buffer
-        10,                            // inSamples (S = 10 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase20,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
-        AUDIOLIB_FLOAT64,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        20,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase20,                                // Input buffer
+    (void **) staticOutPtrsCase20,                    // Output buffer
+    10,                                               // inSamples (S = 10 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase20,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    20,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 21))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase21,             // Input buffer
-        (void **) staticOutPtrsCase21, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase21,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
-        AUDIOLIB_FLOAT64,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        21,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase21,                                // Input buffer
+    (void **) staticOutPtrsCase21,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase21,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    21,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 22))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase22,             // Input buffer
-        (void **) staticOutPtrsCase22, // Output buffer
-        1024,                          // inSamples (S = 1024 samples per channel)
-        8,                             // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase22,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(4 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        22,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase22,                                // Input buffer
+    (void **) staticOutPtrsCase22,                    // Output buffer
+    1024,                                             // inSamples (S = 1024 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase22,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (4 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    22,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 23))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase23,             // Input buffer
-        (void **) staticOutPtrsCase23, // Output buffer
-        10,                            // inSamples (S = 10 samples per channel)
-        4,                             // totalInputChannels (C_total = 4 channels from input)
-        outChannelsCase23,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(4 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(2 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        23,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase23,                                // Input buffer
+    (void **) staticOutPtrsCase23,                    // Output buffer
+    10,                                               // inSamples (S = 10 samples per channel)
+    4,                                                // totalInputChannels (C_total = 4 channels from input)
+    outChannelsCase23,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (4 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (2 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    23,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 24))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase24,             // Input buffer
-        (void **) staticOutPtrsCase24, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase24,             // outChannels (pointer to per-output channel array)
-        1,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        24,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase24,                                // Input buffer
+    (void **) staticOutPtrsCase24,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase24,                                // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    24,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 25))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase25,             // Input buffer
-        (void **) staticOutPtrsCase25, // Output buffer
-        1024,                          // inSamples (S = 1024 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase25,             // outChannels (pointer to per-output channel array)
-        1,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        25,                                                                      // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase25,                                // Input buffer
+    (void **) staticOutPtrsCase25,                    // Output buffer
+    1024,                                             // inSamples (S = 1024 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase25,                                // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    25,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 26))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase26,             // Input buffer
-        (void **) staticOutPtrsCase26, // Output buffer
-        10,                            // inSamples (S = 10 samples per channel)
-        2,                             // totalInputChannels (C_total = 2 channels from input)
-        outChannelsCase26,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(2 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(1 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        26,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase26,                                // Input buffer
+    (void **) staticOutPtrsCase26,                    // Output buffer
+    10,                                               // inSamples (S = 10 samples per channel)
+    2,                                                // totalInputChannels (C_total = 2 channels from input)
+    outChannelsCase26,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (2 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (1 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    26,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 27))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase27,             // Input buffer
-        (void **) staticOutPtrsCase27, // Output buffer
-        256,                           // inSamples (S = 256 samples per channel)
-        4,                             // totalInputChannels (C_total = 4 channels from input)
-        outChannelsCase27,             // outChannels (pointer to per-output channel array)
-        1,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(4 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(4 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        27,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase27,                                // Input buffer
+    (void **) staticOutPtrsCase27,                    // Output buffer
+    256,                                              // inSamples (S = 256 samples per channel)
+    4,                                                // totalInputChannels (C_total = 4 channels from input)
+    outChannelsCase27,                                // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (4 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (4 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    27,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 28))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase28,             // Input buffer
-        (void **) staticOutPtrsCase28, // Output buffer
-        256,                           // inSamples (S = 256 samples per channel)
-        8,                             // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase28,             // outChannels (pointer to per-output channel array)
-        8,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(256 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(256 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        28,                                                                      // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase28,                                // Input buffer
+    (void **) staticOutPtrsCase28,                    // Output buffer
+    256,                                              // inSamples (S = 256 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase28,                                // outChannels (pointer to per-output channel array)
+    8,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (256 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (256 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    28,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 29))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase29,             // Input buffer
-        (void **) staticOutPtrsCase29, // Output buffer
-        256,                           // inSamples (S = 256 samples per channel)
-        12,                            // totalInputChannels (C_total = 12 channels from input)
-        outChannelsCase29,             // outChannels (pointer to per-output channel array)
-        3,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(256 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(256 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        29,                                                                      // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase29,                                // Input buffer
+    (void **) staticOutPtrsCase29,                    // Output buffer
+    256,                                              // inSamples (S = 256 samples per channel)
+    12,                                               // totalInputChannels (C_total = 12 channels from input)
+    outChannelsCase29,                                // outChannels (pointer to per-output channel array)
+    3,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (256 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (256 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    29,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 30))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase30,             // Input buffer
-        (void **) staticOutPtrsCase30, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        15,                            // totalInputChannels (C_total = 15 channels from input)
-        outChannelsCase30,             // outChannels (pointer to per-output channel array)
-        5,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(128 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        30,                                                                      // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase30,                                // Input buffer
+    (void **) staticOutPtrsCase30,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    15,                                               // totalInputChannels (C_total = 15 channels from input)
+    outChannelsCase30,                                // outChannels (pointer to per-output channel array)
+    5,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (128 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (128 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    30,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 31))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase31,             // Input buffer
-        (void **) staticOutPtrsCase31, // Output buffer
-        64,                            // inSamples (S = 64 samples per channel)
-        12,                            // totalInputChannels (C_total = 12 channels from input)
-        outChannelsCase31,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(64 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(64 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        31,                                                                     // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase31,                                // Input buffer
+    (void **) staticOutPtrsCase31,                    // Output buffer
+    64,                                               // inSamples (S = 64 samples per channel)
+    12,                                               // totalInputChannels (C_total = 12 channels from input)
+    outChannelsCase31,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (64 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (64 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    31,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 32))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase32,             // Input buffer
-        (void **) staticOutPtrsCase32, // Output buffer
-        512,                           // inSamples (S = 512 samples per channel)
-        8,                             // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase32,             // outChannels (pointer to per-output channel array)
-        8,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(512 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        32,                                                                      // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase32,                                // Input buffer
+    (void **) staticOutPtrsCase32,                    // Output buffer
+    512,                                              // inSamples (S = 512 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase32,                                // outChannels (pointer to per-output channel array)
+    8,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (512 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (512 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    32,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 33))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase33,             // Input buffer
-        (void **) staticOutPtrsCase33, // Output buffer
-        256,                           // inSamples (S = 256 samples per channel)
-        8,                             // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase33,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(256 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(256 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                         // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                                // Output data location
-        1,                                                                        // number of reps.
-        33,                                                                       // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase33,                                // Input buffer
+    (void **) staticOutPtrsCase33,                    // Output buffer
+    256,                                              // inSamples (S = 256 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase33,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (256 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
+    AUDIOLIB_CALC_STRIDE (256 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    33,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 34))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase34,             // Input buffer
-        (void **) staticOutPtrsCase34, // Output buffer
-        256,                           // inSamples (S = 256 samples per channel)
-        12,                            // totalInputChannels (C_total = 12 channels from input)
-        outChannelsCase34,             // outChannels (pointer to per-output channel array)
-        3,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(256 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(256 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                         // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                                // Output data location
-        1,                                                                        // number of reps.
-        34,                                                                       // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase34,                                // Input buffer
+    (void **) staticOutPtrsCase34,                    // Output buffer
+    256,                                              // inSamples (S = 256 samples per channel)
+    12,                                               // totalInputChannels (C_total = 12 channels from input)
+    outChannelsCase34,                                // outChannels (pointer to per-output channel array)
+    3,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (256 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
+    AUDIOLIB_CALC_STRIDE (256 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    34,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 35))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase35,             // Input buffer
-        (void **) staticOutPtrsCase35, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase35,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(128 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(128 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                         // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                                // Output data location
-        1,                                                                        // number of reps.
-        35,                                                                       // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase35,                                // Input buffer
+    (void **) staticOutPtrsCase35,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase35,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (128 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
+    AUDIOLIB_CALC_STRIDE (128 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    35,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 36))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase36,             // Input buffer
-        (void **) staticOutPtrsCase36, // Output buffer
-        64,                            // inSamples (S = 64 samples per channel)
-        12,                            // totalInputChannels (C_total = 12 channels from input)
-        outChannelsCase36,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(64 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(64 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                        // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                               // Output data location
-        1,                                                                       // number of reps.
-        36,                                                                      // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase36,                                // Input buffer
+    (void **) staticOutPtrsCase36,                    // Output buffer
+    64,                                               // inSamples (S = 64 samples per channel)
+    12,                                               // totalInputChannels (C_total = 12 channels from input)
+    outChannelsCase36,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (64 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideIn
+    AUDIOLIB_CALC_STRIDE (64 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),  // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    36,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 37))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase37,             // Input buffer
-        (void **) staticOutPtrsCase37, // Output buffer
-        512,                           // inSamples (S = 512 samples per channel)
-        8,                             // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase37,             // outChannels (pointer to per-output channel array)
-        1,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(512 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(512 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                         // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                                // Output data location
-        1,                                                                        // number of reps.
-        37,                                                                       // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase37,                                // Input buffer
+    (void **) staticOutPtrsCase37,                    // Output buffer
+    512,                                              // inSamples (S = 512 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase37,                                // outChannels (pointer to per-output channel array)
+    1,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (512 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
+    AUDIOLIB_CALC_STRIDE (512 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    37,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 38))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase38,             // Input buffer
-        (void **) staticOutPtrsCase38, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        6,                             // totalInputChannels (C_total = 6 channels from input)
-        outChannelsCase38,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(6 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(6 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                      // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                             // Output data location
-        1,                                                                     // number of reps.
-        38,                                                                    // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase38,                                // Input buffer
+    (void **) staticOutPtrsCase38,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    6,                                                // totalInputChannels (C_total = 6 channels from input)
+    outChannelsCase38,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (6 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideIn
+    AUDIOLIB_CALC_STRIDE (6 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),    // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    38,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 39))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase39,             // Input buffer
-        (void **) staticOutPtrsCase39, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        16,                            // totalInputChannels (C_total = 16 channels from input)
-        outChannelsCase39,             // outChannels (pointer to per-output channel array)
-        3,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(16 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        39,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase39,                                // Input buffer
+    (void **) staticOutPtrsCase39,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    16,                                               // totalInputChannels (C_total = 16 channels from input)
+    outChannelsCase39,                                // outChannels (pointer to per-output channel array)
+    3,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (16 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    39,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 40))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase40,             // Input buffer
-        (void **) staticOutPtrsCase40, // Output buffer
-        64,                            // inSamples (S = 64 samples per channel)
-        6,                             // totalInputChannels (C_total = 6 channels from input)
-        outChannelsCase40,             // outChannels (pointer to per-output channel array)
-        3,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(6 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(6 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        40,                                                                     // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase40,                                // Input buffer
+    (void **) staticOutPtrsCase40,                    // Output buffer
+    64,                                               // inSamples (S = 64 samples per channel)
+    6,                                                // totalInputChannels (C_total = 6 channels from input)
+    outChannelsCase40,                                // outChannels (pointer to per-output channel array)
+    3,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (6 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (6 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    40,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 41))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase41,             // Input buffer
-        (void **) staticOutPtrsCase41, // Output buffer
-        128,                           // inSamples (S = 128 samples per channel)
-        8,                             // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase41,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        41,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase41,                                // Input buffer
+    (void **) staticOutPtrsCase41,                    // Output buffer
+    128,                                              // inSamples (S = 128 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase41,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    41,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 42))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase42,             // Input buffer
-        (void **) staticOutPtrsCase42, // Output buffer
-        100,                           // inSamples (S = 100 samples per channel)
-        13,                            // totalInputChannels (C_total = 13 channels from input)
-        outChannelsCase42,             // outChannels (pointer to per-output channel array)
-        8,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(13 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(13 * sizeof(float), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT32,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        42,                                                                     // test ID
-        0, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase42,                                // Input buffer
+    (void **) staticOutPtrsCase42,                    // Output buffer
+    100,                                              // inSamples (S = 100 samples per channel)
+    13,                                               // totalInputChannels (C_total = 13 channels from input)
+    outChannelsCase42,                                // outChannels (pointer to per-output channel array)
+    8,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (13 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (13 * sizeof (float), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT32,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    42,                                               // test ID
+    0,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
 
 #if !defined(__C7100__)
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 43))
-    {
-        STATIC,                        // Test pattern
-        staticRefInCase43,             // Input buffer
-        (void **) staticOutPtrsCase43, // Output buffer
-        256,                           // inSamples (S = 256 samples per channel)
-        8,                             // totalInputChannels (C_total = 8 channels from input)
-        outChannelsCase43,             // outChannels (pointer to per-output channel array)
-        2,                             // numOutputs
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideIn
-        AUDIOLIB_CALC_STRIDE(8 * sizeof(double), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideOut
-        AUDIOLIB_FLOAT64,                                                       // precision
-        AUDIOLIB_TEST_OUTPUT_MSMC,                                              // Output data location
-        1,                                                                      // number of reps.
-        43,                                                                     // test ID
-        1, // isInputInterleave (1: interleaved, 0: deinterleaved)
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase43,                                // Input buffer
+    (void **) staticOutPtrsCase43,                    // Output buffer
+    256,                                              // inSamples (S = 256 samples per channel)
+    8,                                                // totalInputChannels (C_total = 8 channels from input)
+    outChannelsCase43,                                // outChannels (pointer to per-output channel array)
+    2,                                                // numOutputs
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideIn
+    AUDIOLIB_CALC_STRIDE (8 * sizeof (double), AUDIOLIB_ALIGN_SHIFT_64BYTES),   // strideOut
+    AUDIOLIB_FLOAT64,                                 // precision
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // Output data location
+    1,                                                // number of reps.
+    43,                                               // test ID
+    1,                                                // isInputInterleave (1: interleaved, 0: deinterleaved)
     },
 #endif
 #endif // if !defined(__C7100__)
@@ -1427,8 +1541,9 @@ static TISP_split_testParams_t testParams[] = {
 /*
  *  Sends the test parameter structure and number of tests
  */
-void TISP_split_getTestParams(TISP_split_testParams_t **params, int32_t *numTests)
+void
+TISP_split_getTestParams (TISP_split_testParams_t ** params, int32_t * numTests)
 {
-   *params   = testParams;
-   *numTests = sizeof(testParams) / sizeof(TISP_split_testParams_t);
+   *params = testParams;
+   *numTests = sizeof (testParams) / sizeof (TISP_split_testParams_t);
 }

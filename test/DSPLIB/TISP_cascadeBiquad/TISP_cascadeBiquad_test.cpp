@@ -225,14 +225,40 @@ int DSPLIB_cascadeBiquad_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 #if DSPLIB_DEBUGPRINT
             printf("DSPLIB_DEBUGPRINT  DSPLIB_cascadeBiquad_d CP 1 status_init %d\n", status_init);
 #endif
+            const TISP::TISP_BufDesc2D inDesc    = {pIn.get(),
+                                                    TISP::Types::kFloat32,
+                                                    bufParamsIn.dim_x,
+                                                    bufParamsIn.dim_y,
+                                                    static_cast<size_t>(bufParamsIn.stride_y),
+                                                    1U};
+            const TISP::TISP_BufDesc2D outDesc   = {pOut.get(),
+                                                    TISP::Types::kFloat32,
+                                                    bufParamsOut.dim_x,
+                                                    bufParamsOut.dim_y,
+                                                    static_cast<size_t>(bufParamsOut.stride_y),
+                                                    1U};
+            const TISP::TISP_BufDesc2D stateDesc = {pFilterVar.get(),
+                                                    TISP::Types::kFloat32,
+                                                    bufParamsFilterVar.dim_x,
+                                                    bufParamsFilterVar.dim_y,
+                                                    static_cast<size_t>(bufParamsFilterVar.stride_y),
+                                                    1U};
+
+            const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+            const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+            const TISP::TISP_BufDescList states  = {&stateDesc, 1U};
+
+            TISP::DSPLIB::CascadeBiquadConfig config;
+            config.numStages       = currPrm.numStages;
+            config.biquadForm      = currPrm.biquadForm;
+            config.enableNChCoeffs = (currPrm.enableNChCoeffs != 0);
+
+            TISP::DSPLIB::CascadeBiquadTunableParams<float> defaultParams;
+            defaultParams.pCoeffs = reinterpret_cast<float *>(pFilterCoeff.get());
+
             TISP::ErrorCtxt errorCtx;
             auto            k0 = std::make_unique<TISP::DSPLIB::CascadeBiquad<float>>(
-                (float *) pIn.get(), (float *) pFilterCoeff.get(), (float *) pFilterVar.get(), (float *) pOut.get(),
-                static_cast<uint32_t>(currPrm.dataSize), static_cast<uint32_t>(currPrm.numChannels),
-                static_cast<uint32_t>(currPrm.numStages), static_cast<uint32_t>(currPrm.biquadForm),
-                static_cast<uint32_t>(currPrm.dataPitch), static_cast<uint32_t>(currPrm.dataPitch),
-                static_cast<uint32_t>(currPrm.filterVarPitch), static_cast<uint32_t>(currPrm.enableNChCoeffs),
-                errorCtx);
+                &inputs, &outputs, &states, &config, &defaultParams, "CascadeBiquad", 0, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

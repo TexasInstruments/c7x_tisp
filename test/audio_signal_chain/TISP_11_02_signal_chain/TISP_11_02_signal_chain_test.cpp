@@ -182,9 +182,19 @@ void *create_graph()
 
    // 1. TypeConversion: int32_t to float
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D typeConvIn = {
+          pIn, TISP::Types::kInt32, NUM_CHANNELS_IN, BLOCK_SIZE, NUM_CHANNELS_IN * sizeof(int32_t), IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D typeConvOut = {pTypeConvInOut, TISP::Types::kFloat32,           NUM_CHANNELS_IN,
+                                                BLOCK_SIZE,     NUM_CHANNELS_IN * sizeof(float), IS_INTERLEAVED};
+
+      const TISP::TISP_BufDescList typeConvInputs  = {&typeConvIn, 1U};
+      const TISP::TISP_BufDescList typeConvOutputs = {&typeConvOut, 1U};
+
+      TISP::AUDIOLIB::TypeConversionConfig typeConvBuild;
+      typeConvBuild.testQ31 = 1U;
+
       auto k0 = TISP::make_unique_node<TISP::AUDIOLIB::TypeConversion<int32_t, float>>(
-          pIn, pTypeConvInOut, NUM_CHANNELS_IN, BLOCK_SIZE, NUM_CHANNELS_IN * sizeof(int32_t),
-          NUM_CHANNELS_IN * sizeof(float), IS_INTERLEAVED, "TypeConversion (i32->f32)", 0, errorCtx);
+          &typeConvInputs, &typeConvOutputs, &typeConvBuild, "TypeConversion (i32->f32)", 0, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k0));
       }
@@ -195,9 +205,19 @@ void *create_graph()
 
    // 2. GainNCh
    if (errorCtx.isSuccess()) {
-      auto k1 = TISP::make_unique_node<TISP::AUDIOLIB::GainNCh<float>>(
-          pTypeConvInOut, pGainNChTarget, pGainNChOut, NUM_CHANNELS_IN, BLOCK_SIZE, NUM_CHANNELS_IN,
-          NUM_CHANNELS_IN * sizeof(float), NUM_CHANNELS_IN * sizeof(float), IS_INTERLEAVED, "GainNCh", 1, errorCtx);
+      const TISP::TISP_BufDesc2D gainNChIn  = {pTypeConvInOut, TISP::Types::kFloat32,           NUM_CHANNELS_IN,
+                                               BLOCK_SIZE,     NUM_CHANNELS_IN * sizeof(float), IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D gainNChOut = {pGainNChOut, TISP::Types::kFloat32,           NUM_CHANNELS_IN,
+                                               BLOCK_SIZE,  NUM_CHANNELS_IN * sizeof(float), IS_INTERLEAVED};
+
+      const TISP::TISP_BufDescList gainNChInputs  = {&gainNChIn, 1U};
+      const TISP::TISP_BufDescList gainNChOutputs = {&gainNChOut, 1U};
+
+      TISP::AUDIOLIB::GainNChTunableParams<float> gainNChDefaults;
+      gainNChDefaults.pGains = pGainNChTarget;
+
+      auto k1 = TISP::make_unique_node<TISP::AUDIOLIB::GainNCh<float>>(&gainNChInputs, &gainNChOutputs,
+                                                                       &gainNChDefaults, "GainNCh", 1, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k1));
       }
@@ -208,10 +228,27 @@ void *create_graph()
 
    // 3. CascadeBiquad
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D hpfIn    = {pGainNChOut, TISP::Types::kFloat32, NUM_CHANNELS_IN, BLOCK_SIZE,
+                                                (NUM_CHANNELS_IN) * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D hpfOut   = {pCascadeOut, TISP::Types::kFloat32, NUM_CHANNELS_IN, BLOCK_SIZE,
+                                                (NUM_CHANNELS_IN) * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D hpfState = {pCascadeFilterVar, TISP::Types::kFloat32, NUM_CHANNELS_IN,
+                                                CASCADE_NUM_STAGES * DSPLIB_NUM_STATE_VARS_DF1,
+                                                (NUM_CHANNELS_IN) * sizeof(float), 1U};
+
+      const TISP::TISP_BufDescList hpfInputs  = {&hpfIn, 1U};
+      const TISP::TISP_BufDescList hpfOutputs = {&hpfOut, 1U};
+      const TISP::TISP_BufDescList hpfStates  = {&hpfState, 1U};
+
+      TISP::DSPLIB::CascadeBiquadConfig hpfBuild;
+      hpfBuild.numStages  = CASCADE_NUM_STAGES;
+      hpfBuild.biquadForm = DSPLIB_BIQUAD_DF1;
+
+      TISP::DSPLIB::CascadeBiquadTunableParams<float> hpfDefaults;
+      hpfDefaults.pCoeffs = pCascadeCoeff;
+
       auto k2 = TISP::make_unique_node<TISP::DSPLIB::CascadeBiquad<float>>(
-          pGainNChOut, pCascadeCoeff, pCascadeFilterVar, pCascadeOut, BLOCK_SIZE, NUM_CHANNELS_IN, CASCADE_NUM_STAGES,
-          DSPLIB_BIQUAD_DF1, NUM_CHANNELS_IN * sizeof(float), NUM_CHANNELS_IN * sizeof(float),
-          NUM_CHANNELS_IN * sizeof(float), false, "CascadeBiquad (HPF)", 2, errorCtx);
+          &hpfInputs, &hpfOutputs, &hpfStates, &hpfBuild, &hpfDefaults, "CascadeBiquad (HPF)", 2, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k2));
       }
@@ -222,10 +259,20 @@ void *create_graph()
 
    // 4. Router
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D routerIn  = {pCascadeOut, TISP::Types::kFloat32,           NUM_CHANNELS_IN,
+                                              BLOCK_SIZE,  NUM_CHANNELS_IN * sizeof(float), IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D routerOut = {pRouterOut, TISP::Types::kFloat32,            NUM_CHANNELS_OUT,
+                                              BLOCK_SIZE, NUM_CHANNELS_OUT * sizeof(float), IS_INTERLEAVED};
+
+      const TISP::TISP_BufDescList routerInputs  = {&routerIn, 1U};
+      const TISP::TISP_BufDescList routerOutputs = {&routerOut, 1U};
+
+      TISP::AUDIOLIB::RouterTunableParams<float> routerDefaults;
+      routerDefaults.pChannelIndices = reinterpret_cast<uint32_t *>(pRouterConfig);
+
       auto k3 = TISP::make_unique_node<TISP::AUDIOLIB::Router<float>>(
-          pCascadeOut, (float *) pRouterConfig, (float *) pRouterScratch, (float *) pRouterOut, NUM_CHANNELS_IN,
-          BLOCK_SIZE, NUM_CHANNELS_OUT, NUM_CHANNELS_IN * sizeof(float), NUM_CHANNELS_OUT * sizeof(float),
-          IS_INTERLEAVED, "Router (8ch->12ch)", 3, errorCtx);
+          &routerInputs, &routerOutputs, pRouterScratch, NUM_CHANNELS_OUT * BLOCK_SIZE * sizeof(float), &routerDefaults,
+          "Router (8ch->12ch)", 3, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k3));
       }
@@ -236,10 +283,27 @@ void *create_graph()
 
    // 5. Parametric EQ (using CascadeBiquad)
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D eqIn    = {pRouterOut, TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE,
+                                                (NUM_CHANNELS_OUT) * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D eqOut   = {pParamEqOut, TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE,
+                                                (NUM_CHANNELS_OUT) * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D eqState = {pParamEqFilterVar, TISP::Types::kFloat32, NUM_CHANNELS_OUT,
+                                                CASCADE_NUM_STAGES * DSPLIB_NUM_STATE_VARS_DF1,
+                                                (NUM_CHANNELS_OUT) * sizeof(float), 1U};
+
+      const TISP::TISP_BufDescList eqInputs  = {&eqIn, 1U};
+      const TISP::TISP_BufDescList eqOutputs = {&eqOut, 1U};
+      const TISP::TISP_BufDescList eqStates  = {&eqState, 1U};
+
+      TISP::DSPLIB::CascadeBiquadConfig eqBuild;
+      eqBuild.numStages  = CASCADE_NUM_STAGES;
+      eqBuild.biquadForm = DSPLIB_BIQUAD_DF1;
+
+      TISP::DSPLIB::CascadeBiquadTunableParams<float> eqDefaults;
+      eqDefaults.pCoeffs = pCascadeCoeff;
+
       auto k4 = TISP::make_unique_node<TISP::DSPLIB::CascadeBiquad<float>>(
-          pRouterOut, pCascadeCoeff, pParamEqFilterVar, pParamEqOut, BLOCK_SIZE, NUM_CHANNELS_OUT, CASCADE_NUM_STAGES,
-          DSPLIB_BIQUAD_DF1, NUM_CHANNELS_OUT * sizeof(float), NUM_CHANNELS_OUT * sizeof(float),
-          NUM_CHANNELS_OUT * sizeof(float), false, "CascadeBiquad (Speaker EQ)", 4, errorCtx);
+          &eqInputs, &eqOutputs, &eqStates, &eqBuild, &eqDefaults, "CascadeBiquad (Speaker EQ)", 4, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k4));
       }
@@ -250,14 +314,30 @@ void *create_graph()
 
    // 6. DelayNCh
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D delayNChIn = {
+          pParamEqOut,   TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE, NUM_CHANNELS_OUT * sizeof(float),
+          IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D delayNChOut = {
+          pDelayNChOut,  TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE, NUM_CHANNELS_OUT * sizeof(float),
+          IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D delayNChState = {pDelayNChBuffer,
+                                                  TISP::Types::kFloat32,
+                                                  DELAY_MAX_DELAY + 1,
+                                                  NUM_CHANNELS_OUT,
+                                                  (DELAY_MAX_DELAY + 1) * sizeof(float),
+                                                  0U};
+
+      const TISP::TISP_BufDescList delayNChInputs  = {&delayNChIn, 1U};
+      const TISP::TISP_BufDescList delayNChOutputs = {&delayNChOut, 1U};
+      const TISP::TISP_BufDescList delayNChStates  = {&delayNChState, 1U};
+
+      TISP::AUDIOLIB::DelayNChannelConfig delayNChBuild;
+      delayNChBuild.mode       = DELAY_NCH_LINEAR_MODE;
+      delayNChBuild.pDelaySize = (uint32_t *) pDelayNChSizes;
+
       auto k5 = TISP::make_unique_node<TISP::AUDIOLIB::DelayNChannel<float>>(
-          pParamEqOut, pDelayNChBuffer, pDelayNChScratch, pDelayNChOut, NUM_CHANNELS_OUT, BLOCK_SIZE,
-          DELAY_MAX_DELAY + 1, NUM_CHANNELS_OUT, // width=BLOCK_SIZE, height=NUM_CHANNELS_OUT, widthD=DELAY_MAX_DELAY+1,
-                                                 // heightD=NUM_CHANNELS_OUT
-          NUM_CHANNELS_OUT * sizeof(float), (DELAY_MAX_DELAY + 1) * sizeof(float),
-          NUM_CHANNELS_OUT * sizeof(float), // inPitchBytes, delayBytes, outPitchBytes
-          IS_INTERLEAVED, DELAY_NCH_LINEAR_MODE, (uint32_t *) pDelayNChSizes, "DelayNChannel", 5,
-          errorCtx); // interleave=IS_INTERLEAVED, mode=0, pDelaySize (max delay derived internally)
+          &delayNChInputs, &delayNChOutputs, &delayNChStates, pDelayNChScratch,
+          NUM_CHANNELS_OUT * BLOCK_SIZE * sizeof(float), &delayNChBuild, "DelayNChannel", 5, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k5));
       }
@@ -268,14 +348,31 @@ void *create_graph()
 
    // 7. BalanceFader
    if (errorCtx.isSuccess()) {
-      auto k6 = TISP::make_unique_node<TISP::AUDIOLIB::BalanceFader<float>>(
-          pDelayNChOut, pBalanceFaderGain, pBalanceFaderOut, NUM_CHANNELS_OUT, BLOCK_SIZE,
-          NUM_CHANNELS_OUT, // gWidthIn set to NUM_CHANNELS_OUT
-          NUM_CHANNELS_OUT * sizeof(float), NUM_CHANNELS_OUT * sizeof(float),
-          IS_INTERLEAVED, // isInterleave=IS_INTERLEAVED
-          balanceFaderFloatParams1[0], balanceFaderFloatParams1[1], pBalanceFaderChannelConfig,
-          balanceFaderFloatParams1[2], balanceFaderFloatParams1[3], balanceFaderFloatParams1[4],
-          balanceFaderIntParams1[0], balanceFaderIntParams1[1], "BalanceFader", 6, errorCtx);
+      const TISP::TISP_BufDesc2D balanceFaderIn   = {pDelayNChOut, TISP::Types::kFloat32,            NUM_CHANNELS_OUT,
+                                                     BLOCK_SIZE,   NUM_CHANNELS_OUT * sizeof(float), IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D balanceFaderOut  = {pBalanceFaderOut, TISP::Types::kFloat32, NUM_CHANNELS_OUT,
+                                                     BLOCK_SIZE,       NUM_CHANNELS_OUT * sizeof(float),
+                                                     IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D balanceFaderGain = {pBalanceFaderGain, TISP::Types::kFloat32, NUM_CHANNELS_OUT, 1U,
+                                                     NUM_CHANNELS_OUT * sizeof(float), 0U};
+
+      const TISP::TISP_BufDescList balanceFaderInputs  = {&balanceFaderIn, 1U};
+      const TISP::TISP_BufDescList balanceFaderOutputs = {&balanceFaderOut, 1U};
+      const TISP::TISP_BufDescList balanceFaderStates  = {&balanceFaderGain, 1U};
+
+      TISP::AUDIOLIB::BalanceFaderTunableParams<float> balanceFaderDefaults;
+      balanceFaderDefaults.balance              = balanceFaderFloatParams1[0];
+      balanceFaderDefaults.fade                 = balanceFaderFloatParams1[1];
+      balanceFaderDefaults.pChannelConfig       = pBalanceFaderChannelConfig;
+      balanceFaderDefaults.lfeBalanceGainFactor = balanceFaderFloatParams1[2];
+      balanceFaderDefaults.lfeFaderGainFactor   = balanceFaderFloatParams1[3];
+      balanceFaderDefaults.sideGainFactor       = balanceFaderFloatParams1[4];
+      balanceFaderDefaults.lfeBalanceMode       = balanceFaderIntParams1[0];
+      balanceFaderDefaults.lfeFaderMode         = balanceFaderIntParams1[1];
+
+      auto k6 = TISP::make_unique_node<TISP::AUDIOLIB::BalanceFader<float>>(&balanceFaderInputs, &balanceFaderOutputs,
+                                                                            &balanceFaderStates, &balanceFaderDefaults,
+                                                                            "BalanceFader", 6, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k6));
       }
@@ -286,11 +383,22 @@ void *create_graph()
 
    // 8. GainNChTrim
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D gainNChTrimIn = {
+          pBalanceFaderOut, TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE, NUM_CHANNELS_OUT * sizeof(float),
+          IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D gainNChTrimOut = {
+          pGainNChTrimOut, TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE, NUM_CHANNELS_OUT * sizeof(float),
+          IS_INTERLEAVED};
+
+      const TISP::TISP_BufDescList gainNChTrimInputs  = {&gainNChTrimIn, 1U};
+      const TISP::TISP_BufDescList gainNChTrimOutputs = {&gainNChTrimOut, 1U};
+
+      TISP::AUDIOLIB::GainNChTrimTunableParams<float> gainNChTrimDefaults;
+      gainNChTrimDefaults.pGains      = pGainNChTrimChannelGains;
+      gainNChTrimDefaults.pMasterGain = pGainNChTrimMasterGain;
+
       auto k7 = TISP::make_unique_node<TISP::AUDIOLIB::GainNChTrim<float>>(
-          pBalanceFaderOut, pGainNChTrimChannelGains, pGainNChTrimMasterGain, pGainNChTrimOut, NUM_CHANNELS_OUT,
-          BLOCK_SIZE, NUM_CHANNELS_OUT, // gHeight = NUM_CHANNELS_OUT
-          NUM_CHANNELS_OUT * sizeof(float), NUM_CHANNELS_OUT * sizeof(float), IS_INTERLEAVED, "GainNChTrim", 7,
-          errorCtx);
+          &gainNChTrimInputs, &gainNChTrimOutputs, &gainNChTrimDefaults, "GainNChTrim", 7, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k7));
       }
@@ -301,11 +409,26 @@ void *create_graph()
 
    // 9. Limiter
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D limiterIn    = {pGainNChTrimOut, TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE,
+                                                 NUM_CHANNELS_OUT * sizeof(float), IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D limiterOut   = {pLimiterOut, TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE,
+                                                 MUTE_NCH_STRIDE_ELEM * sizeof(float), IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D limiterState = {pLimiterGainState, TISP::Types::kFloat32, NUM_CHANNELS_OUT, 1U,
+                                                 NUM_CHANNELS_OUT * sizeof(float), 0U};
+
+      const TISP::TISP_BufDescList limiterInputs  = {&limiterIn, 1U};
+      const TISP::TISP_BufDescList limiterOutputs = {&limiterOut, 1U};
+      const TISP::TISP_BufDescList limiterStates  = {&limiterState, 1U};
+
+      TISP::AUDIOLIB::LimiterTunableParams<float> limiterDefaults;
+      limiterDefaults.pThresholdDb   = pLimiterThreshold;
+      limiterDefaults.pKneeWidthDb   = pLimiterKneeWidth;
+      limiterDefaults.pAttackCoeffs  = pLimiterAttackCoeff;
+      limiterDefaults.pReleaseCoeffs = pLimiterReleaseCoeff;
+
       auto k8 = TISP::make_unique_node<TISP::AUDIOLIB::Limiter<float>>(
-          pGainNChTrimOut, pLimiterScratch, pLimiterOut, pLimiterGainState, pLimiterThreshold, pLimiterKneeWidth,
-          pLimiterAttackCoeff, pLimiterReleaseCoeff, NUM_CHANNELS_OUT, BLOCK_SIZE, NUM_CHANNELS_OUT * sizeof(float),
-          NUM_CHANNELS_OUT * sizeof(float), MUTE_NCH_STRIDE_ELEM * sizeof(float), "Limiter", 8,
-          errorCtx);
+          &limiterInputs, &limiterOutputs, &limiterStates, pLimiterScratch,
+          NUM_CHANNELS_OUT * BLOCK_SIZE * sizeof(float), &limiterDefaults, "Limiter", 8, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k8));
       }
@@ -316,10 +439,26 @@ void *create_graph()
 
    // 10. MuteNCh
    if (errorCtx.isSuccess()) {
-      auto k9 = TISP::make_unique_node<TISP::AUDIOLIB::Mutench<float>>(
-          pLimiterOut, pMuteNChOut, NUM_CHANNELS_OUT, BLOCK_SIZE, NUM_CHANNELS_OUT,
-          MUTE_NCH_STRIDE_ELEM * sizeof(float), MUTE_NCH_STRIDE_ELEM * sizeof(float), IS_INTERLEAVED, SAMPLING_RATE_HZ,
-          (uint32_t *) pMuteNChIsMute, MUTE_NCH_FADE_TIME, MUTE_NCH_FADE_HARD_TYPE, "MuteNCh", 9, errorCtx);
+      const TISP::TISP_BufDesc2D muteNChIn = {
+          pLimiterOut,   TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE, MUTE_NCH_STRIDE_ELEM * sizeof(float),
+          IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D muteNChOut = {
+          pMuteNChOut,   TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE, MUTE_NCH_STRIDE_ELEM * sizeof(float),
+          IS_INTERLEAVED};
+
+      const TISP::TISP_BufDescList muteNChInputs  = {&muteNChIn, 1U};
+      const TISP::TISP_BufDescList muteNChOutputs = {&muteNChOut, 1U};
+
+      TISP::AUDIOLIB::MutenchConfig muteNChBuild;
+      muteNChBuild.samplingRate = SAMPLING_RATE_HZ;
+
+      TISP::AUDIOLIB::MutenchTunableParams<float> muteNChDefaults;
+      muteNChDefaults.pIsMute  = (uint32_t *) pMuteNChIsMute;
+      muteNChDefaults.fadeTime = MUTE_NCH_FADE_TIME;
+      muteNChDefaults.fadeType = MUTE_NCH_FADE_HARD_TYPE;
+
+      auto k9 = TISP::make_unique_node<TISP::AUDIOLIB::Mutench<float>>(&muteNChInputs, &muteNChOutputs, &muteNChBuild,
+                                                                       &muteNChDefaults, "MuteNCh", 9, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k9));
       }
@@ -330,9 +469,21 @@ void *create_graph()
 
    // 11. TypeConversion: float to int32_t
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D floatToIntIn = {
+          pMuteNChOut,   TISP::Types::kFloat32, NUM_CHANNELS_OUT, BLOCK_SIZE, MUTE_NCH_STRIDE_ELEM * sizeof(float),
+          IS_INTERLEAVED};
+      const TISP::TISP_BufDesc2D floatToIntOut = {
+          pFloatToInt,   TISP::Types::kInt32, NUM_CHANNELS_OUT, BLOCK_SIZE, NUM_CHANNELS_OUT * sizeof(int32_t),
+          IS_INTERLEAVED};
+
+      const TISP::TISP_BufDescList floatToIntInputs  = {&floatToIntIn, 1U};
+      const TISP::TISP_BufDescList floatToIntOutputs = {&floatToIntOut, 1U};
+
+      TISP::AUDIOLIB::TypeConversionConfig floatToIntBuild;
+      floatToIntBuild.testQ31 = 1U;
+
       auto k10 = TISP::make_unique_node<TISP::AUDIOLIB::TypeConversion<float, int32_t>>(
-          pMuteNChOut, pFloatToInt, NUM_CHANNELS_OUT, BLOCK_SIZE, MUTE_NCH_STRIDE_ELEM * sizeof(float),
-          NUM_CHANNELS_OUT * sizeof(int32_t), IS_INTERLEAVED, "TypeConversion (f32->i32)", 10, errorCtx);
+          &floatToIntInputs, &floatToIntOutputs, &floatToIntBuild, "TypeConversion (f32->i32)", 10, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k10));
       }

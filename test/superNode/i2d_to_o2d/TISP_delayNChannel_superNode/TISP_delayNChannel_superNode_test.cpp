@@ -65,6 +65,7 @@ TISP::SuperNode::superNodeVec *TISP_delayNChannel_createSuperNode(void          
                                                                   void            *pOutputBlock,
                                                                   void            *pDelaynchannel,
                                                                   void            *pScratch,
+                                                                  size_t           scratchBytes,
                                                                   int32_t          widthIn,
                                                                   int32_t          heightIn,
                                                                   int32_t          widthD,
@@ -82,10 +83,26 @@ TISP::SuperNode::superNodeVec *TISP_delayNChannel_createSuperNode(void          
 {
 
    if (dataType == AUDIOLIB_FLOAT32) {
+      const TISP::TISP_BufDesc2D inDesc = {
+          pInputBlock0,         TISP::ElementDType<float>::value, (size_t) blockWidth,
+          (size_t) blockHeight, blockWidth * sizeof(float),       (uint8_t) interleave};
+      const TISP::TISP_BufDesc2D outDesc = {
+          pOutputBlock,         TISP::ElementDType<float>::value, (size_t) blockWidth,
+          (size_t) blockHeight, blockWidth * sizeof(float),       (uint8_t) interleave};
+      // The delay line always holds one row per channel, whatever the data layout
+      const TISP::TISP_BufDesc2D stateDesc = {pDelaynchannel,   TISP::ElementDType<float>::value, (size_t) widthD,
+                                              (size_t) heightD, (size_t) strideDelaynchannel,     0U};
+
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+      const TISP::TISP_BufDescList states  = {&stateDesc, 1U};
+
+      TISP::AUDIOLIB::DelayNChannelConfig config;
+      config.mode       = static_cast<uint32_t>(mode);
+      config.pDelaySize = pDelaySize;
+
       auto k0 = std::make_unique<TISP::AUDIOLIB::DelayNChannel<float>>(
-          (float *) pInputBlock0, (float *) pDelaynchannel, (float *) pScratch, (float *) pOutputBlock, blockWidth,
-          blockHeight, widthD, heightD, blockWidth * AUDIOLIB_sizeof(dataType), strideDelaynchannel,
-          blockWidth * AUDIOLIB_sizeof(dataType), interleave, mode, pDelaySize, errorCtx);
+          &inputs, &outputs, &states, pScratch, scratchBytes, &config, "DelayNChannel", 0, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating Delaynchannel<float> node: %s\n", errorCtx.getMessage());
@@ -108,10 +125,26 @@ TISP::SuperNode::superNodeVec *TISP_delayNChannel_createSuperNode(void          
    }
    else if (dataType == AUDIOLIB_FLOAT64) {
 
+      const TISP::TISP_BufDesc2D inDesc = {
+          pInputBlock0,         TISP::ElementDType<double>::value, (size_t) blockWidth,
+          (size_t) blockHeight, blockWidth * sizeof(double),       (uint8_t) interleave};
+      const TISP::TISP_BufDesc2D outDesc = {
+          pOutputBlock,         TISP::ElementDType<double>::value, (size_t) blockWidth,
+          (size_t) blockHeight, blockWidth * sizeof(double),       (uint8_t) interleave};
+      // The delay line always holds one row per channel, whatever the data layout
+      const TISP::TISP_BufDesc2D stateDesc = {pDelaynchannel,   TISP::ElementDType<double>::value, (size_t) widthD,
+                                              (size_t) heightD, (size_t) strideDelaynchannel,      0U};
+
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+      const TISP::TISP_BufDescList states  = {&stateDesc, 1U};
+
+      TISP::AUDIOLIB::DelayNChannelConfig config;
+      config.mode       = static_cast<uint32_t>(mode);
+      config.pDelaySize = pDelaySize;
+
       auto k0 = std::make_unique<TISP::AUDIOLIB::DelayNChannel<double>>(
-          (double *) pInputBlock0, (double *) pDelaynchannel, (double *) pScratch, (double *) pOutputBlock, blockWidth,
-          blockHeight, widthD, heightD, blockWidth * AUDIOLIB_sizeof(dataType), strideDelaynchannel,
-          blockWidth * AUDIOLIB_sizeof(dataType), interleave, mode, pDelaySize, errorCtx);
+          &inputs, &outputs, &states, pScratch, scratchBytes, &config, "DelayNChannel", 0, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating Delaynchannel<double> node: %s\n", errorCtx.getMessage());
@@ -272,9 +305,9 @@ int TISP_delayNChannel_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          TISP::ErrorCtxt                errorCtx;
          TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_delayNChannel_createSuperNode(
-             currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), pDelay.get(), pScratch.get(), widthIn,
-             heightIn, widthD, heightD, inPitch, outPitch, strideDelay, delaySize, mode, interleave, blockWidth,
-             blockHeight, currPrm.dataType, errorCtx);
+             currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), pDelay.get(), pScratch.get(), scratchSize,
+             widthIn, heightIn, widthD, heightD, inPitch, outPitch, strideDelay, delaySize, mode, interleave,
+             blockWidth, blockHeight, currPrm.dataType, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -297,9 +330,9 @@ int TISP_delayNChannel_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          for (k = 0; k < NUM_REPS; k++) {
             TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_delayNChannel_createSuperNode(
-                currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), pDelay.get(), pScratch.get(), widthIn,
-                heightIn, widthD, heightD, inPitch, outPitch, strideDelay, delaySize, mode, interleave, blockWidth,
-                blockHeight, currPrm.dataType, errorCtx);
+                currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), pDelay.get(), pScratch.get(),
+                scratchSize, widthIn, heightIn, widthD, heightD, inPitch, outPitch, strideDelay, delaySize, mode,
+                interleave, blockWidth, blockHeight, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -332,9 +365,9 @@ int TISP_delayNChannel_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          volatileSum = outSum;
          for (uint32_t i = 0; i < 1; i++) {
             TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_delayNChannel_createSuperNode(
-                currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), pDelay.get(), pScratch.get(), widthIn,
-                heightIn, widthD, heightD, inPitch, outPitch, strideDelay, delaySize, mode, interleave, blockWidth,
-                blockHeight, currPrm.dataType, errorCtx);
+                currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), pDelay.get(), pScratch.get(),
+                scratchSize, widthIn, heightIn, widthD, heightD, inPitch, outPitch, strideDelay, delaySize, mode,
+                interleave, blockWidth, blockHeight, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());

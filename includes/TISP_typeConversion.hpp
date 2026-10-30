@@ -18,13 +18,22 @@ namespace AUDIOLIB {
 /**@{*/
 
 /**
+ * @brief Construction-time (non-tunable) parameters of the @ref TypeConversion node.
+ *
+ * @details Required; selects the fixed-point scaling.
+ */
+struct TypeConversionConfig {
+   uint8_t testQ31 = 0U; /*!< int32_t conversions only: `1` uses a 2^31 (Q31) scale, `0` a 2^23 (Q23) scale. */
+};
+
+/**
  * \class TypeConversion
  * @brief Provides node-level APIs for the AUDIOLIB_typeConversion kernel from AUDIOLIB.
  * @tparam Tin  : Supports int16_t, int32_t, float and double.
  * @tparam Tout : Supports int16_t, int32_t, float and double.
  *
- * @details This kernel performs data type conversion on the input buffer pX across all channels
- * and writes the converted values to the output buffer pY.
+ * @details This kernel performs data type conversion on the input buffer across all channels
+ * and writes the converted values to the output buffer.
  *
  *  <b>Type Conversions: </b>
  *
@@ -41,7 +50,7 @@ namespace AUDIOLIB {
  *
  * <b>Example: </b>
  *
- * <b>Input</b> (pX): No. of samples = N; No. of channels = M; Tin = int32_t, Tout = float.
+ * <b>Input</b>: No. of samples = N; No. of channels = M; Tin = int32_t, Tout = float.
  *  | Channel/Sample | s0  | s1  | ... | sN-1  |
  *  |----------------|-----|-----|-----|-------|
  *  |      ch0       | 100 | 215 | ... |  675  |
@@ -51,7 +60,7 @@ namespace AUDIOLIB {
  *  |      .         |  .  |  .  | ... |   .   |
  *  |      chM-1     | 900 |1050 | ... |  105  |
  *
- * <b>Output</b> (pY): No. of samples = N; No. of channels = M.
+ * <b>Output</b>: No. of samples = N; No. of channels = M.
  *  | Channel/Sample |  s0   |  s1   | ... |  sN-1   |
  *  |----------------|-------|-------|-----|---------|
  *  |      ch0       | 100.0 | 215.0 | ... |  675.0  |
@@ -65,15 +74,9 @@ namespace AUDIOLIB {
 
 template <typename Tin, typename Tout> class TypeConversion final : public VirtualOp {
 
-   Tin     *_pX;       /*!< Pointer to input matrix. */
-   Tout    *_pY;       /*!< Pointer to output matrix. */
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
-
-   size_t _width;
-   size_t _height;
-   size_t _inPitchBytes;
-   size_t _outPitchBytes;
-   size_t _testQ31;
+   NodeInfo       _nodeInfo; /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;       /*!< Input buffer descriptor (Tin); @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;      /*!< Output buffer descriptor (Tout); @ref setAddr rebinds its pBuf */
 
    TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_typeConversion kernel. */
 
@@ -81,51 +84,32 @@ template <typename Tin, typename Tout> class TypeConversion final : public Virtu
    /**
     * @brief Creates an AUDIOLIB_typeConversion node.
     *
-    * This constructor initializes a node for the AUDIOLIB_typeConversion kernel.
+    * @details Validates the buffer descriptors and initializes the AUDIOLIB_typeConversion kernel. The kernel
+    *          checks the input/output type pair and that both buffers have the same width and height.
     *
-    * @param [in]  *pX            : Pointer to the input matrix.
-    *                               Initializes @ref _pX.
-    * @param [out] *pY            : Pointer to the output matrix.
-    *                               Initializes @ref _pY.
-    * @param [in]  width          : Width of input matrix.
-    * @param [in]  height         : Height of input matrix.
-    * @param [in]  inPitchBytes   : Pitch of input matrix in bytes.
-    * @param [in]  outPitchBytes  : Pitch of output matrix in bytes.
-    * @param [in]  testQ31        : Selects Q31 (1) vs Q24 (0) scaling for 32-bit fixed-point conversions.
-    * @param [in]  errorCtx      : Error context for reporting constructor errors
+    * @param [in] pInputs      : Input buffer descriptors; exactly one buffer of type @c Tin. Its @c pBuf is the
+    *                            initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs     : Output buffer descriptors; exactly one buffer of type @c Tout with the same
+    *                            layout, width, and height as the input.
+    * @param [in] pConfig : Construction-time parameters; required.
+    * @param [in] nodeName     : Name of the node
+    * @param [in] nodeId       : ID of the node
+    * @param [in] errorCtx     : Error context for reporting constructor errors
     *
+    * @throw None
     */
-   TypeConversion(Tin       *pX,
-                  Tout      *pY,
-                  size_t     width,
-                  size_t     height,
-                  size_t     inPitchBytes,
-                  size_t     outPitchBytes,
-                  size_t     testQ31,
-                  ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a AUDIOLIB_typeConversion node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   TypeConversion(Tin        *pX,
-                  Tout       *pY,
-                  size_t      width,
-                  size_t      height,
-                  size_t      inPitchBytes,
-                  size_t      outPitchBytes,
-                  size_t      testQ31,
-                  const char *nodeName,
-                  uint32_t    nodeId,
-                  ErrorCtxt  &errorCtx);
+   TypeConversion(const TISP_BufDescList          *pInputs,
+                  const TISP_BufDescList          *pOutputs,
+                  const TypeConversionConfig *pConfig,
+                  const char                      *nodeName,
+                  uint32_t                         nodeId,
+                  ErrorCtxt                       &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input data matrix) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -136,7 +120,7 @@ template <typename Tin, typename Tout> class TypeConversion final : public Virtu
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -146,14 +130,14 @@ template <typename Tin, typename Tout> class TypeConversion final : public Virtu
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1: input buffer)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1: output buffer)
     */
    size_t getNumOutputs() const noexcept override;
 

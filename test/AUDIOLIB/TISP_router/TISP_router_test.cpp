@@ -54,29 +54,58 @@ __attribute__((section(".ddrData"), aligned(64))) int8_t  ddrBuffer[2048 * 1024]
 
 int16_t volatile volatileSum = 0; // use volatile to keep compiler from removing this operation
 
+template <typename T>
+std::unique_ptr<TISP::VirtualOp> TISP_router_createNode(void            *pIn,
+                                                        void            *pRouter,
+                                                        void            *pScratch,
+                                                        void            *pOut,
+                                                        size_t           widthIn,
+                                                        size_t           heightIn,
+                                                        size_t           outChannels,
+                                                        size_t           strideIn,
+                                                        size_t           strideOut,
+                                                        size_t           scratchBytes,
+                                                        uint8_t          isInterleave,
+                                                        TISP::ErrorCtxt &errorCtx)
+{
+   const size_t widthOut  = (isInterleave == 1U) ? outChannels : widthIn;
+   const size_t heightOut = (isInterleave == 1U) ? heightIn : outChannels;
+
+   const TISP::TISP_BufDesc2D inDesc  = {pIn, TISP::ElementDType<T>::value, widthIn, heightIn, strideIn, isInterleave};
+   const TISP::TISP_BufDesc2D outDesc = {pOut,      TISP::ElementDType<T>::value, widthOut, heightOut, strideOut,
+                                         isInterleave};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+   TISP::AUDIOLIB::RouterTunableParams<T> defaultParams;
+   defaultParams.pChannelIndices = static_cast<uint32_t *>(pRouter);
+
+   return std::make_unique<TISP::AUDIOLIB::Router<T>>(&inputs, &outputs, pScratch, scratchBytes, &defaultParams,
+                                                      "Router", 0, errorCtx);
+}
+
 std::unique_ptr<TISP::VirtualOp> TISP_router_createKernelObject(void            *pIn,
                                                                 void            *pRouter,
                                                                 void            *pScratch,
                                                                 void            *pOut,
-                                                                int32_t          widthIn,
-                                                                int32_t          heightIn,
-                                                                int32_t          gheightIn,
-                                                                int32_t          strideIn,
-                                                                int32_t          strideOut,
-                                                                int32_t          isInterleave,
+                                                                size_t           widthIn,
+                                                                size_t           heightIn,
+                                                                size_t           outChannels,
+                                                                size_t           strideIn,
+                                                                size_t           strideOut,
+                                                                size_t           scratchBytes,
+                                                                uint8_t          isInterleave,
                                                                 uint32_t         dataType,
                                                                 TISP::ErrorCtxt &errorCtx)
 {
    if (dataType == AUDIOLIB_FLOAT32) {
-
-      return std::make_unique<TISP::AUDIOLIB::Router<float>>((float *) pIn, (float *) pRouter, (float *) pScratch,
-                                                             (float *) pOut, widthIn, heightIn, gheightIn, strideIn,
-                                                             strideOut, isInterleave, errorCtx);
+      return TISP_router_createNode<float>(pIn, pRouter, pScratch, pOut, widthIn, heightIn, outChannels, strideIn,
+                                           strideOut, scratchBytes, isInterleave, errorCtx);
    }
    else if (dataType == AUDIOLIB_FLOAT64) {
-      return std::make_unique<TISP::AUDIOLIB::Router<double>>((double *) pIn, (double *) pRouter, (double *) pScratch,
-                                                              (double *) pOut, widthIn, heightIn, gheightIn, strideIn,
-                                                              strideOut, isInterleave, errorCtx);
+      return TISP_router_createNode<double>(pIn, pRouter, pScratch, pOut, widthIn, heightIn, outChannels, strideIn,
+                                            strideOut, scratchBytes, isInterleave, errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_router_createKernelObject", "unsupported data type for Router kernel");
@@ -164,7 +193,7 @@ int TISP_router_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          size_t inputSize, routerSize, outputSize, scratchBufSize;
 
-         routerSize     = (outChannels * dataSize);
+         routerSize     = (outChannels * sizeof(uint32_t));
          outputSize     = (numBlocks * heightOut * strideOut);
          scratchBufSize = (dim_y_padded1 * currPrm.widthIn * dataSize);
 
@@ -198,17 +227,14 @@ int TISP_router_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                }
             }
 
-            TI_fillBuffer_float(prm[tpi].testPattern, 0, pRouter.get(), prm[tpi].staticIn1, outChannels, 1, 0, dataSize,
-                                testPatternString);
+            memcpy(pRouter.get(), prm[tpi].staticIn1, routerSize);
 
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
             TISP::ErrorCtxt errorCtx;
             auto            k0 = TISP_router_createKernelObject(
-                           pIn.get(), pRouter.get(), pScratch.get(), pOut.get(), static_cast<uint32_t>(widthIn),
-                           static_cast<uint32_t>(heightIn), static_cast<uint32_t>(outChannels), static_cast<uint32_t>(strideIn),
-                           static_cast<uint32_t>(strideOut), static_cast<uint8_t>(currPrm.isInterleave), currPrm.dataType,
-                           errorCtx);
+                pIn.get(), pRouter.get(), pScratch.get(), pOut.get(), widthIn, heightIn, outChannels, strideIn,
+                strideOut, scratchBufSize, static_cast<uint8_t>(isInterleave), currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

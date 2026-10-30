@@ -59,6 +59,46 @@ void TISP_router_deleteSuperNode(TISP::SuperNode::superNodeVec *mySuperNodeVec)
    return;
 }
 
+template <typename T>
+std::unique_ptr<TISP::VirtualOp> TISP_router_createNode(void            *pInputBlock0,
+                                                        void            *pInputBlock1,
+                                                        void            *pScratchBlock,
+                                                        void            *pOutputBlock,
+                                                        int32_t          blockWidth,
+                                                        int32_t          blockHeight,
+                                                        int32_t          blockWidthOut,
+                                                        int32_t          blockHeightOut,
+                                                        uint32_t         isInterleave,
+                                                        TISP::ErrorCtxt &errorCtx)
+{
+   const size_t  inPitchBytes  = static_cast<size_t>(blockWidth) * sizeof(T);
+   const size_t  outPitchBytes = static_cast<size_t>(blockWidthOut) * sizeof(T);
+   const uint8_t interleave    = static_cast<uint8_t>(isInterleave);
+
+   const TISP::TISP_BufDesc2D inDesc  = {pInputBlock0,
+                                         TISP::ElementDType<T>::value,
+                                         static_cast<size_t>(blockWidth),
+                                         static_cast<size_t>(blockHeight),
+                                         inPitchBytes,
+                                         interleave};
+   const TISP::TISP_BufDesc2D outDesc = {pOutputBlock,
+                                         TISP::ElementDType<T>::value,
+                                         static_cast<size_t>(blockWidthOut),
+                                         static_cast<size_t>(blockHeightOut),
+                                         outPitchBytes,
+                                         interleave};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+   TISP::AUDIOLIB::RouterTunableParams<T> defaultParams;
+   defaultParams.pChannelIndices = static_cast<uint32_t *>(pInputBlock1);
+
+   return std::make_unique<TISP::AUDIOLIB::Router<T>>(&inputs, &outputs, pScratchBlock,
+                                                      outPitchBytes * static_cast<size_t>(blockHeightOut),
+                                                      &defaultParams, "Router", 0, errorCtx);
+}
+
 TISP::SuperNode::superNodeVec *TISP_router_createSuperNode(void            *pIn,
                                                            void            *pIn1,
                                                            void            *pOut,
@@ -81,12 +121,11 @@ TISP::SuperNode::superNodeVec *TISP_router_createSuperNode(void            *pIn,
                                                            uint32_t         isInterleave,
                                                            TISP::ErrorCtxt &errorCtx)
 {
+   (void) outChannels;
 
    if (dataType == AUDIOLIB_FLOAT32) {
-      auto k0 = std::make_unique<TISP::AUDIOLIB::Router<float>>(
-          (float *) pInputBlock0, (float *) pInputBlock1, (float *) pScratchBlock, (float *) pOutputBlock, blockWidth,
-          blockHeight, outChannels, blockWidth * AUDIOLIB_sizeof(dataType), blockWidthOut * AUDIOLIB_sizeof(dataType),
-          isInterleave, errorCtx);
+      auto k0 = TISP_router_createNode<float>(pInputBlock0, pInputBlock1, pScratchBlock, pOutputBlock, blockWidth,
+                                              blockHeight, blockWidthOut, blockHeightOut, isInterleave, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating Router<float> node: %s\n", errorCtx.getMessage());
@@ -108,10 +147,8 @@ TISP::SuperNode::superNodeVec *TISP_router_createSuperNode(void            *pIn,
    }
    else if (dataType == AUDIOLIB_FLOAT64) {
 
-      auto k0 = std::make_unique<TISP::AUDIOLIB::Router<double>>(
-          (double *) pInputBlock0, (double *) pInputBlock1, (double *) pScratchBlock, (double *) pOutputBlock,
-          blockWidth, blockHeight, outChannels, blockWidth * AUDIOLIB_sizeof(dataType),
-          blockWidthOut * AUDIOLIB_sizeof(dataType), isInterleave, errorCtx);
+      auto k0 = TISP_router_createNode<double>(pInputBlock0, pInputBlock1, pScratchBlock, pOutputBlock, blockWidth,
+                                               blockHeight, blockWidthOut, blockHeightOut, isInterleave, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating Router<double> node: %s\n", errorCtx.getMessage());
@@ -226,7 +263,7 @@ int TISP_router_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
       /* 2x buffer allocation for ping-pong buffers */
       auto pInputBlock0        = myL2Heap.allocate64ByteAligned<uint8_t>(2 * blockHeight * blockWidth * datasize);
-      auto pInputBlock1        = myL2Heap.allocate64ByteAligned<uint8_t>(outChannels * datasize);
+      auto pInputBlock1        = myL2Heap.allocate64ByteAligned<uint8_t>(outChannels * sizeof(uint32_t));
       auto pInputScratchBlock0 = myL2Heap.allocate64ByteAligned<uint8_t>(blockWidthOut * blockHeightOut * datasize);
       auto pOutputBlock        = myL2Heap.allocate64ByteAligned<uint8_t>(2 * blockWidthOut * blockHeightOut * datasize);
 
@@ -238,8 +275,8 @@ int TISP_router_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
-         TI_fillBuffer_float(prm[tpi].testPattern, 0, pInputBlock1.get(), prm[tpi].staticIn1, outChannels * datasize, 1,
-                             0, datasize, testPatternString);
+         memcpy(pInputBlock1.get(), prm[tpi].staticIn1, outChannels * sizeof(uint32_t));
+         (void) strcpy(testPatternString, "STATIC");
 
          TISP::ErrorCtxt                errorCtx;
          TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_router_createSuperNode(

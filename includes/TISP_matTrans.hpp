@@ -24,10 +24,9 @@ namespace DSPLIB {
  */
 
 template <typename T> class MatTrans final : public VirtualOp {
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
-
-   T *_pX; /*!< Pointer to address of input vector */
-   T *_pY; /*!< Pointer to address of result vector*/
+   NodeInfo       _nodeInfo; /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;       /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;      /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
 
    TISP::HandlePtr<char> _handle; /*!< handle required by DSPLIB_MatTrans kernel */
 
@@ -71,40 +70,30 @@ template <typename T> class MatTrans final : public VirtualOp {
    /**
     * @brief Creates a DSPLIB_MatTrans node
     *
-    * This constructor is called to create the node
+    * @details Validates the buffer descriptors and initializes the DSPLIB_matTrans kernel. A @c width x @c height
+    *          input is written as a @c height x @c width output.
     *
-    * @param[in]  *pX      : Pointer to input matrix; initializes @ref _pX
-    * @param[out] *pY      : Pointer to output matrix; initializes @ref _pY
-    * @param[in]  width    : Width of input matrix
-    * @param[in]  height   : Height of input matrix
-    * @param[in]  inPitchBytes  : Pitch of input matrix in bytes
-    * @param[in]  outPitchBytes : Pitch of output matrix in bytes
-    * @param [in]  errorCtx     : Error context for reporting constructor errors
+    * @param [in] pInputs  : Input buffer descriptors; exactly one buffer. Its @c pBuf is the initial input
+    *                        pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs : Output buffer descriptors; exactly one buffer whose width is the input height and whose
+    *                        height is the input width.
+    * @param [in] nodeName : Name of the node
+    * @param [in] nodeId   : ID of the node
+    * @param [in] errorCtx : Error context for reporting constructor errors
     *
+    * @throw None
     */
-   MatTrans(T *pX, T *pY, size_t width, size_t height, size_t inPitchBytes, size_t outPitchBytes, ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a MatTrans node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   MatTrans(T          *pX,
-            T          *pY,
-            size_t      width,
-            size_t      height,
-            size_t      inPitchBytes,
-            size_t      outPitchBytes,
-            const char *nodeName,
-            uint32_t    nodeId,
-            ErrorCtxt  &errorCtx);
+   MatTrans(const TISP_BufDescList *pInputs,
+            const TISP_BufDescList *pOutputs,
+            const char             *nodeName,
+            uint32_t                nodeId,
+            ErrorCtxt              &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input data matrix) - managed by setAddr()
+    * - index 0: input data matrix (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -115,7 +104,7 @@ template <typename T> class MatTrans final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
+    * - index 0: output data matrix (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -125,14 +114,14 @@ template <typename T> class MatTrans final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1)
     */
    size_t getNumOutputs() const noexcept override;
 

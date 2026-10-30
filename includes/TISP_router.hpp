@@ -22,14 +22,12 @@ namespace AUDIOLIB {
  * @brief Provides node-level APIs for the AUDIOLIB_router kernel from AUDIOLIB.
  * @tparam T : Supports float and double.
  *
- * @details This kernel routes selected channels from the input buffer pX
- * (interleaved or non-interleaved) to the output buffer pY based on a
- * given array of channel indices pC. <br>For each channel index, the corresponding input channel is stored in the
- * output. If an index exceeds the available input channels, the output channel is filled with zeros.
+ * @details Routes the input channels selected by a channel index array (@ref RouterTunableParams::pChannelIndices)
+ *          to the output channels; an index beyond the input channel count yields a zero-filled output channel.
  *
  * <b>Example (Interleaved data): </b>
  *
- * <b>Input</b> (pX): No. of samples = N; No. of channels = M.
+ * <b>Input</b>: No. of samples = N; No. of channels = M.
  *  | SampleChannel | Ch0 | Ch1 | ... | ChM-1 |
  *  |--------------- |-----|-----|-----|-------|
  *  |      s0        | 100 | 320 | ... |  430  |
@@ -39,9 +37,9 @@ namespace AUDIOLIB {
  *  |      .         |  .  |  .  | ... |   .   |
  *  |    sN-1        | 980 |1050 | ... |  1024 |
  *
- * <b>Outchannel indices array</b> (pC): `{1, 4, 0}` <br>
+ * <b>Channel indices</b> (@ref RouterTunableParams::pChannelIndices): `{1, 4, 0}` <br>
  *
- * <b>Output</b> (pY): No. of samples = N; No. of channels = 3.
+ * <b>Output</b>: No. of samples = N; No. of channels = 3.
  *  | SampleChannel | Ch0 | Ch1 | Ch2 |
  *  |--------------- |-----|-----|-----|
  *  |      s0        | 320 |  0  | 100 |
@@ -61,91 +59,80 @@ namespace AUDIOLIB {
  *
  */
 enum class RouterParamId : uint16_t {
-   kChannelIndices = 0 /**< kChannelIndices: Channel routing indices to set/get for the node */
+   kChannelIndices = 0, /**< kChannelIndices: Channel routing indices to set/get for the node */
+   kAll            = 1  /**< kAll: all tunable params as one @ref RouterTunableParams payload */
+};
+
+/**
+ * @brief Tunable parameters of the @ref Router node.
+ *
+ * @details Initial values of the runtime parameters, and the @ref RouterParamId::kAll payload of
+ *          @ref Router::setParams / @ref Router::getParams.
+ *
+ * @tparam T : Node element type (float or double).
+ */
+template <typename T> struct RouterTunableParams {
+   uint32_t *pChannelIndices = nullptr; /*!< Caller-owned array, one input channel index per output channel;
+                                             required, must outlive the node. */
 };
 
 template <typename T> class Router final : public VirtualOp {
 
-   T       *_pX;       /*!< Pointer to input buffer */
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
+   NodeInfo       _nodeInfo;       /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;             /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;            /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   size_t         _numOutChannels; /*!< Number of output channels (output width if interleaved, else height) */
+   uint32_t      *_channelIndices; /*!< Caller-owned channel index array (numOutChannels), updated by setParams */
+   void          *_scratch;        /*!< Caller-owned scratch buffer used by the kernel during exec */
 
-   T *_pC; /*!< Pointer to channel index array. */
-   T *_pS; /*!< Pointer to output scratch matrix. */
-   T *_pY; /*!< Pointer to output matrix. */
+   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_router kernel */
 
-   size_t _width;
-   size_t _height;
-   size_t _outChannels;
-   size_t _inPitchBytes;
-   size_t _outPitchBytes;
-   size_t _isInterleave;
-
-   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_router kernel. */
+   /**
+    * @brief Programs the kernel routing from a channel index array and copies it into @ref _channelIndices.
+    *
+    * @param [in]     pChannelIndices : Channel index array holding @ref _numOutChannels entries.
+    * @param [in]     funcName        : Caller identification used in the error message.
+    * @param [in,out] errorCtx        : Error context for reporting errors
+    *
+    * @retval None
+    * @throw None
+    */
+   void applyChannelIndices(uint32_t *pChannelIndices, const char *funcName, ErrorCtxt &errorCtx) noexcept;
 
  public:
    /**
     * @brief Creates an AUDIOLIB_router node.
     *
-    * This constructor initializes a node for the AUDIOLIB_router kernel.
+    * @details Validates the buffer descriptors and initializes the AUDIOLIB_router kernel. The output channel
+    *          count is the output @c width when interleaved, otherwise its @c height.
     *
-    * @param [in]  *pX           : Pointer to the input matrix. Interpretation of rows and columns depends on
-    * `isInterleave`. Initializes @ref _pX.
-    * @param [in]  *pC           : Pointer to a 1D array containing the indices of the output channels to be selected.
-    *                              Initializes @ref _pC
-    * @param [in]  *pS           : Pointer to the intermediate output scratch memory with the same shape as the input
-    * matrix. initializes @ref _pS
-    * @param [out] *pY           : Pointer to the output matrix. The number of channels equals the length of the array
-    * pointed to by `pC`, and the number of samples matches that of the input matrix pointed to by `pX`. Initializes
-    * @ref _pY.
-    * @param [in]  width         : Width of input matrix.
-    * @param [in]  height        : Height of input matrix.
-    * @param [in]  outChannels   : Number of output channels, equal to the length of the 1D array containing the indices
-    * of the selected channels.
-    * @param [in]  inPitchBytes  : Pitch of input matrix in bytes.
-    * @param [in]  outPitchBytes : Pitch of output matrix in bytes.
-    * @param [in]  isInterleave  : Indicates whether the input matrix data is interleaved:
-    *                            - `0`: Non-interleaved (Rows represent channels, columns represent samples).
-    *                            - `1`: Interleaved (Rows represent samples, columns represent channels).
-    * @param [in]  errorCtx      : Error context for reporting constructor errors
+    * @param [in] pInputs               : Input buffer descriptors; exactly one buffer. Its @c pBuf is the
+    *                                    initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs              : Output buffer descriptors; exactly one buffer with the same layout and
+    *                                    sample count as the input.
+    * @param [in] pScratch              : Scratch buffer used by the kernel during exec; required.
+    * @param [in] scratchBytes          : Size of @c pScratch in bytes.
+    * @param [in] pDefaultTunableParams : Initial tunable parameters; required, with a non-null @c pChannelIndices.
+    * @param [in] nodeName              : Name of the node
+    * @param [in] nodeId                : ID of the node
+    * @param [in] errorCtx              : Error context for reporting constructor errors
     *
+    * @throw None
     */
-   Router(T         *pX,
-          T         *pC,
-          T         *pS,
-          T         *pY,
-          size_t     width,
-          size_t     height,
-          size_t     outChannels,
-          size_t     inPitchBytes,
-          size_t     outPitchBytes,
-          size_t     isInterleave,
-          ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a AUDIOLIB_router node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   Router(T          *pX,
-          T          *pC,
-          T          *pS,
-          T          *pY,
-          size_t      width,
-          size_t      height,
-          size_t      outChannels,
-          size_t      inPitchBytes,
-          size_t      outPitchBytes,
-          size_t      isInterleave,
-          const char *nodeName,
-          uint32_t    nodeId,
-          ErrorCtxt  &errorCtx);
+   Router(const TISP_BufDescList       *pInputs,
+          const TISP_BufDescList       *pOutputs,
+          void                         *pScratch,
+          size_t                        scratchBytes,
+          const RouterTunableParams<T> *pDefaultTunableParams,
+          const char                   *nodeName,
+          uint32_t                      nodeId,
+          ErrorCtxt                    &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input data matrix) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -156,7 +143,7 @@ template <typename T> class Router final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -166,14 +153,14 @@ template <typename T> class Router final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1: input buffer)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1: output buffer)
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -186,6 +173,43 @@ template <typename T> class Router final : public VirtualOp {
     * @param [in] mode   : Mode of address setting (input, output, or both)
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
+
+   /**
+    * @brief Update runtime parameters with detailed error reporting
+    *
+    * Updates the specified runtime parameter by ID with the data provided in the value buffer.
+    * The node strictly validates that the provided `size` argument matches or exceeds the
+    * expected byte size for the given parameter before mapping the state into the active node memory.
+    *
+    * @param [in] paramId      : Parameter ID to update
+    * @param [in] value        : Pointer to a buffer containing the new parameter value
+    * @param [in] size         : The size in bytes of the payload
+    * @param [in,out] errorCtx : Error context for reporting errors
+    *
+    * @retval true         : Parameters updated successfully
+    * @retval false        : Failed to update parameters
+    */
+   bool setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt &errorCtx) noexcept override;
+
+   /**
+    * @brief Retrieve current runtime parameters with detailed error reporting
+    *
+    * This API fetches the current live state from the node for the specified parameter ID
+    * and writes it into the provided buffer.
+    *
+    * If the user provides a buffer, it populates the requested data. If the buffer is too small
+    * (or `value` is `nullptr`), it safely fails (returns `false`) but injects the exact required
+    * byte capacity into `*size`, allowing the application to re-allocate precisely.
+    *
+    * @param [in] paramId      : Parameter ID to query
+    * @param [out] value       : Pointer to a buffer where parameters will be stored
+    * @param [in,out] size     : Input: Capacity of value buffer in bytes. Output: Actual bytes written or required.
+    * @param [in,out] errorCtx : Error context for reporting errors
+    *
+    * @retval true          : Parameters retrieved successfully
+    * @retval false         : Failed to retrieve parameters
+    */
+   bool getParams(uint16_t paramId, void *value, size_t *size, ErrorCtxt &errorCtx) noexcept override;
 
    /**
     * @brief Execute the operation
@@ -234,48 +258,9 @@ template <typename T> class Router final : public VirtualOp {
    /**
     * @brief Destructor
     *
-    * This destructor is set to default
-    *
+    * This destructor is set to default.
     */
-
    ~Router() = default;
-
-   /**
-    * @brief Update runtime parameters with detailed error reporting
-    *
-    * Updates the specified runtime parameter by ID with the data provided in the value buffer.
-    * The node strictly validates that the provided `size` argument matches or exceeds the
-    * expected byte size for the given parameter before mapping the state into the active node memory.
-    *
-    * @param [in] paramId      : Parameter ID to update
-    * @param [in] value        : Pointer to a buffer containing the new parameter value
-    * @param [in] size         : The size in bytes of the payload
-    * @param [in,out] errorCtx : Error context for reporting errors
-    *
-    * @retval true         : Parameters updated successfully
-    * @retval false        : Failed to update parameters
-    */
-   bool setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt &errorCtx) noexcept override;
-
-   /**
-    * @brief Retrieve current runtime parameters with detailed error reporting
-    *
-    * This API fetches the current live state from the node for the specified parameter ID
-    * and writes it into the provided buffer.
-    *
-    * If the user provides a buffer, it populates the requested data. If the buffer is too small
-    * (or `value` is `nullptr`), it safely fails (returns `false`) but injects the exact required
-    * byte capacity into `*size`, allowing the application to re-allocate precisely.
-    *
-    * @param [in] paramId      : Parameter ID to query
-    * @param [out] value       : Pointer to a buffer where parameters will be stored
-    * @param [in,out] size     : Input: Capacity of value buffer in bytes. Output: Actual bytes written or required.
-    * @param [in,out] errorCtx : Error context for reporting errors
-    *
-    * @retval true          : Parameters retrieved successfully
-    * @retval false         : Failed to retrieve parameters
-    */
-   bool getParams(uint16_t paramId, void *value, size_t *size, ErrorCtxt &errorCtx) noexcept override;
 };
 
 /** @} */

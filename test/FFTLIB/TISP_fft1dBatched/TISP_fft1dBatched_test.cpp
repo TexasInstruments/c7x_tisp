@@ -54,7 +54,15 @@ void *create_graph()
       return nullptr;
    }
 
-   auto k1 = std::make_unique<TISP::FFTLIB::FFT1dBatched<float>>(pY0, pY1, NUM_POINTS, NUM_CHANNELS, errorCtx);
+   const TISP::TISP_BufDesc2D fftIn  = {pY0, TISP::Types::kFloat32, NUM_POINTS * 2, NUM_CHANNELS,
+                                      static_cast<size_t>(NUM_POINTS * 2) * sizeof(float), 0U};
+   const TISP::TISP_BufDesc2D fftOut = {pY1, TISP::Types::kFloat32, NUM_POINTS * 2, NUM_CHANNELS,
+                                      static_cast<size_t>(NUM_POINTS * 2) * sizeof(float), 0U};
+
+   const TISP::TISP_BufDescList fftInputs  = {&fftIn, 1U};
+   const TISP::TISP_BufDescList fftOutputs = {&fftOut, 1U};
+
+   auto k1 = std::make_unique<TISP::FFTLIB::FFT1dBatched<float>>(&fftInputs, &fftOutputs, "FFT1dBatched", 0, errorCtx);
 
    if (!errorCtx.isSuccess()) {
       printf("\nError creating kernel: %s\n", errorCtx.getMessage());

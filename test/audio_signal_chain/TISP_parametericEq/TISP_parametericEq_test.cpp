@@ -106,9 +106,19 @@ void *create_graph()
    auto  myOpVec = new TISP::opVec();
 
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D intToFloatIn = {
+          pIn, TISP::Types::kInt32, NUM_CHANNELS, BLOCK_SIZE, NUM_CHANNELS * sizeof(int32_t), 1U};
+      const TISP::TISP_BufDesc2D intToFloatOut = {pIntToFloat, TISP::Types::kFloat32,        NUM_CHANNELS,
+                                                  BLOCK_SIZE,  NUM_CHANNELS * sizeof(float), 1U};
+
+      const TISP::TISP_BufDescList intToFloatInputs  = {&intToFloatIn, 1U};
+      const TISP::TISP_BufDescList intToFloatOutputs = {&intToFloatOut, 1U};
+
+      TISP::AUDIOLIB::TypeConversionConfig intToFloatBuild;
+      intToFloatBuild.testQ31 = 1U;
+
       auto k0 = TISP::make_unique_node<TISP::AUDIOLIB::TypeConversion<int32_t, float>>(
-          (int32_t *) pIn, (float *) pIntToFloat, NUM_CHANNELS, BLOCK_SIZE, NUM_CHANNELS * sizeof(int32_t),
-          NUM_CHANNELS * sizeof(float), (size_t) 1, errorCtx);
+          &intToFloatInputs, &intToFloatOutputs, &intToFloatBuild, "TypeConversion (i32->f32)", 0, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k0));
       }
@@ -118,10 +128,28 @@ void *create_graph()
    }
 
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D cascade0In    = {pIntToFloat, TISP::Types::kFloat32, NUM_CHANNELS, BLOCK_SIZE,
+                                                (NUM_CHANNELS) * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D cascade0Out   = {pCascade0Out, TISP::Types::kFloat32, NUM_CHANNELS, BLOCK_SIZE,
+                                                (NUM_CHANNELS) * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D cascade0State = {pCascade0FilterVar, TISP::Types::kFloat32, NUM_CHANNELS,
+                                                CASCADE_NUM_STAGES * DSPLIB_NUM_STATE_VARS_DF1,
+                                                (NUM_CHANNELS) * sizeof(float), 1U};
+
+      const TISP::TISP_BufDescList cascade0Inputs  = {&cascade0In, 1U};
+      const TISP::TISP_BufDescList cascade0Outputs = {&cascade0Out, 1U};
+      const TISP::TISP_BufDescList cascade0States  = {&cascade0State, 1U};
+
+      TISP::DSPLIB::CascadeBiquadConfig cascade0Build;
+      cascade0Build.numStages  = CASCADE_NUM_STAGES;
+      cascade0Build.biquadForm = DSPLIB_BIQUAD_DF1;
+
+      TISP::DSPLIB::CascadeBiquadTunableParams<float> cascade0Defaults;
+      cascade0Defaults.pCoeffs = (float *) pCascade0Coeff;
+
       auto k1 = TISP::make_unique_node<TISP::DSPLIB::CascadeBiquad<float>>(
-          (float *) pIntToFloat, (float *) pCascade0Coeff, (float *) pCascade0FilterVar, (float *) pCascade0Out,
-          BLOCK_SIZE, NUM_CHANNELS, CASCADE_NUM_STAGES, DSPLIB_BIQUAD_DF1, (NUM_CHANNELS) * sizeof(float),
-          (NUM_CHANNELS) * sizeof(float), NUM_CHANNELS * sizeof(float), false, errorCtx);
+          &cascade0Inputs, &cascade0Outputs, &cascade0States, &cascade0Build, &cascade0Defaults, "CascadeBiquad", 1,
+          errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k1));
       }
@@ -131,9 +159,19 @@ void *create_graph()
    }
 
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D floatToIntIn  = {pCascade0Out, TISP::Types::kFloat32,        NUM_CHANNELS,
+                                                  BLOCK_SIZE,   NUM_CHANNELS * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D floatToIntOut = {
+          pFloatToInt, TISP::Types::kInt32, NUM_CHANNELS, BLOCK_SIZE, NUM_CHANNELS * sizeof(int32_t), 1U};
+
+      const TISP::TISP_BufDescList floatToIntInputs  = {&floatToIntIn, 1U};
+      const TISP::TISP_BufDescList floatToIntOutputs = {&floatToIntOut, 1U};
+
+      TISP::AUDIOLIB::TypeConversionConfig floatToIntBuild;
+      floatToIntBuild.testQ31 = 1U;
+
       auto k2 = TISP::make_unique_node<TISP::AUDIOLIB::TypeConversion<float, int32_t>>(
-          (float *) pCascade0Out, (int32_t *) pFloatToInt, NUM_CHANNELS, BLOCK_SIZE, NUM_CHANNELS * sizeof(float),
-          NUM_CHANNELS * sizeof(int32_t), (size_t) 1, errorCtx);
+          &floatToIntInputs, &floatToIntOutputs, &floatToIntBuild, "TypeConversion (f32->i32)", 2, errorCtx);
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k2));
       }

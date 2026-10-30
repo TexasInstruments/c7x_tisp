@@ -152,15 +152,43 @@ int TISP_balanceFader_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
+            const uint8_t              interleave = static_cast<uint8_t>(isInterleave);
+            const TISP::TISP_BufDesc2D inDesc     = {pIn.get(),
+                                                     TISP::Types::kFloat32,
+                                                     static_cast<size_t>(widthIn),
+                                                     static_cast<size_t>(heightIn),
+                                                     static_cast<size_t>(strideIn),
+                                                     interleave};
+            const TISP::TISP_BufDesc2D outDesc    = {pOut.get(),
+                                                     TISP::Types::kFloat32,
+                                                     static_cast<size_t>(widthIn),
+                                                     static_cast<size_t>(heightIn),
+                                                     static_cast<size_t>(strideOut),
+                                                     interleave};
+            const TISP::TISP_BufDesc2D gainDesc   = {pGain.get(),
+                                                     TISP::Types::kFloat32,
+                                                     static_cast<size_t>(gWidthIn),
+                                                     1U,
+                                                     static_cast<size_t>(gWidthIn) * sizeof(float),
+                                                     0U};
+
+            const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+            const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+            const TISP::TISP_BufDescList states  = {&gainDesc, 1U};
+
+            TISP::AUDIOLIB::BalanceFaderTunableParams<float> defaultParams;
+            defaultParams.balance              = static_cast<float>(balance);
+            defaultParams.fade                 = static_cast<float>(fade);
+            defaultParams.pChannelConfig       = static_cast<int32_t *>(channelConfig);
+            defaultParams.lfeBalanceGainFactor = static_cast<float>(lfeBalanceGainFactor);
+            defaultParams.lfeFaderGainFactor   = static_cast<float>(lfeFaderGainFactor);
+            defaultParams.sideGainFactor       = static_cast<float>(sideGainFactor);
+            defaultParams.lfeBalanceMode       = static_cast<int32_t>(lfeBalanceMode);
+            defaultParams.lfeFaderMode         = static_cast<int32_t>(lfeFaderMode);
+
             TISP::ErrorCtxt errorCtx;
-            auto            k0 = std::make_unique<TISP::AUDIOLIB::BalanceFader<float>>(
-                (float *) pIn.get(), (float *) pGain.get(), (float *) pOut.get(), static_cast<uint32_t>(widthIn),
-                static_cast<uint32_t>(heightIn), static_cast<uint32_t>(gWidthIn), static_cast<uint32_t>(strideIn),
-                static_cast<uint32_t>(strideOut), static_cast<uint8_t>(isInterleave), static_cast<float>(balance),
-                static_cast<float>(fade), static_cast<int32_t *>(channelConfig),
-                static_cast<float>(lfeBalanceGainFactor), static_cast<float>(lfeFaderGainFactor),
-                static_cast<float>(sideGainFactor), static_cast<int32_t>(lfeBalanceMode),
-                static_cast<int32_t>(lfeFaderMode), errorCtx);
+            auto k0 = std::make_unique<TISP::AUDIOLIB::BalanceFader<float>>(&inputs, &outputs, &states, &defaultParams,
+                                                                            "BalanceFader", 0, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

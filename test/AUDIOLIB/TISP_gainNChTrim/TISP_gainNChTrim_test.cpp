@@ -51,13 +51,39 @@ __attribute__((section(".ddrData"), aligned(64))) int8_t  ddrBuffer[2048 * 1024]
 
 int16_t volatile volatileSum = 0; // use volatile to keep compiler from removing this operation
 
+template <typename T>
+std::unique_ptr<TISP::VirtualOp> TISP_gainNChTrim_createNode(void            *pIn,
+                                                             void            *pGain,
+                                                             void            *pMasterGain,
+                                                             void            *pOut,
+                                                             size_t           widthIn,
+                                                             size_t           heightIn,
+                                                             size_t           strideIn,
+                                                             size_t           strideOut,
+                                                             uint8_t          isInterleave,
+                                                             TISP::ErrorCtxt &errorCtx)
+{
+   const TISP::TISP_BufDesc2D inDesc  = {pIn, TISP::ElementDType<T>::value, widthIn, heightIn, strideIn, isInterleave};
+   const TISP::TISP_BufDesc2D outDesc = {pOut,        TISP::ElementDType<T>::value, widthIn, heightIn, strideOut,
+                                         isInterleave};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+   TISP::AUDIOLIB::GainNChTrimTunableParams<T> defaultParams;
+   defaultParams.pGains      = static_cast<T *>(pGain);
+   defaultParams.pMasterGain = static_cast<T *>(pMasterGain);
+
+   return std::make_unique<TISP::AUDIOLIB::GainNChTrim<T>>(&inputs, &outputs, &defaultParams, "GainNChTrim", 0,
+                                                           errorCtx);
+}
+
 std::unique_ptr<TISP::VirtualOp> TISP_gainNChTrim_createKernelObject(void            *pIn,
                                                                      void            *pGain,
                                                                      void            *pMasterGain,
                                                                      void            *pOut,
                                                                      int32_t          widthIn,
                                                                      int32_t          heightIn,
-                                                                     int32_t          gheightIn,
                                                                      int32_t          strideIn,
                                                                      int32_t          strideOut,
                                                                      int32_t          isInterleave,
@@ -65,14 +91,12 @@ std::unique_ptr<TISP::VirtualOp> TISP_gainNChTrim_createKernelObject(void       
                                                                      TISP::ErrorCtxt &errorCtx)
 {
    if (dataType == AUDIOLIB_FLOAT32) {
-      return std::make_unique<TISP::AUDIOLIB::GainNChTrim<float>>((float *) pIn, (float *) pGain, (float *) pMasterGain,
-                                                                  (float *) pOut, widthIn, heightIn, gheightIn,
-                                                                  strideIn, strideOut, isInterleave, errorCtx);
+      return TISP_gainNChTrim_createNode<float>(pIn, pGain, pMasterGain, pOut, widthIn, heightIn, strideIn, strideOut,
+                                                static_cast<uint8_t>(isInterleave), errorCtx);
    }
    else if (dataType == AUDIOLIB_FLOAT64) {
-      return std::make_unique<TISP::AUDIOLIB::GainNChTrim<double>>(
-          (double *) pIn, (double *) pGain, (double *) pMasterGain, (double *) pOut, widthIn, heightIn, gheightIn,
-          strideIn, strideOut, isInterleave, errorCtx);
+      return TISP_gainNChTrim_createNode<double>(pIn, pGain, pMasterGain, pOut, widthIn, heightIn, strideIn, strideOut,
+                                                 static_cast<uint8_t>(isInterleave), errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_gainNChTrim_createKernelObject",
@@ -177,9 +201,8 @@ int TISP_gainNChTrim_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::ErrorCtxt errorCtx;
             auto            k0 = TISP_gainNChTrim_createKernelObject(
                            pIn.get(), pGainnchtrim.get(), pMasterGain.get(), pOut.get(), static_cast<int32_t>(widthIn),
-                           static_cast<int32_t>(heightIn), static_cast<int32_t>(gheightIn), static_cast<int32_t>(strideIn),
-                           static_cast<int32_t>(strideOut), static_cast<int32_t>(currPrm.isInterleave), currPrm.dataType,
-                           errorCtx);
+                           static_cast<int32_t>(heightIn), static_cast<int32_t>(strideIn), static_cast<int32_t>(strideOut),
+                           static_cast<int32_t>(currPrm.isInterleave), currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

@@ -67,11 +67,29 @@ namespace AUDIOLIB {
  *
  */
 enum class LimiterParamId : uint16_t {
-   kThreshold = 0, /**< kThreshold: Threshold values to set/get for each channel */
-   kKneeWidth = 1, /**< kKneeWidth: Knee width values to set/get for each channel */
-   kAttack    = 2, /**< kAttack: Attack coeff values to set/get for each channel */
-   kRelease   = 3, /**< kRelease: Release coeff values to set/get for each channel */
-   kBypass    = 4  /**< kBypass: `0` applies the limiter, `1` copies input to output */
+   kBypass    = 0, /**< kBypass: `0` applies the limiter, `1` copies input to output */
+   kThreshold = 1, /**< kThreshold: Threshold values to set/get for each channel */
+   kKneeWidth = 2, /**< kKneeWidth: Knee width values to set/get for each channel */
+   kAttack    = 3, /**< kAttack: Attack coeff values to set/get for each channel */
+   kRelease   = 4, /**< kRelease: Release coeff values to set/get for each channel */
+   kAll       = 5  /**< kAll: all tunable params as one @ref LimiterTunableParams payload */
+};
+
+/**
+ * @brief Tunable parameters of the @ref Limiter node, with their default values.
+ *
+ * @details Initial values of the runtime parameters, and the @ref LimiterParamId::kAll payload of
+ *          @ref Limiter::setParams / @ref Limiter::getParams. Each array is caller-owned, holds one value per channel,
+ *          is required, and must outlive the node.
+ *
+ * @tparam T : Node element type (float).
+ */
+template <typename T> struct LimiterTunableParams {
+   T       *pThresholdDb   = nullptr; /*!< Threshold in dB per channel, range <= 0. */
+   T       *pKneeWidthDb   = nullptr; /*!< Knee width in dB per channel, range >= 0. */
+   T       *pAttackCoeffs  = nullptr; /*!< Attack smoothing coefficient per channel, range [0, 1]. */
+   T       *pReleaseCoeffs = nullptr; /*!< Release smoothing coefficient per channel, range [0, 1]. */
+   uint32_t bypassMode     = 0U;      /*!< `0`: apply the limiter, `1`: copy input to output. */
 };
 
 /**
@@ -102,28 +120,18 @@ enum class LimiterParamId : uint16_t {
 
 template <typename T> class Limiter final : public VirtualOp {
 
-   /* private members */
-
-   T       *_pX;       /*!< Pointer to input buffer */
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
-
-   T *_pS; /*!< Pointer to address of scratch matrix */
-   T *_pY; /*!< Pointer to address of result matrix*/
-   T *_pGainState; /*!< Pointer to address of gain state buffer*/
-
-   T *_pThreshold_dB; /*!< Pointer to address of threshold in db vector */
-   T *_pKneeWidth_dB; /*!< Pointer to address of kneewidth in db vector */
-   T *_pAttackCoeff;  /*!< Pointer to address of attack coefficient vector */
-   T *_pReleaseCoeff; /*!< Pointer to address of release coefficient vector */
-
-   size_t _numChannels; /*!< Number of channels. */
-   size_t _blockSize;   /*!< Number of samples per channel per block. */
-
-   size_t _pitchX; /*!< Pitch in bytes of the input matrix. */
-   size_t _pitchS; /*!< Pitch in bytes of the scratch matrix. */
-   size_t _pitchY; /*!< Pitch in bytes of the output matrix. */
-
-   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the limiter, `1` copies input to output. */
+   NodeInfo       _nodeInfo;      /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;            /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;           /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   T             *_scratch;       /*!< Scratch matrix (numChannels x blockSize, packed rows) */
+   T             *_gainState;     /*!< Per-channel gain-smoothing state buffer */
+   T             *_thresholdDb;   /*!< Caller-owned threshold array (dB), used live by exec and setParams */
+   T             *_kneeWidthDb;   /*!< Caller-owned knee width array (dB), used live by exec and setParams */
+   T             *_attackCoeffs;  /*!< Caller-owned attack coefficient array, used live by exec and setParams */
+   T             *_releaseCoeffs; /*!< Caller-owned release coefficient array, used live by exec and setParams */
+   size_t         _numChannels;   /*!< Number of channels (input width) */
+   size_t         _blockSize;     /*!< Number of samples per channel per block (input height) */
+   uint32_t       _bypassMode;    /*!< Bypass mode: `0` applies the limiter, `1` copies input to output */
 
    TISP::HandlePtr<char> _handle_dB20;         /*!< handle required by AUDIOLIB_dB20 kernel */
    TISP::HandlePtr<char> _handle_undB20;       /*!< handle required by AUDIOLIB_undB20 kernel */
@@ -227,83 +235,85 @@ template <typename T> class Limiter final : public VirtualOp {
    template <typename vecType> inline vecType TISP_limiter_div_exec(vecType vIn);
 
    /**
-    * @brief Copies the input matrix to the output matrix, honouring @ref _pitchX and @ref _pitchY
-    *
-    * Used when @ref _bypassMode is non-zero. The copied geometry follows
-    * @ref _numChannels columns by @ref _blockSize rows.
+    * @brief Copies the input buffer described by @ref _in to the output buffer described by @ref _out,
+    *        row by row, honouring both row pitches.
     *
     * @retval None
     * @throw None
     */
    void bypassCopy() noexcept;
 
+   /**
+    * @brief Range-checks a set of tunable parameters.
+    *
+    * @param [in]     params   : Tunable parameters to check; every array holds @ref _numChannels values.
+    * @param [in]     funcName : Caller identification used in the error message.
+    * @param [in,out] errorCtx : Error context for reporting errors
+    *
+    * @retval true  : All parameters are in range.
+    * @retval false : A pointer is null or a value is out of range.
+    * @throw None
+    */
+   bool checkTunableParams(const LimiterTunableParams<T> &params, const char *funcName, ErrorCtxt &errorCtx) noexcept;
+
+   /**
+    * @brief Range-checks one per-channel parameter array.
+    *
+    * @param [in]     pValues  : Array of @ref _numChannels values.
+    * @param [in]     minValue : Smallest allowed value.
+    * @param [in]     maxValue : Largest allowed value.
+    * @param [in]     funcName : Caller identification used in the error message.
+    * @param [in]     message  : Error message used when a value is out of range.
+    * @param [in,out] errorCtx : Error context for reporting errors
+    *
+    * @retval true  : All values are in range.
+    * @retval false : A value is out of range.
+    * @throw None
+    */
+   bool checkRange(const T    *pValues,
+                   T           minValue,
+                   T           maxValue,
+                   const char *funcName,
+                   const char *message,
+                   ErrorCtxt  &errorCtx) const noexcept;
+
  public:
    /**
-    * @brief Creates a AUDIOLIB_limiter node
+    * @brief Creates a limiter node.
     *
-    * This constructor is called to create the node
+    * @details Validates the buffer descriptors and initializes the internal stages. Buffers are interleaved:
+    *          columns are channels and rows are samples; the gain state buffer is cleared.
     *
-    * @param[in]  *pX      : Pointer to input matrix; initializes @ref _pX
-    * @param[in]  *pS      : Pointer to scratch matrix; initializes @ref _pS
-    * @param[out] *pY      : Pointer to output matrix; initializes @ref _pY
-    * @param[in,out] *pGainState : Per-channel gain-smoothing state (length: numChannels). Initializes @ref _pGainState.
-
-    * @param[in]  *pThreshold_dB      : Pointer to threshold vector; initializes @ref _pThreshold_dB
-    * @param[in]  *pKneeWidth_dB      : Pointer to kneewidth vector; initializes @ref _pKneeWidth_dB
-    * @param[in]  *pAttackCoeff      : Pointer to attack coefficient vector; initializes @ref _pAttackCoeff
-    * @param[in]  *pReleaseCoeff      : Pointer to release coefficient vector; initializes @ref _pReleaseCoeff
-
-    * @param[in]  numChannels    : number of channels of input matrix
-    * @param[in]  blockSize   : block size of input matrix
-    * @param[in]  inPitchBytes  : Pitch of input matrix in bytes
-    * @param[in]  pitchS  : Pitch of scratch matrix in bytes
-    * @param[in]  outPitchBytes : Pitch of output matrix in bytes
-    * @param [in]  errorCtx      : Error context for reporting constructor errors
+    * @param [in] pInputs               : Input buffer descriptors; exactly one interleaved buffer. Its @c pBuf is the
+    *                                    initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs              : Output buffer descriptors; exactly one interleaved buffer with the input's
+    *                                    width and height.
+    * @param [in] pStates               : State buffer descriptors; exactly one gain-smoothing state buffer with a width
+    *                                    of one value per channel.
+    * @param [in] pScratch              : Scratch buffer; required.
+    * @param [in] scratchBytes          : Size of @c pScratch in bytes; at least channels x samples elements.
+    * @param [in] pDefaultTunableParams : Initial tunable parameters; required, with all four arrays non-null.
+    * @param [in] nodeName              : Name of the node
+    * @param [in] nodeId                : ID of the node
+    * @param [in] errorCtx              : Error context for reporting constructor errors
     *
+    * @throw None
     */
-   Limiter(T         *pX,
-           T         *pS,
-           T         *pY,
-           T         *pGainState,
-           T         *pThreshold_dB,
-           T         *pKneeWidth_dB,
-           T         *pAttackCoeff,
-           T         *pReleaseCoeff,
-           size_t     numChannels,
-           size_t     blockSize,
-           size_t     inPitchBytes,
-           size_t     pitchS,
-           size_t     outPitchBytes,
-           ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a AUDIOLIB_limiter node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   Limiter(T          *pX,
-           T          *pS,
-           T          *pY,
-           T          *pGainState,
-           T          *pThreshold_dB,
-           T          *pKneeWidth_dB,
-           T          *pAttackCoeff,
-           T          *pReleaseCoeff,
-           size_t      numChannels,
-           size_t      blockSize,
-           size_t      inPitchBytes,
-           size_t      pitchS,
-           size_t      outPitchBytes,
-           const char *nodeName,
-           uint32_t    nodeId,
-           ErrorCtxt  &errorCtx);
+   Limiter(const TISP_BufDescList        *pInputs,
+           const TISP_BufDescList        *pOutputs,
+           const TISP_BufDescList        *pStates,
+           void                          *pScratch,
+           size_t                         scratchBytes,
+           const LimiterTunableParams<T> *pDefaultTunableParams,
+           const char                    *nodeName,
+           uint32_t                       nodeId,
+           ErrorCtxt                     &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input data matrix) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -314,7 +324,7 @@ template <typename T> class Limiter final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -324,14 +334,14 @@ template <typename T> class Limiter final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1: input buffer)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1: output buffer)
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -437,7 +447,7 @@ template <typename T> class Limiter final : public VirtualOp {
    /**
     * @brief Clean and reset all internal state and history buffers to zero
     *
-    * @details Zeroes the per-channel gain-smoothing state in @ref _pGainState, which is the
+    * @details Zeroes the per-channel gain-smoothing state in @ref _gainState, which is the
     *          node's only internal state. Called by the constructor once initialization has
     *          succeeded, so the envelope always starts from rest, and by @ref setParams when
     *          @ref LimiterParamId::kBypass returns from `1` to `0`, since the envelope froze

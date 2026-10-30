@@ -67,9 +67,29 @@ TISP::SuperNode::superNodeVec *TISP_cascadeBiquad_createSuperNode(void          
                                                                   TISP::ErrorCtxt &errorCtx)
 {
    if (dataType == DSPLIB_FLOAT32) {
-      auto k0 = std::make_unique<TISP::DSPLIB::CascadeBiquad<float>>(
-          (float *) pInputBlock, (float *) pFilterCoeffBlock, (float *) pFilterVarBlock, (float *) pOutputBlock, 64,
-          numChannels, numStages, biquadForm, dataPitchIn, dataPitchOut, filterVarPitch, enableNchCoefs, errorCtx);
+      const size_t stateRows = numStages * ((biquadForm == static_cast<uint32_t>(DSPLIB_BIQUAD_DF1))
+                                                ? static_cast<size_t>(DSPLIB_NUM_STATE_VARS_DF1)
+                                                : static_cast<size_t>(DSPLIB_NUM_STATE_VARS_DF2));
+
+      const TISP::TISP_BufDesc2D inDesc    = {pInputBlock, TISP::Types::kFloat32, numChannels, 64U, dataPitchIn, 1U};
+      const TISP::TISP_BufDesc2D outDesc   = {pOutputBlock, TISP::Types::kFloat32, numChannels, 64U, dataPitchOut, 1U};
+      const TISP::TISP_BufDesc2D stateDesc = {pFilterVarBlock, TISP::Types::kFloat32, numChannels, stateRows,
+                                              filterVarPitch,  1U};
+
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+      const TISP::TISP_BufDescList states  = {&stateDesc, 1U};
+
+      TISP::DSPLIB::CascadeBiquadConfig config;
+      config.numStages       = numStages;
+      config.biquadForm      = biquadForm;
+      config.enableNChCoeffs = enableNchCoefs;
+
+      TISP::DSPLIB::CascadeBiquadTunableParams<float> defaultParams;
+      defaultParams.pCoeffs = static_cast<float *>(pFilterCoeffBlock);
+
+      auto k0 = std::make_unique<TISP::DSPLIB::CascadeBiquad<float>>(&inputs, &outputs, &states, &config,
+                                                                     &defaultParams, "CascadeBiquad", 0, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating CascadeBiquad<float> node: %s\n", errorCtx.getMessage());

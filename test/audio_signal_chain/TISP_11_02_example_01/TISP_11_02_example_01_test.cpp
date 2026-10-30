@@ -119,9 +119,19 @@ void *create_graph()
 
    // 1. TypeConversion: int32_t to float
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D intToFloatIn = {
+          pIn, TISP::Types::kInt32, NUM_CHANNELS, BLOCK_SIZE, NUM_CHANNELS * sizeof(int32_t), 1U};
+      const TISP::TISP_BufDesc2D intToFloatOut = {pIntToFloat, TISP::Types::kFloat32,        NUM_CHANNELS,
+                                                  BLOCK_SIZE,  NUM_CHANNELS * sizeof(float), 1U};
+
+      const TISP::TISP_BufDescList intToFloatInputs  = {&intToFloatIn, 1U};
+      const TISP::TISP_BufDescList intToFloatOutputs = {&intToFloatOut, 1U};
+
+      TISP::AUDIOLIB::TypeConversionConfig intToFloatBuild;
+      intToFloatBuild.testQ31 = 0U;
+
       auto k0 = TISP::make_unique_node<TISP::AUDIOLIB::TypeConversion<int32_t, float>>(
-          (int32_t *) pIn, (float *) pIntToFloat, NUM_CHANNELS, BLOCK_SIZE, NUM_CHANNELS * sizeof(int32_t),
-          NUM_CHANNELS * sizeof(float), 0, errorCtx);
+          &intToFloatInputs, &intToFloatOutputs, &intToFloatBuild, "TypeConversion (i32->f32)", 0, errorCtx);
 
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k0));
@@ -133,10 +143,28 @@ void *create_graph()
 
    // 2. CascadeBiquad: Apply parametric EQ
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D cascade0In    = {pIntToFloat, TISP::Types::kFloat32, NUM_CHANNELS, BLOCK_SIZE,
+                                                (NUM_CHANNELS) * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D cascade0Out   = {pCascade0Out, TISP::Types::kFloat32, NUM_CHANNELS, BLOCK_SIZE,
+                                                (NUM_CHANNELS) * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D cascade0State = {pCascade0FilterVar, TISP::Types::kFloat32, NUM_CHANNELS,
+                                                CASCADE_NUM_STAGES * DSPLIB_NUM_STATE_VARS_DF1,
+                                                (NUM_CHANNELS) * sizeof(float), 1U};
+
+      const TISP::TISP_BufDescList cascade0Inputs  = {&cascade0In, 1U};
+      const TISP::TISP_BufDescList cascade0Outputs = {&cascade0Out, 1U};
+      const TISP::TISP_BufDescList cascade0States  = {&cascade0State, 1U};
+
+      TISP::DSPLIB::CascadeBiquadConfig cascade0Build;
+      cascade0Build.numStages  = CASCADE_NUM_STAGES;
+      cascade0Build.biquadForm = DSPLIB_BIQUAD_DF1;
+
+      TISP::DSPLIB::CascadeBiquadTunableParams<float> cascade0Defaults;
+      cascade0Defaults.pCoeffs = (float *) pCascade0Coeff;
+
       auto k1 = TISP::make_unique_node<TISP::DSPLIB::CascadeBiquad<float>>(
-          (float *) pIntToFloat, (float *) pCascade0Coeff, (float *) pCascade0FilterVar, (float *) pCascade0Out,
-          BLOCK_SIZE, NUM_CHANNELS, CASCADE_NUM_STAGES, DSPLIB_BIQUAD_DF1, (NUM_CHANNELS) * sizeof(float),
-          (NUM_CHANNELS) * sizeof(float), NUM_CHANNELS * sizeof(float), false, errorCtx);
+          &cascade0Inputs, &cascade0Outputs, &cascade0States, &cascade0Build, &cascade0Defaults, "CascadeBiquad", 1,
+          errorCtx);
 
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k1));
@@ -148,9 +176,19 @@ void *create_graph()
 
    // 3. GainNCh: Apply gain to each channel
    if (errorCtx.isSuccess()) {
-      auto k2 = TISP::make_unique_node<TISP::AUDIOLIB::GainNCh<float>>(
-          (float *) pCascade0Out, (float *) pGainNChTarget, (float *) pGainNChOut, NUM_CHANNELS, BLOCK_SIZE,
-          NUM_CHANNELS, NUM_CHANNELS * sizeof(float), NUM_CHANNELS * sizeof(float), 1, errorCtx);
+      const TISP::TISP_BufDesc2D gainNChIn  = {pCascade0Out, TISP::Types::kFloat32,        NUM_CHANNELS,
+                                               BLOCK_SIZE,   NUM_CHANNELS * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D gainNChOut = {pGainNChOut, TISP::Types::kFloat32,        NUM_CHANNELS,
+                                               BLOCK_SIZE,  NUM_CHANNELS * sizeof(float), 1U};
+
+      const TISP::TISP_BufDescList gainNChInputs  = {&gainNChIn, 1U};
+      const TISP::TISP_BufDescList gainNChOutputs = {&gainNChOut, 1U};
+
+      TISP::AUDIOLIB::GainNChTunableParams<float> gainNChDefaults;
+      gainNChDefaults.pGains = pGainNChTarget;
+
+      auto k2 = TISP::make_unique_node<TISP::AUDIOLIB::GainNCh<float>>(&gainNChInputs, &gainNChOutputs,
+                                                                       &gainNChDefaults, "GainNCh", 2, errorCtx);
 
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k2));
@@ -162,10 +200,24 @@ void *create_graph()
 
    // 4. MuteNCh: Apply mute/unmute to each channel
    if (errorCtx.isSuccess()) {
-      auto k3 = TISP::make_unique_node<TISP::AUDIOLIB::Mutench<float>>(
-          (float *) pGainNChOut, (float *) pMuteNChOut, NUM_CHANNELS, BLOCK_SIZE, NUM_CHANNELS,
-          NUM_CHANNELS * sizeof(float), NUM_CHANNELS * sizeof(float), 1, 48000, (uint32_t *) pMuteNChIsMute, 0.0f, 2,
-          errorCtx);
+      const TISP::TISP_BufDesc2D muteNChIn  = {pGainNChOut, TISP::Types::kFloat32,        NUM_CHANNELS,
+                                               BLOCK_SIZE,  NUM_CHANNELS * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D muteNChOut = {pMuteNChOut, TISP::Types::kFloat32,        NUM_CHANNELS,
+                                               BLOCK_SIZE,  NUM_CHANNELS * sizeof(float), 1U};
+
+      const TISP::TISP_BufDescList muteNChInputs  = {&muteNChIn, 1U};
+      const TISP::TISP_BufDescList muteNChOutputs = {&muteNChOut, 1U};
+
+      TISP::AUDIOLIB::MutenchConfig muteNChBuild;
+      muteNChBuild.samplingRate = 48000;
+
+      TISP::AUDIOLIB::MutenchTunableParams<float> muteNChDefaults;
+      muteNChDefaults.pIsMute  = (uint32_t *) pMuteNChIsMute;
+      muteNChDefaults.fadeTime = 0.0f;
+      muteNChDefaults.fadeType = 2;
+
+      auto k3 = TISP::make_unique_node<TISP::AUDIOLIB::Mutench<float>>(&muteNChInputs, &muteNChOutputs, &muteNChBuild,
+                                                                       &muteNChDefaults, "MuteNCh", 3, errorCtx);
 
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k3));
@@ -177,9 +229,19 @@ void *create_graph()
 
    // 5. TypeConversion: float to int32_t
    if (errorCtx.isSuccess()) {
+      const TISP::TISP_BufDesc2D floatToIntIn  = {pMuteNChOut, TISP::Types::kFloat32,        NUM_CHANNELS,
+                                                  BLOCK_SIZE,  NUM_CHANNELS * sizeof(float), 1U};
+      const TISP::TISP_BufDesc2D floatToIntOut = {
+          pFloatToInt, TISP::Types::kInt32, NUM_CHANNELS, BLOCK_SIZE, NUM_CHANNELS * sizeof(int32_t), 1U};
+
+      const TISP::TISP_BufDescList floatToIntInputs  = {&floatToIntIn, 1U};
+      const TISP::TISP_BufDescList floatToIntOutputs = {&floatToIntOut, 1U};
+
+      TISP::AUDIOLIB::TypeConversionConfig floatToIntBuild;
+      floatToIntBuild.testQ31 = 0U;
+
       auto k4 = TISP::make_unique_node<TISP::AUDIOLIB::TypeConversion<float, int32_t>>(
-          (float *) pMuteNChOut, (int32_t *) pFloatToInt, NUM_CHANNELS, BLOCK_SIZE, NUM_CHANNELS * sizeof(float),
-          NUM_CHANNELS * sizeof(int32_t), 0, errorCtx);
+          &floatToIntInputs, &floatToIntOutputs, &floatToIntBuild, "TypeConversion (f32->i32)", 4, errorCtx);
 
       if (errorCtx.isSuccess()) {
          myOpVec->push_back(std::move(k4));

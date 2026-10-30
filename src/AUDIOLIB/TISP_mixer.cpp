@@ -101,7 +101,7 @@ Mixer<T>::Mixer(TISP_BufDesc2D *pX,
       for (size_t i = 0; i < numBufIn; i++) {
          _nodeInfo.bufParams.widthIn[i]      = pX[i].width;
          _nodeInfo.bufParams.heightIn[i]     = pX[i].height;
-         _nodeInfo.bufParams.inPitchBytes[i] = static_cast<size_t>(pX[i].stride_y);
+         _nodeInfo.bufParams.inPitchBytes[i] = pX[i].pitchBytes;
       }
 
       _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
@@ -144,7 +144,7 @@ Mixer<T>::Mixer(TISP_BufDesc2D *pX,
                bufParamsIn[i].data_type = AUDIOLIB_element_dType<T>::value;
                bufParamsIn[i].dim_x     = static_cast<uint32_t>(pX[i].width);
                bufParamsIn[i].dim_y     = static_cast<uint32_t>(pX[i].height);
-               bufParamsIn[i].stride_y  = static_cast<int32_t>(pX[i].stride_y);
+               bufParamsIn[i].stride_y  = static_cast<int32_t>(pX[i].pitchBytes);
 
                // Initialize the member pointer array to avoid nulls
                _inputPtrs[i] = static_cast<void *>(pX[i].pBuf);

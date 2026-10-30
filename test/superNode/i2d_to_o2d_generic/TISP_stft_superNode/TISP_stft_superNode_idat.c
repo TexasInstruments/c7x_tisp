@@ -221,140 +221,140 @@ static TISP_stft_superNode_testParams_t testParams[] = {
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 8))
-    {
-        STATIC,                      // testPattern
-        (float *) staticRefInCase8,  // *staticIn
-        (float *) staticRefOutCase8, // *staticOut
-        640,                         // fftSize
-        640,                         // windowLength
-        150,                         // hopSize
-        2,                           // numChannels
-        1500,                        // numInputSamples
-        0,                           // onesided
-        2,                           // windowType (hamming)
-        0,                           // windowAlign (center)
-        1,                           // windowPeriodic (periodic)
-        2,                           // numBlocks
-        12000,                       // dataPitchIn (bytes)
-        102400,                      // dataPitchOut (bytes)
-        AUDIOLIB_TEST_OUTPUT_MSMC,   // outputDataLocation
-        1,                           // numReps
-        8,                           // testID
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase8,                       // *staticIn
+    (float *) staticRefOutCase8,                      // *staticOut
+    640,                                              // fftSize
+    640,                                              // windowLength
+    150,                                              // hopSize
+    2,                                                // numChannels
+    1500,                                             // numInputSamples
+    0,                                                // onesided
+    2,                                                // windowType (hamming)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    2,                                                // numBlocks
+    12000,                                            // dataPitchIn (bytes)
+    102400,                                           // dataPitchOut (bytes)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    8,                                                // testID
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 9))
-    {
-        STATIC,                      // testPattern
-        (float *) staticRefInCase9,  // *staticIn
-        (float *) staticRefOutCase9, // *staticOut
-        120,                         // fftSize
-        120,                         // windowLength
-        30,                          // hopSize
-        1,                           // numChannels
-        240,                         // numInputSamples
-        0,                           // onesided
-        3,                           // windowType (blackman)
-        0,                           // windowAlign (center)
-        1,                           // windowPeriodic (periodic)
-        4,                           // numBlocks
-        3840,                        // dataPitchIn (bytes)
-        30720,                       // dataPitchOut (bytes)
-        AUDIOLIB_TEST_OUTPUT_MSMC,   // outputDataLocation
-        1,                           // numReps
-        9,                           // testID
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase9,                       // *staticIn
+    (float *) staticRefOutCase9,                      // *staticOut
+    120,                                              // fftSize
+    120,                                              // windowLength
+    30,                                               // hopSize
+    1,                                                // numChannels
+    240,                                              // numInputSamples
+    0,                                                // onesided
+    3,                                                // windowType (blackman)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    4,                                                // numBlocks
+    3840,                                             // dataPitchIn (bytes)
+    30720,                                            // dataPitchOut (bytes)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    9,                                                // testID
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 10))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase10,  // *staticIn
-        (float *) staticRefOutCase10, // *staticOut
-        240,                          // fftSize
-        240,                          // windowLength
-        60,                           // hopSize
-        1,                            // numChannels
-        240,                          // numInputSamples
-        0,                            // onesided
-        4,                            // windowType (blackman_harris)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        2,                            // numBlocks
-        1920,                         // dataPitchIn (bytes)
-        15360,                        // dataPitchOut (bytes)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        10,                           // testID
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase10,                      // *staticIn
+    (float *) staticRefOutCase10,                     // *staticOut
+    240,                                              // fftSize
+    240,                                              // windowLength
+    60,                                               // hopSize
+    1,                                                // numChannels
+    240,                                              // numInputSamples
+    0,                                                // onesided
+    4,                                                // windowType (blackman_harris)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    2,                                                // numBlocks
+    1920,                                             // dataPitchIn (bytes)
+    15360,                                            // dataPitchOut (bytes)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    10,                                               // testID
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 11))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase11,  // *staticIn
-        (float *) staticRefOutCase11, // *staticOut
-        600,                          // fftSize
-        600,                          // windowLength
-        150,                          // hopSize
-        2,                            // numChannels
-        1200,                         // numInputSamples
-        1,                            // onesided
-        5,                            // windowType (bartlett)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        2,                            // numBlocks
-        9600,                         // dataPitchIn (bytes)
-        38528,                        // dataPitchOut (bytes)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        11,                           // testID
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase11,                      // *staticIn
+    (float *) staticRefOutCase11,                     // *staticOut
+    600,                                              // fftSize
+    600,                                              // windowLength
+    150,                                              // hopSize
+    2,                                                // numChannels
+    1200,                                             // numInputSamples
+    1,                                                // onesided
+    5,                                                // windowType (bartlett)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    2,                                                // numBlocks
+    9600,                                             // dataPitchIn (bytes)
+    38528,                                            // dataPitchOut (bytes)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    11,                                               // testID
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 12))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase12,  // *staticIn
-        (float *) staticRefOutCase12, // *staticOut
-        648,                          // fftSize
-        648,                          // windowLength
-        54,                           // hopSize
-        2,                            // numChannels
-        540,                          // numInputSamples
-        0,                            // onesided
-        1,                            // windowType (hann)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        4,                            // numBlocks
-        8640,                         // dataPitchIn (bytes)
-        207360,                       // dataPitchOut (bytes)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        12,                           // testID
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase12,                      // *staticIn
+    (float *) staticRefOutCase12,                     // *staticOut
+    648,                                              // fftSize
+    648,                                              // windowLength
+    54,                                               // hopSize
+    2,                                                // numChannels
+    540,                                              // numInputSamples
+    0,                                                // onesided
+    1,                                                // windowType (hann)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    4,                                                // numBlocks
+    8640,                                             // dataPitchIn (bytes)
+    207360,                                           // dataPitchOut (bytes)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    12,                                               // testID
     },
 #endif
 
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 13))
-    {
-        STATIC,                       // testPattern
-        (float *) staticRefInCase13,  // *staticIn
-        (float *) staticRefOutCase13, // *staticOut
-        1000,                         // fftSize
-        1000,                         // windowLength
-        200,                          // hopSize
-        1,                            // numChannels
-        1000,                         // numInputSamples
-        0,                            // onesided
-        1,                            // windowType (hann)
-        0,                            // windowAlign (center)
-        1,                            // windowPeriodic (periodic)
-        2,                            // numBlocks
-        8000,                         // dataPitchIn (bytes)
-        80000,                        // dataPitchOut (bytes)
-        AUDIOLIB_TEST_OUTPUT_MSMC,    // outputDataLocation
-        1,                            // numReps
-        13,                           // testID
+   {
+    STATIC,                                           // testPattern
+    (float *) staticRefInCase13,                      // *staticIn
+    (float *) staticRefOutCase13,                     // *staticOut
+    1000,                                             // fftSize
+    1000,                                             // windowLength
+    200,                                              // hopSize
+    1,                                                // numChannels
+    1000,                                             // numInputSamples
+    0,                                                // onesided
+    1,                                                // windowType (hann)
+    0,                                                // windowAlign (center)
+    1,                                                // windowPeriodic (periodic)
+    2,                                                // numBlocks
+    8000,                                             // dataPitchIn (bytes)
+    80000,                                            // dataPitchOut (bytes)
+    AUDIOLIB_TEST_OUTPUT_MSMC,                        // outputDataLocation
+    1,                                                // numReps
+    13,                                               // testID
     },
 #endif
 
@@ -364,7 +364,7 @@ static TISP_stft_superNode_testParams_t testParams[] = {
  *  Sends the test parameter structure and number of tests
  */
 void
-TISP_stft_superNode_getTestParams (TISP_stft_superNode_testParams_t **params, int32_t *numTests)
+TISP_stft_superNode_getTestParams (TISP_stft_superNode_testParams_t ** params, int32_t * numTests)
 {
    *params = testParams;
    *numTests = sizeof (testParams) / sizeof (TISP_stft_superNode_testParams_t);

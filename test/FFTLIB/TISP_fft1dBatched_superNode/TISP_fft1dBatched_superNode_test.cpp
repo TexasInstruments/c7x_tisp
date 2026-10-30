@@ -79,8 +79,16 @@ void *create_graph()
    printf("\nDDR-->L2-->fft1dBatched-->L2-->DDR\n");
 
    TISP::ErrorCtxt errorCtx;
-   auto            k0 =
-       std::make_unique<TISP::FFTLIB::FFT1dBatched<float>>(pInputBlock, pOutputBlock, numPoints, blockHeight, errorCtx);
+
+   const TISP::TISP_BufDesc2D fftIn  = {pInputBlock, TISP::Types::kFloat32, numPoints * 2U, blockHeight,
+                                      static_cast<size_t>(numPoints * 2U) * sizeof(float), 0U};
+   const TISP::TISP_BufDesc2D fftOut = {pOutputBlock, TISP::Types::kFloat32, numPoints * 2U, blockHeight,
+                                      static_cast<size_t>(numPoints * 2U) * sizeof(float), 0U};
+
+   const TISP::TISP_BufDescList fftInputs  = {&fftIn, 1U};
+   const TISP::TISP_BufDescList fftOutputs = {&fftOut, 1U};
+
+   auto k0 = std::make_unique<TISP::FFTLIB::FFT1dBatched<float>>(&fftInputs, &fftOutputs, "FFT1dBatched", 0, errorCtx);
 
    if (!errorCtx.isSuccess()) {
       printf("\nError creating kernel: %s\n", errorCtx.getMessage());
