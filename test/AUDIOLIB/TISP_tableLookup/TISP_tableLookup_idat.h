@@ -22,6 +22,7 @@ typedef struct {
    void    *staticIn1;
    void    *staticOut;
    uint32_t sampleDataType;
+   uint32_t tableDataType;
    uint32_t srcSamples;
    uint32_t tableSamples;
    float    minVal;

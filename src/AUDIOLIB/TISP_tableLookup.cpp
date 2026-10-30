@@ -11,175 +11,155 @@
 
 namespace TISP {
 namespace AUDIOLIB {
-
 //! [TISP::Tablelookup constructor]
 
-template <typename T>
-Tablelookup<T>::Tablelookup(T         *pX,
-                            T         *pG,
-                            T         *pY,
-                            size_t     srcSamples,
-                            size_t     tableSamples,
-                            float      minVal,
-                            float      maxVal,
-                            uint32_t   tableLookupSize,
-                            ErrorCtxt &errorCtx)
-    : _pX(pX), _pG(pG), _pY(pY)
+template <typename TIn, typename TOut>
+Tablelookup<TIn, TOut>::Tablelookup(const TISP_BufDescList               *pInputs,
+                                    const TISP_BufDescList               *pOutputs,
+                                    const TablelookupConfig              *pConfig,
+                                    const TablelookupTunableParams<TOut> *pDefaultTunableParams,
+                                    const char                           *nodeName,
+                                    uint32_t                              nodeId,
+                                    ErrorCtxt                            &errorCtx)
+    : _in{}, _out{}, _table(nullptr)
 {
+   _nodeInfo.setName(nodeName);
+   _nodeInfo.nodeId = nodeId;
 
-   // Initialize _params with the node parameters
-   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
-                   "srcSamples=%zu,tableSamples=%zu,minVal=%.2f,maxVal=%.2f", srcSamples, tableSamples, minVal, maxVal);
-
-   // Input validation checks
-   if (pX == nullptr) {
-      errorCtx.setNullPointerError("Tablelookup constructor", "input pointer pX is null");
+   if (pConfig == nullptr) {
+      errorCtx.setNullPointerError("Tablelookup constructor", "build params pointer pConfig is null");
    }
-   if (pG == nullptr) {
-      errorCtx.setNullPointerError("Tablelookup constructor", "tableLookup pointer pG is null");
+   else if (pDefaultTunableParams == nullptr) {
+      errorCtx.setNullPointerError("Tablelookup constructor", "default params pointer pDefaultTunableParams is null");
    }
-   if (pY == nullptr) {
-      errorCtx.setNullPointerError("Tablelookup constructor", "output pointer pY is null");
+   else if (pDefaultTunableParams->pTable == nullptr) {
+      errorCtx.setNullPointerError("Tablelookup constructor", "table pointer pDefaultTunableParams->pTable is null");
    }
-   if (srcSamples == 0) {
-      errorCtx.setInvalidParameterError("Tablelookup constructor", "srcSamples must be greater than zero");
-   }
-   if (tableSamples == 0) {
-      errorCtx.setInvalidParameterError("Tablelookup constructor", "tableSamples must be greater than zero");
-   }
-   if (tableLookupSize == 0) {
-      errorCtx.setInvalidParameterError("Tablelookup constructor", "tableLookupSize must be greater than zero");
+   else {
+      _table = pDefaultTunableParams->pTable;
    }
 
-   // Only proceed with initialization if all validation checks passed
+   // Buffer checks (skipped once an error is set): one input of TIn, one output of TOut
+   if (TISP_checkBufDescList<TIn>(pInputs, 1U, 1U, "Tablelookup constructor (inputs)", errorCtx) &&
+       TISP_checkBufDescList<TOut>(pOutputs, 1U, 1U, "Tablelookup constructor (outputs)", errorCtx)) {
+      _in  = pInputs->pDesc[0];
+      _out = pOutputs->pDesc[0];
+
+      if ((_out.width != _in.width) || (_out.height != _in.height)) {
+         errorCtx.setInvalidParameterError("Tablelookup constructor", "output width and height must match the input");
+      }
+      else if ((_in.height > 1U) &&
+               ((_in.pitchBytes != (_in.width * sizeof(TIn))) || (_out.pitchBytes != (_out.width * sizeof(TOut))))) {
+         errorCtx.setInvalidParameterError("Tablelookup constructor", "input and output rows must be packed");
+      }
+      else if (pConfig->tableSamples == 0U) {
+         errorCtx.setInvalidParameterError("Tablelookup constructor", "tableSamples must be greater than zero");
+      }
+      else if (pConfig->tableLookupSize == 0U) {
+         errorCtx.setInvalidParameterError("Tablelookup constructor", "tableLookupSize must be greater than zero");
+      }
+      else {
+         /* Nothing to do here */
+      }
+   }
+
    if (errorCtx.isSuccess()) {
-      _srcSamples      = srcSamples;
-      _tableSamples    = tableSamples;
-      _minVal          = minVal;
-      _maxVal          = maxVal;
-      _tableLookupSize = tableLookupSize;
+      const size_t numSamples = _in.width * _in.height;
 
-      // Initialize bufParams with node input and output buffer parameters
-      _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isInputInterleave = 0;
-      _nodeInfo.bufParams.widthIn[0]        = srcSamples;
-      _nodeInfo.bufParams.heightIn[0]       = 1;
-      _nodeInfo.bufParams.inPitchBytes[0]   = srcSamples * sizeof(T);
+      // Initialize _params and bufParams with the node parameters
+      (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
+                      "numSamples=%zu, tableSamples=%zu, minVal=%.2f, maxVal=%.2f", numSamples, pConfig->tableSamples,
+                      static_cast<double>(pConfig->minVal), static_cast<double>(pConfig->maxVal));
+      TISP_setNodeBufParams(&_nodeInfo.bufParams, pInputs, pOutputs);
 
-      _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isOutputInterleave = 0;
-      _nodeInfo.bufParams.widthOut[0]        = srcSamples;
-      _nodeInfo.bufParams.heightOut[0]       = 1;
-      _nodeInfo.bufParams.outPitchBytes[0]   = srcSamples * sizeof(T);
       /***********************************************************************/
-      /* Initialize data structures required by AUDIOLIB_Tablelookup from AUDIOLIB */
+      /* Initialize data structures required by AUDIOLIB_tableLookup        */
       /***********************************************************************/
-
       AUDIOLIB_tableLookup_InitArgs kerInitArgs;
       kerInitArgs.funcStyle       = AUDIOLIB_FUNCTION_OPTIMIZED;
-      kerInitArgs.minVal          = minVal;
-      kerInitArgs.maxVal          = maxVal;
-      kerInitArgs.tableLookupSize = tableLookupSize;
+      kerInitArgs.minVal          = pConfig->minVal;
+      kerInitArgs.maxVal          = pConfig->maxVal;
+      kerInitArgs.tableLookupSize = pConfig->tableLookupSize;
 
       _handle = make_unique_handle<char>(AUDIOLIB_tableLookup_getHandleSize(&kerInitArgs));
-
       if (!_handle) {
          errorCtx.setMemoryError("Tablelookup constructor", "failed to allocate tableLookup handle");
       }
-
-      if (errorCtx.isSuccess()) {
-
+      else {
          AUDIOLIB_bufParams1D_t bufParamsIn;
+         AUDIOLIB_bufParams1D_t bufParamsTable;
          AUDIOLIB_bufParams1D_t bufParamsOut;
-         AUDIOLIB_bufParams1D_t bufParamsTablelookup;
 
-         bufParamsIn.data_type = AUDIOLIB_element_dType<T>::value;
-         bufParamsIn.dim_x     = static_cast<uint32_t>(srcSamples);
+         bufParamsIn.data_type    = static_cast<uint32_t>(AUDIOLIB_element_dType<TIn>::value);
+         bufParamsIn.dim_x        = static_cast<uint32_t>(numSamples);
+         bufParamsTable.data_type = static_cast<uint32_t>(AUDIOLIB_element_dType<TOut>::value);
+         bufParamsTable.dim_x     = static_cast<uint32_t>(pConfig->tableSamples);
+         bufParamsOut.data_type   = static_cast<uint32_t>(AUDIOLIB_element_dType<TOut>::value);
+         bufParamsOut.dim_x       = static_cast<uint32_t>(numSamples);
 
-         bufParamsTablelookup.data_type = AUDIOLIB_element_dType<T>::value;
-         bufParamsTablelookup.dim_x     = static_cast<uint32_t>(tableSamples);
-
-         bufParamsOut.data_type = AUDIOLIB_element_dType<T>::value;
-         bufParamsOut.dim_x     = static_cast<uint32_t>(srcSamples);
          /******************************************************************************/
          /* Validate parameters before init                                            */
          /******************************************************************************/
+         AUDIOLIB_STATUS status = AUDIOLIB_tableLookup_init_checkParams(_handle.get(), &bufParamsIn, &bufParamsTable,
+                                                                        &bufParamsOut, &kerInitArgs);
 
-         AUDIOLIB_STATUS checkRet = AUDIOLIB_tableLookup_init_checkParams(
-             _handle.get(), &bufParamsIn, &bufParamsTablelookup, &bufParamsOut, &kerInitArgs);
-         errorCtx.remapXLIBError(checkRet, "AUDIOLIB_tableLookup_init_checkParams");
          /******************************************************************************/
-         /* Call init function from AUDIOLIB to for tableLookup to set SE/SA params */
+         /* Call init function from AUDIOLIB for tableLookup to set SE/SA params       */
          /******************************************************************************/
-
-         if (errorCtx.isSuccess()) {
-            AUDIOLIB_STATUS initRet = AUDIOLIB_tableLookup_init(_handle.get(), &bufParamsIn, &bufParamsTablelookup,
-                                                                &bufParamsOut, &kerInitArgs);
-            errorCtx.remapXLIBError(initRet, "AUDIOLIB_tableLookup_init");
+         if (errorCtx.remapXLIBError(status, "AUDIOLIB_tableLookup_init_checkParams")) {
+            status =
+                AUDIOLIB_tableLookup_init(_handle.get(), &bufParamsIn, &bufParamsTable, &bufParamsOut, &kerInitArgs);
+            if (errorCtx.remapXLIBError(status, "AUDIOLIB_tableLookup_init")) {
 #if defined(__C7524__)
-            if (tableLookupSize >= tableSamples) {
-               if (errorCtx.isSuccess()) {
-                  AUDIOLIB_tableLookup_set_ci(_handle.get(), _pG);
-                  // errorCtx.remapXLIBError(setRet, "AUDIOLIB_tableLookup_set_ci");
+               // A table that fits the hardware lookup table is loaded into it here; exec then reads it from there
+               if (pConfig->tableSamples <= pConfig->tableLookupSize) {
+                  AUDIOLIB_tableLookup_set_ci(_handle.get(), _table);
                }
-            }
 #endif
+            }
          }
       }
    }
 }
 
-template <typename T>
-Tablelookup<T>::Tablelookup(T          *pX,
-                            T          *pG,
-                            T          *pY,
-                            size_t      srcSamples,
-                            size_t      tableSamples,
-                            float       minVal,
-                            float       maxVal,
-                            uint32_t    tableLookupSize,
-                            const char *nodeName,
-                            uint32_t    nodeId,
-                            ErrorCtxt  &errorCtx)
-    : Tablelookup(pX, pG, pY, srcSamples, tableSamples, minVal, maxVal, tableLookupSize, errorCtx)
+template <typename TIn, typename TOut> void *Tablelookup<TIn, TOut>::getInputAddr(size_t index) const noexcept
 {
-   _nodeInfo.setName(nodeName);
-   _nodeInfo.nodeId = nodeId;
+   return (index == 0) ? _in.pBuf : nullptr;
 }
 
-template <typename T> void *Tablelookup<T>::getInputAddr(size_t index) const noexcept
+template <typename TIn, typename TOut> void *Tablelookup<TIn, TOut>::getOutputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pX) : nullptr;
+   return (index == 0) ? _out.pBuf : nullptr;
 }
 
-template <typename T> void *Tablelookup<T>::getOutputAddr(size_t index) const noexcept
-{
-   return (index == 0) ? static_cast<void *>(_pY) : nullptr;
-}
+template <typename TIn, typename TOut> size_t Tablelookup<TIn, TOut>::getNumInputs() const noexcept { return 1; }
 
-template <typename T> size_t Tablelookup<T>::getNumInputs() const noexcept { return 1; }
-
-template <typename T> size_t Tablelookup<T>::getNumOutputs() const noexcept { return 1; }
+template <typename TIn, typename TOut> size_t Tablelookup<TIn, TOut>::getNumOutputs() const noexcept { return 1; }
 
 //! [TISP::Tablelookup setAddr]
-template <typename T> void Tablelookup<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) noexcept
+template <typename TIn, typename TOut>
+void Tablelookup<TIn, TOut>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) noexcept
 {
    if (mode == kAddrModeIn) {
-      _pX = static_cast<T *>(addr.src[0]);
+      _in.pBuf = addr.src[0];
    }
    if (mode == kAddrModeOut) {
-      _pY = static_cast<T *>(addr.dst[0]);
+      _out.pBuf = addr.dst[0];
    }
-
    if (mode == kAddrModeInOut) {
-      _pX = static_cast<T *>(addr.src[0]);
-      _pY = static_cast<T *>(addr.dst[0]);
+      _in.pBuf  = addr.src[0];
+      _out.pBuf = addr.dst[0];
    }
 }
 
-template <typename T> void Tablelookup<T>::exec() noexcept { AUDIOLIB_tableLookup_exec(_handle.get(), _pX, _pG, _pY); }
+template <typename TIn, typename TOut> void Tablelookup<TIn, TOut>::exec() noexcept
+{
+   AUDIOLIB_tableLookup_exec(_handle.get(), _in.pBuf, _table, _out.pBuf);
+}
 
-template class Tablelookup<float>;
+template class Tablelookup<float, float>;
+template class Tablelookup<int32_t, float>;
+template class Tablelookup<int32_t, int32_t>;
 
 } // namespace AUDIOLIB
 } // namespace TISP
