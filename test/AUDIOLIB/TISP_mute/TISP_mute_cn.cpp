@@ -88,6 +88,20 @@ void AUDIOLIB_mute_cn_set(uint32_t isMute,
       *bypassSmoothing = (int32_t) 1;
       break;
    }
+
+   case 3: {
+      // Geometric ramp between the mute floor (-200 dB) and unity: equal time to mute and unmute
+      const float floorGain        = 1e-10f;
+      float       totalFadeSamples = (fadeTime * samplingRate) / 1000.0f;
+      *bypassSmoothing             = (int32_t) (fadeTime == 0.0f || totalFadeSamples <= 0);
+
+      if (!*bypassSmoothing) {
+         *currentGain = isMute ? 1.0f : floorGain;
+         *targetGain  = isMute ? floorGain : 1.0f;
+         *gainStep    = powf(*targetGain / *currentGain, 1.0f / totalFadeSamples);
+      }
+      break;
+   }
    }
 
    return;
@@ -222,6 +236,54 @@ void AUDIOLIB_muteSmoothFade_exec_cn(void  *pIn,
    return;
 }
 
+template <typename dataType>
+void AUDIOLIB_muteSymmetricFade_exec_cn(void  *pIn,
+                                        void  *pOut,
+                                        size_t widthIn,
+                                        size_t heightIn,
+                                        size_t strideInElements,
+                                        size_t strideOutElements,
+                                        size_t isInterleaved)
+{
+   /* Typecast void pointers to respective data type */
+   dataType *restrict pInLocal  = (dataType *) pIn;
+   dataType *restrict pOutLocal = (dataType *) pOut;
+
+   float *currentGain = getCurrentGain();
+   float *gainStep    = getGainStep();
+
+   const float floorGain        = 1e-10f;
+   float       localCurrentGain = *currentGain;
+   float       appliedGain;
+
+   if (isInterleaved) {
+      // Interleaved: [ch0_s0, ch1_s0, ..., ch0_s1, ...]
+      for (uint32_t j = 0; j < heightIn; j++) {
+         // The ramp moves geometrically, so it is clamped to [floor, 1]; the floor is the fully muted state
+         localCurrentGain = fminf(fmaxf(localCurrentGain * *gainStep, floorGain), 1.0f);
+         appliedGain      = (localCurrentGain > floorGain) ? localCurrentGain : 0.0f;
+
+         for (uint32_t c = 0; c < widthIn; c++) {
+            pOutLocal[j * strideOutElements + c] = pInLocal[j * strideInElements + c] * appliedGain;
+         }
+      }
+   }
+   else {
+      // Non-interleaved: [ch0_s0, ch0_s1, ..., ch1_s0, ...]
+      for (uint32_t j = 0; j < widthIn; j++) {
+         localCurrentGain = fminf(fmaxf(localCurrentGain * *gainStep, floorGain), 1.0f);
+         appliedGain      = (localCurrentGain > floorGain) ? localCurrentGain : 0.0f;
+
+         for (uint32_t c = 0; c < heightIn; c++) {
+            pOutLocal[c * strideOutElements + j] = pInLocal[c * strideInElements + j] * appliedGain;
+         }
+      }
+   }
+
+   *currentGain = localCurrentGain;
+   return;
+}
+
 template void AUDIOLIB_muteHard_exec_cn<float>(void  *pIn,
                                                void  *pOut,
                                                size_t widthIn,
@@ -245,6 +307,14 @@ template void AUDIOLIB_muteSmoothFade_exec_cn<float>(void  *pIn,
                                                      size_t strideInElements,
                                                      size_t strideOutElements,
                                                      size_t isInterleaved);
+
+template void AUDIOLIB_muteSymmetricFade_exec_cn<float>(void  *pIn,
+                                                        void  *pOut,
+                                                        size_t widthIn,
+                                                        size_t heightIn,
+                                                        size_t strideInElements,
+                                                        size_t strideOutElements,
+                                                        size_t isInterleaved);
 
 void AUDIOLIB_mute_cn(void    *pIn,
                       void    *pOut,
@@ -272,6 +342,11 @@ void AUDIOLIB_mute_cn(void    *pIn,
       case 1:
          AUDIOLIB_muteSmoothFade_exec_cn<float>(pIn, pOut, widthIn, heightIn, strideInElements, strideOutElements,
                                                 isInterleaved);
+         break;
+
+      case 3:
+         AUDIOLIB_muteSymmetricFade_exec_cn<float>(pIn, pOut, widthIn, heightIn, strideInElements, strideOutElements,
+                                                   isInterleaved);
          break;
       }
    }

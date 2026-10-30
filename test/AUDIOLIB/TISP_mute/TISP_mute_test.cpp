@@ -146,12 +146,25 @@ int TISP_mute_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
+            const TISP::TISP_BufDesc2D inDesc  = {pIn.get(), TISP::ElementDType<float>::value,   widthIn, heightIn,
+                                                  strideIn,  static_cast<uint8_t>(isInterleaved)};
+            const TISP::TISP_BufDesc2D outDesc = {pOut.get(), TISP::ElementDType<float>::value,   widthIn, heightIn,
+                                                  strideOut,  static_cast<uint8_t>(isInterleaved)};
+
+            const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+            const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+            TISP::AUDIOLIB::MuteConfig config;
+            config.samplingRate = static_cast<int32_t>(samplingRate);
+
+            TISP::AUDIOLIB::MuteTunableParams<float> defaultParams;
+            defaultParams.isMute   = static_cast<uint32_t>(isMute);
+            defaultParams.fadeTime = static_cast<float>(fadeTime);
+            defaultParams.fadeType = static_cast<uint32_t>(fadeType);
+
             TISP::ErrorCtxt errorCtx;
-            auto            k0 = std::make_unique<TISP::AUDIOLIB::Mute<float>>(
-                (float *) pIn.get(), (float *) pOut.get(), static_cast<uint32_t>(widthIn),
-                static_cast<uint32_t>(heightIn), static_cast<uint32_t>(strideIn), static_cast<uint32_t>(strideOut),
-                static_cast<uint8_t>(isInterleaved), static_cast<int32_t>(samplingRate), static_cast<uint32_t>(isMute),
-                static_cast<float>(fadeTime), static_cast<uint32_t>(fadeType), errorCtx);
+            auto k0 = std::make_unique<TISP::AUDIOLIB::Mute<float>>(&inputs, &outputs, &config, &defaultParams, "Mute",
+                                                                    0, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

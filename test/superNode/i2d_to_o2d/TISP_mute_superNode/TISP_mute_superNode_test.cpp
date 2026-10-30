@@ -77,10 +77,24 @@ TISP::SuperNode::superNodeVec *TISP_mute_createSuperNode(void            *pIn,
                                                          TISP::ErrorCtxt &errorCtx)
 {
    if (dataType == AUDIOLIB_FLOAT32) {
-      auto k0 = std::make_unique<TISP::AUDIOLIB::Mute<float>>(
-          (float *) pInputBlock0, (float *) pOutputBlock, blockWidth, blockHeight,
-          blockWidth * AUDIOLIB_sizeof(dataType), blockWidth * AUDIOLIB_sizeof(dataType), isInterleaved, samplingRate,
-          isMute, fadeTime, fadeType, errorCtx);
+      const TISP::TISP_BufDesc2D inDesc  = {pInputBlock0, TISP::ElementDType<float>::value, blockWidth, blockHeight,
+                                            blockWidth * AUDIOLIB_sizeof(dataType), isInterleaved};
+      const TISP::TISP_BufDesc2D outDesc = {pOutputBlock, TISP::ElementDType<float>::value, blockWidth, blockHeight,
+                                            blockWidth * AUDIOLIB_sizeof(dataType), isInterleaved};
+
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+      TISP::AUDIOLIB::MuteConfig config;
+      config.samplingRate = samplingRate;
+
+      TISP::AUDIOLIB::MuteTunableParams<float> defaultParams;
+      defaultParams.isMute   = isMute;
+      defaultParams.fadeTime = fadeTime;
+      defaultParams.fadeType = fadeType;
+
+      auto k0 = std::make_unique<TISP::AUDIOLIB::Mute<float>>(&inputs, &outputs, &config, &defaultParams, "Mute", 0,
+                                                              errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating Mute<float> node: %s\n", errorCtx.getMessage());
@@ -275,6 +289,8 @@ int TISP_mute_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::execute::graph(mySuperNodeVec);
 
             TI_profile_stop();
+
+            TISP_mute_deleteSuperNode(mySuperNodeVec);
          }
 
          if (currPrm.staticOut != nullptr) {

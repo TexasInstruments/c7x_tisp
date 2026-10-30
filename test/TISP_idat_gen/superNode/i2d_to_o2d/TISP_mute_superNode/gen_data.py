@@ -78,7 +78,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     AUDIOLIB_dType = TISP_utils.resolve_AUDIOLIB_dType(dType)
 
     # Map fadeType string to integer
-    fadeType_map = {"LINEAR": 0, "SMOOTH": 1, "HARD": 2}
+    fadeType_map = {"LINEAR": 0, "SMOOTH": 1, "HARD": 2, "SYMMETRIC": 3}
     fadeType_int = fadeType_map[fadeType]
 
     if testType in ["STATIC", "SINE"]:
@@ -101,7 +101,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write("%s, // Sampling Rate \n" % (samplingRate))
     idatFile.write("%s, // fadeTime \n" % (fadeTime))
     idatFile.write("%d, // isInterleaved \n" % (int(isInterleaved)))
-    idatFile.write("%d, // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)\n" % (fadeType_int))
+    idatFile.write("%d, // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD, 3=SYMMETRIC)\n" % (fadeType_int))
     idatFile.write(
         "AUDIOLIB_CALC_STRIDE(%s * sizeof(%s), AUDIOLIB_ALIGN_SHIFT_64BYTES), // inPitch \n"
         % (inPitch, AUDIOLIB_dType)
@@ -189,7 +189,7 @@ def process_test_case(testCase):
             f"Invalid isInterleaved value {testCase['isInterleaved']} for test ID {testCase['ID']}"
         )
     # Validate fadeType
-    if testCase["fadeType"] not in ["LINEAR", "SMOOTH", "HARD"]:
+    if testCase["fadeType"] not in ["LINEAR", "SMOOTH", "HARD", "SYMMETRIC"]:
         raise ValueError(
             f"Invalid fadeType value {testCase['fadeType']} for test ID {testCase['ID']}"
         )
@@ -285,6 +285,26 @@ def gen_test_case_header_file(testCase):
                     pCurrentGain[j] = (smoothingCoefficient * prevGain) + (
                         (1.0 - smoothingCoefficient) * targetGain
                     )
+    elif fadeType == "SYMMETRIC":
+        # Geometric ramp between the mute floor (-200 dB) and unity: equal time to mute and unmute
+        floorGain = np.float32(1e-10)
+        totalFadeSamples = (fadeTime / 1000.0) * samplingRate
+        if totalFadeSamples <= 0:
+            # No ramp: instantaneous change, exact zeros when muted
+            pCurrentGain[:] = targetGain
+        else:
+            startGain = np.float32(1.0) if isMuted == 1.0 else floorGain
+            stopGain = floorGain if isMuted == 1.0 else np.float32(1.0)
+            gainStep = np.float32(
+                np.power(np.float32(stopGain / startGain), np.float32(1.0 / totalFadeSamples))
+            )
+            rampGain = startGain
+            for i in range(totalSamplesPerChannel):
+                rampGain = np.float32(
+                    min(max(np.float32(rampGain * gainStep), floorGain), np.float32(1.0))
+                )
+                # The floor is the fully muted state and outputs exact zeros
+                pCurrentGain[i] = rampGain if rampGain > floorGain else 0.0
 
     # Generate input samples for all channels
     pInLocal = np.zeros((numBlocks, samplesPerFrame), dtype=np.float32)
