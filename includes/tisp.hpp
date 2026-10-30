@@ -42,6 +42,7 @@
 #include "TISP_gain.hpp"
 #include "TISP_gainNCh.hpp"
 #include "TISP_gainNChTrim.hpp"
+#include "TISP_gainNChTrimSmoothing.hpp"
 #include "TISP_gainSmoothing.hpp"
 #include "TISP_ifftr1dBatched.hpp"
 #include "TISP_initDru.hpp"
