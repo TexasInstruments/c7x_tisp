@@ -18,6 +18,7 @@
 #include "TISP_cascadeBiquad.hpp"
 #include "TISP_common.hpp"
 #include "TISP_concat.hpp"
+#include "TISP_conditionalReplace.hpp"
 #include "TISP_cos.hpp"
 #include "TISP_cosh.hpp"
 #include "TISP_dB10.hpp"

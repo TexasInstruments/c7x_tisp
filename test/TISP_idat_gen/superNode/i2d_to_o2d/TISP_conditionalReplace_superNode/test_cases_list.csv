@@ -1,0 +1,7 @@
+ID,dType,widthIn,heightIn,inPitch,outPitch,blockWidth,blockHeight,testPattern,isInterleave,alignStride,AM275 SOC
+1,int32_t,128,64,128,128,32,64,STATIC,0,TRUE,yes
+2,int32_t,128,128,128,128,64,128,STATIC,0,TRUE,no
+3,int32_t,256,32,256,256,64,32,STATIC,0,TRUE,no
+4,int32_t,64,8,64,64,16,8,STATIC,0,TRUE,no
+5,int32_t,512,16,512,512,128,16,STATIC,0,TRUE,no
+6,int32_t,128,6,128,128,32,6,STATIC,0,TRUE,no
