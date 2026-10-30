@@ -225,15 +225,20 @@ static int TISP_delayDru_d(uint32_t *pProfile,
       // INIT: node construction
       TISP::ErrorCtxt errCtxA;
       TI_profile_start(TI_PROFILE_KERNEL_INIT);
+      const size_t                 frameRowBytesA = static_cast<size_t>(frameSamples) * sizeof(float);
+      const TISP::TISP_BufDesc2D   inDescA    = {gInFrameL2, TISP::ElementDType<float>::value, frameSamples, numChannels, frameRowBytesA, 0U};
+      const TISP::TISP_BufDesc2D   outDescA   = {gOutFrameL2_A, TISP::ElementDType<float>::value, frameSamples, numChannels, frameRowBytesA, 0U};
+      const TISP::TISP_BufDesc2D   stateDescA = {ringExt, TISP::ElementDType<float>::value, ringSamplesPerCh, numChannels,
+                                                 static_cast<size_t>(ringSamplesPerCh) * sizeof(float), 0U};
+      const TISP::TISP_BufDescList inputsA    = {&inDescA, 1U};
+      const TISP::TISP_BufDescList outputsA   = {&outDescA, 1U};
+      const TISP::TISP_BufDescList statesA    = {&stateDescA, 1U};
+      TISP::misc::DelayDruConfig   configA;
+      configA.pDelaySamples  = delaySamples;
+      configA.pUdmaDrvHandle = pUdmaDrvHandle;
       TISP::NodePtr delayDru = TISP::NodePtr(
          TISP::make_unique_node<TISP::misc::DelayDru<float>>(
-            gInFrameL2, gOutFrameL2_A,
-            static_cast<void *>(ringExt),
-            delaySamples,
-            static_cast<size_t>(frameSamples),
-            static_cast<size_t>(numChannels),
-            pUdmaDrvHandle,
-            errCtxA));
+            &inputsA, &outputsA, &statesA, &configA, "DelayDru", 0U, errCtxA));
       TI_profile_stop();
 
       if (!delayDru) {
@@ -356,23 +361,21 @@ static int TISP_delayDru_d(uint32_t *pProfile,
          TISP::NodePtr dmaXferIn = TISP::NodePtr(
             TISP::make_unique_node<TISP::misc::DMAXfer<1>>(
                dmaRt, 1, dmaChIds, 1, stateInSrc, stateInDst, stateSize, errCtxB));
+         const size_t rowBytes_delayNch = static_cast<size_t>(frameSamples) * sizeof(float);
+         const TISP::TISP_BufDesc2D inDesc_delayNch = {gInFrameL2, TISP::ElementDType<float>::value, frameSamples, numChannels, rowBytes_delayNch, 0U};
+         const TISP::TISP_BufDesc2D outDesc_delayNch = {gOutFrameL2_B, TISP::ElementDType<float>::value, frameSamples, numChannels, rowBytes_delayNch, 0U};
+         const TISP::TISP_BufDesc2D stateDesc_delayNch = {pStateL2, TISP::ElementDType<float>::value, delayPitchElems, numChannels, delayPitchBytes, 0U};
+         const TISP::TISP_BufDescList inputs_delayNch  = {&inDesc_delayNch, 1U};
+         const TISP::TISP_BufDescList outputs_delayNch = {&outDesc_delayNch, 1U};
+         const TISP::TISP_BufDescList states_delayNch  = {&stateDesc_delayNch, 1U};
+         TISP::AUDIOLIB::DelayNChannelConfig config_delayNch;
+         config_delayNch.mode       = delayMode;
+         config_delayNch.pDelaySize = delaySamples;
          TISP::NodePtr delayNch = TISP::NodePtr(
             TISP::make_unique_node<TISP::AUDIOLIB::DelayNChannel<float>>(
-               gInFrameL2,
-               pStateL2,
-               gScratchL2,
-               gOutFrameL2_B,
-               static_cast<size_t>(frameSamples),   // width
-               static_cast<size_t>(numChannels),     // height
-               static_cast<size_t>(delayPitchElems), // widthD (whole row is live in circular mode)
-               static_cast<size_t>(numChannels),     // heightD
-               static_cast<size_t>(frameSamples) * sizeof(float),  // inPitchBytes
-               delayPitchBytes,                      // delayPitchBytes (pow2 + aligned in circular)
-               static_cast<size_t>(frameSamples) * sizeof(float),  // outPitchBytes
-               static_cast<size_t>(0U),              // interleave=0 (non-interleaved)
-               delayMode,                            // mode: 1=circular, 0=linear if it doesn't fit
-               delaySamples,
-               errCtxB));
+               &inputs_delayNch, &outputs_delayNch, &states_delayNch, gScratchL2,
+               static_cast<size_t>(numChannels) * frameSamples * sizeof(float), &config_delayNch,
+               "DelayNChannel", 0U, errCtxB));
          TISP::NodePtr dmaXferOut = TISP::NodePtr(
             TISP::make_unique_node<TISP::misc::DMAXfer<1>>(
                dmaRt, 1, dmaChIds, 1, stateOutSrc, stateOutDst, stateSize, errCtxB));
@@ -466,23 +469,21 @@ static int TISP_delayDru_d(uint32_t *pProfile,
 
          TISP::ErrorCtxt errCtxC;
          TI_profile_start(TI_PROFILE_KERNEL_INIT);
+         const size_t rowBytes_delayNchDdr = static_cast<size_t>(frameSamples) * sizeof(float);
+         const TISP::TISP_BufDesc2D inDesc_delayNchDdr = {gInFrameL2, TISP::ElementDType<float>::value, frameSamples, numChannels, rowBytes_delayNchDdr, 0U};
+         const TISP::TISP_BufDesc2D outDesc_delayNchDdr = {gOutFrameL2_B, TISP::ElementDType<float>::value, frameSamples, numChannels, rowBytes_delayNchDdr, 0U};
+         const TISP::TISP_BufDesc2D stateDesc_delayNchDdr = {circStateDdr, TISP::ElementDType<float>::value, circPitchElems_C, numChannels, circPitchBytes_C, 0U};
+         const TISP::TISP_BufDescList inputs_delayNchDdr  = {&inDesc_delayNchDdr, 1U};
+         const TISP::TISP_BufDescList outputs_delayNchDdr = {&outDesc_delayNchDdr, 1U};
+         const TISP::TISP_BufDescList states_delayNchDdr  = {&stateDesc_delayNchDdr, 1U};
+         TISP::AUDIOLIB::DelayNChannelConfig config_delayNchDdr;
+         config_delayNchDdr.mode       = 0U;
+         config_delayNchDdr.pDelaySize = delaySamples;
          TISP::NodePtr delayNchDdr = TISP::NodePtr(
             TISP::make_unique_node<TISP::AUDIOLIB::DelayNChannel<float>>(
-               gInFrameL2,
-               circStateDdr,
-               gScratchL2,
-               gOutFrameL2_B,
-               static_cast<size_t>(frameSamples),
-               static_cast<size_t>(numChannels),
-               static_cast<size_t>(circPitchElems_C),
-               static_cast<size_t>(numChannels),
-               static_cast<size_t>(frameSamples) * sizeof(float),
-               circPitchBytes_C,
-               static_cast<size_t>(frameSamples) * sizeof(float),
-               static_cast<size_t>(0U),
-               0U,             // mode=1 (circular)
-               delaySamples,
-               errCtxC));
+               &inputs_delayNchDdr, &outputs_delayNchDdr, &states_delayNchDdr, gScratchL2,
+               static_cast<size_t>(numChannels) * frameSamples * sizeof(float), &config_delayNchDdr,
+               "DelayNChannel", 0U, errCtxC));
          TI_profile_stop();
 
          if (!delayNchDdr) {
@@ -552,23 +553,21 @@ static int TISP_delayDru_d(uint32_t *pProfile,
 
          TISP::ErrorCtxt errCtxD;
          TI_profile_start(TI_PROFILE_KERNEL_INIT);
+         const size_t rowBytes_delayNchL2 = static_cast<size_t>(frameSamples) * sizeof(float);
+         const TISP::TISP_BufDesc2D inDesc_delayNchL2 = {gInFrameL2, TISP::ElementDType<float>::value, frameSamples, numChannels, rowBytes_delayNchL2, 0U};
+         const TISP::TISP_BufDesc2D outDesc_delayNchL2 = {gOutFrameL2_B, TISP::ElementDType<float>::value, frameSamples, numChannels, rowBytes_delayNchL2, 0U};
+         const TISP::TISP_BufDesc2D stateDesc_delayNchL2 = {pStateL2, TISP::ElementDType<float>::value, delayPitchElems, numChannels, delayPitchBytes, 0U};
+         const TISP::TISP_BufDescList inputs_delayNchL2  = {&inDesc_delayNchL2, 1U};
+         const TISP::TISP_BufDescList outputs_delayNchL2 = {&outDesc_delayNchL2, 1U};
+         const TISP::TISP_BufDescList states_delayNchL2  = {&stateDesc_delayNchL2, 1U};
+         TISP::AUDIOLIB::DelayNChannelConfig config_delayNchL2;
+         config_delayNchL2.mode       = delayMode;
+         config_delayNchL2.pDelaySize = delaySamples;
          TISP::NodePtr delayNchL2 = TISP::NodePtr(
             TISP::make_unique_node<TISP::AUDIOLIB::DelayNChannel<float>>(
-               gInFrameL2,
-               pStateL2,
-               gScratchL2,
-               gOutFrameL2_B,
-               static_cast<size_t>(frameSamples),
-               static_cast<size_t>(numChannels),
-               static_cast<size_t>(delayPitchElems),
-               static_cast<size_t>(numChannels),
-               static_cast<size_t>(frameSamples) * sizeof(float),
-               delayPitchBytes,
-               static_cast<size_t>(frameSamples) * sizeof(float),
-               static_cast<size_t>(0U),
-               delayMode,                            // 1=circular (fits L2), else 0=linear
-               delaySamples,
-               errCtxD));
+               &inputs_delayNchL2, &outputs_delayNchL2, &states_delayNchL2, gScratchL2,
+               static_cast<size_t>(numChannels) * frameSamples * sizeof(float), &config_delayNchL2,
+               "DelayNChannel", 0U, errCtxD));
          TI_profile_stop();
 
          if (!delayNchL2) {

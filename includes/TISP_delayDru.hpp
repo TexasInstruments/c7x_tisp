@@ -56,25 +56,37 @@ namespace misc {
  *  @par Ring sizing and alignment
  *  `ringSamplesPerCh` is the next power of two >= `frameSamples + maxDelay`
  *  (DRU circular addressing requires a power-of-two circular size).  The
- *  caller-allocated `pRingDdr` buffer must be:
+ *  caller-allocated state (ring) buffer, `pStates`, must be:
  *    - sized `numChannels * ringBytesPerCh()` bytes (see @ref ringBytes),
  *    - aligned to `ringBytesPerCh` bytes, so that every per-channel block
- *      (`pRingDdr + c * ringBytesPerCh`) is itself aligned to `ringBytesPerCh`
+ *      (ring base + c * ringBytesPerCh) is itself aligned to `ringBytesPerCh`
  *      and the DRU's circular address masking wraps correctly within each
  *      channel's block,
  *    - non-cacheable DDR (no CPU cache maintenance is applied to the ring;
- *      only `_pIn` / `_pOut`, which live in cacheable L2SRAM, are flushed).
+ *      only `_in` / `_out`, which live in cacheable L2SRAM, are flushed).
  *
  *  @par HOST_EMULATION
  *  On PC, the DRU/UDMA driver is unavailable. `exec()` instead runs the
  *  identical ring math on the CPU (same as the PoC's `App_delayReference`),
- *  using the same caller-allocated `pRingDdr` buffer as plain heap memory.
+ *  using the same caller-allocated ring buffer as plain heap memory.
  */
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref DelayDru node.
+ *
+ * @details Required; fixed for the node's lifetime.
+ */
+struct DelayDruConfig {
+   uint32_t *pDelaySamples  = nullptr; /*!< Caller-owned array, one delay in samples per channel; required. Copied into
+                                            the node at construction. */
+   void     *pUdmaDrvHandle = nullptr; /*!< Initialised @c Udma_DrvHandle owned by the application; required on the
+                                            target, ignored on HOST_EMULATION. */
+};
+
 template <typename T> class DelayDru final : public VirtualOp {
 
-   T        *_pIn;            /*!< L2 input frame  [numChannels][frameSamples], planar */
-   T        *_pOut;           /*!< L2 output frame [numChannels][frameSamples], planar */
-   uint8_t  *_pRingDdr;       /*!< Caller-allocated ring: numChannels * _ringBytesPerCh bytes */
+   TISP_BufDesc2D _in;        /*!< Input buffer descriptor (L2, planar); @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;       /*!< Output buffer descriptor (L2, planar); @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _ring;      /*!< Ring state descriptor: caller-allocated, numChannels * _ringBytesPerCh bytes */
    std::unique_ptr<uint32_t[]> _delaySamples; /*!< Owned copy of per-channel delay sizes [numChannels] */
 
    size_t   _frameSamples;      /*!< Samples per channel per frame */
@@ -143,48 +155,35 @@ template <typename T> class DelayDru final : public VirtualOp {
     * The application must have called @c Udma_init() on the driver object before
     * constructing the node and must @c Udma_deinit() it after the node is destroyed.
     *
-    * @param [in,out] pIn           L2 input frame  [numChannels][frameSamples], planar.
-    * @param [out]    pOut          L2 output frame [numChannels][frameSamples], planar.
-    * @param [in]     pRingDdr      Caller-allocated NON-CACHEABLE DDR ring, sized and
-    *                               aligned as documented on the class -- see @ref ringBytes.
-    * @param [in]     pDelaySamples Per-channel delay in samples [numChannels].
-    * @param [in]     frameSamples  Samples per channel per frame.
-    * @param [in]     numChannels   Number of channels.
-    * @param [in]     pUdmaDrvHandle Initialised @c Udma_DrvHandle owned by the application
-    *                               (ignored, may be nullptr, on HOST_EMULATION).
-    * @param [in,out] errorCtx      Error context for reporting constructor errors.
-    */
-   DelayDru(T         *pIn,
-            T         *pOut,
-            void      *pRingDdr,
-            uint32_t  *pDelaySamples,
-            size_t     frameSamples,
-            size_t     numChannels,
-            void      *pUdmaDrvHandle,
-            ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a DelayDru node with a name and ID.
+    * @param [in] pInputs  : Input buffer descriptors; exactly one non-interleaved buffer
+    *                        [numChannels][frameSamples] in L2, rows packed (pitch of one row). Its @c pBuf is the
+    *                        initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs : Output buffer descriptors; exactly one buffer with the input's width and height, rows
+    *                        packed.
+    * @param [in] pStates  : State buffer descriptors; exactly one buffer, the NON-CACHEABLE DDR ring with one row per
+    *                        channel (at least numChannels rows). Its @c pitchBytes must equal @ref ringBytes, and the
+    *                        buffer must be aligned to it, as documented on the class.
+    * @param [in] pConfig  : Construction-time parameters; required, with a non-null @c pDelaySamples (and, on the
+    *                        target, a non-null @c pUdmaDrvHandle).
+    * @param [in] nodeName : Name of the node
+    * @param [in] nodeId   : ID of the node
+    * @param [in] errorCtx : Error context for reporting constructor errors
     *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
+    * @throw None
     */
-   DelayDru(T          *pIn,
-            T          *pOut,
-            void       *pRingDdr,
-            uint32_t   *pDelaySamples,
-            size_t      frameSamples,
-            size_t      numChannels,
-            void       *pUdmaDrvHandle,
-            const char *nodeName,
-            uint32_t    nodeId,
-            ErrorCtxt  &errorCtx);
+   DelayDru(const TISP_BufDescList *pInputs,
+            const TISP_BufDescList *pOutputs,
+            const TISP_BufDescList *pStates,
+            const DelayDruConfig   *pConfig,
+            const char             *nodeName,
+            uint32_t                nodeId,
+            ErrorCtxt              &errorCtx);
 
    /**
     * @brief Get the address of an input buffer.
     *
     * Buffer Address Mapping:
-    * - index 0: _pIn (input frame) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -195,7 +194,7 @@ template <typename T> class DelayDru final : public VirtualOp {
     * @brief Get the address of an output buffer.
     *
     * Buffer Address Mapping:
-    * - index 0: _pOut (output frame) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -203,17 +202,17 @@ template <typename T> class DelayDru final : public VirtualOp {
    void *getOutputAddr(size_t index) const noexcept override;
 
    /**
-    * @brief Get the number of input buffers (1: _pIn).
+    * @brief Get the number of input buffers (1).
     */
    size_t getNumInputs() const noexcept override;
 
    /**
-    * @brief Get the number of output buffers (1: _pOut).
+    * @brief Get the number of output buffers (1).
     */
    size_t getNumOutputs() const noexcept override;
 
    /**
-    * @brief Update _pIn / _pOut from addrs.src[0] / addrs.dst[0].
+    * @brief Update _in / _out from addrs.src[0] / addrs.dst[0].
     *
     * Unlike DMAXfer (whose addresses are fixed at construction), DelayDru
     * keeps the ring write offset live across frames as internal state, so
@@ -239,7 +238,7 @@ template <typename T> class DelayDru final : public VirtualOp {
 
    /**
     * @brief Size (in bytes) of the per-channel ring a caller must allocate
-    *        for `pRingDdr`, given `frameSamples`, the maximum per-channel
+    *        for the state (ring) buffer, given `frameSamples`, the maximum per-channel
     *        delay, and `numChannels`. The caller must allocate
     *        `numChannels * ringBytes(...)` bytes total, aligned to the
     *        returned size (see class-level documentation).
