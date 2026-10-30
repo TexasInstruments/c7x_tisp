@@ -168,8 +168,19 @@ Stft<T>::Stft(T        *pX,
       uint32_t           firstHalfElems = ((batchSize * fftSize) + alignElems - 1u) & ~(alignElems - 1u);
       _pFftScratch                      = &pScratch[firstHalfElems];
 
-      _rfftNode = TISP::make_unique_node<TISP::FFTLIB::RFFT1dBatched<T>>(_pScratch, _pFftScratch, pY, fftSize,
-                                                                         batchSize, !onesided, errorCtx);
+      const TISP_BufDesc2D   rfftIn      = {_pScratch, ElementDType<T>::value, fftSize, batchSize,
+                                             static_cast<size_t>(fftSize) * sizeof(T), 0U};
+      const TISP_BufDesc2D   rfftOut     = {pY, ElementDType<T>::value, _outBins, batchSize,
+                                             static_cast<size_t>(_outBins) * sizeof(T), 0U};
+      const TISP_BufDescList rfftInputs  = {&rfftIn, 1U};
+      const TISP_BufDescList rfftOutputs = {&rfftOut, 1U};
+
+      TISP::FFTLIB::RFFT1dBatchedConfig rfftBuild;
+      rfftBuild.fullSpectrum = !onesided;
+
+      _rfftNode = TISP::make_unique_node<TISP::FFTLIB::RFFT1dBatched<T>>(
+          &rfftInputs, &rfftOutputs, _pFftScratch, static_cast<size_t>(batchSize) * fftSize * sizeof(T), &rfftBuild,
+          "RFFT1dBatched", 0U, errorCtx);
       /* make_unique_node returns null on L2 node-arena exhaustion without touching
        * errorCtx, so a null result must be reported explicitly as a memory error */
       if (_rfftNode == nullptr) {

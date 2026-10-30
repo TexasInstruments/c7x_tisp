@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "TISP_common.hpp"
 #include "TISP_ErrorCtxt.hpp"
-#include <memory>
+#include "TISP_common.hpp"
+#include <array>
 
 namespace TISP {
 
@@ -22,72 +22,46 @@ namespace AUDIOLIB {
  * \class Concat
  * @brief Provides node-level APIs for the AUDIOLIB_concat kernel from AUDIOLIB.
  * @tparam T : Supports float and double.
- *
- * @details This kernel concatenates multiple input arrays into a single output array.
- *          Each input may carry a different number of channels; the output holds the
- *          sum of all input channels. The output uses the same layout as the input
- *          (interleaved or planar).
+ * @details Concatenates the channels of multiple inputs, each with its own channel count, into one output.
+ *          Inputs and output share one layout (interleaved or non-interleaved).
  */
 
 template <typename T> class Concat final : public VirtualOp {
 
-   std::unique_ptr<void*[]> _inputPtrs; /*!< void* array passed to AUDIOLIB_concat_exec. */
-   T                        *_pY;        /*!< Single output pointer. */
-   NodeInfo                  _nodeInfo;  /*!< Node name, parameters, and ID. */
+   NodeInfo                        _nodeInfo;  /*!< Node name, parameters, buffer params, and ID */
+   std::array<void *, kMaxSrcAddr> _inputs;    /*!< Input buffer pointers; @ref setAddr rebinds them */
+   TISP_BufDesc2D                  _out;       /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   size_t                          _numInputs; /*!< Number of input buffers */
 
-   uint32_t _numInputs;       /*!< Number of input buffers to concatenate. */
-   uint32_t _totalInChannels; /*!< Total channels across all inputs (sum of inChannels). */
-   uint32_t _inSamples;       /*!< Samples per channel. */
-   uint8_t  _isInterleave;    /*!< 0=planar, 1=interleaved. */
-
-   TISP::HandlePtr<char> _handle; /*!< Opaque AUDIOLIB kernel handle. */
+   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_concat kernel */
 
  public:
    /**
-    * @brief Creates a AUDIOLIB_concat node.
+    * @brief Creates an AUDIOLIB_concat node.
     *
-    * This constructor initializes a node for the AUDIOLIB_concat kernel.
+    * @details Validates the buffer descriptors and initializes the AUDIOLIB_concat kernel. Each input's
+    *          channel count is its @c width when interleaved, otherwise its @c height.
     *
-    * @param [in]   pInputs       : Array of per-input descriptors (one entry per input).
-    *                               Each entry carries the input buffer pointer, its
-    *                               width/height (pre-oriented per isInterleave), and its
-    *                               row stride in bytes.
-    * @param [in]   numInputs     : Number of inputs.
-    * @param [out]  pY            : Pointer to the output array.
-    * @param [in]   outPitchBytes : Pitch in bytes for output array.
-    * @param [in]   inSamples     : Samples per channel.
-    * @param [in]   isInterleave  : 0=planar, 1=interleaved.
-    * @param [in]   errorCtx      : Error context for reporting constructor errors
+    * @param [in] pInputs  : Input buffer descriptors; 1 to @ref kMaxSrcAddr buffers.
+    * @param [in] pOutputs : Output buffer descriptors; exactly one buffer holding all input channels,
+    *                       with the same layout as the inputs.
+    * @param [in] nodeName : Name of the node
+    * @param [in] nodeId   : ID of the node
+    * @param [in] errorCtx : Error context for reporting constructor errors
+    *
+    * @throw None
     */
-   Concat(const TISP_BufDesc2D *pInputs,
-          uint32_t              numInputs,
-          T                    *pY,
-          size_t                outPitchBytes,
-          uint32_t              inSamples,
-          uint8_t               isInterleave,
-          ErrorCtxt            &errorCtx);
-
-   /**
-    * @brief Creates a AUDIOLIB_concat node with a name and ID.
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   Concat(const TISP_BufDesc2D *pInputs,
-          uint32_t              numInputs,
-          T                    *pY,
-          size_t                outPitchBytes,
-          uint32_t              inSamples,
-          uint8_t               isInterleave,
-          const char           *nodeName,
-          uint32_t              nodeId,
-          ErrorCtxt            &errorCtx);
+   Concat(const TISP_BufDescList *pInputs,
+          const TISP_BufDescList *pOutputs,
+          const char             *nodeName,
+          uint32_t                nodeId,
+          ErrorCtxt              &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0 to _numInputs-1: _inputPtrs[index] (input array)
+    * - index 0 to _numInputs-1: input buffers (@ref _inputs) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0 to _numInputs-1)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -98,7 +72,7 @@ template <typename T> class Concat final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output array)
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -108,14 +82,14 @@ template <typename T> class Concat final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (_numInputs: _inputPtrs)
+    * @retval    size_t : The number of input buffers (_numInputs)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1: output buffer)
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -133,7 +107,6 @@ template <typename T> class Concat final : public VirtualOp {
     * @brief Execute the operation
     *
     * This function performs the actual operation.
-    *
     */
    void exec() noexcept override;
 
@@ -177,7 +150,6 @@ template <typename T> class Concat final : public VirtualOp {
     * @brief Destructor
     *
     * This destructor is set to default.
-    *
     */
    ~Concat() = default;
 };

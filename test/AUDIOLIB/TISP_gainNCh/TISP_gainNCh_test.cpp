@@ -53,6 +53,55 @@ __attribute__((section(".ddrData"), aligned(64))) int8_t  ddrBuffer[2048 * 1024]
 
 int16_t volatile volatileSum = 0; // use volatile to keep compiler from removing this operation
 
+template <typename T>
+std::unique_ptr<TISP::VirtualOp> TISP_gainNCh_createNode(void            *pIn,
+                                                         void            *pGain,
+                                                         void            *pOut,
+                                                         size_t           widthIn,
+                                                         size_t           heightIn,
+                                                         size_t           strideIn,
+                                                         size_t           strideOut,
+                                                         uint8_t          isInterleave,
+                                                         TISP::ErrorCtxt &errorCtx)
+{
+   const TISP::TISP_BufDesc2D inDesc  = {pIn, TISP::ElementDType<T>::value, widthIn, heightIn, strideIn, isInterleave};
+   const TISP::TISP_BufDesc2D outDesc = {pOut,        TISP::ElementDType<T>::value, widthIn, heightIn, strideOut,
+                                         isInterleave};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+   TISP::AUDIOLIB::GainNChTunableParams<T> defaultParams;
+   defaultParams.pGains = static_cast<T *>(pGain);
+
+   return std::make_unique<TISP::AUDIOLIB::GainNCh<T>>(&inputs, &outputs, &defaultParams, "GainNCh", 0, errorCtx);
+}
+
+std::unique_ptr<TISP::VirtualOp> TISP_gainNCh_createKernelObject(void            *pIn,
+                                                                 void            *pGain,
+                                                                 void            *pOut,
+                                                                 size_t           widthIn,
+                                                                 size_t           heightIn,
+                                                                 size_t           strideIn,
+                                                                 size_t           strideOut,
+                                                                 uint8_t          isInterleave,
+                                                                 uint32_t         dataType,
+                                                                 TISP::ErrorCtxt &errorCtx)
+{
+   if (dataType == AUDIOLIB_FLOAT32) {
+      return TISP_gainNCh_createNode<float>(pIn, pGain, pOut, widthIn, heightIn, strideIn, strideOut, isInterleave,
+                                            errorCtx);
+   }
+   else if (dataType == AUDIOLIB_FLOAT64) {
+      return TISP_gainNCh_createNode<double>(pIn, pGain, pOut, widthIn, heightIn, strideIn, strideOut, isInterleave,
+                                             errorCtx);
+   }
+   else {
+      errorCtx.setInvalidParameterError("TISP_gainNCh_createKernelObject", "unsupported data type for GainNCh kernel");
+      return nullptr;
+   }
+}
+
 int TISP_gainNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 {
    int32_t  tpi;
@@ -143,11 +192,9 @@ int TISP_gainNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
             TISP::ErrorCtxt errorCtx;
-            auto            k0 = TISP::TEST::NodeFactory::createA<TISP::AUDIOLIB::GainNCh>(
-                TISP::TEST::AUDIOLIBTypeToTISPType(currPrm.dataType), pIn.get(), pGainnch.get(), pOut.get(),
-                static_cast<int32_t>(widthIn), static_cast<int32_t>(heightIn), static_cast<int32_t>(gheightIn),
-                static_cast<int32_t>(strideIn), static_cast<int32_t>(strideOut),
-                static_cast<int32_t>(currPrm.isInterleave), errorCtx);
+            auto k0 = TISP_gainNCh_createKernelObject(pIn.get(), pGainnch.get(), pOut.get(), widthIn, heightIn,
+                                                      strideIn, strideOut, static_cast<uint8_t>(isInterleave),
+                                                      currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

@@ -20,10 +20,10 @@ namespace AUDIOLIB {
 /**
  * \class Mutench
  * @brief Provides node-level APIs for the AUDIOLIB_muteNCh kernel from AUDIOLIB.
- * @tparam T : Supports float and double.
+ * @tparam T : Supports float.
  *
- * @details This kernel mutes or unmutes a multi-channel audio signal of the input buffer pX (interleaved or
- * non-interleaved) by applying a per-channel gain factor and writes the resulting values to the output buffer pY.
+ * @details This kernel mutes or unmutes a multi-channel audio signal of the input buffer (interleaved or
+ * non-interleaved) by applying a per-channel gain factor and writes the resulting values to the output buffer.
  * <br> The gain factor transitions between 1.0 (unmuted) and 0.0 (muted). To avoid
  * audible clicks, the transition can be smoothed over a specified `fadeTime`. The kernel
  * supports three distinct fade behaviors for each channel.
@@ -46,25 +46,45 @@ namespace AUDIOLIB {
  *
  */
 enum class MutenchParamId : uint16_t {
-   kIsMuteValue = 0, /**< kIsMuteValue: Mute status values to set/get for each channel */
-   kFadeTime    = 1, /**< kFadeTime: Duration of the fade-in or fade-out ramp in ms */
-   kFadeType    = 2, /**< kFadeType: Type of fade curve to apply */
-   kBypass      = 3  /**< kBypass: uint32_t bypass mode; `0` applies the mute, `1` copies input to output */
+   kBypass      = 0, /**< kBypass: uint32_t bypass mode; `0` applies the mute, `1` copies input to output */
+   kIsMuteValue = 1, /**< kIsMuteValue: Mute status values to set/get for each channel */
+   kFadeTime    = 2, /**< kFadeTime: Duration of the fade-in or fade-out ramp in ms */
+   kFadeType    = 3, /**< kFadeType: Type of fade curve to apply */
+   kAll         = 4  /**< kAll: all tunable params as one @ref MutenchTunableParams payload */
+};
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref Mutench node.
+ *
+ * @details Fixed for the node's lifetime; required.
+ */
+struct MutenchConfig {
+   int32_t samplingRate = 48000; /*!< Sampling rate of the audio signal in Hz; must be greater than zero. */
+};
+
+/**
+ * @brief Tunable parameters of the @ref Mutench node, with their default values.
+ *
+ * @details Initial values of the runtime parameters, and the @ref MutenchParamId::kAll payload of
+ *          @ref Mutench::setParams / @ref Mutench::getParams.
+ *
+ * @tparam T : Node element type (float).
+ */
+template <typename T> struct MutenchTunableParams {
+   uint32_t *pIsMute = nullptr; /*!< Caller-owned array, one flag per channel (`1`: engage mute (fade-out), `0`:
+                                     disengage mute (fade-in)); required, must outlive the node. */
+   float    fadeTime   = 0.0F;  /*!< Fade-in or fade-out ramp in milliseconds; `0` gives a hard (instant) mute. */
+   uint32_t fadeType   = 0U;    /*!< Fade curve: `0` linear, `1` smooth, `2` hard. */
+   uint32_t bypassMode = 0U;    /*!< `0`: apply the mute, `1`: copy input to output. */
 };
 
 template <typename T> class Mutench final : public VirtualOp {
 
-   T       *_pX;       /*!< Pointer to input matrix. */
-   T       *_pY;       /*!< Pointer to output matrix. */
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
-
-   size_t  _width;         /*!< Width of the input/output matrix. */
-   size_t  _height;        /*!< Height of the input/output matrix. */
-   size_t  _inChannels;    /*!< Number of audio channels. */
-   size_t  _inPitchBytes;  /*!< Pitch of the input matrix in bytes. */
-   size_t  _outPitchBytes; /*!< Pitch of the output matrix in bytes. */
-   size_t  _isInterleaved; /*!< Data layout: 1 = interleaved, 0 = non-interleaved. */
-   int32_t _samplingRate;  /*!< Audio sampling rate in Hz. */
+   NodeInfo       _nodeInfo;     /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;           /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;          /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   size_t         _inChannels;   /*!< Number of channels (input width if interleaved, else height) */
+   int32_t        _samplingRate; /*!< Audio sampling rate in Hz. */
 
    uint32_t _bypassMode; /*!< Bypass mode: `0` applies the mute, `1` copies input to output. */
 
@@ -72,8 +92,8 @@ template <typename T> class Mutench final : public VirtualOp {
    TISP::HandlePtr<char> _setArgsBuf; /*!< Buffer to hold AUDIOLIB_muteNCh_SetArgs private member. */
 
    /**
-    * @brief Copies @ref _height rows of @ref _width elements from @ref _pX to @ref _pY, honouring
-    *        @ref _inPitchBytes and @ref _outPitchBytes.
+    * @brief Copies the input buffer described by @ref _in to the output buffer described by @ref _out,
+    *        row by row, honouring both row pitches.
     *
     * @retval None
     * @throw None
@@ -84,74 +104,34 @@ template <typename T> class Mutench final : public VirtualOp {
    /**
     * @brief Creates an AUDIOLIB_muteNCh node.
     *
-    * This constructor initializes a node for the AUDIOLIB_muteNCh kernel.
+    * @details Validates the buffer descriptors and initializes the AUDIOLIB_muteNCh kernel. The channel
+    *          count is the input @c width when interleaved, otherwise its @c height.
     *
-    * @param [in]  *pX            : Pointer to the input matrix.
-    *                               Initializes @ref _pX.
-    * @param [out] *pY            : Pointer to the output matrix.
-    *                               Initializes @ref _pY.
-    * @param [in]  width          : Width of input matrix.
-    * @param [in]  height         : Height of input matrix.
-    * @param [in]  inChannels     : Number of input channels.
-    * @param [in]  inPitchBytes   : Pitch of input matrix in bytes.
-    * @param [in]  outPitchBytes  : Pitch of output matrix in bytes.
-    * @param [in]  isInterleaved  : Indicates whether the input matrix data is interleaved:
-    *                             - `0`: Non-interleaved (Rows represent channels, columns represent samples).
-    *                             - `1`: Interleaved (Rows represent samples, columns represent channels).
-    * @param [in]  samplingRate   : Sampling rate of an audio signal (in Hz).
-    * @param [in]  isMute         : Per-channel control switch for muting (int32 array, one flag per channel).
-    *                             - '1': Engage mute (fade-out).
-    *                             - '0': Disengage mute (fade-in).
-    * @param [in]  fadeTime       : Duration of the fade-in or fade-out ramp in milliseconds. A value of 0 results in a
-    *                               hard (instant) mute.
-    * @param [in]  fadeType       : Type of fade curve to apply.
-    *                             - '0': Linear fade.
-    *                             - '1': Smooth fade.
-    *                             - '2': Hard fade.
-    * @param [in]  errorCtx       : Error context for reporting constructor errors
+    * @param [in] pInputs               : Input buffer descriptors; exactly one buffer. Its @c pBuf is the
+    *                                    initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs              : Output buffer descriptors; exactly one buffer with the same layout as
+    *                                    the input.
+    * @param [in] pConfig          : Construction-time parameters; required.
+    * @param [in] pDefaultTunableParams : Initial tunable parameters; required, with a non-null @c pIsMute.
+    * @param [in] nodeName              : Name of the node
+    * @param [in] nodeId                : ID of the node
+    * @param [in] errorCtx              : Error context for reporting constructor errors
     *
+    * @throw None
     */
-   Mutench(T         *pX,
-           T         *pY,
-           size_t     width,
-           size_t     height,
-           size_t     inChannels,
-           size_t     inPitchBytes,
-           size_t     outPitchBytes,
-           size_t     isInterleaved,
-           int32_t    samplingRate,
-           uint32_t  *isMute,
-           float      fadeTime,
-           uint32_t   fadeType,
-           ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates an AUDIOLIB_muteNCh node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   Mutench(T          *pX,
-           T          *pY,
-           size_t      width,
-           size_t      height,
-           size_t      inChannels,
-           size_t      inPitchBytes,
-           size_t      outPitchBytes,
-           size_t      isInterleaved,
-           int32_t     samplingRate,
-           uint32_t   *isMute,
-           float       fadeTime,
-           uint32_t    fadeType,
-           const char *nodeName,
-           uint32_t    nodeId,
-           ErrorCtxt  &errorCtx);
+   Mutench(const TISP_BufDescList        *pInputs,
+           const TISP_BufDescList        *pOutputs,
+           const MutenchConfig      *pConfig,
+           const MutenchTunableParams<T> *pDefaultTunableParams,
+           const char                    *nodeName,
+           uint32_t                       nodeId,
+           ErrorCtxt                     &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input data matrix) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -162,7 +142,7 @@ template <typename T> class Mutench final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -172,14 +152,14 @@ template <typename T> class Mutench final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1)
     */
    size_t getNumOutputs() const noexcept override;
 

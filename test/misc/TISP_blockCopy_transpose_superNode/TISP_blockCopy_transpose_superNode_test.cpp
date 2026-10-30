@@ -86,9 +86,15 @@ void *create_graph()
 
    TISP::ErrorCtxt errorCtx;
 
-   auto k0 = std::make_unique<TISP::DSPLIB::MatTrans<float>>(pInputBlock, pOutputBlock, blockWidth, blockHeight,
-                                                             blockWidth * sizeof(float), blockHeight * sizeof(float),
-                                                             errorCtx);
+   const TISP::TISP_BufDesc2D inDesc  = {pInputBlock, TISP::Types::kFloat32,      blockWidth,
+                                         blockHeight, blockWidth * sizeof(float), 0U};
+   const TISP::TISP_BufDesc2D outDesc = {pOutputBlock, TISP::Types::kFloat32,       blockHeight,
+                                         blockWidth,   blockHeight * sizeof(float), 0U};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+   auto k0 = std::make_unique<TISP::DSPLIB::MatTrans<float>>(&inputs, &outputs, "MatTrans", 0, errorCtx);
 
    if (!errorCtx.isSuccess()) {
       printf("\nError creating kernel: %s\n", errorCtx.getMessage());

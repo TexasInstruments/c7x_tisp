@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "TISP_common.hpp"
 #include "TISP_ErrorCtxt.hpp"
-#include <memory>
+#include "TISP_common.hpp"
+#include <array>
 
 namespace TISP {
 
@@ -23,71 +23,46 @@ namespace AUDIOLIB {
  * @brief Provides node-level APIs for the AUDIOLIB_split kernel from AUDIOLIB.
  * @tparam T : Supports float and double.
  *
- * @details This kernel splits an input array into multiple output arrays. Each output
- *          may carry a different number of channels; the input holds the sum of all
- *          output channels. Each output uses the same layout as the input (interleaved
- *          or planar).
+ * @details Splits the channels of one input into multiple outputs, each with its own channel count.
+ *          Input and outputs share one layout (interleaved or non-interleaved).
  */
 
 template <typename T> class Split final : public VirtualOp {
 
-   std::unique_ptr<void*[]> _outputPtrs; /*!< void* array passed to AUDIOLIB_split_exec. */
-   T                        *_pIn;        /*!< Single input pointer. */
-   NodeInfo                  _nodeInfo;   /*!< Node name, parameters, and ID. */
+   NodeInfo                        _nodeInfo;   /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D                  _in;         /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   std::array<void *, kMaxDstAddr> _outputs;    /*!< Output buffer pointers; @ref setAddr rebinds them */
+   size_t                          _numOutputs; /*!< Number of output buffers */
 
-   uint32_t _numOutputs;         /*!< Number of output buffers to split into. */
-   uint32_t _totalInputChannels; /*!< Total input channels (sum of outChannels). */
-   uint32_t _inSamples;          /*!< Samples per channel. */
-   uint8_t  _isInterleave;       /*!< 0=planar, 1=interleaved. */
-
-   TISP::HandlePtr<char> _handle; /*!< Opaque AUDIOLIB kernel handle. */
+   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_split kernel */
 
  public:
    /**
-    * @brief Creates a AUDIOLIB_split node.
+    * @brief Creates an AUDIOLIB_split node.
     *
-    * This constructor initializes a node for the AUDIOLIB_split kernel.
+    * @details Validates the buffer descriptors and initializes the AUDIOLIB_split kernel. Each output's
+    *          channel count is its @c width when interleaved, otherwise its @c height.
     *
-    * @param [in]   pIn           : Pointer to the input array.
-    * @param [in]   inPitchBytes  : Pitch in bytes for the input array.
-    * @param [out]  pOutputs      : Array of per-output descriptors (one entry per output).
-    *                               Each entry carries the output buffer pointer, its
-    *                               width/height (pre-oriented per isInterleave), and its
-    *                               row stride in bytes.
-    * @param [in]   numOutputs    : Number of outputs.
-    * @param [in]   inSamples     : Samples per channel.
-    * @param [in]   isInterleave  : 0=planar, 1=interleaved.
-    * @param [in]   errorCtx      : Error context for reporting constructor errors
+    * @param [in] pInputs  : Input buffer descriptors; exactly one buffer holding all output channels.
+    * @param [in] pOutputs : Output buffer descriptors; 1 to @ref kMaxDstAddr buffers, with the same
+    *                       layout as the input.
+    * @param [in] nodeName : Name of the node
+    * @param [in] nodeId   : ID of the node
+    * @param [in] errorCtx : Error context for reporting constructor errors
+    *
+    * @throw None
     */
-   Split(T                    *pIn,
-         size_t                inPitchBytes,
-         const TISP_BufDesc2D *pOutputs,
-         uint32_t              numOutputs,
-         uint32_t              inSamples,
-         uint8_t               isInterleave,
-         ErrorCtxt            &errorCtx);
-
-   /**
-    * @brief Creates a AUDIOLIB_split node with a name and ID.
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   Split(T                    *pIn,
-         size_t                inPitchBytes,
-         const TISP_BufDesc2D *pOutputs,
-         uint32_t              numOutputs,
-         uint32_t              inSamples,
-         uint8_t               isInterleave,
-         const char           *nodeName,
-         uint32_t              nodeId,
-         ErrorCtxt            &errorCtx);
+   Split(const TISP_BufDescList *pInputs,
+         const TISP_BufDescList *pOutputs,
+         const char             *nodeName,
+         uint32_t                nodeId,
+         ErrorCtxt              &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pIn (input array)
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -98,7 +73,7 @@ template <typename T> class Split final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0 to _numOutputs-1: _outputPtrs[index] (output array)
+    * - index 0 to _numOutputs-1: output buffers (@ref _outputs) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0 to _numOutputs-1)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -108,14 +83,14 @@ template <typename T> class Split final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pIn)
+    * @retval    size_t : The number of input buffers (1: input buffer)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (_numOutputs: _pY)
+    * @retval    size_t : The number of output buffers (_numOutputs)
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -133,7 +108,6 @@ template <typename T> class Split final : public VirtualOp {
     * @brief Execute the operation
     *
     * This function performs the actual operation.
-    *
     */
    void exec() noexcept override;
 
@@ -177,7 +151,6 @@ template <typename T> class Split final : public VirtualOp {
     * @brief Destructor
     *
     * This destructor is set to default.
-    *
     */
    ~Split() = default;
 };
@@ -189,5 +162,5 @@ template <typename T> class Split final : public VirtualOp {
 } // namespace TISP
 
 /* ======================================================================== */
-/*  End of file:  TISP_split.hpp                                           */
+/*  End of file:  TISP_split.hpp                                            */
 /* ======================================================================== */

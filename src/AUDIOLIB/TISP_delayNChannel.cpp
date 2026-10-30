@@ -7,6 +7,7 @@
 #include "common/AUDIOLIB_bufParams.h"
 #include <AUDIOLIB/TISP_AUDIOLIB_types.hpp>
 #include <TISP_delayNChannel.hpp>
+#include <cstring>
 
 namespace TISP {
 namespace AUDIOLIB {
@@ -14,85 +15,75 @@ namespace AUDIOLIB {
 //! [TISP::DelayNChannel constructor]
 
 template <typename T>
-DelayNChannel<T>::DelayNChannel(T         *pX,
-                                T         *pD,
-                                T         *pS,
-                                T         *pY,
-                                size_t     width,
-                                size_t     height,
-                                size_t     widthD,
-                                size_t     heightD,
-                                size_t     inPitchBytes,
-                                size_t     delayPitchBytes,
-                                size_t     outPitchBytes,
-                                size_t     interleave,
-                                size_t     mode,
-                                uint32_t  *pDelaySize,
-                                ErrorCtxt &errorCtx)
-    : _pX(pX), _pD(pD), _pS(pS), _pY(pY), _widthD(0), _heightD(0), _delayPitchBytes(0), _mode(0)
+DelayNChannel<T>::DelayNChannel(const TISP_BufDescList         *pInputs,
+                                const TISP_BufDescList         *pOutputs,
+                                const TISP_BufDescList         *pStates,
+                                void                           *pScratch,
+                                size_t                          scratchBytes,
+                                const DelayNChannelConfig *pConfig,
+                                const char                     *nodeName,
+                                uint32_t                        nodeId,
+                                ErrorCtxt                      &errorCtx)
+    : _in{}, _out{}, _state{}, _scratch(static_cast<T *>(pScratch)), _mode(0U)
 {
-   // Initialize _params with the node parameters
-   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(), "width=%zu,height=%zu,widthD=%zu,heightD=%zu",
-                   width, height, widthD, heightD);
+   _nodeInfo.setName(nodeName);
+   _nodeInfo.nodeId = nodeId;
 
-   // Input validation checks
-   if (pX == nullptr) {
-      errorCtx.setNullPointerError("DelayNChannel constructor", "input pointer pX is null");
+   if (pConfig == nullptr) {
+      errorCtx.setNullPointerError("DelayNChannel constructor", "build params pointer pConfig is null");
    }
-   if (pD == nullptr) {
-      errorCtx.setNullPointerError("DelayNChannel constructor", "delay pointer pD is null");
+   else if (pConfig->pDelaySize == nullptr) {
+      errorCtx.setNullPointerError("DelayNChannel constructor", "delay size pointer pConfig->pDelaySize is null");
    }
-   if (pS == nullptr) {
-      errorCtx.setNullPointerError("DelayNChannel constructor", "scratch memory pointer pS is null");
+   else if (pScratch == nullptr) {
+      errorCtx.setNullPointerError("DelayNChannel constructor", "scratch pointer pScratch is null");
    }
-   if (pY == nullptr) {
-      errorCtx.setNullPointerError("DelayNChannel constructor", "output pointer pY is null");
-   }
-   if (width == 0) {
-      errorCtx.setInvalidParameterError("DelayNChannel constructor", "width must be greater than zero");
-   }
-   if (height == 0) {
-      errorCtx.setInvalidParameterError("DelayNChannel constructor", "height must be greater than zero");
-   }
-   if (widthD == 0) {
-      errorCtx.setInvalidParameterError("DelayNChannel constructor", "widthD must be greater than zero");
-   }
-   if (heightD == 0) {
-      errorCtx.setInvalidParameterError("DelayNChannel constructor", "heightD must be greater than zero");
-   }
-   if (heightD > MAX_NUM_CHANNELS) {
-      errorCtx.setInvalidParameterError("DelayNChannel constructor", "heightD must not exceed MAX_NUM_CHANNELS");
-   }
-   if (pDelaySize == nullptr) {
-      errorCtx.setInvalidParameterError("DelayNChannel constructor", "delay size pointer pDelaySize is null");
+   else {
+      /* Nothing to do here */
    }
 
-   // Only proceed with initialization if all validation checks passed
+   size_t numChannels = 0U;
+
+   // Buffer checks (skipped once an error is set): one input, one output, and one delay line
+   if (TISP_checkBufDescList<T>(pInputs, 1U, 1U, "DelayNChannel constructor (inputs)", errorCtx) &&
+       TISP_checkBufDescList<T>(pOutputs, 1U, 1U, "DelayNChannel constructor (outputs)", errorCtx) &&
+       TISP_checkBufDescList<T>(pStates, 1U, 1U, "DelayNChannel constructor (states)", errorCtx)) {
+      _in    = pInputs->pDesc[0];
+      _out   = pOutputs->pDesc[0];
+      _state = pStates->pDesc[0];
+
+      // One delay per channel: channels are columns when interleaved, rows otherwise
+      numChannels = (_in.isInterleave == 1U) ? _in.width : _in.height;
+
+      if (_in.isInterleave != _out.isInterleave) {
+         errorCtx.setInvalidParameterError("DelayNChannel constructor", "input and output interleave must match");
+      }
+      else if (numChannels > MAX_NUM_CHANNELS) {
+         errorCtx.setInvalidParameterError("DelayNChannel constructor",
+                                           "number of channels must not exceed MAX_NUM_CHANNELS");
+      }
+      else if (_state.height < numChannels) {
+         errorCtx.setInvalidParameterError("DelayNChannel constructor", "delay state must have one row per channel");
+      }
+      else if (scratchBytes < (_in.width * _in.height * sizeof(T))) {
+         errorCtx.setInvalidParameterError("DelayNChannel constructor",
+                                           "scratchBytes is smaller than channels x samples");
+      }
+      else if (pConfig->mode > 1U) {
+         errorCtx.setInvalidParameterError("DelayNChannel constructor", "mode must be either zero or one");
+      }
+      else {
+         /* Nothing to do here */
+      }
+   }
+
    if (errorCtx.isSuccess()) {
-      _width           = width;
-      _height          = height;
-      _widthD          = widthD;
-      _heightD         = heightD;
-      _inPitchBytes    = inPitchBytes;
-      _outPitchBytes   = outPitchBytes;
-      _delayPitchBytes = delayPitchBytes;
-      _interleave      = interleave;
-      _mode            = mode;
+      _mode = pConfig->mode;
 
-      // Initialize bufParams with node input and output buffer parameters. The delay (pD)
-      // and scratch (pS) buffers are internal/owned state, not exposed via getInputAddr(),
-      // so only the primary data buffer pX/pY is represented here.
-      _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isInputInterleave = interleave;
-      _nodeInfo.bufParams.widthIn[0]        = width;
-      _nodeInfo.bufParams.heightIn[0]       = height;
-      _nodeInfo.bufParams.inPitchBytes[0]   = inPitchBytes;
-
-      _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isOutputInterleave = interleave;
-      _nodeInfo.bufParams.widthOut[0]        = width;
-      _nodeInfo.bufParams.heightOut[0]       = height;
-      _nodeInfo.bufParams.outPitchBytes[0]   = outPitchBytes;
+      // Initialize _params and bufParams with the node parameters
+      (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(), "width=%zu,height=%zu,widthD=%zu,heightD=%zu",
+                      _in.width, _in.height, _state.width, _state.height);
+      TISP_setNodeBufParams(&_nodeInfo.bufParams, pInputs, pOutputs);
 
       /***********************************************************************/
       /* Initialize data structures required by AUDIOLIB_Delaynchannel from AUDIOLIB */
@@ -100,12 +91,10 @@ DelayNChannel<T>::DelayNChannel(T         *pX,
 
       AUDIOLIB_delayNChannel_InitArgs kerInitArgs;
       kerInitArgs.funcStyle  = AUDIOLIB_FUNCTION_OPTIMIZED;
-      kerInitArgs.interleave = interleave;
-      kerInitArgs.mode       = mode;
-      uint32_t *pDelay       = pDelaySize;
-      uint32_t  ch;
-      for (ch = 0; ch < heightD; ch++) {
-         kerInitArgs.delaySize[ch] = pDelay[ch];
+      kerInitArgs.interleave = _in.isInterleave;
+      kerInitArgs.mode       = _mode;
+      for (size_t ch = 0; ch < numChannels; ch++) {
+         kerInitArgs.delaySize[ch] = pConfig->pDelaySize[ch]; // NOLINT(MISRA.PTR.ARITH)
       }
 
       _handle = make_unique_handle<char>(AUDIOLIB_delayNChannel_getHandleSize(&kerInitArgs));
@@ -113,42 +102,26 @@ DelayNChannel<T>::DelayNChannel(T         *pX,
       if (!_handle) {
          errorCtx.setMemoryError("DelayNChannel constructor", "failed to allocate delayNChannel handle");
       }
+      else {
+         AUDIOLIB_bufParams2D_t bufParamsIn    = TISP_toAudiolibBufParams2D<T>(_in);
+         AUDIOLIB_bufParams2D_t bufParamsDelay = TISP_toAudiolibBufParams2D<T>(_state);
+         AUDIOLIB_bufParams2D_t bufParamsOut   = TISP_toAudiolibBufParams2D<T>(_out);
 
-      if (errorCtx.isSuccess()) {
-         AUDIOLIB_bufParams2D_t bufParamsIn;
-         AUDIOLIB_bufParams2D_t bufParamsOut;
-         AUDIOLIB_bufParams2D_t bufParamsDelay;
-
-         bufParamsIn.data_type = AUDIOLIB_element_dType<T>::value;
-         bufParamsIn.dim_x     = static_cast<uint32_t>(width);
-         bufParamsIn.dim_y     = static_cast<uint32_t>(height);
-         bufParamsIn.stride_y  = static_cast<int32_t>(inPitchBytes);
-
-         bufParamsDelay.data_type = AUDIOLIB_element_dType<T>::value;
-         bufParamsDelay.dim_x     = static_cast<uint32_t>(widthD);
-         bufParamsDelay.dim_y     = static_cast<uint32_t>(heightD);
-         bufParamsDelay.stride_y  = static_cast<int32_t>(delayPitchBytes);
-
-         bufParamsOut.data_type = AUDIOLIB_element_dType<T>::value;
-         bufParamsOut.dim_x     = static_cast<uint32_t>(width);
-         bufParamsOut.dim_y     = static_cast<uint32_t>(height);
-         bufParamsOut.stride_y  = static_cast<int32_t>(outPitchBytes);
          /******************************************************************************/
          /* Validate parameters before init                                            */
          /******************************************************************************/
 
-         AUDIOLIB_STATUS checkRet = AUDIOLIB_delayNChannel_init_checkParams(
-             _handle.get(), &bufParamsIn, &bufParamsDelay, &bufParamsOut, &kerInitArgs);
-         errorCtx.remapXLIBError(checkRet, "AUDIOLIB_delayNChannel_init_checkParams");
+         AUDIOLIB_STATUS status = AUDIOLIB_delayNChannel_init_checkParams(_handle.get(), &bufParamsIn, &bufParamsDelay,
+                                                                          &bufParamsOut, &kerInitArgs);
+
          /******************************************************************************/
          /* Call init function from AUDIOLIB to for delayNChannel to set SE/SA params             */
          /******************************************************************************/
 
-         if (errorCtx.isSuccess()) {
-            AUDIOLIB_STATUS initRet =
+         if (errorCtx.remapXLIBError(status, "AUDIOLIB_delayNChannel_init_checkParams")) {
+            status =
                 AUDIOLIB_delayNChannel_init(_handle.get(), &bufParamsIn, &bufParamsDelay, &bufParamsOut, &kerInitArgs);
-            errorCtx.remapXLIBError(initRet, "AUDIOLIB_delayNChannel_init");
-            if (errorCtx.isSuccess()) {
+            if (errorCtx.remapXLIBError(status, "AUDIOLIB_delayNChannel_init")) {
                cleanInternalBuffers();
             }
          }
@@ -156,54 +129,14 @@ DelayNChannel<T>::DelayNChannel(T         *pX,
    }
 }
 
-template <typename T>
-DelayNChannel<T>::DelayNChannel(T          *pX,
-                                T          *pD,
-                                T          *pS,
-                                T          *pY,
-                                size_t      width,
-                                size_t      height,
-                                size_t      widthD,
-                                size_t      heightD,
-                                size_t      inPitchBytes,
-                                size_t      delayPitchBytes,
-                                size_t      outPitchBytes,
-                                size_t      interleave,
-                                size_t      mode,
-                                uint32_t   *pDelaySize,
-                                const char *nodeName,
-                                uint32_t    nodeId,
-                                ErrorCtxt  &errorCtx)
-    : DelayNChannel(pX,
-                    pD,
-                    pS,
-                    pY,
-                    width,
-                    height,
-                    widthD,
-                    heightD,
-                    inPitchBytes,
-                    delayPitchBytes,
-                    outPitchBytes,
-                    interleave,
-                    mode,
-                    pDelaySize,
-                    errorCtx
-
-      )
-{
-   _nodeInfo.setName(nodeName);
-   _nodeInfo.nodeId = nodeId;
-}
-
 template <typename T> void *DelayNChannel<T>::getInputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pX) : nullptr;
+   return (index == 0) ? _in.pBuf : nullptr;
 }
 
 template <typename T> void *DelayNChannel<T>::getOutputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pY) : nullptr;
+   return (index == 0) ? _out.pBuf : nullptr;
 }
 
 template <typename T> size_t DelayNChannel<T>::getNumInputs() const noexcept { return 1; }
@@ -214,40 +147,40 @@ template <typename T> size_t DelayNChannel<T>::getNumOutputs() const noexcept { 
 template <typename T> void DelayNChannel<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) noexcept
 {
    if (mode == kAddrModeIn) {
-      _pX = static_cast<T *>(addr.src[0]);
+      _in.pBuf = addr.src[0];
    }
    if (mode == kAddrModeOut) {
-      _pY = static_cast<T *>(addr.dst[0]);
+      _out.pBuf = addr.dst[0];
    }
 
    if (mode == kAddrModeInOut) {
-      _pX = static_cast<T *>(addr.src[0]);
-      _pY = static_cast<T *>(addr.dst[0]);
+      _in.pBuf  = addr.src[0];
+      _out.pBuf = addr.dst[0];
    }
 }
 
 template <typename T> void DelayNChannel<T>::exec() noexcept
 {
-   AUDIOLIB_delayNChannel_exec(_handle.get(), _pX, _pD, _pY, _pS);
+   AUDIOLIB_delayNChannel_exec(_handle.get(), _in.pBuf, _state.pBuf, _out.pBuf, _scratch);
 }
 
 template <typename T> void DelayNChannel<T>::cleanInternalBuffers() noexcept
 {
-   if (_pD != nullptr && _heightD > 0) {
+   if (_state.pBuf != nullptr && _state.height > 0) {
       if (_mode == 0) {
-         /* Linear delay: row i is only indexed up to its own delaySize[i], and _widthD is the
+         /* Linear delay: row i is only indexed up to its own delaySize[i], and the state width is the
           * maximum delay across channels, so it bounds every row's live region. The remainder of
-          * the row up to _delayPitchBytes is padding the kernel never touches. */
-         for (size_t row = 0; row < _heightD; row++) {
-            uint8_t *pRow = reinterpret_cast<uint8_t *>(_pD) + (row * _delayPitchBytes); // NOLINT(MISRA.PTR.ARITH)
-            std::memset(pRow, 0, _widthD * sizeof(T));
+          * the row up to the state pitch is padding the kernel never touches. */
+         for (size_t row = 0; row < _state.height; row++) {
+            uint8_t *pRow = static_cast<uint8_t *>(_state.pBuf) + (row * _state.pitchBytes); // NOLINT(MISRA.PTR.ARITH)
+            std::memset(pRow, 0, _state.width * sizeof(T));
          }
       }
       else {
          /* Circular delay: AUDIOLIB_delayNChannel_init derives delayBuffSize from stride_y, so the
-          * per-channel readIdx[]/writeIdx[] wrap over the whole _delayPitchBytes-wide row. The entire
-          * row is live circular buffer - clearing only _widthD would leave stale samples behind. */
-         std::memset(_pD, 0, _heightD * _delayPitchBytes);
+          * per-channel readIdx[]/writeIdx[] wrap over the whole state pitch. The entire
+          * row is live circular buffer - clearing only the state width would leave stale samples behind. */
+         std::memset(_state.pBuf, 0, _state.height * _state.pitchBytes);
       }
    }
 }

@@ -71,10 +71,27 @@ TISP::SuperNode::superNodeVec *TISP_fir_createSuperNode(void            *pIn,
                                                         uint32_t         dataType,
                                                         TISP::ErrorCtxt &errorCtx)
 {
-   auto k0 = std::make_unique<TISP::DSPLIB::Fir<float>>((float *) pInputBlockX, (float *) pInputBlockS,
-                                                        (float *) pInputBlockH, (float *) pOutputBlock, inputSize,
-                                                        filterSize, stateSize, batchSize, pitchX, pitchS, pitchH,
-                                                        pitchY, enableNchCoefs, enableMMA, enableQ, Q, errorCtx);
+   const TISP::TISP_BufDesc2D inDesc    = {pInputBlockX, TISP::Types::kFloat32, inputSize, batchSize, pitchX, 0U};
+   const TISP::TISP_BufDesc2D outDesc   = {pOutputBlock, TISP::Types::kFloat32, inputSize, batchSize, pitchY, 0U};
+   const TISP::TISP_BufDesc2D stateDesc = {pInputBlockS, TISP::Types::kFloat32, stateSize, batchSize, pitchS, 0U};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+   const TISP::TISP_BufDescList states  = {&stateDesc, 1U};
+
+   TISP::DSPLIB::FirConfig config;
+   config.filterSize      = filterSize;
+   config.enableNchCoefs  = enableNchCoefs;
+   config.coeffPitchBytes = pitchH;
+   config.enableMMA       = enableMMA;
+   config.enableQ         = enableQ;
+   config.Q               = Q;
+
+   TISP::DSPLIB::FirTunableParams<float> defaultParams;
+   defaultParams.pCoeffs = static_cast<float *>(pInputBlockH);
+
+   auto k0 = std::make_unique<TISP::DSPLIB::Fir<float>>(&inputs, &outputs, &states, &config, &defaultParams, "Fir",
+                                                        0, errorCtx);
 
    if (!errorCtx.isSuccess()) {
       printf("\nError creating Fir<float> node: %s\n", errorCtx.getMessage());

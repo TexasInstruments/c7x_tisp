@@ -15,113 +15,94 @@ namespace AUDIOLIB {
 //! [TISP::GainNChTrim constructor]
 
 template <typename T>
-GainNChTrim<T>::GainNChTrim(T         *pX,
-                            T         *pG,
-                            T         *pM,
-                            T         *pY,
-                            size_t     width,
-                            size_t     height,
-                            size_t     gHeight,
-                            size_t     inPitchBytes,
-                            size_t     outPitchBytes,
-                            size_t     isInterleave,
-                            ErrorCtxt &errorCtx)
-    : _pX(pX), _pG(pG), _pM(pM), _pY(pY), _bypassMode(0U)
+GainNChTrim<T>::GainNChTrim(const TISP_BufDescList            *pInputs,
+                            const TISP_BufDescList            *pOutputs,
+                            const GainNChTrimTunableParams<T> *pDefaultTunableParams,
+                            const char                        *nodeName,
+                            uint32_t                           nodeId,
+                            ErrorCtxt                         &errorCtx)
+    : _in{}, _out{}, _numChannels(0U), _bypassMode(0U), _gains(nullptr), _masterGain(nullptr)
 {
+   _nodeInfo.setName(nodeName);
+   _nodeInfo.nodeId = nodeId;
 
-   // Initialize _params with the node parameters
-   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
-                   "width=%zu, height=%zu, gHeight=%zu, isInterleave=%zu, masterGain=%.2f", width, height, gHeight,
-                   isInterleave, pM ? *pM : 0.0f);
-
-   // Input validation checks
-   if (pX == nullptr) {
-      errorCtx.setNullPointerError("GainNChTrim constructor", "input pointer pX is null");
+   if (pDefaultTunableParams == nullptr) {
+      errorCtx.setNullPointerError("GainNChTrim constructor", "default params pointer pDefaultTunableParams is null");
    }
-   else if (pG == nullptr) {
-      errorCtx.setNullPointerError("GainNChTrim constructor", "gain pointer pG is null");
+   else if (pDefaultTunableParams->pGains == nullptr) {
+      errorCtx.setNullPointerError("GainNChTrim constructor", "gain pointer pDefaultTunableParams->pGains is null");
    }
-   else if (pM == nullptr) {
-      errorCtx.setNullPointerError("GainNChTrim constructor", "master gain pointer pM is null");
-   }
-   else if (pY == nullptr) {
-      errorCtx.setNullPointerError("GainNChTrim constructor", "output pointer pY is null");
-   }
-   else if (width == 0) {
-      errorCtx.setInvalidParameterError("GainNChTrim constructor", "width must be greater than zero");
-   }
-   else if (height == 0) {
-      errorCtx.setInvalidParameterError("GainNChTrim constructor", "height must be greater than zero");
-   }
-   else if (gHeight == 0) {
-      errorCtx.setInvalidParameterError("GainNChTrim constructor", "gHeight must be greater than zero");
-   }
-   else if (isInterleave > 1) {
-      errorCtx.setInvalidParameterError("GainNChTrim constructor", "interleave must be either zero or one");
+   else if (pDefaultTunableParams->pMasterGain == nullptr) {
+      errorCtx.setNullPointerError("GainNChTrim constructor",
+                                   "master gain pointer pDefaultTunableParams->pMasterGain is null");
    }
    else {
-      _width         = width;
-      _height        = height;
-      _gHeight       = gHeight;
-      _inPitchBytes  = inPitchBytes;
-      _outPitchBytes = outPitchBytes;
-      _isInterleave  = isInterleave;
+      /* Nothing to do here */
+   }
 
-      // Initialize bufParams with node input and output buffer parameters
-      _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isInputInterleave = isInterleave;
-      _nodeInfo.bufParams.widthIn[0]        = width;
-      _nodeInfo.bufParams.heightIn[0]       = height;
-      _nodeInfo.bufParams.inPitchBytes[0]   = inPitchBytes;
+   // Buffer checks (skipped once an error is set): one input, one output
+   if (TISP_checkBufDescList<T>(pInputs, 1U, 1U, "GainNChTrim constructor (inputs)", errorCtx) &&
+       TISP_checkBufDescList<T>(pOutputs, 1U, 1U, "GainNChTrim constructor (outputs)", errorCtx)) {
+      _in  = pInputs->pDesc[0];
+      _out = pOutputs->pDesc[0];
 
-      _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isOutputInterleave = isInterleave;
-      _nodeInfo.bufParams.widthOut[0]        = width;
-      _nodeInfo.bufParams.heightOut[0]       = height;
-      _nodeInfo.bufParams.outPitchBytes[0]   = outPitchBytes;
-      /***********************************************************************/
-      /* Initialize data structures required by AUDIOLIB_Gainnchtrim from AUDIOLIB */
-      /***********************************************************************/
+      if (_in.isInterleave != _out.isInterleave) {
+         errorCtx.setInvalidParameterError("GainNChTrim constructor", "input and output interleave must match");
+      }
+      else if (pDefaultTunableParams->bypassMode > 1U) {
+         errorCtx.setInvalidParameterError("GainNChTrim constructor", "bypass mode must be either zero or one");
+      }
+      else {
+         /* Nothing to do here */
+      }
+   }
+
+   if (errorCtx.isSuccess()) {
+      // One gain per channel: channels are columns when interleaved, rows otherwise
+      _numChannels = (_in.isInterleave == 1U) ? _in.width : _in.height;
+      _bypassMode  = pDefaultTunableParams->bypassMode;
+      _gains       = pDefaultTunableParams->pGains;
+      _masterGain  = pDefaultTunableParams->pMasterGain;
+
+      // Initialize _params and bufParams with the node parameters
+      (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
+                      "width=%zu, height=%zu, numChannels=%zu, isInterleave=%u, masterGain=%.2f", _in.width, _in.height,
+                      _numChannels, static_cast<uint32_t>(_in.isInterleave), static_cast<double>(*_masterGain));
+      TISP_setNodeBufParams(&_nodeInfo.bufParams, pInputs, pOutputs);
+
+      /***************************************************************************/
+      /* Initialize data structures required by AUDIOLIB_gainNChTrim from AUDIOLIB */
+      /***************************************************************************/
 
       AUDIOLIB_gainNChTrim_InitArgs kerInitArgs;
       kerInitArgs.funcStyle    = AUDIOLIB_FUNCTION_OPTIMIZED;
-      kerInitArgs.isInterleave = isInterleave;
+      kerInitArgs.isInterleave = _in.isInterleave;
 
       _handle = make_unique_handle<char>(AUDIOLIB_gainNChTrim_getHandleSize(&kerInitArgs));
 
       if (!_handle) {
          errorCtx.setMemoryError("GainNChTrim constructor", "failed to allocate gainNChTrim handle");
       }
-
-      if (errorCtx.isSuccess()) {
-         AUDIOLIB_bufParams2D_t bufParamsIn;
-         AUDIOLIB_bufParams2D_t bufParamsOut;
+      else {
+         AUDIOLIB_bufParams2D_t bufParamsIn  = TISP_toAudiolibBufParams2D<T>(_in);
+         AUDIOLIB_bufParams2D_t bufParamsOut = TISP_toAudiolibBufParams2D<T>(_out);
          AUDIOLIB_bufParams1D_t bufParamsGain;
 
-         bufParamsIn.data_type = AUDIOLIB_element_dType<T>::value;
-         bufParamsIn.dim_x     = static_cast<uint32_t>(width);
-         bufParamsIn.dim_y     = static_cast<uint32_t>(height);
-         bufParamsIn.stride_y  = static_cast<int32_t>(inPitchBytes);
+         bufParamsGain.data_type = static_cast<uint32_t>(AUDIOLIB_element_dType<T>::value);
+         bufParamsGain.dim_x     = static_cast<uint32_t>(_numChannels);
 
-         bufParamsOut.data_type = AUDIOLIB_element_dType<T>::value;
-         bufParamsOut.dim_x     = static_cast<uint32_t>(width);
-         bufParamsOut.dim_y     = static_cast<uint32_t>(height);
-         bufParamsOut.stride_y  = static_cast<int32_t>(outPitchBytes);
-
-         bufParamsGain.data_type = AUDIOLIB_element_dType<T>::value;
-         bufParamsGain.dim_x     = static_cast<uint32_t>(gHeight);
          /******************************************************************************/
          /* Validate parameters before init                                            */
          /******************************************************************************/
 
          AUDIOLIB_STATUS status = AUDIOLIB_gainNChTrim_init_checkParams(_handle.get(), &bufParamsIn, &bufParamsGain,
                                                                         &bufParamsOut, &kerInitArgs);
-         errorCtx.remapXLIBError(status, "AUDIOLIB_gainNChTrim_init_checkParams");
+
          /******************************************************************************/
-         /* Call init function from AUDIOLIB to for gainNChTrim to set SE/SA params             */
+         /* Call init function from AUDIOLIB for gainNChTrim to set SE/SA params       */
          /******************************************************************************/
 
-         if (errorCtx.isSuccess()) {
+         if (errorCtx.remapXLIBError(status, "AUDIOLIB_gainNChTrim_init_checkParams")) {
             status =
                 AUDIOLIB_gainNChTrim_init(_handle.get(), &bufParamsIn, &bufParamsGain, &bufParamsOut, &kerInitArgs);
             errorCtx.remapXLIBError(status, "AUDIOLIB_gainNChTrim_init");
@@ -132,48 +113,48 @@ GainNChTrim<T>::GainNChTrim(T         *pX,
 
 template <typename T> void *GainNChTrim<T>::getInputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pX) : nullptr;
+   return (index == 0) ? _in.pBuf : nullptr;
 }
 
 template <typename T> void *GainNChTrim<T>::getOutputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pY) : nullptr;
+   return (index == 0) ? _out.pBuf : nullptr;
 }
 
 template <typename T> size_t GainNChTrim<T>::getNumInputs() const noexcept { return 1; }
 
 template <typename T> size_t GainNChTrim<T>::getNumOutputs() const noexcept { return 1; }
 
-//! [TISP::Gainnchtrim setAddr]
+//! [TISP::GainNChTrim setAddr]
 template <typename T> void GainNChTrim<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) noexcept
 {
    if (mode == kAddrModeIn) {
-      _pX = static_cast<T *>(addr.src[0]);
+      _in.pBuf = addr.src[0];
    }
    if (mode == kAddrModeOut) {
-      _pY = static_cast<T *>(addr.dst[0]);
+      _out.pBuf = addr.dst[0];
    }
 
    if (mode == kAddrModeInOut) {
-      _pX = static_cast<T *>(addr.src[0]);
-      _pY = static_cast<T *>(addr.dst[0]);
+      _in.pBuf  = addr.src[0];
+      _out.pBuf = addr.dst[0];
    }
 }
 
 template <typename T> void GainNChTrim<T>::bypassCopy() noexcept
 {
-   const size_t rowBytes = _width * sizeof(T);
+   const size_t rowBytes = _in.width * sizeof(T);
 
-   if (_pX != _pY) {
-      if ((_inPitchBytes == rowBytes) && (_outPitchBytes == rowBytes)) {
-         (void) memcpy(_pY, _pX, rowBytes * _height);
+   if (_in.pBuf != _out.pBuf) {
+      if ((_in.pitchBytes == rowBytes) && (_out.pitchBytes == rowBytes)) {
+         (void) memcpy(_out.pBuf, _in.pBuf, rowBytes * _in.height);
       }
       else {
-         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
-         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
+         uint8_t       *pDst = static_cast<uint8_t *>(_out.pBuf);
+         const uint8_t *pSrc = static_cast<const uint8_t *>(_in.pBuf);
 
-         for (size_t i = 0; i < _height; i++) {
-            (void) memcpy(&pDst[i * _outPitchBytes], &pSrc[i * _inPitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         for (size_t i = 0; i < _in.height; i++) {
+            (void) memcpy(&pDst[i * _out.pitchBytes], &pSrc[i * _in.pitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
          }
       }
    }
@@ -185,38 +166,8 @@ template <typename T> void GainNChTrim<T>::exec() noexcept
       bypassCopy();
    }
    else {
-      AUDIOLIB_gainNChTrim_exec(_handle.get(), _pX, _pG, _pM, _pY);
+      AUDIOLIB_gainNChTrim_exec(_handle.get(), _in.pBuf, _gains, _masterGain, _out.pBuf);
    }
-}
-
-template <typename T>
-GainNChTrim<T>::GainNChTrim(T          *pX,
-                            T          *pG,
-                            T          *pM,
-                            T          *pY,
-                            size_t      width,
-                            size_t      height,
-                            size_t      gHeight,
-                            size_t      inPitchBytes,
-                            size_t      outPitchBytes,
-                            size_t      isInterleave,
-                            const char *nodeName,
-                            uint32_t    nodeId,
-                            ErrorCtxt  &errorCtx)
-    : GainNChTrim(pX, pG, pM, pY, width, height, gHeight, inPitchBytes, outPitchBytes, isInterleave, errorCtx)
-{
-   (void) pX;
-   (void) pG;
-   (void) pM;
-   (void) pY;
-   (void) width;
-   (void) height;
-   (void) gHeight;
-   (void) inPitchBytes;
-   (void) outPitchBytes;
-   (void) isInterleave;
-   _nodeInfo.setName(nodeName);
-   _nodeInfo.nodeId = nodeId;
 }
 
 template <typename T>
@@ -228,13 +179,16 @@ bool GainNChTrim<T>::setParams(uint16_t paramId, void *value, size_t size, Error
    else {
       switch (static_cast<GainNChTrimParamId>(paramId)) {
       case GainNChTrimParamId::kGainValues: {
-         size_t expectedSize = _gHeight * sizeof(T);
+         size_t expectedSize = _numChannels * sizeof(T);
          if (size < expectedSize) {
             errorCtx.setInvalidParameterError("GainNChTrim::setParams",
                                               "Value size smaller than expected for kGainValues");
          }
+         else if (value != _gains) {
+            memcpy(_gains, value, expectedSize);
+         }
          else {
-            memcpy(_pG, value, expectedSize);
+            /* Nothing to do here */
          }
          break;
       }
@@ -243,8 +197,11 @@ bool GainNChTrim<T>::setParams(uint16_t paramId, void *value, size_t size, Error
             errorCtx.setInvalidParameterError("GainNChTrim::setParams",
                                               "Value size smaller than expected for kMasterGain");
          }
+         else if (value != _masterGain) {
+            memcpy(_masterGain, value, sizeof(T));
+         }
          else {
-            memcpy(_pM, value, sizeof(T));
+            /* Nothing to do here */
          }
          break;
       }
@@ -261,6 +218,31 @@ bool GainNChTrim<T>::setParams(uint16_t paramId, void *value, size_t size, Error
             else {
                _bypassMode = bypassMode;
             }
+         }
+         break;
+      }
+      case GainNChTrimParamId::kAll: {
+         const GainNChTrimTunableParams<T> *pParams = static_cast<const GainNChTrimTunableParams<T> *>(value);
+         if (size < sizeof(GainNChTrimTunableParams<T>)) {
+            errorCtx.setInvalidParameterError("GainNChTrim::setParams", "Value size smaller than expected for kAll");
+         }
+         else if (pParams->pGains == nullptr) {
+            errorCtx.setNullPointerError("GainNChTrim::setParams", "gain pointer pGains is null");
+         }
+         else if (pParams->pMasterGain == nullptr) {
+            errorCtx.setNullPointerError("GainNChTrim::setParams", "master gain pointer pMasterGain is null");
+         }
+         else if (pParams->bypassMode > 1U) {
+            errorCtx.setInvalidParameterError("GainNChTrim::setParams", "bypass mode must be either zero or one");
+         }
+         else {
+            if (pParams->pGains != _gains) {
+               memcpy(_gains, pParams->pGains, _numChannels * sizeof(T));
+            }
+            if (pParams->pMasterGain != _masterGain) {
+               memcpy(_masterGain, pParams->pMasterGain, sizeof(T));
+            }
+            _bypassMode = pParams->bypassMode;
          }
          break;
       }
@@ -285,13 +267,16 @@ bool GainNChTrim<T>::getParams(uint16_t paramId, void *value, size_t *size, Erro
    else {
       switch (static_cast<GainNChTrimParamId>(paramId)) {
       case GainNChTrimParamId::kGainValues: {
-         size_t expectedSize = _gHeight * sizeof(T);
+         size_t expectedSize = _numChannels * sizeof(T);
          if (*size < expectedSize) {
             errorCtx.setInvalidParameterError("GainNChTrim::getParams",
                                               "Value size smaller than expected for kGainValues");
          }
+         else if (value != _gains) {
+            memcpy(value, _gains, expectedSize);
+         }
          else {
-            memcpy(value, _pG, expectedSize);
+            /* Nothing to do here */
          }
          *size = expectedSize;
          break;
@@ -301,8 +286,11 @@ bool GainNChTrim<T>::getParams(uint16_t paramId, void *value, size_t *size, Erro
             errorCtx.setInvalidParameterError("GainNChTrim::getParams",
                                               "Value size smaller than expected for kMasterGain");
          }
+         else if (value != _masterGain) {
+            memcpy(value, _masterGain, sizeof(T));
+         }
          else {
-            memcpy(value, _pM, sizeof(T));
+            /* Nothing to do here */
          }
          *size = sizeof(T);
          break;
@@ -315,6 +303,29 @@ bool GainNChTrim<T>::getParams(uint16_t paramId, void *value, size_t *size, Erro
             memcpy(value, &_bypassMode, sizeof(uint32_t));
          }
          *size = sizeof(uint32_t);
+         break;
+      }
+      case GainNChTrimParamId::kAll: {
+         GainNChTrimTunableParams<T> *pParams = static_cast<GainNChTrimTunableParams<T> *>(value);
+         if (*size < sizeof(GainNChTrimTunableParams<T>)) {
+            errorCtx.setInvalidParameterError("GainNChTrim::getParams", "Value size smaller than expected for kAll");
+         }
+         else if (pParams->pGains == nullptr) {
+            errorCtx.setNullPointerError("GainNChTrim::getParams", "gain pointer pGains is null");
+         }
+         else if (pParams->pMasterGain == nullptr) {
+            errorCtx.setNullPointerError("GainNChTrim::getParams", "master gain pointer pMasterGain is null");
+         }
+         else {
+            if (pParams->pGains != _gains) {
+               memcpy(pParams->pGains, _gains, _numChannels * sizeof(T));
+            }
+            if (pParams->pMasterGain != _masterGain) {
+               memcpy(pParams->pMasterGain, _masterGain, sizeof(T));
+            }
+            pParams->bypassMode = _bypassMode;
+         }
+         *size = sizeof(GainNChTrimTunableParams<T>);
          break;
       }
       default:

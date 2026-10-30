@@ -22,13 +22,8 @@ namespace DSPLIB {
  *  @brief Provides node-level APIs for the DSPLIB_fir kernel from DSPLIB.
  *  @tparam T        : Supports float
  *
- *  @details This node applies a finite impulse response filter to each channel of the input
- *  buffer pX and writes the filtered values to the output buffer pY. Filtering is performed
- *  block by block: each @ref exec() first copies the incoming block into the state buffer pS
- *  behind the retained `filterSize - 1` history samples, runs the kernel over the state buffer,
- *  and then shifts the tail of the state buffer back to the front so the next block sees the
- *  correct history. The filter coefficients pH are shared across channels unless
- *  `enableNchCoefs` is set, in which case one coefficient set per channel is used.
+ *  @details Applies a finite impulse response filter to each channel (row) of a non-interleaved input block.
+ *           The state buffer carries the last `filterSize - 1` input samples of every channel across blocks.
  */
 
 /**
@@ -39,34 +34,52 @@ namespace DSPLIB {
  *
  */
 enum class FirParamId : uint16_t {
-   kFilterCoeffs = 0, /**< kFilterCoeffs: Filter coefficients to set/get for the node */
-   kBypass       = 1  /**< kBypass: uint32_t bypass mode; `0` applies the filter, `1` copies input to output */
+   kBypass       = 0, /**< kBypass: uint32_t bypass mode; `0` applies the filter, `1` copies input to output */
+   kFilterCoeffs = 1, /**< kFilterCoeffs: Filter coefficients to set/get, `filterSize` values per coefficient row */
+   kAll          = 2  /**< kAll: all tunable params as one @ref FirTunableParams payload */
+};
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref Fir node.
+ *
+ * @details Required; describes the filter and the layout of the coefficient buffer
+ *          (@ref FirTunableParams::pCoeffs).
+ */
+struct FirConfig {
+   size_t filterSize      = 0U;    /*!< Number of filter taps. */
+   bool   enableNchCoefs  = false; /*!< `true`: one coefficient row per channel, `false`: one row shared by all. */
+   size_t coeffPitchBytes = 0U;    /*!< Row pitch of the coefficient buffer in bytes. */
+   bool   enableMMA       = false; /*!< `true`: MMA-based computation; coefficient rows use the MMA-padded layout. */
+   bool   enableQ         = false; /*!< `true`: fixed Q format for MMA-based computation (fixed-point MMA SoCs). */
+   size_t Q               = 0U;    /*!< Q value for Q-enabled computation. */
+};
+
+/**
+ * @brief Tunable parameters of the @ref Fir node, with their default values.
+ *
+ * @details Initial values of the runtime parameters, and the @ref FirParamId::kAll payload of
+ *          @ref Fir::setParams / @ref Fir::getParams.
+ *
+ * @tparam T : Node element type (float).
+ */
+template <typename T> struct FirTunableParams {
+   T       *pCoeffs    = nullptr; /*!< Caller-owned coefficient buffer in kernel layout (one row, or one per channel,
+                                       at @ref FirConfig::coeffPitchBytes); required, must outlive the node. */
+   uint32_t bypassMode = 0U;      /*!< `0`: apply the filter, `1`: copy input to output. */
 };
 
 template <typename T> class Fir final : public VirtualOp {
 
-   /* private members */
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
-
-   T *_pX; /*!< Pointer to address of input vector */
-   T *_pS; /*!< Pointer to address of state vector */
-   T *_pH; /*!< Pointer to address of filter vector */
-   T *_pY; /*!< Pointer to address of result vector*/
-
-   size_t _inputSize;  /*!< Input size */
-   size_t _filterSize; /*!< Filter size */
-   size_t _batchSize;  /*!< Number of channels */
-   size_t _stateSize;  /*!< State size */
-
-   size_t _pitchX; /*!< Input pitch */
-   size_t _pitchS; /*!< State pitch */
-   size_t _pitchH; /*!< Filter pitch */
-   size_t _pitchY; /*!< Output pitch */
-
-   bool   _enableNchCoefs; /*!< Enable different coeffs per channel */
-   bool   _enableMMA;      /*!< Enable MMA computation */
-   bool   _enableQ;        /*!< Enable fixed point Q for MMA-based computation */
-   size_t _Q;              /*!< Q value */
+   NodeInfo       _nodeInfo;        /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;              /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;             /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _state;           /*!< State buffer descriptor (filter history followed by the current block) */
+   size_t         _filterSize;      /*!< Number of filter taps */
+   size_t         _numCoeffRows;    /*!< Number of coefficient rows (number of channels, or 1 when shared) */
+   size_t         _coeffPitchBytes; /*!< Row pitch of the coefficient buffer in bytes */
+   size_t         _coeffOffset;     /*!< Offset of the first tap within a coefficient row, in elements */
+   T             *_coeffs;          /*!< Caller-owned coefficient buffer, used live by exec and setParams */
+   uint32_t       _bypassMode;      /*!< Bypass mode: `0` applies the filter, `1` copies input to output */
 
    // input to state
    __SE_TEMPLATE_v1 _se0ParamsPre = __gen_SE_TEMPLATE_v1(); /*!< SE params for the input-to-state block copy */
@@ -76,9 +89,7 @@ template <typename T> class Fir final : public VirtualOp {
    __SE_TEMPLATE_v1 _se0ParamsPost = __gen_SE_TEMPLATE_v1(); /*!< SE params for the state delay-line block copy */
    __SA_TEMPLATE_v1 _sa0ParamsPost = __gen_SA_TEMPLATE_v1(); /*!< SA params for the state delay-line block copy */
 
-   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the filter, `1` copies input to output. */
-
-   TISP::HandlePtr<char> _handle; /*!< handle required by DSPLIB_fir kernel */
+   TISP::HandlePtr<char> _handle; /*!< Handle to low level DSPLIB_fir kernel */
 
    /**
     * @brief Private TISP_fir block copy
@@ -94,7 +105,6 @@ template <typename T> class Fir final : public VirtualOp {
     * @retval None
     * @throw None
     */
-
    void TISP_fir_blockCopy2D(T               *pX,
                              T               *pY,
                              size_t           width,
@@ -103,17 +113,33 @@ template <typename T> class Fir final : public VirtualOp {
                              __SA_TEMPLATE_v1 sa0Params);
 
    /**
-    * @brief Copies @ref _batchSize rows of @ref _inputSize elements from @ref _pX to @ref _pY,
-    *        honouring @ref _pitchX and @ref _pitchY
-    *
-    * Used by the bypass path. The state buffer @ref _pS is not advanced while bypass is enabled,
-    * so @ref cleanInternalBuffers() is invoked when bypass is disengaged to discard the
-    * now-stale filter history.
+    * @brief Copies the input buffer described by @ref _in to the output buffer described by @ref _out,
+    *        row by row, honouring both row pitches.
     *
     * @retval None
     * @throw None
     */
    void bypassCopy() noexcept;
+
+   /**
+    * @brief Copies packed coefficient rows (`filterSize` values each) into the coefficient buffer.
+    *
+    * @param [in] pPacked : Packed coefficients, @ref _numCoeffRows rows of @ref _filterSize values.
+    *
+    * @retval None
+    * @throw None
+    */
+   void writePackedCoeffs(const T *pPacked) noexcept;
+
+   /**
+    * @brief Copies the coefficient buffer into packed rows (`filterSize` values each).
+    *
+    * @param [out] pPacked : Destination for @ref _numCoeffRows rows of @ref _filterSize values.
+    *
+    * @retval None
+    * @throw None
+    */
+   void readPackedCoeffs(T *pPacked) const noexcept;
 
  public:
    /**
@@ -153,80 +179,39 @@ template <typename T> class Fir final : public VirtualOp {
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
    /**
-    * @brief Creates a DSPLIB_fir node
+    * @brief Creates a DSPLIB_fir node.
     *
-    * This constructor is called to create the node
+    * @details Validates the buffer descriptors and initializes the DSPLIB_fir kernel. Rows are channels and
+    *          columns are samples; the state buffer is cleared.
     *
-    * @param[in]  *pX      : Pointer to input matrix; initializes @ref _pX
-    * @param[in]  *pS      : Pointer to state matrix; initializes @ref _pS
-    * @param[in]  *pH      : Pointer to filter matrix; initializes @ref _pH
-    * @param[out] *pY      : Pointer to output matrix; initializes @ref _pY
-    * @param[in]  inputSize    : Size of input per channel
-    * @param[in]  filterSize    : Size of filter per channel
-    * @param[in]  stateSize   : Size of state buffer per channel
-    * @param[in]  batchSize   : Number of channels
-    * @param[in]  pitchX  : Pitch of input data (in bytes)
-    * @param[in]  pitchS  : Pitch of state data (in bytes)
-    * @param[in]  pitchH  : Pitch of filter data (in bytes)
-    * @param[in]  pitchY  : Pitch of output data (in bytes)
-    * @param[in]  enableNchCoefs : Flag for different coefficients per channel
-    * @param[in]  enableMMA      : Flag for enabling MMA-based computation
-    * @param[in]  enableQ        : Flag for enabling fixed Q format for MMA-based computation (valid only for SOCs with
-    * Fixed-Point MMA)
-    * @param[in]  Q              : Q value for Q-enabled computations
-    * @param[in]  errorCtx       : Error context for reporting constructor errors
+    * @param [in] pInputs               : Input buffer descriptors; exactly one non-interleaved buffer. Its @c pBuf is
+    *                                    the initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs              : Output buffer descriptors; exactly one non-interleaved buffer with the
+    *                                    input's width and height.
+    * @param [in] pStates               : State buffer descriptors; exactly one non-interleaved buffer with the input's
+    *                                    height and a width of input width + `filterSize` - 1.
+    * @param [in] pConfig          : Construction-time parameters; required.
+    * @param [in] pDefaultTunableParams : Initial tunable parameters; required, with a non-null @c pCoeffs.
+    * @param [in] nodeName              : Name of the node
+    * @param [in] nodeId                : ID of the node
+    * @param [in] errorCtx              : Error context for reporting constructor errors
     *
+    * @throw None
     */
-
-   Fir(T         *pX,
-       T         *pS,
-       T         *pH,
-       T         *pY,
-       size_t     inputSize,
-       size_t     filterSize,
-       size_t     stateSize,
-       size_t     batchSize,
-       size_t     pitchX,
-       size_t     pitchS,
-       size_t     pitchH,
-       size_t     pitchY,
-       bool       enableNchCoefs,
-       bool       enableMMA, /* Default method is C7x unless specified by user */
-       bool       enableQ,
-       size_t     Q,
-       ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a Fir node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   Fir(T          *pX,
-       T          *pS,
-       T          *pH,
-       T          *pY,
-       size_t      inputSize,
-       size_t      filterSize,
-       size_t      stateSize,
-       size_t      batchSize,
-       size_t      pitchX,
-       size_t      pitchS,
-       size_t      pitchH,
-       size_t      pitchY,
-       bool        enableNchCoefs,
-       bool        enableMMA,
-       bool        enableQ,
-       size_t      Q,
-       const char *nodeName,
-       uint32_t    nodeId,
-       ErrorCtxt  &errorCtx);
+   Fir(const TISP_BufDescList    *pInputs,
+       const TISP_BufDescList    *pOutputs,
+       const TISP_BufDescList    *pStates,
+       const FirConfig      *pConfig,
+       const FirTunableParams<T> *pDefaultTunableParams,
+       const char                *nodeName,
+       uint32_t                   nodeId,
+       ErrorCtxt                 &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input data matrix) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -237,7 +222,7 @@ template <typename T> class Fir final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -247,14 +232,14 @@ template <typename T> class Fir final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1: input buffer)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1: output buffer)
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -263,8 +248,8 @@ template <typename T> class Fir final : public VirtualOp {
     *
     * This function sets the source and destination addresses for the operation.
     *
-    * @param[in] addrs Structure containing source and destination addresses
-    * @param[in] mode Mode of address setting (input, output, or both)
+    * @param [in] addrs  : Structure containing source and destination addresses
+    * @param [in] mode   : Mode of address setting (input, output, or both)
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
@@ -283,15 +268,6 @@ template <typename T> class Fir final : public VirtualOp {
     * @throw None
     */
    void cleanInternalBuffers() noexcept override;
-
-   /**
-    * @brief Destructor
-    *
-    * This destructor is set to default
-    *
-    */
-
-   ~Fir() = default;
 
    /**
     * @brief Update runtime parameters with detailed error reporting
@@ -329,6 +305,13 @@ template <typename T> class Fir final : public VirtualOp {
     * @retval false         : Failed to retrieve parameters
     */
    bool getParams(uint16_t paramId, void *value, size_t *size, ErrorCtxt &errorCtx) noexcept override;
+
+   /**
+    * @brief Destructor
+    *
+    * This destructor is set to default.
+    */
+   ~Fir() = default;
 };
 
 /** @} */

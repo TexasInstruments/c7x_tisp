@@ -54,22 +54,16 @@ __attribute__((section(".ddrData"), aligned(64))) int8_t  ddrBuffer[2048 * 1024]
 
 int16_t volatile volatileSum = 0; // use volatile to keep compiler from removing this operation
 
-std::unique_ptr<TISP::VirtualOp> TISP_split_createKernelObject(void                 *pIn,
-                                                               TISP::TISP_BufDesc2D *splitOutput,
-                                                               uint32_t              numOutputs,
-                                                               uint32_t              inSamples,
-                                                               uint8_t               isInterleave,
-                                                               size_t                inPitchBytes,
-                                                               uint32_t              sampleDataType,
-                                                               TISP::ErrorCtxt      &errorCtx)
+std::unique_ptr<TISP::VirtualOp> TISP_split_createKernelObject(const TISP::TISP_BufDescList *pInputs,
+                                                               const TISP::TISP_BufDescList *pOutputs,
+                                                               uint32_t                      sampleDataType,
+                                                               TISP::ErrorCtxt              &errorCtx)
 {
    if (sampleDataType == AUDIOLIB_FLOAT32) {
-      return std::make_unique<TISP::AUDIOLIB::Split<float>>((float *) pIn, inPitchBytes, splitOutput, numOutputs,
-                                                            inSamples, isInterleave, errorCtx);
+      return std::make_unique<TISP::AUDIOLIB::Split<float>>(pInputs, pOutputs, "Split", 0, errorCtx);
    }
    else if (sampleDataType == AUDIOLIB_FLOAT64) {
-      return std::make_unique<TISP::AUDIOLIB::Split<double>>((double *) pIn, inPitchBytes, splitOutput, numOutputs,
-                                                             inSamples, isInterleave, errorCtx);
+      return std::make_unique<TISP::AUDIOLIB::Split<double>>(pInputs, pOutputs, "Split", 0, errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_split_createKernelObject", "unsupported data type for Split kernel");
@@ -172,14 +166,22 @@ int TISP_split_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             offset += outputSizeArr[i];
          }
 
-         // Build outputs descriptor array
+         // Build input and output descriptors
+         const TISP::Types dataTypeTisp =
+             (currPrm.dataType == AUDIOLIB_FLOAT64) ? TISP::Types::kFloat64 : TISP::Types::kFloat32;
          std::vector<TISP::TISP_BufDesc2D> splitOutputs(numOutputs);
          for (size_t i = 0; i < numOutputs; i++) {
-            splitOutputs[i].pBuf     = outputBuffers[i].get();
-            splitOutputs[i].width    = isInterleave ? outChannelsArr[i] : inSamples;
-            splitOutputs[i].height   = isInterleave ? inSamples : outChannelsArr[i];
-            splitOutputs[i].stride_y = static_cast<int32_t>(outPitchBytesArr[i]);
+            splitOutputs[i].pBuf         = outputBuffers[i].get();
+            splitOutputs[i].dataType     = dataTypeTisp;
+            splitOutputs[i].width        = isInterleave ? outChannelsArr[i] : inSamples;
+            splitOutputs[i].height       = isInterleave ? inSamples : outChannelsArr[i];
+            splitOutputs[i].pitchBytes   = outPitchBytesArr[i];
+            splitOutputs[i].isInterleave = static_cast<uint8_t>(isInterleave);
          }
+         const TISP::TISP_BufDesc2D   splitInput = {pIn.get(), dataTypeTisp, widthIn,
+                                                    heightIn,  strideIn,     static_cast<uint8_t>(isInterleave)};
+         const TISP::TISP_BufDescList inputList  = {&splitInput, 1U};
+         const TISP::TISP_BufDescList outputList = {splitOutputs.data(), numOutputs};
 
          /* Only run the test if the buffer allocations fit in the heap */
          if (pIn.get() && pOutCn) {
@@ -192,10 +194,7 @@ int TISP_split_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
             TISP::ErrorCtxt errorCtx;
-            auto            k0 = TISP_split_createKernelObject(
-                pIn.get(), splitOutputs.data(), static_cast<uint32_t>(numOutputs),
-                static_cast<uint32_t>(inSamples), static_cast<uint32_t>(currPrm.isInputInterleave),
-                strideIn, currPrm.dataType, errorCtx);
+            auto            k0 = TISP_split_createKernelObject(&inputList, &outputList, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

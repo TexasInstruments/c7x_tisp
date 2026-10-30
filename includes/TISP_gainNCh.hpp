@@ -22,13 +22,12 @@ namespace AUDIOLIB {
  * @brief Provides node-level APIs for the AUDIOLIB_gainNCh kernel from AUDIOLIB.
  * @tparam T : Supports float and double.
  *
- * @details This kernel applies a specified gain factor to each channel in the input buffer pX
- * (interleaved or non-interleaved) and writes the resulting values to the output buffer pY based on a
- * given array of gain values pG.
+ * @details Applies a per-channel gain to an interleaved or non-interleaved input and writes the output.
+ * Gains come from a caller-owned array (@ref GainNChTunableParams::pGains), updatable via @ref setParams.
  *
  * <b>Example (Interleaved data): </b>
  *
- * <b>Input</b> (pX): No. of samples = N; No. of channels = M.
+ * <b>Input</b>: No. of samples = N; No. of channels = M.
  *  | SampleChannel | Ch0 | Ch1 | ... | ChM-1 |
  *  |--------------- |-----|-----|-----|-------|
  *  |      s0        | 100 | 320 | ... |  430  |
@@ -38,9 +37,9 @@ namespace AUDIOLIB {
  *  |      .         |  .  |  .  | ... |   .   |
  *  |     sN-1       | 980 |1050 | ... | 1024  |
  *
- * <b>gain values array</b> (pG): `{1, 3, ..., 2}` <br>
+ * <b>Gain values</b> (@ref GainNChTunableParams::pGains): `{1, 3, ..., 2}` <br>
  *
- * <b>Output</b> (pY): No. of samples = N; No. of channels = M.
+ * <b>Output</b>: No. of samples = N; No. of channels = M.
  *  | SampleChannel | Ch0 | Ch1 | ... | ChM-1 |
  *  |--------------- |-----|-----|-----|-------|
  *  |      s0        | 100 | 960 | ... |  860  |
@@ -59,32 +58,38 @@ namespace AUDIOLIB {
  *
  */
 enum class GainNChParamId : uint16_t {
-   kGainValue = 0, /**< kGainValue: Gain values to set/get for each channel */
-   kBypass    = 1  /**< kBypass: uint32_t bypass mode; `0` applies the gain, `1` copies input to output */
+   kBypass    = 0, /**< kBypass: uint32_t bypass mode; `0` applies the gain, `1` copies input to output */
+   kGainValue = 1, /**< kGainValue: Gain values to set/get for each channel */
+   kAll       = 2  /**< kAll: all tunable params as one @ref GainNChTunableParams payload */
+};
+
+/**
+ * @brief Tunable parameters of the @ref GainNCh node, with their default values.
+ *
+ * @details Initial values of the runtime parameters, and the @ref GainNChParamId::kAll payload of
+ *          @ref GainNCh::setParams / @ref GainNCh::getParams.
+ *
+ * @tparam T : Node element type (float or double).
+ */
+template <typename T> struct GainNChTunableParams {
+   T       *pGains     = nullptr; /*!< Caller-owned array, one gain per channel; required, must outlive the node. */
+   uint32_t bypassMode = 0U;      /*!< `0`: apply the gain, `1`: copy input to output. */
 };
 
 template <typename T> class GainNCh final : public VirtualOp {
 
-   T       *_pX;       /*!< Pointer to input buffer */
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
+   NodeInfo       _nodeInfo;    /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;          /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;         /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   size_t         _numChannels; /*!< Number of channels (input width if interleaved, else height) */
+   uint32_t       _bypassMode;  /*!< Bypass mode: `0` applies the gain, `1` copies input to output */
 
-   T *_pG; /*!< Pointer to input gain array. */
-   T *_pY; /*!< Pointer to output matrix. */
-
-   size_t _width;         /*!< Width of the input matrix. */
-   size_t _height;        /*!< Height of the input matrix. */
-   size_t _gHeight;       /*!< Number of elements in the gain array. */
-   size_t _inPitchBytes;  /*!< Pitch of the input matrix in bytes. */
-   size_t _outPitchBytes; /*!< Pitch of the output matrix in bytes. */
-   size_t _isInterleave;  /*!< `0`: non-interleaved, `1`: interleaved input data. */
-
-   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the gain, `1` copies input to output. */
-
-   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_gainNCh kernel. */
+   T                    *_gains;  /*!< Caller-owned gain array (numChannels), used live by exec and setParams */
+   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_gainNCh kernel */
 
    /**
-    * @brief Copies @ref _height rows of @ref _width elements from @ref _pX to @ref _pY, honouring
-    *        @ref _inPitchBytes and @ref _outPitchBytes.
+    * @brief Copies the input buffer described by @ref _in to the output buffer described by @ref _out,
+    *        row by row, honouring both row pitches.
     *
     * @retval None
     * @throw None
@@ -95,60 +100,32 @@ template <typename T> class GainNCh final : public VirtualOp {
    /**
     * @brief Creates an AUDIOLIB_gainNCh node.
     *
-    * This constructor initializes a node for the AUDIOLIB_gainNCh kernel.
+    * @details Validates the buffer descriptors and initializes the AUDIOLIB_gainNCh kernel. The channel
+    *          count is the input @c width when interleaved, otherwise its @c height.
     *
-    * @param [in]  *pX           : Pointer to the input matrix.
-    *                              Initializes @ref _pX.
-    * @param [in]  *pG           : Pointer to the array of input gain values.
-    *                              Initializes @ref _pG.
-    * @param [out] *pY           : Pointer to the output matrix.
-    *                              Initializes @ref _pY.
-    * @param [in]  width         : Width of input matrix.
-    * @param [in]  height        : Height of input matrix.
-    * @param [in]  gHeight       : Number of elements in input gain array.
-    * @param [in]  inPitchBytes  : Pitch of input matrix in bytes.
-    * @param [in]  outPitchBytes : Pitch of output matrix in bytes.
-    * @param [in]  isInterleave  : Indicates whether the input matrix data is interleaved:
-    *                            - `0`: Non-interleaved (Rows represent channels, columns represent samples).
-    *                            - `1`: Interleaved (Rows represent samples, columns represent channels).
-    * @param [in]  errorCtx      : Error context for reporting constructor errors
+    * @param [in] pInputs               : Input buffer descriptors; exactly one buffer. Its @c pBuf is the
+    *                                    initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs              : Output buffer descriptors; exactly one buffer with the same layout as
+    *                                    the input.
+    * @param [in] pDefaultTunableParams : Initial tunable parameters; required, with a non-null @c pGains.
+    * @param [in] nodeName              : Name of the node
+    * @param [in] nodeId                : ID of the node
+    * @param [in] errorCtx              : Error context for reporting constructor errors
     *
+    * @throw None
     */
-   GainNCh(T         *pX,
-           T         *pG,
-           T         *pY,
-           size_t     width,
-           size_t     height,
-           size_t     gHeight,
-           size_t     inPitchBytes,
-           size_t     outPitchBytes,
-           size_t     isInterleave,
-           ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a AUDIOLIB_gainNCh node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   GainNCh(T          *pX,
-           T          *pG,
-           T          *pY,
-           size_t      width,
-           size_t      height,
-           size_t      gHeight,
-           size_t      inPitchBytes,
-           size_t      outPitchBytes,
-           size_t      isInterleave,
-           const char *nodeName,
-           uint32_t    nodeId,
-           ErrorCtxt  &errorCtx);
+   GainNCh(const TISP_BufDescList        *pInputs,
+           const TISP_BufDescList        *pOutputs,
+           const GainNChTunableParams<T> *pDefaultTunableParams,
+           const char                    *nodeName,
+           uint32_t                       nodeId,
+           ErrorCtxt                     &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input data matrix) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -159,7 +136,7 @@ template <typename T> class GainNCh final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -169,14 +146,14 @@ template <typename T> class GainNCh final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1: input buffer)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1: output buffer)
     */
    size_t getNumOutputs() const noexcept override;
 

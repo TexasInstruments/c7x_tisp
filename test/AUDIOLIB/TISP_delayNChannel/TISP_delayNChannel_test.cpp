@@ -54,6 +54,41 @@ __attribute__((section(".ddrData"), aligned(64))) int8_t  ddrBuffer[2048 * 1024]
 
 int16_t volatile volatileSum = 0; // use volatile to keep compiler from removing this operation
 
+template <typename T>
+std::unique_ptr<TISP::VirtualOp> TISP_delayNChannel_createNode(void            *pIn,
+                                                               void            *pDelay,
+                                                               void            *pScratch,
+                                                               void            *pOut,
+                                                               size_t           widthIn,
+                                                               size_t           heightIn,
+                                                               size_t           widthD,
+                                                               size_t           heightD,
+                                                               size_t           strideIn,
+                                                               size_t           strideDelay,
+                                                               size_t           strideOut,
+                                                               uint8_t          interleave,
+                                                               uint32_t         mode,
+                                                               uint32_t        *delaySize,
+                                                               size_t           scratchBytes,
+                                                               TISP::ErrorCtxt &errorCtx)
+{
+   const TISP::TISP_BufDesc2D inDesc  = {pIn, TISP::ElementDType<T>::value, widthIn, heightIn, strideIn, interleave};
+   const TISP::TISP_BufDesc2D outDesc = {pOut, TISP::ElementDType<T>::value, widthIn, heightIn, strideOut, interleave};
+   // The delay line always holds one row per channel, whatever the data layout
+   const TISP::TISP_BufDesc2D stateDesc = {pDelay, TISP::ElementDType<T>::value, widthD, heightD, strideDelay, 0U};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+   const TISP::TISP_BufDescList states  = {&stateDesc, 1U};
+
+   TISP::AUDIOLIB::DelayNChannelConfig config;
+   config.mode       = mode;
+   config.pDelaySize = delaySize;
+
+   return std::make_unique<TISP::AUDIOLIB::DelayNChannel<T>>(&inputs, &outputs, &states, pScratch, scratchBytes,
+                                                             &config, "DelayNChannel", 0, errorCtx);
+}
+
 std::unique_ptr<TISP::VirtualOp> TISP_delayNChannel_createKernelObject(void            *pIn,
                                                                        void            *pDelay,
                                                                        void            *pScratch,
@@ -68,18 +103,19 @@ std::unique_ptr<TISP::VirtualOp> TISP_delayNChannel_createKernelObject(void     
                                                                        int32_t          interleave,
                                                                        int32_t          mode,
                                                                        uint32_t        *delaySize,
+                                                                       size_t           scratchBytes,
                                                                        uint32_t         dataType,
                                                                        TISP::ErrorCtxt &errorCtx)
 {
    if (dataType == AUDIOLIB_FLOAT32) {
-      return std::make_unique<TISP::AUDIOLIB::DelayNChannel<float>>(
-          (float *) pIn, (float *) pDelay, (float *) pScratch, (float *) pOut, widthIn, heightIn, widthD, heightD,
-          strideIn, strideDelay, strideOut, interleave, mode, delaySize, errorCtx);
+      return TISP_delayNChannel_createNode<float>(pIn, pDelay, pScratch, pOut, widthIn, heightIn, widthD, heightD,
+                                                  strideIn, strideDelay, strideOut, interleave, mode, delaySize,
+                                                  scratchBytes, errorCtx);
    }
    else if (dataType == AUDIOLIB_FLOAT64) {
-      return std::make_unique<TISP::AUDIOLIB::DelayNChannel<double>>(
-          (double *) pIn, (double *) pDelay, (double *) pScratch, (double *) pOut, widthIn, heightIn, widthD, heightD,
-          strideIn, strideDelay, strideOut, interleave, mode, delaySize, errorCtx);
+      return TISP_delayNChannel_createNode<double>(pIn, pDelay, pScratch, pOut, widthIn, heightIn, widthD, heightD,
+                                                   strideIn, strideDelay, strideOut, interleave, mode, delaySize,
+                                                   scratchBytes, errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_delayNChannel_createKernelObject",
@@ -243,7 +279,7 @@ int TISP_delayNChannel_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                            static_cast<uint32_t>(heightIn), static_cast<uint32_t>(widthD), static_cast<uint32_t>(heightD),
                            static_cast<int32_t>(strideIn), static_cast<int32_t>(strideDelay), static_cast<int32_t>(strideOut),
                            static_cast<uint32_t>(interleave), static_cast<uint32_t>(mode), static_cast<uint32_t *>(delaySize),
-                           currPrm.dataType, errorCtx);
+                           scratchSize, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

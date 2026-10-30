@@ -3,12 +3,10 @@
 // SPDX-License-Identifier: LicenseRef-TI-TFL
 
 #include "TISP_AUDIOLIB_common.hpp"
-#include "TISP_virtualOp.hpp"
 #include "common/AUDIOLIB_bufParams.h"
-#include <AUDIOLIB/TISP_AUDIOLIB_types.hpp>
 #include <TISP_balanceFader.hpp>
+#include <cstdio>
 #include <cstring>
-#include <string>
 
 namespace TISP {
 namespace AUDIOLIB {
@@ -16,193 +14,169 @@ namespace AUDIOLIB {
 //! [TISP::BalanceFader constructor]
 
 template <typename T>
-BalanceFader<T>::BalanceFader(T         *pX,
-                              T         *pG,
-                              T         *pY,
-                              size_t     widthIn,
-                              size_t     heightIn,
-                              size_t     gWidthIn,
-                              size_t     inPitchBytes,
-                              size_t     outPitchBytes,
-                              size_t     isInterleave,
-                              float      balance,
-                              float      fade,
-                              int32_t   *channelConfig,
-                              float      lfeBalanceGainFactor,
-                              float      lfeFaderGainFactor,
-                              float      sideGainFactor,
-                              int32_t    lfeBalanceMode,
-                              int32_t    lfeFaderMode,
-                              ErrorCtxt &errorCtx)
-    : _pX(pX), _pG(pG), _pY(pY), _bypassMode(0U)
+BalanceFader<T>::BalanceFader(const TISP_BufDescList             *pInputs,
+                              const TISP_BufDescList             *pOutputs,
+                              const TISP_BufDescList             *pStates,
+                              const BalanceFaderTunableParams<T> *pDefaultTunableParams,
+                              const char                         *nodeName,
+                              uint32_t                            nodeId,
+                              ErrorCtxt                          &errorCtx)
+    : _in{}, _out{}, _gains(nullptr), _numChannels(0U), _params{}
 {
+   _nodeInfo.setName(nodeName);
+   _nodeInfo.nodeId = nodeId;
 
-   // Initialize _params with the node parameters
-   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
-                   "widthIn=%zu,heightIn=%zu,gWidthIn=%zu,isInterleave=%zu", widthIn, heightIn, gWidthIn, isInterleave);
-
-   // Input validation checks
-   if (pX == nullptr) {
-      errorCtx.setNullPointerError("BalanceFader constructor", "input pointer pX is null");
+   if (pDefaultTunableParams == nullptr) {
+      errorCtx.setNullPointerError("BalanceFader constructor", "default params pointer pDefaultTunableParams is null");
    }
-   else if (pG == nullptr) {
-      errorCtx.setNullPointerError("BalanceFader constructor", "gain pointer pG is null");
-   }
-   else if (pY == nullptr) {
-      errorCtx.setNullPointerError("BalanceFader constructor", "output pointer pY is null");
-   }
-   else if (widthIn == 0) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor", "width must be greater than zero");
-   }
-   else if (heightIn == 0) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor", "height must be greater than zero");
-   }
-   else if (gWidthIn == 0) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor", "width of gain matrix must be greater than zero");
-   }
-   else if (isInterleave > 1) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor", "interleave must be either zero or one");
-   }
-   else if (balance < -1 || balance > 1) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor", "left/right control must be between -1 and 1");
-   }
-   else if (fade < -1 || fade > 1) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor", "front/rear control must be between -1 and 1");
-   }
-   else if (channelConfig == nullptr) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor", "channel config pointer is null");
-   }
-   else if (lfeBalanceGainFactor < 0 || lfeBalanceGainFactor > 1) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor",
-                                        "LFE balance gain factor must be between zero and one");
-   }
-   else if (lfeFaderGainFactor < 0 || lfeFaderGainFactor > 1) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor",
-                                        "LFE fader gain factor must be between zero and one");
-   }
-   else if (sideGainFactor < 0 || sideGainFactor > 1) {
-      errorCtx.setInvalidParameterError("BalanceFader constructor", "Side gain factor must be between zero and one");
-   }
-   else if (lfeBalanceMode < 0 || lfeBalanceMode > 2) {
-      errorCtx.setInvalidParameterError(
-          "BalanceFader constructor",
-          "mode for LFE channel response to balance control must be either zero or one or two");
-   }
-   else if (lfeFaderMode < 0 || lfeFaderMode > 3) {
-      errorCtx.setInvalidParameterError(
-          "BalanceFader constructor", "mode for LFE channel response to fader control must be between zero and three");
+   else if (pDefaultTunableParams->pChannelConfig == nullptr) {
+      errorCtx.setNullPointerError("BalanceFader constructor",
+                                   "channel config pointer pDefaultTunableParams->pChannelConfig is null");
    }
    else {
-      _widthIn              = widthIn;
-      _heightIn             = heightIn;
-      _gWidthIn             = gWidthIn;
-      _inPitchBytes         = inPitchBytes;
-      _outPitchBytes        = outPitchBytes;
-      _isInterleave         = isInterleave;
-      _balance              = balance;
-      _fade                 = fade;
-      _channelConfig        = channelConfig;
-      _lfeBalanceGainFactor = lfeBalanceGainFactor;
-      _lfeFaderGainFactor   = lfeFaderGainFactor;
-      _sideGainFactor       = sideGainFactor;
-      _lfeBalanceMode       = lfeBalanceMode;
-      _lfeFaderMode         = lfeFaderMode;
+      /* Nothing to do here */
+   }
 
-      // Initialize bufParams with node input and output buffer parameters
-      _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isInputInterleave = isInterleave;
-      _nodeInfo.bufParams.widthIn[0]        = widthIn;
-      _nodeInfo.bufParams.heightIn[0]       = heightIn;
-      _nodeInfo.bufParams.inPitchBytes[0]   = inPitchBytes;
+   // Buffer checks (skipped once an error is set): one input, one output, and one gain state buffer
+   if (TISP_checkBufDescList<T>(pInputs, 1U, 1U, "BalanceFader constructor (inputs)", errorCtx) &&
+       TISP_checkBufDescList<T>(pOutputs, 1U, 1U, "BalanceFader constructor (outputs)", errorCtx) &&
+       TISP_checkBufDescList<T>(pStates, 1U, 1U, "BalanceFader constructor (states)", errorCtx)) {
+      _in  = pInputs->pDesc[0];
+      _out = pOutputs->pDesc[0];
 
-      _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isOutputInterleave = isInterleave;
-      _nodeInfo.bufParams.widthOut[0]        = widthIn;
-      _nodeInfo.bufParams.heightOut[0]       = heightIn;
-      _nodeInfo.bufParams.outPitchBytes[0]   = outPitchBytes;
-      /***********************************************************************/
-      /* Initialize data structures required by AUDIOLIB_Balancefader from AUDIOLIB */
-      /***********************************************************************/
+      if (_in.isInterleave != _out.isInterleave) {
+         errorCtx.setInvalidParameterError("BalanceFader constructor", "input and output interleave must match");
+      }
+      else {
+         (void) checkTunableParams(*pDefaultTunableParams, "BalanceFader constructor", errorCtx);
+      }
+   }
+
+   if (errorCtx.isSuccess()) {
+      const TISP_BufDesc2D &gainDesc = pStates->pDesc[0];
+
+      // One gain per channel: channels are columns when interleaved, rows otherwise
+      _numChannels = (_in.isInterleave == 1U) ? _in.width : _in.height;
+      _gains       = static_cast<T *>(gainDesc.pBuf);
+
+      // Initialize _params and bufParams with the node parameters
+      (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
+                      "width=%zu, height=%zu, numChannels=%zu, isInterleave=%u", _in.width, _in.height, _numChannels,
+                      static_cast<uint32_t>(_in.isInterleave));
+      TISP_setNodeBufParams(&_nodeInfo.bufParams, pInputs, pOutputs);
+
+      /****************************************************************************/
+      /* Initialize data structures required by AUDIOLIB_balanceFader from AUDIOLIB */
+      /****************************************************************************/
 
       AUDIOLIB_balanceFader_InitArgs kerInitArgs;
       kerInitArgs.funcStyle    = AUDIOLIB_FUNCTION_OPTIMIZED;
-      kerInitArgs.isInterleave = isInterleave;
+      kerInitArgs.isInterleave = _in.isInterleave;
 
-      _setArgsBuf = make_unique_handle<char>(sizeof(AUDIOLIB_balanceFader_SetArgs));
-      AUDIOLIB_balanceFader_SetArgs *pSetArgs = nullptr;
-      if (!_setArgsBuf) {
-         errorCtx.setMemoryError("BalanceFader constructor", "failed to allocate _setArgsBuf");
+      _handle = make_unique_handle<char>(AUDIOLIB_balanceFader_getHandleSize(&kerInitArgs));
+
+      if (!_handle) {
+         errorCtx.setMemoryError("BalanceFader constructor", "failed to allocate balanceFader handle");
       }
       else {
-         pSetArgs                       = reinterpret_cast<AUDIOLIB_balanceFader_SetArgs *>(_setArgsBuf.get());
-         pSetArgs->balance              = balance;
-         pSetArgs->fade                 = fade;
-         pSetArgs->channelConfig        = channelConfig;
-         pSetArgs->lfeBalanceGainFactor = lfeBalanceGainFactor;
-         pSetArgs->lfeFaderGainFactor   = lfeFaderGainFactor;
-         pSetArgs->sideGainFactor       = sideGainFactor;
-         pSetArgs->lfeBalanceMode       = lfeBalanceMode;
-         pSetArgs->lfeFaderMode         = lfeFaderMode;
-      }
+         AUDIOLIB_bufParams2D_t bufParamsIn  = TISP_toAudiolibBufParams2D<T>(_in);
+         AUDIOLIB_bufParams2D_t bufParamsOut = TISP_toAudiolibBufParams2D<T>(_out);
+         AUDIOLIB_bufParams1D_t bufParamsGain;
 
-      if (errorCtx.isSuccess()) {
-         _handle = make_unique_handle<char>(AUDIOLIB_balanceFader_getHandleSize(&kerInitArgs));
+         bufParamsGain.data_type = static_cast<uint32_t>(AUDIOLIB_element_dType<T>::value);
+         bufParamsGain.dim_x     = static_cast<uint32_t>(gainDesc.width);
 
-         if (!_handle) {
-            errorCtx.setMemoryError("BalanceFader constructor", "failed to allocate balanceFader handle");
-         }
+         /******************************************************************************/
+         /* Validate parameters before init                                            */
+         /******************************************************************************/
 
-         if (errorCtx.isSuccess()) {
-            AUDIOLIB_bufParams2D_t bufParamsIn;
-            AUDIOLIB_bufParams2D_t bufParamsOut;
-            AUDIOLIB_bufParams1D_t bufParamsGain;
+         AUDIOLIB_STATUS status = AUDIOLIB_balanceFader_init_checkParams(_handle.get(), &bufParamsIn, &bufParamsGain,
+                                                                         &bufParamsOut, &kerInitArgs);
 
-            bufParamsIn.data_type = AUDIOLIB_element_dType<T>::value;
-            bufParamsIn.dim_x     = static_cast<uint32_t>(widthIn);
-            bufParamsIn.dim_y     = static_cast<uint32_t>(heightIn);
-            bufParamsIn.stride_y  = static_cast<int32_t>(inPitchBytes);
+         /******************************************************************************/
+         /* Call init function from AUDIOLIB for balanceFader and compute the gains    */
+         /******************************************************************************/
 
-            bufParamsOut.data_type = AUDIOLIB_element_dType<T>::value;
-            bufParamsOut.dim_x     = static_cast<uint32_t>(widthIn);
-            bufParamsOut.dim_y     = static_cast<uint32_t>(heightIn);
-            bufParamsOut.stride_y  = static_cast<int32_t>(outPitchBytes);
-
-            bufParamsGain.data_type = AUDIOLIB_element_dType<T>::value;
-            bufParamsGain.dim_x     = static_cast<uint32_t>(gWidthIn);
-            /******************************************************************************/
-            /* Validate parameters before init                                            */
-            /******************************************************************************/
-
-            AUDIOLIB_STATUS status = AUDIOLIB_balanceFader_init_checkParams(_handle.get(), &bufParamsIn, &bufParamsGain,
-                                                                            &bufParamsOut, &kerInitArgs);
-            errorCtx.remapXLIBError(status, "AUDIOLIB_balanceFader_init_checkParams");
-
-            /******************************************************************************/
-            /* Call init function from AUDIOLIB to for balanceFader to set SE/SA params             */
-            /******************************************************************************/
-
-            if (errorCtx.isSuccess()) {
-               status =
-                   AUDIOLIB_balanceFader_init(_handle.get(), &bufParamsIn, &bufParamsGain, &bufParamsOut, &kerInitArgs);
-               errorCtx.remapXLIBError(status, "AUDIOLIB_balanceFader_init");
-               if (errorCtx.isSuccess()) {
-                  status = AUDIOLIB_balanceFader_set(_handle.get(), _pG, pSetArgs);
-                  errorCtx.remapXLIBError(status, "AUDIOLIB_balanceFader_set");
-               }
+         if (errorCtx.remapXLIBError(status, "AUDIOLIB_balanceFader_init_checkParams")) {
+            status = AUDIOLIB_balanceFader_init(_handle.get(), &bufParamsIn, &bufParamsGain, &bufParamsOut,
+                                                &kerInitArgs);
+            if (errorCtx.remapXLIBError(status, "AUDIOLIB_balanceFader_init")) {
+               applyTunableParams(*pDefaultTunableParams, errorCtx);
             }
          }
       }
    }
 }
 
+template <typename T>
+bool BalanceFader<T>::checkTunableParams(const BalanceFaderTunableParams<T> &params,
+                                         const char                         *funcName,
+                                         ErrorCtxt                          &errorCtx) noexcept
+{
+   if (params.pChannelConfig == nullptr) {
+      errorCtx.setNullPointerError(funcName, "channel config pointer pChannelConfig is null");
+   }
+   else if ((params.balance < -1.0F) || (params.balance > 1.0F)) {
+      errorCtx.setInvalidParameterError(funcName, "left/right control must be between -1 and 1");
+   }
+   else if ((params.fade < -1.0F) || (params.fade > 1.0F)) {
+      errorCtx.setInvalidParameterError(funcName, "front/rear control must be between -1 and 1");
+   }
+   else if ((params.lfeBalanceGainFactor < 0.0F) || (params.lfeBalanceGainFactor > 1.0F)) {
+      errorCtx.setInvalidParameterError(funcName, "LFE balance gain factor must be between zero and one");
+   }
+   else if ((params.lfeFaderGainFactor < 0.0F) || (params.lfeFaderGainFactor > 1.0F)) {
+      errorCtx.setInvalidParameterError(funcName, "LFE fader gain factor must be between zero and one");
+   }
+   else if ((params.sideGainFactor < 0.0F) || (params.sideGainFactor > 1.0F)) {
+      errorCtx.setInvalidParameterError(funcName, "Side gain factor must be between zero and one");
+   }
+   else if ((params.lfeBalanceMode < 0) || (params.lfeBalanceMode > 2)) {
+      errorCtx.setInvalidParameterError(funcName,
+                                        "mode for LFE channel response to balance control must be between zero and two");
+   }
+   else if ((params.lfeFaderMode < 0) || (params.lfeFaderMode > 3)) {
+      errorCtx.setInvalidParameterError(funcName,
+                                        "mode for LFE channel response to fader control must be between zero and three");
+   }
+   else if (params.bypassMode > 1U) {
+      errorCtx.setInvalidParameterError(funcName, "bypass mode must be either zero or one");
+   }
+   else {
+      /* Nothing to do here */
+   }
+
+   return errorCtx.isSuccess();
+}
+
+template <typename T>
+void BalanceFader<T>::applyTunableParams(const BalanceFaderTunableParams<T> &params, ErrorCtxt &errorCtx) noexcept
+{
+   AUDIOLIB_balanceFader_SetArgs setArgs;
+   setArgs.balance              = params.balance;
+   setArgs.fade                 = params.fade;
+   setArgs.channelConfig        = params.pChannelConfig;
+   setArgs.lfeBalanceGainFactor = params.lfeBalanceGainFactor;
+   setArgs.lfeFaderGainFactor   = params.lfeFaderGainFactor;
+   setArgs.sideGainFactor       = params.sideGainFactor;
+   setArgs.lfeBalanceMode       = params.lfeBalanceMode;
+   setArgs.lfeFaderMode         = params.lfeFaderMode;
+
+   AUDIOLIB_STATUS status = AUDIOLIB_balanceFader_set(_handle.get(), _gains, &setArgs);
+
+   if (errorCtx.remapXLIBError(status, "AUDIOLIB_balanceFader_set")) {
+      _params = params;
+   }
+}
+
 template <typename T> void *BalanceFader<T>::getInputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pX) : nullptr;
+   return (index == 0) ? _in.pBuf : nullptr;
 }
 
 template <typename T> void *BalanceFader<T>::getOutputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pY) : nullptr;
+   return (index == 0) ? _out.pBuf : nullptr;
 }
 
 template <typename T> size_t BalanceFader<T>::getNumInputs() const noexcept { return 1; }
@@ -212,33 +186,28 @@ template <typename T> size_t BalanceFader<T>::getNumOutputs() const noexcept { r
 //! [TISP::Balancefader setAddr]
 template <typename T> void BalanceFader<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) noexcept
 {
-   if (mode == kAddrModeIn) {
-      _pX = static_cast<T *>(addr.src[0]);
+   if ((mode == kAddrModeIn) || (mode == kAddrModeInOut)) {
+      _in.pBuf = addr.src[0];
    }
-   if (mode == kAddrModeOut) {
-      _pY = static_cast<T *>(addr.dst[0]);
-   }
-
-   if (mode == kAddrModeInOut) {
-      _pX = static_cast<T *>(addr.src[0]);
-      _pY = static_cast<T *>(addr.dst[0]);
+   if ((mode == kAddrModeOut) || (mode == kAddrModeInOut)) {
+      _out.pBuf = addr.dst[0];
    }
 }
 
 template <typename T> void BalanceFader<T>::bypassCopy() noexcept
 {
-   const size_t rowBytes = _widthIn * sizeof(T);
+   const size_t rowBytes = _in.width * sizeof(T);
 
-   if (_pX != _pY) {
-      if ((_inPitchBytes == rowBytes) && (_outPitchBytes == rowBytes)) {
-         (void) memcpy(_pY, _pX, rowBytes * _heightIn);
+   if (_in.pBuf != _out.pBuf) {
+      if ((_in.pitchBytes == rowBytes) && (_out.pitchBytes == rowBytes)) {
+         (void) memcpy(_out.pBuf, _in.pBuf, rowBytes * _in.height);
       }
       else {
-         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
-         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
+         uint8_t       *pDst = static_cast<uint8_t *>(_out.pBuf);
+         const uint8_t *pSrc = static_cast<const uint8_t *>(_in.pBuf);
 
-         for (size_t i = 0; i < _heightIn; i++) {
-            (void) memcpy(&pDst[i * _outPitchBytes], &pSrc[i * _inPitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         for (size_t i = 0; i < _in.height; i++) {
+            (void) memcpy(&pDst[i * _out.pitchBytes], &pSrc[i * _in.pitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
          }
       }
    }
@@ -246,184 +215,130 @@ template <typename T> void BalanceFader<T>::bypassCopy() noexcept
 
 template <typename T> void BalanceFader<T>::exec() noexcept
 {
-   if (_bypassMode != 0U) {
+   if (_params.bypassMode != 0U) {
       bypassCopy();
    }
    else {
-      AUDIOLIB_balanceFader_exec(_handle.get(), _pX, _pG, _pY);
+      AUDIOLIB_balanceFader_exec(_handle.get(), _in.pBuf, _gains, _out.pBuf);
    }
-}
-
-template <typename T>
-BalanceFader<T>::BalanceFader(T          *pX,
-                              T          *pG,
-                              T          *pY,
-                              size_t      widthIn,
-                              size_t      heightIn,
-                              size_t      gWidthIn,
-                              size_t      inPitchBytes,
-                              size_t      outPitchBytes,
-                              size_t      isInterleave,
-                              float       balance,
-                              float       fade,
-                              int32_t    *channelConfig,
-                              float       lfeBalanceGainFactor,
-                              float       lfeFaderGainFactor,
-                              float       sideGainFactor,
-                              int32_t     lfeBalanceMode,
-                              int32_t     lfeFaderMode,
-                              const char *nodeName,
-                              uint32_t    nodeId,
-                              ErrorCtxt  &errorCtx)
-    : BalanceFader(pX,
-                   pG,
-                   pY,
-                   widthIn,
-                   heightIn,
-                   gWidthIn,
-                   inPitchBytes,
-                   outPitchBytes,
-                   isInterleave,
-                   balance,
-                   fade,
-                   channelConfig,
-                   lfeBalanceGainFactor,
-                   lfeFaderGainFactor,
-                   sideGainFactor,
-                   lfeBalanceMode,
-                   lfeFaderMode,
-                   errorCtx)
-{
-   _nodeInfo.setName(nodeName);
-   _nodeInfo.nodeId = nodeId;
 }
 
 template <typename T>
 bool BalanceFader<T>::setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt &errorCtx) noexcept
 {
+   BalanceFaderTunableParams<T> params = _params;
+
    if (value == nullptr) {
       errorCtx.setNullPointerError("BalanceFader::setParams", "value pointer is null");
    }
-   else if (!_setArgsBuf) {
-      errorCtx.setMemoryError("BalanceFader::setParams", "_setArgsBuf is null");
-   }
    else {
-      auto                         *pSetArgs = reinterpret_cast<AUDIOLIB_balanceFader_SetArgs *>(_setArgsBuf.get());
-      AUDIOLIB_balanceFader_SetArgs setArgs  = {0};
-      memcpy(&setArgs, pSetArgs, sizeof(AUDIOLIB_balanceFader_SetArgs));
-
-      const char *paramName = "Unknown";
-
-      /* Bypass is node local state and is not forwarded to the kernel. */
-      bool applyToKernel = true;
-
       switch (static_cast<BalanceFaderParamId>(paramId)) {
       case BalanceFaderParamId::kBalance: {
-         if (size < sizeof(setArgs.balance)) {
+         if (size < sizeof(params.balance)) {
             errorCtx.setInvalidParameterError("BalanceFader::setParams",
                                               "Value size smaller than expected for kBalance");
          }
          else {
-            memcpy(&setArgs.balance, value, sizeof(setArgs.balance));
-            paramName = "kBalance";
+            (void) memcpy(&params.balance, value, sizeof(params.balance));
          }
          break;
       }
       case BalanceFaderParamId::kFade: {
-         if (size < sizeof(setArgs.fade)) {
+         if (size < sizeof(params.fade)) {
             errorCtx.setInvalidParameterError("BalanceFader::setParams", "Value size smaller than expected for kFade");
          }
          else {
-            memcpy(&setArgs.fade, value, sizeof(setArgs.fade));
-            paramName = "kFade";
+            (void) memcpy(&params.fade, value, sizeof(params.fade));
          }
          break;
       }
       case BalanceFaderParamId::kLfeBalanceGainFactor: {
-         if (size < sizeof(setArgs.lfeBalanceGainFactor)) {
+         if (size < sizeof(params.lfeBalanceGainFactor)) {
             errorCtx.setInvalidParameterError("BalanceFader::setParams",
                                               "Value size smaller than expected for kLfeBalanceGainFactor");
          }
          else {
-            memcpy(&setArgs.lfeBalanceGainFactor, value, sizeof(setArgs.lfeBalanceGainFactor));
-            paramName = "kLfeBalanceGainFactor";
+            (void) memcpy(&params.lfeBalanceGainFactor, value, sizeof(params.lfeBalanceGainFactor));
          }
          break;
       }
       case BalanceFaderParamId::kLfeFaderGainFactor: {
-         if (size < sizeof(setArgs.lfeFaderGainFactor)) {
+         if (size < sizeof(params.lfeFaderGainFactor)) {
             errorCtx.setInvalidParameterError("BalanceFader::setParams",
                                               "Value size smaller than expected for kLfeFaderGainFactor");
          }
          else {
-            memcpy(&setArgs.lfeFaderGainFactor, value, sizeof(setArgs.lfeFaderGainFactor));
-            paramName = "kLfeFaderGainFactor";
+            (void) memcpy(&params.lfeFaderGainFactor, value, sizeof(params.lfeFaderGainFactor));
          }
          break;
       }
       case BalanceFaderParamId::kSideGainFactor: {
-         if (size < sizeof(setArgs.sideGainFactor)) {
+         if (size < sizeof(params.sideGainFactor)) {
             errorCtx.setInvalidParameterError("BalanceFader::setParams",
                                               "Value size smaller than expected for kSideGainFactor");
          }
          else {
-            memcpy(&setArgs.sideGainFactor, value, sizeof(setArgs.sideGainFactor));
-            paramName = "kSideGainFactor";
+            (void) memcpy(&params.sideGainFactor, value, sizeof(params.sideGainFactor));
          }
          break;
       }
       case BalanceFaderParamId::kLfeBalanceMode: {
-         if (size < sizeof(setArgs.lfeBalanceMode)) {
+         if (size < sizeof(params.lfeBalanceMode)) {
             errorCtx.setInvalidParameterError("BalanceFader::setParams",
                                               "Value size smaller than expected for kLfeBalanceMode");
          }
          else {
-            memcpy(&setArgs.lfeBalanceMode, value, sizeof(setArgs.lfeBalanceMode));
-            paramName = "kLfeBalanceMode";
+            (void) memcpy(&params.lfeBalanceMode, value, sizeof(params.lfeBalanceMode));
          }
          break;
       }
       case BalanceFaderParamId::kLfeFaderMode: {
-         if (size < sizeof(setArgs.lfeFaderMode)) {
+         if (size < sizeof(params.lfeFaderMode)) {
             errorCtx.setInvalidParameterError("BalanceFader::setParams",
                                               "Value size smaller than expected for kLfeFaderMode");
          }
          else {
-            memcpy(&setArgs.lfeFaderMode, value, sizeof(setArgs.lfeFaderMode));
-            paramName = "kLfeFaderMode";
+            (void) memcpy(&params.lfeFaderMode, value, sizeof(params.lfeFaderMode));
          }
          break;
       }
       case BalanceFaderParamId::kChannelConfig: {
-         size_t expectedSize = (_gWidthIn * sizeof(int32_t));
-         if (_channelConfig == nullptr) {
-            errorCtx.setNullPointerError("BalanceFader::setParams", "_channelConfig is null");
-         }
-         else if (size < expectedSize) {
+         size_t expectedSize = _numChannels * sizeof(int32_t);
+         if (size < expectedSize) {
             errorCtx.setInvalidParameterError("BalanceFader::setParams",
                                               "Value size smaller than expected for kChannelConfig");
          }
+         else if (value != _params.pChannelConfig) {
+            (void) memcpy(_params.pChannelConfig, value, expectedSize);
+         }
          else {
-            memcpy(_channelConfig, value, expectedSize);
-            setArgs.channelConfig = _channelConfig;
-            paramName             = "kChannelConfig";
+            /* Nothing to do here */
          }
          break;
       }
       case BalanceFaderParamId::kBypass: {
-         applyToKernel = false;
-         if (size < sizeof(uint32_t)) {
+         if (size < sizeof(params.bypassMode)) {
             errorCtx.setInvalidParameterError("BalanceFader::setParams", "Value size smaller than expected for kBypass");
          }
          else {
-            uint32_t bypassMode = 0U;
-            memcpy(&bypassMode, value, sizeof(uint32_t));
-            if (bypassMode > 1U) {
-               errorCtx.setInvalidParameterError("BalanceFader::setParams", "bypass mode must be either zero or one");
+            (void) memcpy(&params.bypassMode, value, sizeof(params.bypassMode));
+         }
+         break;
+      }
+      case BalanceFaderParamId::kAll: {
+         const BalanceFaderTunableParams<T> *pParams = static_cast<const BalanceFaderTunableParams<T> *>(value);
+         if (size < sizeof(BalanceFaderTunableParams<T>)) {
+            errorCtx.setInvalidParameterError("BalanceFader::setParams", "Value size smaller than expected for kAll");
+         }
+         else if (checkTunableParams(*pParams, "BalanceFader::setParams", errorCtx)) {
+            if (pParams->pChannelConfig != _params.pChannelConfig) {
+               (void) memcpy(_params.pChannelConfig, pParams->pChannelConfig, _numChannels * sizeof(int32_t));
             }
-            else {
-               _bypassMode = bypassMode;
-            }
+            params                = *pParams;
+            params.pChannelConfig = _params.pChannelConfig;
+         }
+         else {
+            /* Nothing to do here */
          }
          break;
       }
@@ -431,14 +346,14 @@ bool BalanceFader<T>::setParams(uint16_t paramId, void *value, size_t size, Erro
          errorCtx.setInvalidParameterError("BalanceFader::setParams", "Invalid paramId");
          break;
       }
+   }
 
-      if (errorCtx.isSuccess() && applyToKernel) {
-         AUDIOLIB_STATUS status = AUDIOLIB_balanceFader_set(_handle.get(), _pG, &setArgs);
-         std::string     msg    = std::string("AUDIOLIB_balanceFader_set with ") + paramName;
-         (void) errorCtx.remapXLIBError(status, msg.c_str());
-         if (errorCtx.isSuccess()) {
-            memcpy(pSetArgs, &setArgs, sizeof(AUDIOLIB_balanceFader_SetArgs));
-         }
+   if (errorCtx.isSuccess() && checkTunableParams(params, "BalanceFader::setParams", errorCtx)) {
+      if (static_cast<BalanceFaderParamId>(paramId) == BalanceFaderParamId::kBypass) {
+         _params.bypassMode = params.bypassMode;
+      }
+      else {
+         applyTunableParams(params, errorCtx);
       }
    }
 
@@ -448,124 +363,87 @@ bool BalanceFader<T>::setParams(uint16_t paramId, void *value, size_t size, Erro
 template <typename T>
 bool BalanceFader<T>::getParams(uint16_t paramId, void *value, size_t *size, ErrorCtxt &errorCtx) noexcept
 {
-   if (value == nullptr) {
-      errorCtx.setNullPointerError("BalanceFader::getParams", "value pointer is null");
-   }
-   else if (size == nullptr) {
+   size_t      expectedSize = 0U;
+   const void *pSrc         = nullptr;
+
+   if (size == nullptr) {
       errorCtx.setNullPointerError("BalanceFader::getParams", "size pointer is null");
    }
-   else if (!_setArgsBuf) {
-      errorCtx.setMemoryError("BalanceFader::getParams", "_setArgsBuf is null");
-   }
    else {
-      auto *pSetArgs = reinterpret_cast<AUDIOLIB_balanceFader_SetArgs *>(_setArgsBuf.get());
-
       switch (static_cast<BalanceFaderParamId>(paramId)) {
-      case BalanceFaderParamId::kBalance: {
-         if (*size < sizeof(pSetArgs->balance)) {
-            errorCtx.setInvalidParameterError("BalanceFader::getParams",
-                                              "Value size smaller than expected for kBalance");
-         }
-         else {
-            memcpy(value, &pSetArgs->balance, sizeof(pSetArgs->balance));
-         }
-         *size = sizeof(pSetArgs->balance);
+      case BalanceFaderParamId::kBalance:
+         expectedSize = sizeof(_params.balance);
+         pSrc         = &_params.balance;
          break;
-      }
-      case BalanceFaderParamId::kFade: {
-         if (*size < sizeof(pSetArgs->fade)) {
-            errorCtx.setInvalidParameterError("BalanceFader::getParams", "Value size smaller than expected for kFade");
-         }
-         else {
-            memcpy(value, &pSetArgs->fade, sizeof(pSetArgs->fade));
-         }
-         *size = sizeof(pSetArgs->fade);
+      case BalanceFaderParamId::kFade:
+         expectedSize = sizeof(_params.fade);
+         pSrc         = &_params.fade;
          break;
-      }
-      case BalanceFaderParamId::kLfeBalanceGainFactor: {
-         if (*size < sizeof(pSetArgs->lfeBalanceGainFactor)) {
-            errorCtx.setInvalidParameterError("BalanceFader::getParams",
-                                              "Value size smaller than expected for kLfeBalanceGainFactor");
-         }
-         else {
-            memcpy(value, &pSetArgs->lfeBalanceGainFactor, sizeof(pSetArgs->lfeBalanceGainFactor));
-         }
-         *size = sizeof(pSetArgs->lfeBalanceGainFactor);
+      case BalanceFaderParamId::kLfeBalanceGainFactor:
+         expectedSize = sizeof(_params.lfeBalanceGainFactor);
+         pSrc         = &_params.lfeBalanceGainFactor;
          break;
-      }
-      case BalanceFaderParamId::kLfeFaderGainFactor: {
-         if (*size < sizeof(pSetArgs->lfeFaderGainFactor)) {
-            errorCtx.setInvalidParameterError("BalanceFader::getParams",
-                                              "Value size smaller than expected for kLfeFaderGainFactor");
-         }
-         else {
-            memcpy(value, &pSetArgs->lfeFaderGainFactor, sizeof(pSetArgs->lfeFaderGainFactor));
-         }
-         *size = sizeof(pSetArgs->lfeFaderGainFactor);
+      case BalanceFaderParamId::kLfeFaderGainFactor:
+         expectedSize = sizeof(_params.lfeFaderGainFactor);
+         pSrc         = &_params.lfeFaderGainFactor;
          break;
-      }
-      case BalanceFaderParamId::kSideGainFactor: {
-         if (*size < sizeof(pSetArgs->sideGainFactor)) {
-            errorCtx.setInvalidParameterError("BalanceFader::getParams",
-                                              "Value size smaller than expected for kSideGainFactor");
-         }
-         else {
-            memcpy(value, &pSetArgs->sideGainFactor, sizeof(pSetArgs->sideGainFactor));
-         }
-         *size = sizeof(pSetArgs->sideGainFactor);
+      case BalanceFaderParamId::kSideGainFactor:
+         expectedSize = sizeof(_params.sideGainFactor);
+         pSrc         = &_params.sideGainFactor;
          break;
-      }
-      case BalanceFaderParamId::kLfeBalanceMode: {
-         if (*size < sizeof(pSetArgs->lfeBalanceMode)) {
-            errorCtx.setInvalidParameterError("BalanceFader::getParams",
-                                              "Value size smaller than expected for kLfeBalanceMode");
-         }
-         else {
-            memcpy(value, &pSetArgs->lfeBalanceMode, sizeof(pSetArgs->lfeBalanceMode));
-         }
-         *size = sizeof(pSetArgs->lfeBalanceMode);
+      case BalanceFaderParamId::kLfeBalanceMode:
+         expectedSize = sizeof(_params.lfeBalanceMode);
+         pSrc         = &_params.lfeBalanceMode;
          break;
-      }
-      case BalanceFaderParamId::kLfeFaderMode: {
-         if (*size < sizeof(pSetArgs->lfeFaderMode)) {
-            errorCtx.setInvalidParameterError("BalanceFader::getParams",
-                                              "Value size smaller than expected for kLfeFaderMode");
-         }
-         else {
-            memcpy(value, &pSetArgs->lfeFaderMode, sizeof(pSetArgs->lfeFaderMode));
-         }
-         *size = sizeof(pSetArgs->lfeFaderMode);
+      case BalanceFaderParamId::kLfeFaderMode:
+         expectedSize = sizeof(_params.lfeFaderMode);
+         pSrc         = &_params.lfeFaderMode;
          break;
-      }
-      case BalanceFaderParamId::kChannelConfig: {
-         size_t expectedSize = (_gWidthIn * sizeof(int32_t));
-         if (_channelConfig == nullptr) {
-            errorCtx.setNullPointerError("BalanceFader::getParams", "_channelConfig is null");
-         }
-         else if (*size < expectedSize) {
-            errorCtx.setInvalidParameterError("BalanceFader::getParams",
-                                              "Value size smaller than expected for kChannelConfig");
-         }
-         else {
-            memcpy(value, _channelConfig, expectedSize);
-         }
-         *size = expectedSize;
+      case BalanceFaderParamId::kChannelConfig:
+         expectedSize = _numChannels * sizeof(int32_t);
+         pSrc         = _params.pChannelConfig;
          break;
-      }
-      case BalanceFaderParamId::kBypass: {
-         if (*size < sizeof(uint32_t)) {
-            errorCtx.setInvalidParameterError("BalanceFader::getParams", "Value size smaller than expected for kBypass");
-         }
-         else {
-            memcpy(value, &_bypassMode, sizeof(uint32_t));
-         }
-         *size = sizeof(uint32_t);
+      case BalanceFaderParamId::kBypass:
+         expectedSize = sizeof(_params.bypassMode);
+         pSrc         = &_params.bypassMode;
          break;
-      }
+      case BalanceFaderParamId::kAll:
+         expectedSize = sizeof(BalanceFaderTunableParams<T>);
+         break;
       default:
          errorCtx.setInvalidParameterError("BalanceFader::getParams", "Invalid paramId");
          break;
       }
+   }
+
+   if (errorCtx.isSuccess()) {
+      if (value == nullptr) {
+         errorCtx.setNullPointerError("BalanceFader::getParams", "value pointer is null");
+      }
+      else if (*size < expectedSize) {
+         errorCtx.setInvalidParameterError("BalanceFader::getParams", "Provided buffer size is too small");
+      }
+      else if (static_cast<BalanceFaderParamId>(paramId) == BalanceFaderParamId::kAll) {
+         BalanceFaderTunableParams<T> *pParams = static_cast<BalanceFaderTunableParams<T> *>(value);
+         if (pParams->pChannelConfig == nullptr) {
+            errorCtx.setNullPointerError("BalanceFader::getParams", "channel config pointer pChannelConfig is null");
+         }
+         else {
+            int32_t *pChannelConfig = pParams->pChannelConfig;
+            if (pChannelConfig != _params.pChannelConfig) {
+               (void) memcpy(pChannelConfig, _params.pChannelConfig, _numChannels * sizeof(int32_t));
+            }
+            *pParams                = _params;
+            pParams->pChannelConfig = pChannelConfig;
+         }
+      }
+      else if (value != pSrc) {
+         (void) memcpy(value, pSrc, expectedSize);
+      }
+      else {
+         /* Nothing to do here */
+      }
+      *size = expectedSize;
    }
 
    return errorCtx.isSuccess();

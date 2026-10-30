@@ -85,11 +85,44 @@ TISP::SuperNode::superNodeVec *TISP_balanceFader_createSuperNode(void           
 {
 
    if (dataType == AUDIOLIB_FLOAT32) {
-      auto k0 = std::make_unique<TISP::AUDIOLIB::BalanceFader<float>>(
-          (float *) pInputBlock0, (float *) pInputBlock1, (float *) pOutputBlock, blockWidth, blockHeight, gheightIn,
-          blockWidth * AUDIOLIB_sizeof(dataType), blockWidth * AUDIOLIB_sizeof(dataType), isInterleave, balance, fade,
-          channelConfig, lfeBalanceGainFactor, lfeFaderGainFactor, sideGainFactor, lfeBalanceMode, lfeFaderMode,
-          errorCtx);
+      const size_t  blockPitch = static_cast<size_t>(blockWidth) * AUDIOLIB_sizeof(dataType);
+      const uint8_t interleave = static_cast<uint8_t>(isInterleave);
+
+      const TISP::TISP_BufDesc2D inDesc   = {pInputBlock0,
+                                             TISP::Types::kFloat32,
+                                             static_cast<size_t>(blockWidth),
+                                             static_cast<size_t>(blockHeight),
+                                             blockPitch,
+                                             interleave};
+      const TISP::TISP_BufDesc2D outDesc  = {pOutputBlock,
+                                             TISP::Types::kFloat32,
+                                             static_cast<size_t>(blockWidth),
+                                             static_cast<size_t>(blockHeight),
+                                             blockPitch,
+                                             interleave};
+      const TISP::TISP_BufDesc2D gainDesc = {pInputBlock1,
+                                             TISP::Types::kFloat32,
+                                             static_cast<size_t>(gheightIn),
+                                             1U,
+                                             static_cast<size_t>(gheightIn) * sizeof(float),
+                                             0U};
+
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+      const TISP::TISP_BufDescList states  = {&gainDesc, 1U};
+
+      TISP::AUDIOLIB::BalanceFaderTunableParams<float> defaultParams;
+      defaultParams.balance              = balance;
+      defaultParams.fade                 = fade;
+      defaultParams.pChannelConfig       = channelConfig;
+      defaultParams.lfeBalanceGainFactor = lfeBalanceGainFactor;
+      defaultParams.lfeFaderGainFactor   = lfeFaderGainFactor;
+      defaultParams.sideGainFactor       = sideGainFactor;
+      defaultParams.lfeBalanceMode       = lfeBalanceMode;
+      defaultParams.lfeFaderMode         = lfeFaderMode;
+
+      auto k0 = std::make_unique<TISP::AUDIOLIB::BalanceFader<float>>(&inputs, &outputs, &states, &defaultParams,
+                                                                      "BalanceFader", 0, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating BalanceFader<float> node: %s\n", errorCtx.getMessage());

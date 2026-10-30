@@ -13,6 +13,7 @@
 #define TISP_FFT1DBATCHED_I32F_C32FC_O32FC_PBLOCK_SIZE  FFTLIB_FFT1DBATCHED_I32F_C32FC_O32FC_PBLOCK_SIZE
 
 namespace TISP {
+
 namespace FFTLIB {
 
 /**
@@ -22,30 +23,38 @@ namespace FFTLIB {
 /**@{*/
 
 /**
+ * @brief Construction-time (non-tunable) parameters of the @ref RFFT1dBatched node.
+ *
+ * @details Required; selects the output spectrum.
+ */
+struct RFFT1dBatchedConfig {
+   bool fullSpectrum = false; /*!< `true`: `numPoints` output bins, `false`: `numPoints / 2 + 1` bins. */
+};
+
+/**
  *  \class RFFT1dBatched
  *  @brief Provides node-level APIs for the FFTLIB_rfft1dBatched kernel from FFTLIB.
  *
  *  @tparam T        : Supports float
+ *
+ *  @details Computes the FFT of every real channel (row); each output row holds the complex bins as interleaved
+ *           real/imaginary pairs.
  */
 
 template <typename T> class RFFT1dBatched final : public VirtualOp {
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
 
-   T *_pX;    /*!< Pointer to input vector (2D matrix flattened to numChannels * numPoints) */
-   T *_pXFFT; /*!< Pointer to temp buffer (2D matrix flattened to numChannels * numPoints) */
+   NodeInfo             _nodeInfo;     /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D       _in;           /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D       _out;          /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   T                   *_scratch;      /*!< Scratch buffer holding the intermediate complex FFT */
+   std::shared_ptr<T>   _twiddles;     /*!< Shared FFT twiddle factors (via TwiddleLUT) */
+   std::shared_ptr<T>   _splitFactors; /*!< Shared split factors (via TwiddleLUT) */
+   FFTLIB_bufParams1D_t _bufParamsX;   /*!< FFTLIB bufParams of the kernel buffers */
+   uint32_t             _numPoints;    /*!< FFT size */
+   uint32_t             _numChannels;  /*!< Number of channels */
+   bool                 _fullSpectrum; /*!< `true`: full spectrum output, `false`: half spectrum */
 
-   std::shared_ptr<T> _pW;  /*!< Shared pointer to FFT coeff (via TwiddleLUT) */
-   std::shared_ptr<T> _pSf; /*!< Shared pointer to split factor coeff (via TwiddleLUT) */
-
-   T *_pY; /*!< Pointer to FFT output */
-
-   FFTLIB_bufParams1D_t _bufParamsX; /*!< FFTLIB bufParams structure of input data */
-
-   uint32_t _numPoints;   /*!< FFT size */
-   uint32_t _numChannels; /*!< number of channels */
-   bool     _outMode;     /*!< 0 == half spectrum, 1 = full spectrum */
-
-   TISP::HandlePtr<uint8_t> _pBlock; /*!< Pointer with address location of SE and SA params */
+   TISP::HandlePtr<uint8_t> _block; /*!< SE and SA params of the FFTLIB kernel */
 
  public:
    /**
@@ -85,39 +94,38 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
    /**
-    * @brief Creates a FFTLIB_rfft1dBatched node
-    * @param [in]  pX          : Pointer to input; initializes @ref _pX
-    * @param [in]  *pXFFT      : Pointer to FFT scratch buffer
-    * @param [out] pY          : Pointer to FFT output; initializes @ref _pY
-    * @param [in]  numPoints   : FFT size
-    * @param [in]  numChannels : Number of FFT channels
-    * @param [in]  outMode     : Output mode flag
-    * @param [in]  errorCtx    : Error context for reporting constructor errors
-    */
-
-   RFFT1dBatched(T *pX, T *pXFFT, T *pY, uint32_t numPoints, uint32_t numChannels, bool outMode, ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a RFFT1dBatched node with a name and ID
+    * @brief Creates an FFTLIB_fft1dBatched_i32f_c32fc_o32fc node.
     *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
+    * @details Validates the buffer descriptors and initializes the FFTLIB kernel. The FFT size is the input width
+    *          and the channel count is its height.
+    *
+    * @param [in] pInputs      : Input buffer descriptors; exactly one non-interleaved real buffer with packed
+    *                           rows. Its @c pBuf is rebound later by @ref setAddr.
+    * @param [in] pOutputs     : Output buffer descriptors; exactly one non-interleaved buffer with packed rows
+    *                           of 2 x (number of bins) values and the input's height.
+    * @param [in] pScratch     : Scratch buffer; required.
+    * @param [in] scratchBytes : Size of @c pScratch in bytes; at least input width x height elements.
+    * @param [in] pConfig : Construction-time parameters; required.
+    * @param [in] nodeName     : Name of the node
+    * @param [in] nodeId       : ID of the node
+    * @param [in] errorCtx     : Error context for reporting constructor errors
+    *
+    * @throw None
     */
-   RFFT1dBatched(T          *pX,
-                 T          *pXFFT,
-                 T          *pY,
-                 uint32_t    numPoints,
-                 uint32_t    numChannels,
-                 bool        outMode,
-                 const char *nodeName,
-                 uint32_t    nodeId,
-                 ErrorCtxt  &errorCtx);
+   RFFT1dBatched(const TISP_BufDescList         *pInputs,
+                 const TISP_BufDescList         *pOutputs,
+                 void                           *pScratch,
+                 size_t                          scratchBytes,
+                 const RFFT1dBatchedConfig *pConfig,
+                 const char                     *nodeName,
+                 uint32_t                        nodeId,
+                 ErrorCtxt                      &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input array)
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -128,7 +136,7 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output array)
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -138,14 +146,14 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1: input buffer)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1: output buffer)
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -154,8 +162,8 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
     *
     * This function sets the source and destination addresses for the operation.
     *
-    * @param[in] addrs Structure containing source and destination addresses
-    * @param[in] mode Mode of address setting (input, output, or both)
+    * @param [in] addrs  : Structure containing source and destination addresses
+    * @param [in] mode   : Mode of address setting (input, output, or both)
     */
    void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
 
@@ -170,14 +178,13 @@ template <typename T> class RFFT1dBatched final : public VirtualOp {
    /**
     * @brief Destructor
     *
-    * This destructor is set to default
-    *
+    * This destructor is set to default.
     */
-
    ~RFFT1dBatched() = default;
 };
 
 /** @} */
 
 } // namespace FFTLIB
+
 } // namespace TISP

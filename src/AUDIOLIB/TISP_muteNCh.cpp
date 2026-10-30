@@ -16,130 +16,106 @@ namespace AUDIOLIB {
 //! [TISP::Mutench constructor]
 
 template <typename T>
-Mutench<T>::Mutench(T         *pX,
-                    T         *pY,
-                    size_t     width,
-                    size_t     height,
-                    size_t     inChannels,
-                    size_t     inPitchBytes,
-                    size_t     outPitchBytes,
-                    size_t     isInterleaved,
-                    int32_t    samplingRate,
-                    uint32_t  *isMute,
-                    float      fadeTime,
-                    uint32_t   fadeType,
-                    ErrorCtxt &errorCtx)
-    : _pX(pX), _pY(pY), _bypassMode(0U)
+Mutench<T>::Mutench(const TISP_BufDescList        *pInputs,
+                    const TISP_BufDescList        *pOutputs,
+                    const MutenchConfig      *pConfig,
+                    const MutenchTunableParams<T> *pDefaultTunableParams,
+                    const char                    *nodeName,
+                    uint32_t                       nodeId,
+                    ErrorCtxt                     &errorCtx)
+    : _in{}, _out{}, _inChannels(0U), _samplingRate(0), _bypassMode(0U)
 {
+   _nodeInfo.setName(nodeName);
+   _nodeInfo.nodeId = nodeId;
 
-   // Initialize _params with the node parameters
-   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(), "numChannels=%zu,samplingRate=%d", inChannels,
-                   samplingRate);
-
-   // Input validation checks
-   if (pX == nullptr) {
-      errorCtx.setNullPointerError("Mutench constructor", "input pointer pX is null");
+   if (pConfig == nullptr) {
+      errorCtx.setNullPointerError("Mutench constructor", "build params pointer pConfig is null");
    }
-   else if (pY == nullptr) {
-      errorCtx.setNullPointerError("Mutench constructor", "output pointer pY is null");
+   else if (pDefaultTunableParams == nullptr) {
+      errorCtx.setNullPointerError("Mutench constructor", "default params pointer pDefaultTunableParams is null");
    }
-   else if (width == 0) {
-      errorCtx.setInvalidParameterError("Mutench constructor", "width must be greater than zero");
-   }
-   else if (height == 0) {
-      errorCtx.setInvalidParameterError("Mutench constructor", "height must be greater than zero");
-   }
-   else if (inChannels == 0) {
-      errorCtx.setInvalidParameterError("Mutench constructor", "inChannels must be greater than zero");
-   }
-   else if (isInterleaved > 1) {
-      errorCtx.setInvalidParameterError("Mutench constructor", "isInterleaved must be either zero or one");
-   }
-   else if (samplingRate == 0) {
-      errorCtx.setInvalidParameterError("Mutench constructor", "samplingRate must be greater than zero");
-   }
-   else if (isMute == nullptr) {
-      errorCtx.setNullPointerError("Mutench constructor", "isMute pointer is null");
+   else if (pDefaultTunableParams->pIsMute == nullptr) {
+      errorCtx.setNullPointerError("Mutench constructor", "mute pointer pDefaultTunableParams->pIsMute is null");
    }
    else {
-      _width         = width;
-      _height        = height;
-      _inChannels    = inChannels;
-      _inPitchBytes  = inPitchBytes;
-      _outPitchBytes = outPitchBytes;
-      _isInterleaved = isInterleaved;
-      _samplingRate  = samplingRate;
+      /* Nothing to do here */
+   }
 
-      // Initialize bufParams with node input and output buffer parameters
-      _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isInputInterleave = isInterleaved;
-      _nodeInfo.bufParams.widthIn[0]        = width;
-      _nodeInfo.bufParams.heightIn[0]       = height;
-      _nodeInfo.bufParams.inPitchBytes[0]   = inPitchBytes;
+   // Buffer checks (skipped once an error is set): one input, one output
+   if (TISP_checkBufDescList<T>(pInputs, 1U, 1U, "Mutench constructor (inputs)", errorCtx) &&
+       TISP_checkBufDescList<T>(pOutputs, 1U, 1U, "Mutench constructor (outputs)", errorCtx)) {
+      _in  = pInputs->pDesc[0];
+      _out = pOutputs->pDesc[0];
 
-      _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isOutputInterleave = isInterleaved;
-      _nodeInfo.bufParams.widthOut[0]        = width;
-      _nodeInfo.bufParams.heightOut[0]       = height;
-      _nodeInfo.bufParams.outPitchBytes[0]   = outPitchBytes;
+      if (_in.isInterleave != _out.isInterleave) {
+         errorCtx.setInvalidParameterError("Mutench constructor", "input and output interleave must match");
+      }
+      else if (pConfig->samplingRate <= 0) {
+         errorCtx.setInvalidParameterError("Mutench constructor", "samplingRate must be greater than zero");
+      }
+      else if (pDefaultTunableParams->bypassMode > 1U) {
+         errorCtx.setInvalidParameterError("Mutench constructor", "bypass mode must be either zero or one");
+      }
+      else {
+         /* Nothing to do here */
+      }
+   }
+
+   if (errorCtx.isSuccess()) {
+      // One mute flag per channel: channels are columns when interleaved, rows otherwise
+      _inChannels   = (_in.isInterleave == 1U) ? _in.width : _in.height;
+      _samplingRate = pConfig->samplingRate;
+      _bypassMode   = pDefaultTunableParams->bypassMode;
+
+      // Initialize _params and bufParams with the node parameters
+      (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(), "numChannels=%zu,samplingRate=%d", _inChannels,
+                      _samplingRate);
+      TISP_setNodeBufParams(&_nodeInfo.bufParams, pInputs, pOutputs);
+
       /***********************************************************************/
       /* Initialize data structures required by AUDIOLIB_Mutench from AUDIOLIB */
       /***********************************************************************/
 
       AUDIOLIB_muteNCh_InitArgs kerInitArgs;
       kerInitArgs.funcStyle     = AUDIOLIB_FUNCTION_OPTIMIZED;
-      kerInitArgs.samplingRate  = samplingRate;
-      kerInitArgs.isInterleaved = isInterleaved;
-      kerInitArgs.numChannels   = inChannels;
+      kerInitArgs.samplingRate  = _samplingRate;
+      kerInitArgs.isInterleaved = _in.isInterleave;
+      kerInitArgs.numChannels   = static_cast<uint32_t>(_inChannels);
 
-      _setArgsBuf        = make_unique_handle<char>(sizeof(AUDIOLIB_muteNCh_SetArgs));
-      AUDIOLIB_muteNCh_SetArgs *pSetArgs = nullptr;
+      _setArgsBuf = make_unique_handle<char>(sizeof(AUDIOLIB_muteNCh_SetArgs));
+
       if (!_setArgsBuf) {
          errorCtx.setMemoryError("Mutench constructor", "failed to allocate _setArgsBuf");
       }
       else {
-         pSetArgs           = reinterpret_cast<AUDIOLIB_muteNCh_SetArgs *>(_setArgsBuf.get());
-         pSetArgs->isMute   = isMute;
-         pSetArgs->fadeTime = fadeTime;
-         pSetArgs->fadeType = fadeType;
-      }
+         AUDIOLIB_muteNCh_SetArgs *pSetArgs = reinterpret_cast<AUDIOLIB_muteNCh_SetArgs *>(_setArgsBuf.get());
+         pSetArgs->isMute                   = pDefaultTunableParams->pIsMute;
+         pSetArgs->fadeTime                 = pDefaultTunableParams->fadeTime;
+         pSetArgs->fadeType                 = pDefaultTunableParams->fadeType;
 
-      if (errorCtx.isSuccess()) {
          _handle = make_unique_handle<char>(AUDIOLIB_muteNCh_getHandleSize(&kerInitArgs));
 
          if (!_handle) {
             errorCtx.setMemoryError("Mutench constructor", "failed to allocate muteNCh handle");
          }
+         else {
+            AUDIOLIB_bufParams2D_t bufParamsIn  = TISP_toAudiolibBufParams2D<T>(_in);
+            AUDIOLIB_bufParams2D_t bufParamsOut = TISP_toAudiolibBufParams2D<T>(_out);
 
-         if (errorCtx.isSuccess()) {
-
-            AUDIOLIB_bufParams2D_t bufParamsIn;
-            AUDIOLIB_bufParams2D_t bufParamsOut;
-
-            bufParamsIn.data_type = AUDIOLIB_element_dType<T>::value;
-            bufParamsIn.dim_x     = static_cast<uint32_t>(width);
-            bufParamsIn.dim_y     = static_cast<uint32_t>(height);
-            bufParamsIn.stride_y  = static_cast<int32_t>(inPitchBytes);
-
-            bufParamsOut.data_type = AUDIOLIB_element_dType<T>::value;
-            bufParamsOut.dim_x     = static_cast<uint32_t>(width);
-            bufParamsOut.dim_y     = static_cast<uint32_t>(height);
-            bufParamsOut.stride_y  = static_cast<int32_t>(outPitchBytes);
             /******************************************************************************/
             /* Validate parameters before init                                            */
             /******************************************************************************/
 
             AUDIOLIB_STATUS status =
                 AUDIOLIB_muteNCh_init_checkParams(_handle.get(), &bufParamsIn, &bufParamsOut, &kerInitArgs);
-            errorCtx.remapXLIBError(status, "AUDIOLIB_muteNCh_init_checkParams");
+
             /******************************************************************************/
             /* Call init function from AUDIOLIB to for muteNCh to set SE/SA params             */
             /******************************************************************************/
 
-            if (errorCtx.isSuccess()) {
+            if (errorCtx.remapXLIBError(status, "AUDIOLIB_muteNCh_init_checkParams")) {
                status = AUDIOLIB_muteNCh_init(_handle.get(), &bufParamsIn, &bufParamsOut, &kerInitArgs);
-               errorCtx.remapXLIBError(status, "AUDIOLIB_muteNCh_init");
-               if (errorCtx.isSuccess()) {
+               if (errorCtx.remapXLIBError(status, "AUDIOLIB_muteNCh_init")) {
                   status = AUDIOLIB_muteNCh_set(_handle.get(), pSetArgs);
                   errorCtx.remapXLIBError(status, "AUDIOLIB_muteNCh_set");
                }
@@ -151,12 +127,12 @@ Mutench<T>::Mutench(T         *pX,
 
 template <typename T> void *Mutench<T>::getInputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pX) : nullptr;
+   return (index == 0) ? _in.pBuf : nullptr;
 }
 
 template <typename T> void *Mutench<T>::getOutputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pY) : nullptr;
+   return (index == 0) ? _out.pBuf : nullptr;
 }
 
 template <typename T> size_t Mutench<T>::getNumInputs() const noexcept { return 1; }
@@ -167,32 +143,32 @@ template <typename T> size_t Mutench<T>::getNumOutputs() const noexcept { return
 template <typename T> void Mutench<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) noexcept
 {
    if (mode == kAddrModeIn) {
-      _pX = static_cast<T *>(addr.src[0]);
+      _in.pBuf = addr.src[0];
    }
    if (mode == kAddrModeOut) {
-      _pY = static_cast<T *>(addr.dst[0]);
+      _out.pBuf = addr.dst[0];
    }
 
    if (mode == kAddrModeInOut) {
-      _pX = static_cast<T *>(addr.src[0]);
-      _pY = static_cast<T *>(addr.dst[0]);
+      _in.pBuf  = addr.src[0];
+      _out.pBuf = addr.dst[0];
    }
 }
 
 template <typename T> void Mutench<T>::bypassCopy() noexcept
 {
-   const size_t rowBytes = _width * sizeof(T);
+   const size_t rowBytes = _in.width * sizeof(T);
 
-   if (_pX != _pY) {
-      if ((_inPitchBytes == rowBytes) && (_outPitchBytes == rowBytes)) {
-         (void) memcpy(_pY, _pX, rowBytes * _height);
+   if (_in.pBuf != _out.pBuf) {
+      if ((_in.pitchBytes == rowBytes) && (_out.pitchBytes == rowBytes)) {
+         (void) memcpy(_out.pBuf, _in.pBuf, rowBytes * _in.height);
       }
       else {
-         uint8_t       *pDst = reinterpret_cast<uint8_t *>(_pY);
-         const uint8_t *pSrc = reinterpret_cast<const uint8_t *>(_pX);
+         uint8_t       *pDst = static_cast<uint8_t *>(_out.pBuf);
+         const uint8_t *pSrc = static_cast<const uint8_t *>(_in.pBuf);
 
-         for (size_t i = 0; i < _height; i++) {
-            (void) memcpy(&pDst[i * _outPitchBytes], &pSrc[i * _inPitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
+         for (size_t i = 0; i < _in.height; i++) {
+            (void) memcpy(&pDst[i * _out.pitchBytes], &pSrc[i * _in.pitchBytes], rowBytes); // NOLINT(MISRA.PTR.ARITH)
          }
       }
    }
@@ -204,7 +180,7 @@ template <typename T> void Mutench<T>::exec() noexcept
       bypassCopy();
    }
    else {
-      AUDIOLIB_muteNCh_exec(_handle.get(), static_cast<void *>(_pX), static_cast<void *>(_pY));
+      AUDIOLIB_muteNCh_exec(_handle.get(), _in.pBuf, _out.pBuf);
    }
 }
 
@@ -225,7 +201,8 @@ bool Mutench<T>::setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt
       const char *paramName = "Unknown";
 
       /* Bypass is node local state and is not forwarded to the kernel. */
-      bool applyToKernel = true;
+      bool     applyToKernel     = true;
+      uint32_t pendingBypassMode = _bypassMode;
 
       switch (static_cast<MutenchParamId>(paramId)) {
       case MutenchParamId::kIsMuteValue: {
@@ -277,6 +254,28 @@ bool Mutench<T>::setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt
          }
          break;
       }
+      case MutenchParamId::kAll: {
+         const MutenchTunableParams<T> *pParams = static_cast<const MutenchTunableParams<T> *>(value);
+         if (size < sizeof(MutenchTunableParams<T>)) {
+            errorCtx.setInvalidParameterError("Mutench::setParams", "Value size smaller than expected for kAll");
+         }
+         else if (pParams->pIsMute == nullptr) {
+            errorCtx.setNullPointerError("Mutench::setParams", "mute pointer pIsMute is null");
+         }
+         else if (pParams->bypassMode > 1U) {
+            errorCtx.setInvalidParameterError("Mutench::setParams", "bypass mode must be either zero or one");
+         }
+         else {
+            if (pParams->pIsMute != setArgs.isMute) {
+               memcpy(setArgs.isMute, pParams->pIsMute, _inChannels * sizeof(uint32_t));
+            }
+            setArgs.fadeTime  = pParams->fadeTime;
+            setArgs.fadeType  = pParams->fadeType;
+            pendingBypassMode = pParams->bypassMode;
+            paramName         = "kAll";
+         }
+         break;
+      }
       default:
          errorCtx.setInvalidParameterError("Mutench::setParams", "Invalid paramId");
          break;
@@ -288,6 +287,7 @@ bool Mutench<T>::setParams(uint16_t paramId, void *value, size_t size, ErrorCtxt
          (void) errorCtx.remapXLIBError(status, msg.c_str());
          if (errorCtx.isSuccess()) {
             memcpy(pSetArgs, &setArgs, sizeof(AUDIOLIB_muteNCh_SetArgs));
+            _bypassMode = pendingBypassMode;
          }
       }
    }
@@ -353,6 +353,25 @@ bool Mutench<T>::getParams(uint16_t paramId, void *value, size_t *size, ErrorCtx
          *size = sizeof(uint32_t);
          break;
       }
+      case MutenchParamId::kAll: {
+         MutenchTunableParams<T> *pParams = static_cast<MutenchTunableParams<T> *>(value);
+         if (*size < sizeof(MutenchTunableParams<T>)) {
+            errorCtx.setInvalidParameterError("Mutench::getParams", "Value size smaller than expected for kAll");
+         }
+         else if (pParams->pIsMute == nullptr) {
+            errorCtx.setNullPointerError("Mutench::getParams", "mute pointer pIsMute is null");
+         }
+         else {
+            if (pParams->pIsMute != pSetArgs->isMute) {
+               memcpy(pParams->pIsMute, pSetArgs->isMute, _inChannels * sizeof(uint32_t));
+            }
+            pParams->fadeTime   = pSetArgs->fadeTime;
+            pParams->fadeType   = pSetArgs->fadeType;
+            pParams->bypassMode = _bypassMode;
+         }
+         *size = sizeof(MutenchTunableParams<T>);
+         break;
+      }
       default:
          errorCtx.setInvalidParameterError("Mutench::getParams", "Invalid paramId");
          break;
@@ -360,40 +379,6 @@ bool Mutench<T>::getParams(uint16_t paramId, void *value, size_t *size, ErrorCtx
    }
 
    return errorCtx.isSuccess();
-}
-
-template <typename T>
-Mutench<T>::Mutench(T          *pX,
-                    T          *pY,
-                    size_t      width,
-                    size_t      height,
-                    size_t      inChannels,
-                    size_t      inPitchBytes,
-                    size_t      outPitchBytes,
-                    size_t      isInterleaved,
-                    int32_t     samplingRate,
-                    uint32_t   *isMute,
-                    float       fadeTime,
-                    uint32_t    fadeType,
-                    const char *nodeName,
-                    uint32_t    nodeId,
-                    ErrorCtxt  &errorCtx)
-    : Mutench(pX,
-              pY,
-              width,
-              height,
-              inChannels,
-              inPitchBytes,
-              outPitchBytes,
-              isInterleaved,
-              samplingRate,
-              isMute,
-              fadeTime,
-              fadeType,
-              errorCtx)
-{
-   _nodeInfo.setName(nodeName);
-   _nodeInfo.nodeId = nodeId;
 }
 
 template class Mutench<float>;

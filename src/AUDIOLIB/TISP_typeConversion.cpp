@@ -15,164 +15,117 @@ namespace AUDIOLIB {
 //! [TISP::TypeConversion constructor]
 
 template <typename Tin, typename Tout>
-TypeConversion<Tin, Tout>::TypeConversion(Tin       *pX,
-                                          Tout      *pY,
-                                          size_t     width,
-                                          size_t     height,
-                                          size_t     inPitchBytes,
-                                          size_t     outPitchBytes,
-                                          size_t     testQ31,
-                                          ErrorCtxt &errorCtx)
-    : _pX(pX), _pY(pY)
+TypeConversion<Tin, Tout>::TypeConversion(const TISP_BufDescList          *pInputs,
+                                          const TISP_BufDescList          *pOutputs,
+                                          const TypeConversionConfig *pConfig,
+                                          const char                      *nodeName,
+                                          uint32_t                         nodeId,
+                                          ErrorCtxt                       &errorCtx)
+    : _in{}, _out{}
 {
+   _nodeInfo.setName(nodeName);
+   _nodeInfo.nodeId = nodeId;
 
-   // Initialize _params with the node parameters
-   (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(), "width=%zu,height=%zu,testQ31=%zu", width, height,
-                   testQ31);
-
-   // Input validation checks
-   if (pX == nullptr) {
-      errorCtx.setNullPointerError("TypeConversion constructor", "input pointer pX is null");
+   if (pConfig == nullptr) {
+      errorCtx.setNullPointerError("TypeConversion constructor", "build params pointer pConfig is null");
    }
-   if (pY == nullptr) {
-      errorCtx.setNullPointerError("TypeConversion constructor", "output pointer pY is null");
-   }
-   if (width == 0) {
-      errorCtx.setInvalidParameterError("TypeConversion constructor", "width must be greater than zero");
-   }
-   if (height == 0) {
-      errorCtx.setInvalidParameterError("TypeConversion constructor", "height must be greater than zero");
-   }
-   if (testQ31 > 1) {
-      errorCtx.setInvalidParameterError("TypeConversion constructor", "testQ31 must be either zero or one");
+   else {
+      /* Nothing to do here */
    }
 
-   // Only proceed with initialization if all validation checks passed
+   // Buffer checks (skipped once an error is set): one Tin input, one Tout output
+   if (TISP_checkBufDescList<Tin>(pInputs, 1U, 1U, "TypeConversion constructor (inputs)", errorCtx) &&
+       TISP_checkBufDescList<Tout>(pOutputs, 1U, 1U, "TypeConversion constructor (outputs)", errorCtx)) {
+      _in  = pInputs->pDesc[0];
+      _out = pOutputs->pDesc[0];
+
+      if (_in.isInterleave != _out.isInterleave) {
+         errorCtx.setInvalidParameterError("TypeConversion constructor", "input and output interleave must match");
+      }
+      else if (pConfig->testQ31 > 1U) {
+         errorCtx.setInvalidParameterError("TypeConversion constructor", "testQ31 must be either zero or one");
+      }
+      else {
+         /* Nothing to do here */
+      }
+   }
+
    if (errorCtx.isSuccess()) {
-      _width         = width;
-      _height        = height;
-      _inPitchBytes  = inPitchBytes;
-      _outPitchBytes = outPitchBytes;
-      _testQ31       = testQ31;
+      // Initialize _params and bufParams with the node parameters
+      (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(), "width=%zu,height=%zu,testQ31=%u", _in.width,
+                      _in.height, static_cast<uint32_t>(pConfig->testQ31));
+      TISP_setNodeBufParams(&_nodeInfo.bufParams, pInputs, pOutputs);
 
-      // Initialize bufParams with node input and output buffer parameters
-      _nodeInfo.bufParams.inputDataType     = ElementDType<Tin>::value;
-      _nodeInfo.bufParams.isInputInterleave = 1;
-      _nodeInfo.bufParams.widthIn[0]        = width;
-      _nodeInfo.bufParams.heightIn[0]       = height;
-      _nodeInfo.bufParams.inPitchBytes[0]   = inPitchBytes;
-
-      _nodeInfo.bufParams.outputDataType     = ElementDType<Tout>::value;
-      _nodeInfo.bufParams.isOutputInterleave = 1;
-      _nodeInfo.bufParams.widthOut[0]        = width;
-      _nodeInfo.bufParams.heightOut[0]       = height;
-      _nodeInfo.bufParams.outPitchBytes[0]   = outPitchBytes;
       /***********************************************************************/
       /* Initialize data structures required by AUDIOLIB_Typeconversion from AUDIOLIB */
       /***********************************************************************/
 
       AUDIOLIB_typeConversion_InitArgs kerInitArgs;
       kerInitArgs.funcStyle = AUDIOLIB_FUNCTION_OPTIMIZED;
-      kerInitArgs.testQ31   = testQ31;
+      kerInitArgs.testQ31   = pConfig->testQ31;
 
       _handle = make_unique_handle<char>(AUDIOLIB_typeConversion_getHandleSize(&kerInitArgs));
 
       if (!_handle) {
          errorCtx.setMemoryError("TypeConversion constructor", "failed to allocate typeConversion handle");
       }
+      else {
+         AUDIOLIB_bufParams2D_t bufParamsIn  = TISP_toAudiolibBufParams2D<Tin>(_in);
+         AUDIOLIB_bufParams2D_t bufParamsOut = TISP_toAudiolibBufParams2D<Tout>(_out);
 
-      if (errorCtx.isSuccess()) {
-         AUDIOLIB_bufParams2D_t bufParamsIn;
-         AUDIOLIB_bufParams2D_t bufParamsOut;
-
-         bufParamsIn.data_type = AUDIOLIB_element_dType<Tin>::value;
-         bufParamsIn.dim_x     = static_cast<uint32_t>(width);
-         bufParamsIn.dim_y     = static_cast<uint32_t>(height);
-         bufParamsIn.stride_y  = static_cast<int32_t>(inPitchBytes);
-
-         bufParamsOut.data_type = AUDIOLIB_element_dType<Tout>::value;
-         bufParamsOut.dim_x     = static_cast<uint32_t>(width);
-         bufParamsOut.dim_y     = static_cast<uint32_t>(height);
-         bufParamsOut.stride_y  = static_cast<int32_t>(outPitchBytes);
          /******************************************************************************/
          /* Validate parameters before init                                            */
          /******************************************************************************/
 
-         AUDIOLIB_STATUS checkRet =
+         AUDIOLIB_STATUS status =
              AUDIOLIB_typeConversion_init_checkParams(_handle.get(), &bufParamsIn, &bufParamsOut, &kerInitArgs);
-         errorCtx.remapXLIBError(checkRet, "AUDIOLIB_typeConversion_init_checkParams");
+
          /******************************************************************************/
          /* Call init function from AUDIOLIB to for typeConversion to set SE/SA params */
          /******************************************************************************/
 
-         if (errorCtx.isSuccess()) {
-            AUDIOLIB_STATUS initRet =
-                AUDIOLIB_typeConversion_init(_handle.get(), &bufParamsIn, &bufParamsOut, &kerInitArgs);
-            errorCtx.remapXLIBError(initRet, "AUDIOLIB_typeConversion_init");
+         if (errorCtx.remapXLIBError(status, "AUDIOLIB_typeConversion_init_checkParams")) {
+            status = AUDIOLIB_typeConversion_init(_handle.get(), &bufParamsIn, &bufParamsOut, &kerInitArgs);
+            errorCtx.remapXLIBError(status, "AUDIOLIB_typeConversion_init");
          }
       }
    }
 }
 
-//! [TISP::Typeconversion setAddr]
 template <typename Tin, typename Tout> void *TypeConversion<Tin, Tout>::getInputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pX) : nullptr;
+   return (index == 0) ? _in.pBuf : nullptr;
 }
 
 template <typename Tin, typename Tout> void *TypeConversion<Tin, Tout>::getOutputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pY) : nullptr;
+   return (index == 0) ? _out.pBuf : nullptr;
 }
 
 template <typename Tin, typename Tout> size_t TypeConversion<Tin, Tout>::getNumInputs() const noexcept { return 1; }
 
 template <typename Tin, typename Tout> size_t TypeConversion<Tin, Tout>::getNumOutputs() const noexcept { return 1; }
 
+//! [TISP::TypeConversion setAddr]
 template <typename Tin, typename Tout>
 void TypeConversion<Tin, Tout>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) noexcept
 {
    if (mode == kAddrModeIn) {
-      _pX = static_cast<Tin *>(addr.src[0]);
+      _in.pBuf = addr.src[0];
    }
    if (mode == kAddrModeOut) {
-      _pY = static_cast<Tout *>(addr.dst[0]);
+      _out.pBuf = addr.dst[0];
    }
 
    if (mode == kAddrModeInOut) {
-      _pX = static_cast<Tin *>(addr.src[0]);
-      _pY = static_cast<Tout *>(addr.dst[0]);
+      _in.pBuf  = addr.src[0];
+      _out.pBuf = addr.dst[0];
    }
 }
 
 template <typename Tin, typename Tout> void TypeConversion<Tin, Tout>::exec() noexcept
 {
-
-   AUDIOLIB_typeConversion_exec(_handle.get(), _pX, _pY);
-}
-
-template <typename Tin, typename Tout>
-TypeConversion<Tin, Tout>::TypeConversion(Tin        *pX,
-                                          Tout       *pY,
-                                          size_t      width,
-                                          size_t      height,
-                                          size_t      inPitchBytes,
-                                          size_t      outPitchBytes,
-                                          size_t      testQ31,
-                                          const char *nodeName,
-                                          uint32_t    nodeId,
-                                          ErrorCtxt  &errorCtx)
-    : TypeConversion(pX, pY, width, height, inPitchBytes, outPitchBytes, testQ31, errorCtx)
-{
-   (void) pX;
-   (void) pY;
-   (void) width;
-   (void) height;
-   (void) inPitchBytes;
-   (void) outPitchBytes;
-   (void) testQ31;
-   _nodeInfo.setName(nodeName);
-   _nodeInfo.nodeId = nodeId;
+   AUDIOLIB_typeConversion_exec(_handle.get(), _in.pBuf, _out.pBuf);
 }
 
 template class TypeConversion<float, int16_t>;

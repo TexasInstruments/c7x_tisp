@@ -156,12 +156,26 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
+            const TISP::TISP_BufDesc2D inDesc    = {pIn.get(), TISP::Types::kFloat32, numChannels, blockSize,
+                                                    static_cast<size_t>(pitchX), 1U};
+            const TISP::TISP_BufDesc2D outDesc   = {pOut.get(), TISP::Types::kFloat32, numChannels, blockSize,
+                                                    static_cast<size_t>(pitchY), 1U};
+            const TISP::TISP_BufDesc2D stateDesc = {pGainState.get(), TISP::Types::kFloat32, numChannels, 1U,
+                                                    numChannels * sizeof(float), 0U};
+
+            const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+            const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+            const TISP::TISP_BufDescList states  = {&stateDesc, 1U};
+
+            TISP::AUDIOLIB::LimiterTunableParams<float> defaultParams;
+            defaultParams.pThresholdDb   = reinterpret_cast<float *>(pThreshold_dB.get());
+            defaultParams.pKneeWidthDb   = reinterpret_cast<float *>(pKneeWidth_dB.get());
+            defaultParams.pAttackCoeffs  = reinterpret_cast<float *>(pAttackCoeff.get());
+            defaultParams.pReleaseCoeffs = reinterpret_cast<float *>(pReleaseCoeff.get());
+
             TISP::ErrorCtxt errorCtx;
             auto            k0 = std::make_unique<TISP::AUDIOLIB::Limiter<float>>(
-                (float *) pIn.get(), (float *) pScratch.get(), (float *) pOut.get(),
-                (float *) pGainState.get(), (float *) pThreshold_dB.get(), (float *) pKneeWidth_dB.get(), (float *) pAttackCoeff.get(),
-                (float *) pReleaseCoeff.get(), static_cast<uint32_t>(numChannels), static_cast<uint32_t>(blockSize),
-                static_cast<uint32_t>(pitchX), static_cast<uint32_t>(pitchS), static_cast<uint32_t>(pitchY), errorCtx);
+                &inputs, &outputs, &states, pScratch.get(), scratchBufSize, &defaultParams, "Limiter", 0, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());

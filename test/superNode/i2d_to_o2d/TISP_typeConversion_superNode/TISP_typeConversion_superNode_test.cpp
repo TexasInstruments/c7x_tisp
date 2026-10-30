@@ -58,6 +58,31 @@ void TISP_typeConversion_deleteSuperNode(TISP::SuperNode::superNodeVec *mySuperN
    return;
 }
 
+template <typename Tin, typename Tout>
+std::unique_ptr<TISP::VirtualOp> TISP_typeConversion_createNode(void            *pInputBlock0,
+                                                                void            *pOutputBlock,
+                                                                size_t           blockWidth,
+                                                                size_t           blockHeight,
+                                                                size_t           inPitch,
+                                                                size_t           outPitch,
+                                                                uint8_t          testQ31,
+                                                                TISP::ErrorCtxt &errorCtx)
+{
+   const TISP::TISP_BufDesc2D inDesc = {
+       pInputBlock0, TISP::ElementDType<Tin>::value, blockWidth, blockHeight, inPitch, 1U};
+   const TISP::TISP_BufDesc2D outDesc = {
+       pOutputBlock, TISP::ElementDType<Tout>::value, blockWidth, blockHeight, outPitch, 1U};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+   TISP::AUDIOLIB::TypeConversionConfig config;
+   config.testQ31 = testQ31;
+
+   return std::make_unique<TISP::AUDIOLIB::TypeConversion<Tin, Tout>>(&inputs, &outputs, &config, "TypeConversion",
+                                                                      0, errorCtx);
+}
+
 TISP::SuperNode::superNodeVec *TISP_typeConversion_createSuperNode(void            *pIn,
                                                                    void            *pOut,
                                                                    void            *pInputBlock0,
@@ -76,9 +101,9 @@ TISP::SuperNode::superNodeVec *TISP_typeConversion_createSuperNode(void         
 
    if (outdataType == AUDIOLIB_INT32) {
       if (indataType == AUDIOLIB_FLOAT32) {
-         auto k0 = std::make_unique<TISP::AUDIOLIB::TypeConversion<float, int32_t>>(
-             (float *) pInputBlock0, (int32_t *) pOutputBlock, blockWidth, blockHeight,
-             blockWidth * AUDIOLIB_sizeof(indataType), blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
+         auto k0 = TISP_typeConversion_createNode<float, int32_t>(
+             pInputBlock0, pOutputBlock, blockWidth, blockHeight, blockWidth * AUDIOLIB_sizeof(indataType),
+             blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating TypeConversion<float, int32_t> node: %s\n", errorCtx.getMessage());
@@ -100,9 +125,9 @@ TISP::SuperNode::superNodeVec *TISP_typeConversion_createSuperNode(void         
          return mySuperNodeVec;
       }
       else if (indataType == AUDIOLIB_FLOAT64) {
-         auto k0 = std::make_unique<TISP::AUDIOLIB::TypeConversion<double, int32_t>>(
-             (double *) pInputBlock0, (int32_t *) pOutputBlock, blockWidth, blockHeight,
-             blockWidth * AUDIOLIB_sizeof(indataType), blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
+         auto k0 = TISP_typeConversion_createNode<double, int32_t>(
+             pInputBlock0, pOutputBlock, blockWidth, blockHeight, blockWidth * AUDIOLIB_sizeof(indataType),
+             blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating TypeConversion<double, int32_t> node: %s\n", errorCtx.getMessage());
@@ -126,9 +151,9 @@ TISP::SuperNode::superNodeVec *TISP_typeConversion_createSuperNode(void         
    }
    else if (outdataType == AUDIOLIB_INT16) {
       if (indataType == AUDIOLIB_FLOAT32) {
-         auto k0 = std::make_unique<TISP::AUDIOLIB::TypeConversion<float, int16_t>>(
-             (float *) pInputBlock0, (int16_t *) pOutputBlock, blockWidth, blockHeight,
-             blockWidth * AUDIOLIB_sizeof(indataType), blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
+         auto k0 = TISP_typeConversion_createNode<float, int16_t>(
+             pInputBlock0, pOutputBlock, blockWidth, blockHeight, blockWidth * AUDIOLIB_sizeof(indataType),
+             blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating TypeConversion<float, int16_t> node: %s\n", errorCtx.getMessage());
@@ -150,9 +175,9 @@ TISP::SuperNode::superNodeVec *TISP_typeConversion_createSuperNode(void         
          return mySuperNodeVec;
       }
       else if (indataType == AUDIOLIB_FLOAT64) {
-         auto k0 = std::make_unique<TISP::AUDIOLIB::TypeConversion<double, int16_t>>(
-             (double *) pInputBlock0, (int16_t *) pOutputBlock, blockWidth, blockHeight,
-             blockWidth * AUDIOLIB_sizeof(indataType), blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
+         auto k0 = TISP_typeConversion_createNode<double, int16_t>(
+             pInputBlock0, pOutputBlock, blockWidth, blockHeight, blockWidth * AUDIOLIB_sizeof(indataType),
+             blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating TypeConversion<double, int16_t> node: %s\n", errorCtx.getMessage());
@@ -176,9 +201,9 @@ TISP::SuperNode::superNodeVec *TISP_typeConversion_createSuperNode(void         
    }
    else if (outdataType == AUDIOLIB_FLOAT64) {
       if (indataType == AUDIOLIB_INT16) {
-         auto k0 = std::make_unique<TISP::AUDIOLIB::TypeConversion<int16_t, double>>(
-             (int16_t *) pInputBlock0, (double *) pOutputBlock, blockWidth, blockHeight,
-             blockWidth * AUDIOLIB_sizeof(indataType), blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
+         auto k0 = TISP_typeConversion_createNode<int16_t, double>(
+             pInputBlock0, pOutputBlock, blockWidth, blockHeight, blockWidth * AUDIOLIB_sizeof(indataType),
+             blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating TypeConversion<int16_t, double> node: %s\n", errorCtx.getMessage());
@@ -200,9 +225,9 @@ TISP::SuperNode::superNodeVec *TISP_typeConversion_createSuperNode(void         
          return mySuperNodeVec;
       }
       else if (indataType == AUDIOLIB_INT32) {
-         auto k0 = std::make_unique<TISP::AUDIOLIB::TypeConversion<int32_t, double>>(
-             (int32_t *) pInputBlock0, (double *) pOutputBlock, blockWidth, blockHeight,
-             blockWidth * AUDIOLIB_sizeof(indataType), blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
+         auto k0 = TISP_typeConversion_createNode<int32_t, double>(
+             pInputBlock0, pOutputBlock, blockWidth, blockHeight, blockWidth * AUDIOLIB_sizeof(indataType),
+             blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating TypeConversion<int32_t, double> node: %s\n", errorCtx.getMessage());
@@ -226,9 +251,9 @@ TISP::SuperNode::superNodeVec *TISP_typeConversion_createSuperNode(void         
    }
    else if (outdataType == AUDIOLIB_FLOAT32) {
       if (indataType == AUDIOLIB_INT16) {
-         auto k0 = std::make_unique<TISP::AUDIOLIB::TypeConversion<int16_t, float>>(
-             (int16_t *) pInputBlock0, (float *) pOutputBlock, blockWidth, blockHeight,
-             blockWidth * AUDIOLIB_sizeof(indataType), blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
+         auto k0 = TISP_typeConversion_createNode<int16_t, float>(
+             pInputBlock0, pOutputBlock, blockWidth, blockHeight, blockWidth * AUDIOLIB_sizeof(indataType),
+             blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating TypeConversion<int16_t, float> node: %s\n", errorCtx.getMessage());
@@ -250,9 +275,9 @@ TISP::SuperNode::superNodeVec *TISP_typeConversion_createSuperNode(void         
          return mySuperNodeVec;
       }
       else if (indataType == AUDIOLIB_INT32) {
-         auto k0 = std::make_unique<TISP::AUDIOLIB::TypeConversion<int32_t, float>>(
-             (int32_t *) pInputBlock0, (float *) pOutputBlock, blockWidth, blockHeight,
-             blockWidth * AUDIOLIB_sizeof(indataType), blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
+         auto k0 = TISP_typeConversion_createNode<int32_t, float>(
+             pInputBlock0, pOutputBlock, blockWidth, blockHeight, blockWidth * AUDIOLIB_sizeof(indataType),
+             blockWidth * AUDIOLIB_sizeof(outdataType), testQ31, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating TypeConversion<int32_t, float> node: %s\n", errorCtx.getMessage());

@@ -103,7 +103,15 @@ void *create_graph()
 
    TISP::ErrorCtxt errorCtx;
 
-   auto k0 = TISP::make_unique_node<TISP::FFTLIB::FFT1dBatched<float>>(pInputBlock, pTempBlock, numPoints, blockHeight,
+   const TISP::TISP_BufDesc2D fft0In  = {pInputBlock, TISP::Types::kFloat32, numPoints * 2U, blockHeight,
+                                      static_cast<size_t>(numPoints * 2U) * sizeof(float), 0U};
+   const TISP::TISP_BufDesc2D fft0Out = {pTempBlock, TISP::Types::kFloat32, numPoints * 2U, blockHeight,
+                                      static_cast<size_t>(numPoints * 2U) * sizeof(float), 0U};
+
+   const TISP::TISP_BufDescList fft0Inputs  = {&fft0In, 1U};
+   const TISP::TISP_BufDescList fft0Outputs = {&fft0Out, 1U};
+
+   auto k0 = TISP::make_unique_node<TISP::FFTLIB::FFT1dBatched<float>>(&fft0Inputs, &fft0Outputs,
                                                                        "FFT1dBatched_FirstPass", 1001, errorCtx);
 
    if (!errorCtx.isSuccess()) {
@@ -111,9 +119,16 @@ void *create_graph()
       return nullptr;
    }
 
-   auto k1 = TISP::make_unique_node<TISP::DSPLIB::MatTrans<double>>(
-       (double *) pTempBlock, (double *) pOutputBlock, blockWidth >> 1, blockHeight, blockWidth * sizeof(double) >> 1,
-       blockHeight * sizeof(double), "MatrixTranspose", 1002, errorCtx);
+   const TISP::TISP_BufDesc2D transIn = {
+       pTempBlock, TISP::Types::kFloat64, blockWidth >> 1, blockHeight, blockWidth * sizeof(double) >> 1, 0U};
+   const TISP::TISP_BufDesc2D transOut = {pOutputBlock,    TISP::Types::kFloat64,        blockHeight,
+                                          blockWidth >> 1, blockHeight * sizeof(double), 0U};
+
+   const TISP::TISP_BufDescList transInputs  = {&transIn, 1U};
+   const TISP::TISP_BufDescList transOutputs = {&transOut, 1U};
+
+   auto k1 = TISP::make_unique_node<TISP::DSPLIB::MatTrans<double>>(&transInputs, &transOutputs, "MatrixTranspose",
+                                                                    1002, errorCtx);
 
    auto myOpVec0 = make_unique<TISP::opVec>();
 
@@ -125,8 +140,16 @@ void *create_graph()
        numPoints, numChannels, blockWidth >> 1, blockHeight, (numPoints) * sizeof(double), numChannels * sizeof(double),
        (TOTAL_DMA_CHANNELS));
 
-   auto k2 = TISP::make_unique_node<TISP::FFTLIB::FFT1dBatched<float>>(
-       pInputBlock, pOutputBlock, numChannels, blockHeight, "FFT1dBatched_SecondPass", 1003, errorCtx);
+   const TISP::TISP_BufDesc2D fft1In  = {pInputBlock, TISP::Types::kFloat32, numChannels * 2U, blockHeight,
+                                      static_cast<size_t>(numChannels * 2U) * sizeof(float), 0U};
+   const TISP::TISP_BufDesc2D fft1Out = {pOutputBlock, TISP::Types::kFloat32, numChannels * 2U, blockHeight,
+                                      static_cast<size_t>(numChannels * 2U) * sizeof(float), 0U};
+
+   const TISP::TISP_BufDescList fft1Inputs  = {&fft1In, 1U};
+   const TISP::TISP_BufDescList fft1Outputs = {&fft1Out, 1U};
+
+   auto k2 = TISP::make_unique_node<TISP::FFTLIB::FFT1dBatched<float>>(&fft1Inputs, &fft1Outputs,
+                                                                       "FFT1dBatched_SecondPass", 1003, errorCtx);
 
    if (!errorCtx.isSuccess()) {
       printf("\nError creating kernel: %s\n", errorCtx.getMessage());

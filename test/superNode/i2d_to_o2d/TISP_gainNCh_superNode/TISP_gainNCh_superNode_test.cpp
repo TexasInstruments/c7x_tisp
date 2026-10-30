@@ -76,11 +76,32 @@ TISP::SuperNode::superNodeVec *TISP_gainNCh_createSuperNode(void            *pIn
                                                             uint32_t         isInterleave,
                                                             TISP::ErrorCtxt &errorCtx)
 {
+   // Channel count is derived by GainNCh from the block descriptor
+   (void) gheightIn;
 
    if (dataType == AUDIOLIB_FLOAT32) {
-      auto k0 = std::make_unique<TISP::AUDIOLIB::GainNCh<float>>(
-          (float *) pInputBlock0, (float *) pInputBlock1, (float *) pOutputBlock, blockWidth, blockHeight, gheightIn,
-          blockWidth * AUDIOLIB_sizeof(dataType), blockWidth * AUDIOLIB_sizeof(dataType), isInterleave, errorCtx);
+      const size_t               blockPitch = static_cast<size_t>(blockWidth) * AUDIOLIB_sizeof(dataType);
+      const TISP::TISP_BufDesc2D inDesc     = {pInputBlock0,
+                                               TISP::ElementDType<float>::value,
+                                               static_cast<size_t>(blockWidth),
+                                               static_cast<size_t>(blockHeight),
+                                               blockPitch,
+                                               static_cast<uint8_t>(isInterleave)};
+      const TISP::TISP_BufDesc2D outDesc    = {pOutputBlock,
+                                               TISP::ElementDType<float>::value,
+                                               static_cast<size_t>(blockWidth),
+                                               static_cast<size_t>(blockHeight),
+                                               blockPitch,
+                                               static_cast<uint8_t>(isInterleave)};
+
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+      TISP::AUDIOLIB::GainNChTunableParams<float> defaultParams;
+      defaultParams.pGains = static_cast<float *>(pInputBlock1);
+
+      auto k0 =
+          std::make_unique<TISP::AUDIOLIB::GainNCh<float>>(&inputs, &outputs, &defaultParams, "GainNCh", 0, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating GainNCh<float> node: %s\n", errorCtx.getMessage());
@@ -101,9 +122,28 @@ TISP::SuperNode::superNodeVec *TISP_gainNCh_createSuperNode(void            *pIn
    }
    else if (dataType == AUDIOLIB_FLOAT64) {
 
-      auto k0 = std::make_unique<TISP::AUDIOLIB::GainNCh<double>>(
-          (double *) pInputBlock0, (double *) pInputBlock1, (double *) pOutputBlock, blockWidth, blockHeight, gheightIn,
-          blockWidth * AUDIOLIB_sizeof(dataType), blockWidth * AUDIOLIB_sizeof(dataType), isInterleave, errorCtx);
+      const size_t               blockPitch = static_cast<size_t>(blockWidth) * AUDIOLIB_sizeof(dataType);
+      const TISP::TISP_BufDesc2D inDesc     = {pInputBlock0,
+                                               TISP::ElementDType<double>::value,
+                                               static_cast<size_t>(blockWidth),
+                                               static_cast<size_t>(blockHeight),
+                                               blockPitch,
+                                               static_cast<uint8_t>(isInterleave)};
+      const TISP::TISP_BufDesc2D outDesc    = {pOutputBlock,
+                                               TISP::ElementDType<double>::value,
+                                               static_cast<size_t>(blockWidth),
+                                               static_cast<size_t>(blockHeight),
+                                               blockPitch,
+                                               static_cast<uint8_t>(isInterleave)};
+
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+      TISP::AUDIOLIB::GainNChTunableParams<double> defaultParams;
+      defaultParams.pGains = static_cast<double *>(pInputBlock1);
+
+      auto k0 =
+          std::make_unique<TISP::AUDIOLIB::GainNCh<double>>(&inputs, &outputs, &defaultParams, "GainNCh", 0, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating GainNCh<double> node: %s\n", errorCtx.getMessage());

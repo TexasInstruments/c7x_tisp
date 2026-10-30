@@ -51,6 +51,29 @@ __attribute__((section(".ddrData"), aligned(64))) int8_t  ddrBuffer[2048 * 1024]
 
 int16_t volatile volatileSum = 0; // use volatile to keep compiler from removing this operation
 
+template <typename Tin, typename Tout>
+std::unique_ptr<TISP::VirtualOp> TISP_typeConversion_createNode(void            *pIn,
+                                                                void            *pOut,
+                                                                size_t           widthIn,
+                                                                size_t           heightIn,
+                                                                size_t           strideIn,
+                                                                size_t           strideOut,
+                                                                uint8_t          testQ31,
+                                                                TISP::ErrorCtxt &errorCtx)
+{
+   const TISP::TISP_BufDesc2D inDesc  = {pIn, TISP::ElementDType<Tin>::value, widthIn, heightIn, strideIn, 1U};
+   const TISP::TISP_BufDesc2D outDesc = {pOut, TISP::ElementDType<Tout>::value, widthIn, heightIn, strideOut, 1U};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+   TISP::AUDIOLIB::TypeConversionConfig config;
+   config.testQ31 = testQ31;
+
+   return std::make_unique<TISP::AUDIOLIB::TypeConversion<Tin, Tout>>(&inputs, &outputs, &config, "TypeConversion",
+                                                                      0, errorCtx);
+}
+
 std::unique_ptr<TISP::VirtualOp> TISP_typeConversion_createKernelObject(void            *pIn,
                                                                         void            *pOut,
                                                                         uint32_t         indataType,
@@ -62,45 +85,42 @@ std::unique_ptr<TISP::VirtualOp> TISP_typeConversion_createKernelObject(void    
                                                                         uint8_t          testQ31,
                                                                         TISP::ErrorCtxt &errorCtx)
 {
-   if (indataType == AUDIOLIB_INT16) {
-      if (outdataType == AUDIOLIB_FLOAT32) {
-         return std::make_unique<TISP::AUDIOLIB::TypeConversion<int16_t, float>>(
-             (int16_t *) pIn, (float *) pOut, widthIn, heightIn, strideIn, strideOut, testQ31, errorCtx);
-      }
-      else if (outdataType == AUDIOLIB_FLOAT64) {
-         return std::make_unique<TISP::AUDIOLIB::TypeConversion<int16_t, double>>(
-             (int16_t *) pIn, (double *) pOut, widthIn, heightIn, strideIn, strideOut, testQ31, errorCtx);
-      }
+   const size_t width    = static_cast<size_t>(widthIn);
+   const size_t height   = static_cast<size_t>(heightIn);
+   const size_t inPitch  = static_cast<size_t>(strideIn);
+   const size_t outPitch = static_cast<size_t>(strideOut);
+
+   if ((indataType == AUDIOLIB_INT16) && (outdataType == AUDIOLIB_FLOAT32)) {
+      return TISP_typeConversion_createNode<int16_t, float>(pIn, pOut, width, height, inPitch, outPitch, testQ31,
+                                                            errorCtx);
    }
-   else if (outdataType == AUDIOLIB_INT16) {
-      if (indataType == AUDIOLIB_FLOAT32) {
-         return std::make_unique<TISP::AUDIOLIB::TypeConversion<float, int16_t>>(
-             (float *) pIn, (int16_t *) pOut, widthIn, heightIn, strideIn, strideOut, testQ31, errorCtx);
-      }
-      else if (indataType == AUDIOLIB_FLOAT64) {
-         return std::make_unique<TISP::AUDIOLIB::TypeConversion<double, int16_t>>(
-             (double *) pIn, (int16_t *) pOut, widthIn, heightIn, strideIn, strideOut, testQ31, errorCtx);
-      }
+   else if ((indataType == AUDIOLIB_INT16) && (outdataType == AUDIOLIB_FLOAT64)) {
+      return TISP_typeConversion_createNode<int16_t, double>(pIn, pOut, width, height, inPitch, outPitch, testQ31,
+                                                             errorCtx);
    }
-   else if (indataType == AUDIOLIB_INT32) {
-      if (outdataType == AUDIOLIB_FLOAT32) {
-         return std::make_unique<TISP::AUDIOLIB::TypeConversion<int32_t, float>>(
-             (int32_t *) pIn, (float *) pOut, widthIn, heightIn, strideIn, strideOut, testQ31, errorCtx);
-      }
-      else if (outdataType == AUDIOLIB_FLOAT64) {
-         return std::make_unique<TISP::AUDIOLIB::TypeConversion<int32_t, double>>(
-             (int32_t *) pIn, (double *) pOut, widthIn, heightIn, strideIn, strideOut, testQ31, errorCtx);
-      }
+   else if ((indataType == AUDIOLIB_FLOAT32) && (outdataType == AUDIOLIB_INT16)) {
+      return TISP_typeConversion_createNode<float, int16_t>(pIn, pOut, width, height, inPitch, outPitch, testQ31,
+                                                            errorCtx);
    }
-   else if (outdataType == AUDIOLIB_INT32) {
-      if (indataType == AUDIOLIB_FLOAT32) {
-         return std::make_unique<TISP::AUDIOLIB::TypeConversion<float, int32_t>>(
-             (float *) pIn, (int32_t *) pOut, widthIn, heightIn, strideIn, strideOut, testQ31, errorCtx);
-      }
-      else if (indataType == AUDIOLIB_FLOAT64) {
-         return std::make_unique<TISP::AUDIOLIB::TypeConversion<double, int32_t>>(
-             (double *) pIn, (int32_t *) pOut, widthIn, heightIn, strideIn, strideOut, testQ31, errorCtx);
-      }
+   else if ((indataType == AUDIOLIB_FLOAT64) && (outdataType == AUDIOLIB_INT16)) {
+      return TISP_typeConversion_createNode<double, int16_t>(pIn, pOut, width, height, inPitch, outPitch, testQ31,
+                                                             errorCtx);
+   }
+   else if ((indataType == AUDIOLIB_INT32) && (outdataType == AUDIOLIB_FLOAT32)) {
+      return TISP_typeConversion_createNode<int32_t, float>(pIn, pOut, width, height, inPitch, outPitch, testQ31,
+                                                            errorCtx);
+   }
+   else if ((indataType == AUDIOLIB_INT32) && (outdataType == AUDIOLIB_FLOAT64)) {
+      return TISP_typeConversion_createNode<int32_t, double>(pIn, pOut, width, height, inPitch, outPitch, testQ31,
+                                                             errorCtx);
+   }
+   else if ((indataType == AUDIOLIB_FLOAT32) && (outdataType == AUDIOLIB_INT32)) {
+      return TISP_typeConversion_createNode<float, int32_t>(pIn, pOut, width, height, inPitch, outPitch, testQ31,
+                                                            errorCtx);
+   }
+   else if ((indataType == AUDIOLIB_FLOAT64) && (outdataType == AUDIOLIB_INT32)) {
+      return TISP_typeConversion_createNode<double, int32_t>(pIn, pOut, width, height, inPitch, outPitch, testQ31,
+                                                             errorCtx);
    }
    else {
       errorCtx.setInvalidParameterError("TISP_typeConversion_createKernelObject",

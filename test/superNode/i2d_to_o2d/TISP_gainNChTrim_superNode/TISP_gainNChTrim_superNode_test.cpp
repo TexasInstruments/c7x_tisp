@@ -68,7 +68,6 @@ TISP::SuperNode::superNodeVec *TISP_gainNChTrim_createSuperNode(void            
                                                                 void            *pOutputBlock,
                                                                 int32_t          widthIn,
                                                                 int32_t          heightIn,
-                                                                int32_t          gHeightIn,
                                                                 int32_t          inPitch,
                                                                 int32_t          outPitch,
                                                                 int32_t          blockWidth,
@@ -77,12 +76,31 @@ TISP::SuperNode::superNodeVec *TISP_gainNChTrim_createSuperNode(void            
                                                                 uint32_t         isInterleave,
                                                                 TISP::ErrorCtxt &errorCtx)
 {
+   const size_t blockPitch = blockWidth * AUDIOLIB_sizeof(dataType);
 
    if (dataType == AUDIOLIB_FLOAT32) {
-      auto k0 = std::make_unique<TISP::AUDIOLIB::GainNChTrim<float>>(
-          (float *) pInputBlock0, (float *) pInputBlock1, (float *) pInputBlock2, (float *) pOutputBlock, blockWidth,
-          blockHeight, gHeightIn, blockWidth * AUDIOLIB_sizeof(dataType), blockWidth * AUDIOLIB_sizeof(dataType),
-          isInterleave, errorCtx);
+      const TISP::TISP_BufDesc2D inDesc  = {pInputBlock0,
+                                            TISP::ElementDType<float>::value,
+                                            static_cast<size_t>(blockWidth),
+                                            static_cast<size_t>(blockHeight),
+                                            blockPitch,
+                                            static_cast<uint8_t>(isInterleave)};
+      const TISP::TISP_BufDesc2D outDesc = {pOutputBlock,
+                                            TISP::ElementDType<float>::value,
+                                            static_cast<size_t>(blockWidth),
+                                            static_cast<size_t>(blockHeight),
+                                            blockPitch,
+                                            static_cast<uint8_t>(isInterleave)};
+
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+      TISP::AUDIOLIB::GainNChTrimTunableParams<float> defaultParams;
+      defaultParams.pGains      = static_cast<float *>(pInputBlock1);
+      defaultParams.pMasterGain = static_cast<float *>(pInputBlock2);
+
+      auto k0 = std::make_unique<TISP::AUDIOLIB::GainNChTrim<float>>(&inputs, &outputs, &defaultParams, "GainNChTrim",
+                                                                     0, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating GainNChTrim<float> node: %s\n", errorCtx.getMessage());
@@ -101,11 +119,28 @@ TISP::SuperNode::superNodeVec *TISP_gainNChTrim_createSuperNode(void            
       return mySuperNodeVec;
    }
    else if (dataType == AUDIOLIB_FLOAT64) {
+      const TISP::TISP_BufDesc2D inDesc  = {pInputBlock0,
+                                            TISP::ElementDType<double>::value,
+                                            static_cast<size_t>(blockWidth),
+                                            static_cast<size_t>(blockHeight),
+                                            blockPitch,
+                                            static_cast<uint8_t>(isInterleave)};
+      const TISP::TISP_BufDesc2D outDesc = {pOutputBlock,
+                                            TISP::ElementDType<double>::value,
+                                            static_cast<size_t>(blockWidth),
+                                            static_cast<size_t>(blockHeight),
+                                            blockPitch,
+                                            static_cast<uint8_t>(isInterleave)};
 
-      auto k0 = std::make_unique<TISP::AUDIOLIB::GainNChTrim<double>>(
-          (double *) pInputBlock0, (double *) pInputBlock1, (double *) pInputBlock2, (double *) pOutputBlock,
-          blockWidth, blockHeight, gHeightIn, blockWidth * AUDIOLIB_sizeof(dataType),
-          blockWidth * AUDIOLIB_sizeof(dataType), isInterleave, errorCtx);
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+      TISP::AUDIOLIB::GainNChTrimTunableParams<double> defaultParams;
+      defaultParams.pGains      = static_cast<double *>(pInputBlock1);
+      defaultParams.pMasterGain = static_cast<double *>(pInputBlock2);
+
+      auto k0 = std::make_unique<TISP::AUDIOLIB::GainNChTrim<double>>(&inputs, &outputs, &defaultParams, "GainNChTrim",
+                                                                      0, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating GainNChTrim<double> node: %s\n", errorCtx.getMessage());
@@ -229,8 +264,8 @@ int TISP_gainNChTrim_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          TISP::ErrorCtxt                errorCtx;
          TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_gainNChTrim_createSuperNode(
              currPrm.staticIn0, currPrm.staticIn1, pOut, pInputBlock0.get(), pInputBlock1.get(), pInputBlock2.get(),
-             pOutputBlock.get(), widthIn, heightIn, gHeightIn, inPitch, outPitch, blockWidth, blockHeight,
-             currPrm.dataType, isInterleave, errorCtx);
+             pOutputBlock.get(), widthIn, heightIn, inPitch, outPitch, blockWidth, blockHeight, currPrm.dataType,
+             isInterleave, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating supernode: %s\n", errorCtx.getMessage());

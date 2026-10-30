@@ -22,14 +22,14 @@ namespace AUDIOLIB {
  * @brief Provides node-level APIs for the AUDIOLIB_delayNChannel kernel from AUDIOLIB.
  * @tparam T : Supports float and double.
  *
- * @details This kernel copies each channel from the input buffer pX
- * (interleaved or non-interleaved) to the output buffer pY based on a
- * given array of delay sizes pD. <br>For each channel, corresponding delay size elements of zeros are stored in the
- * output and then the corresponding input channel is stored in the output.
+ * @details This kernel copies each channel from the input buffer
+ * (interleaved or non-interleaved) to the output buffer based on a
+ * given array of delay sizes (@ref DelayNChannelConfig::pDelaySize). <br>For each channel, corresponding delay
+ * size elements of zeros are stored in the output and then the corresponding input channel is stored in the output.
  *
  * <b>Example (Non-interleaved data): </b>
  *
- * <b>Input</b> (pX): No. of samples = N; No. of channels = M.
+ * <b>Input</b>: No. of samples = N; No. of channels = M.
  *  | Channel/Sample | s0  | s1  | ... | sN-3  | sN-2  | sN-1  |
  *  |--------------- |-----|-----|-----|-------|-------|-------|
  *  |      ch0       | 100 | 320 | ... |  430  |  520  |  701  |
@@ -39,10 +39,10 @@ namespace AUDIOLIB {
  *  |      .         |  .  |  .  | ... |   .   |   .   |   .   |
  *  |      chM       | 980 |1050 | ... | 1024  |  240  |  156  |
  *
- * <b>mode</b> (mode): 0 <br>
- * <b>delay sizes array</b> (pC): `{1, 2,...., 0}` <br>
+ * <b>mode</b> (@ref DelayNChannelConfig::mode): 0 <br>
+ * <b>delay sizes array</b> (@ref DelayNChannelConfig::pDelaySize): `{1, 2,...., 0}` <br>
  *
- * <b>Output</b> (pY): No. of samples = N; No. of channels = M.
+ * <b>Output</b>: No. of samples = N; No. of channels = M.
  *  | Channel/Sample | s0  | s1  |  s2 | ... | sN-1  |
  *  |--------------- |-----|-----|-----|-----|-------|
  *  |      ch0       |  0  | 100 | 320 | ... |  520  |
@@ -54,24 +54,25 @@ namespace AUDIOLIB {
  *
  */
 
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref DelayNChannel node.
+ *
+ * @details Required; fixed for the node's lifetime.
+ */
+struct DelayNChannelConfig {
+   uint32_t  mode       = 0U;      /*!< `0`: linear delay, `1`: circular delay. */
+   uint32_t *pDelaySize = nullptr; /*!< Caller-owned array, one delay in samples per channel; required. Copied into
+                                        the kernel at construction. */
+};
+
 template <typename T> class DelayNChannel final : public VirtualOp {
 
-   T       *_pX;       /*!< Pointer to input buffer */
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
-
-   T *_pD; /*!< Pointer to input delay matrix. */
-   T *_pS; /*!< Pointer to scratch matrix. */
-   T *_pY; /*!< Pointer to result matrix. */
-
-   size_t _width;         /*!< Width (samples) of the input matrix. */
-   size_t _height;        /*!< Height (channels) of the input matrix. */
-   size_t _widthD;        /*!< Width of the delay matrix. */
-   size_t _heightD;       /*!< Height (channels) of the delay matrix. */
-   size_t _inPitchBytes;  /*!< Pitch in bytes of the input matrix. */
-   size_t _outPitchBytes; /*!< Pitch in bytes of the output matrix. */
-   size_t _delayPitchBytes;    /*!< Pitch in bytes of the delay matrix. */
-   size_t _interleave;    /*!< 0 = non-interleaved, 1 = interleaved. */
-   size_t _mode;          /*!< 0 = linear delay, 1 = circular delay. */
+   NodeInfo       _nodeInfo; /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;       /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;      /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _state;    /*!< Delay line descriptor, one row per channel */
+   T             *_scratch;  /*!< Scratch matrix (channels x samples, packed rows) */
+   uint32_t       _mode;     /*!< `0`: linear delay, `1`: circular delay */
 
    TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_delayNChannel kernel. */
 
@@ -79,79 +80,41 @@ template <typename T> class DelayNChannel final : public VirtualOp {
    /**
     * @brief Creates an AUDIOLIB_delayNChannel node.
     *
-    * This constructor initializes a node for the AUDIOLIB_delayNChannel kernel.
+    * @details Validates the buffer descriptors and initializes the AUDIOLIB_delayNChannel kernel, then clears the
+    *          delay line. The channel count is the input @c width when interleaved, otherwise its @c height.
     *
-    * @param [in]  *pX           : Pointer to the input matrix.
-    *                              Initializes @ref _pX.
-    * @param [in]  *pD           : Pointer to the input delay matrix.
-    *                              Initializes @ref _pD.
-    * @param [in]  *pS           : Pointer to the intermediate scratch memory with the same shape as the input matrix.
-    *                              initializes @ref _pS.
-    * @param [out] *pY           : Pointer to the output matrix.
-    *                              Initializes @ref _pY.
-    * @param [in]  width         : Width of input matrix.
-    * @param [in]  height        : Height of input matrix.
-    * @param [in]  widthD        : Width of delay matrix.
-    * @param [in]  heightD       : Height of delay matrix.
-    * @param [in]  inPitchBytes  : Pitch of input matrix in bytes.
-    * @param [in]  delayPitchBytes    : Pitch of delay matrix in bytes.
-    * @param [in]  outPitchBytes : Pitch of output matrix in bytes.
-    * @param [in]  interleave    : Indicates whether the input matrix data is interleaved:
-    *                            - `0`: Non-interleaved (Rows represent channels, columns represent samples).
-    *                            - `1`: Interleaved (Rows represent samples, columns represent channels).
-    * @param [in]  mode          : Indicates the type of delay.
-    *                            - `0`: Linear delay.
-    *                            - `1`: Circular delay.
-    * @param [in]  *pDelaySize   : Pointer to the array of per-channel delay sizes.
-    * @param [in]  errorCtx      : Error context for reporting constructor errors
+    * @param [in] pInputs      : Input buffer descriptors; exactly one buffer, interleaved or non-interleaved. Its
+    *                            @c pBuf is the initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs     : Output buffer descriptors; exactly one buffer with the input's layout, width and
+    *                            height.
+    * @param [in] pStates      : State buffer descriptors; exactly one delay line with one row per channel (at least
+    *                            as many rows as channels), whatever the data layout. Its @c width is the maximum delay
+    *                            (linear mode) or the circular buffer length; the kernel takes the delay buffer length
+    *                            from @c pitchBytes. Its @c isInterleave is not used.
+    * @param [in] pScratch     : Scratch buffer; required.
+    * @param [in] scratchBytes : Size of @c pScratch in bytes; at least channels x samples elements.
+    * @param [in] pConfig : Construction-time parameters; required, with a non-null @c pDelaySize.
+    * @param [in] nodeName     : Name of the node
+    * @param [in] nodeId       : ID of the node
+    * @param [in] errorCtx     : Error context for reporting constructor errors
     *
+    * @throw None
     */
-   DelayNChannel(T         *pX,
-                 T         *pD,
-                 T         *pS,
-                 T         *pY,
-                 size_t     width,
-                 size_t     height,
-                 size_t     widthD,
-                 size_t     heightD,
-                 size_t     inPitchBytes,
-                 size_t     delayPitchBytes,
-                 size_t     outPitchBytes,
-                 size_t     interleave,
-                 size_t     mode,
-                 uint32_t  *pDelaySize,
-                 ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a AUDIOLIB_delayNChannel node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-
-   DelayNChannel(T          *pX,
-                 T          *pD,
-                 T          *pS,
-                 T          *pY,
-                 size_t      width,
-                 size_t      height,
-                 size_t      widthD,
-                 size_t      heightD,
-                 size_t      inPitchBytes,
-                 size_t      delayPitchBytes,
-                 size_t      outPitchBytes,
-                 size_t      interleave,
-                 size_t      mode,
-                 uint32_t   *pDelaySize,
-                 const char *nodeName,
-                 uint32_t    nodeId,
-                 ErrorCtxt  &errorCtx);
+   DelayNChannel(const TISP_BufDescList         *pInputs,
+                 const TISP_BufDescList         *pOutputs,
+                 const TISP_BufDescList         *pStates,
+                 void                           *pScratch,
+                 size_t                          scratchBytes,
+                 const DelayNChannelConfig *pConfig,
+                 const char                     *nodeName,
+                 uint32_t                        nodeId,
+                 ErrorCtxt                      &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input data matrix) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -162,7 +125,7 @@ template <typename T> class DelayNChannel final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -172,14 +135,14 @@ template <typename T> class DelayNChannel final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1)
     */
    size_t getNumOutputs() const noexcept override;
 

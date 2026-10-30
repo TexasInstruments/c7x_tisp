@@ -11,20 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace TISP {
-
-/**
- * @brief Generic 2-D buffer descriptor: pointer, dimensions, and row stride.
- *
- */
-typedef struct TISP_BufDesc2D_t {
-   void    *pBuf;     /*!< Buffer pointer. */
-   uint32_t width;    /*!< dim_x in elements. */
-   uint32_t height;   /*!< dim_y in elements. */
-   int32_t  stride_y; /*!< Row stride in bytes. */
-} TISP_BufDesc2D;
-
-} // namespace TISP
+// TISP_BufDesc2D / TISP_BufDescList are defined in TISP_types.hpp.
 
 /*
  * Byte alignment for SE/SA streaming scratch sub-buffers.  64 bytes is the maximum

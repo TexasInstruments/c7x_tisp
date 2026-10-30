@@ -22,13 +22,15 @@ namespace AUDIOLIB {
  * @brief Provides node-level APIs for the AUDIOLIB_gainNChTrim kernel from AUDIOLIB.
  * @tparam T : Supports float and double.
  *
- * @details This kernel applies a specified gain factor to each channel in the input buffer pX
- * (interleaved or non-interleaved) and multiplies the obtained values with master gain value pM
- * and writes the resulting values to the output buffer pY based on a given array of gain values pG.
+ * @details This kernel applies a specified gain factor to each channel of the input buffer
+ * (interleaved or non-interleaved), multiplies the obtained values by a master gain value, and writes
+ * the resulting values to the output buffer. The per-channel gains come from a caller-owned array
+ * (@ref GainNChTrimTunableParams::pGains) and the master gain from a caller-owned value
+ * (@ref GainNChTrimTunableParams::pMasterGain), both updatable via @ref setParams.
  *
  * <b>Example (Interleaved data): </b>
  *
- * <b>Input</b> (pX): No. of samples = N; No. of channels = M.
+ * <b>Input</b>: No. of samples = N; No. of channels = M.
  *  | SampleChannel | ch0 | ch1 | ... | chM-1 |
  *  |--------------- |-----|-----|-----|-------|
  *  |      s0        | 100 | 320 | ... |  430  |
@@ -38,13 +40,13 @@ namespace AUDIOLIB {
  *  |      .         |  .  |  .  | ... |   .   |
  *  |     sN-1       | 980 |1050 | ... | 1024  |
  *
- * <b>gain values array</b> (pG): `{1, 3, ..., 2}` <br>
- * <b>master gain value</b> (pM): 4 <br>
+ * <b>Gain values</b> (@ref GainNChTrimTunableParams::pGains): `{1, 3, ..., 2}` <br>
+ * <b>Master gain value</b> (@ref GainNChTrimTunableParams::pMasterGain): 4 <br>
  *
  * <b>Operation:</b>
  * output[s0][ch0] = (input[s0][ch0]*gain[ch0])*masterGain
  *
- * <b>Output</b> (pY): No. of samples = N; No. of channels = M.
+ * <b>Output</b>: No. of samples = N; No. of channels = M.
  *  | SampleChannel |  Ch0 |  Ch1 | ... | ChM-1 |
  *  |--------------- |------|------|-----|-------|
  *  |      s0        |  400 | 3840 | ... | 3440  |
@@ -58,7 +60,7 @@ namespace AUDIOLIB {
  *
  * | Parameter    | Configuration Time | Description                                                         |
  * |--------------|--------------------|---------------------------------------------------------------------|
- * | gHeight      | Instance Creation  | Number of channels (gain array size). <b>FIXED</b> at creation time.|
+ * | Channels     | Instance Creation  | Input width if interleaved, else height (gain array size). <b>FIXED</b>.|
  * | Gain values  | Runtime            | Gain factor for each channel.                                       |
  * | Master gain  | Runtime            | Master gain factor.                                                 |
  * | Bypass       | Runtime            | Copies input to output, leaving the gain unapplied.                 |
@@ -72,34 +74,41 @@ namespace AUDIOLIB {
  *
  */
 enum class GainNChTrimParamId : uint16_t {
-   kGainValues = 0, /**< kGainValues: Gain values to set/get for each channel */
-   kMasterGain = 1, /**< kMasterGain: Master gain scalar (float) to set/get */
-   kBypass     = 2  /**< kBypass: uint32_t bypass mode; `0` applies the gain, `1` copies input to output */
+   kBypass     = 0, /**< kBypass: uint32_t bypass mode; `0` applies the gain, `1` copies input to output */
+   kGainValues = 1, /**< kGainValues: Gain values to set/get for each channel */
+   kMasterGain = 2, /**< kMasterGain: Master gain scalar (float) to set/get */
+   kAll        = 3  /**< kAll: all tunable params as one @ref GainNChTrimTunableParams payload */
+};
+
+/**
+ * @brief Tunable parameters of the @ref GainNChTrim node, with their default values.
+ *
+ * @details Initial values of the runtime parameters, and the @ref GainNChTrimParamId::kAll payload of
+ *          @ref GainNChTrim::setParams / @ref GainNChTrim::getParams.
+ *
+ * @tparam T : Node element type (float or double).
+ */
+template <typename T> struct GainNChTrimTunableParams {
+   T       *pGains      = nullptr; /*!< Caller-owned array, one gain per channel; required, must outlive the node. */
+   T       *pMasterGain = nullptr; /*!< Caller-owned master gain value; required, must outlive the node. */
+   uint32_t bypassMode  = 0U;      /*!< `0`: apply the gain, `1`: copy input to output. */
 };
 
 template <typename T> class GainNChTrim final : public VirtualOp {
 
-   T       *_pX;       /*!< Pointer to input buffer */
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
+   NodeInfo       _nodeInfo;    /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _in;          /*!< Input buffer descriptor; @ref setAddr rebinds its pBuf */
+   TISP_BufDesc2D _out;         /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
+   size_t         _numChannels; /*!< Number of channels (input width if interleaved, else height) */
+   uint32_t       _bypassMode;  /*!< Bypass mode: `0` applies the gain, `1` copies input to output */
 
-   T *_pG; /*!< Pointer to input gain array. */
-   T *_pM; /*!< Pointer to input master gain value. */
-   T *_pY; /*!< Pointer to output matrix. */
-
-   size_t _width;         /*!< Width of the input matrix. */
-   size_t _height;        /*!< Height of the input matrix. */
-   size_t _gHeight;       /*!< Number of elements in the gain array. */
-   size_t _inPitchBytes;  /*!< Pitch of the input matrix in bytes. */
-   size_t _outPitchBytes; /*!< Pitch of the output matrix in bytes. */
-   size_t _isInterleave;  /*!< `0`: non-interleaved, `1`: interleaved input data. */
-
-   uint32_t _bypassMode; /*!< Bypass mode: `0` applies the gain, `1` copies input to output. */
-
-   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_gainNChTrim kernel. */
+   T                    *_gains;      /*!< Caller-owned gain array (numChannels), used live by exec and setParams */
+   T                    *_masterGain; /*!< Caller-owned master gain value, used live by exec and setParams */
+   TISP::HandlePtr<char> _handle;     /*!< Handle to low level AUDIOLIB_gainNChTrim kernel */
 
    /**
-    * @brief Copies @ref _height rows of @ref _width elements from @ref _pX to @ref _pY, honouring
-    *        @ref _inPitchBytes and @ref _outPitchBytes.
+    * @brief Copies the input buffer described by @ref _in to the output buffer described by @ref _out,
+    *        row by row, honouring both row pitches.
     *
     * @retval None
     * @throw None
@@ -110,64 +119,34 @@ template <typename T> class GainNChTrim final : public VirtualOp {
    /**
     * @brief Creates an AUDIOLIB_gainNChTrim node.
     *
-    * This constructor initializes a node for the AUDIOLIB_gainNChTrim kernel.
+    * @details Validates the buffer descriptors and initializes the AUDIOLIB_gainNChTrim kernel. The channel
+    *          count is the input @c width when interleaved (rows are samples, columns are channels), otherwise
+    *          its @c height (rows are channels, columns are samples).
     *
-    * @param [in]  *pX           : Pointer to the input matrix.
-    *                              Initializes @ref _pX.
-    * @param [in]  *pG           : Pointer to the array of input gain values.
-    *                              Initializes @ref _pG.
-    * @param [in]  *pM           : Pointer to the input master gain value.
-    *                              Initializes @ref _pM.
-    * @param [out] *pY           : Pointer to the output matrix.
-    *                              Initializes @ref _pY.
-    * @param [in]  width         : Width of input matrix.
-    * @param [in]  height        : Height of input matrix.
-    * @param [in]  gHeight       : Number of elements in input gain array.
-    * @param [in]  inPitchBytes  : Pitch of input matrix in bytes.
-    * @param [in]  outPitchBytes : Pitch of output matrix in bytes.
-    * @param [in]  isInterleave  : Indicates whether the input matrix data is interleaved:
-    *                            - `0`: Non-interleaved (Rows represent channels, columns represent samples).
-    *                            - `1`: Interleaved (Rows represent samples, columns represent channels).
-    * @param [in]  errorCtx      : Error context for reporting constructor errors
+    * @param [in] pInputs               : Input buffer descriptors; exactly one buffer. Its @c pBuf is the
+    *                                    initial input pointer, rebound later by @ref setAddr.
+    * @param [in] pOutputs              : Output buffer descriptors; exactly one buffer with the same layout as
+    *                                    the input.
+    * @param [in] pDefaultTunableParams : Initial tunable parameters; required, with non-null @c pGains and
+    *                                    @c pMasterGain.
+    * @param [in] nodeName              : Name of the node
+    * @param [in] nodeId                : ID of the node
+    * @param [in] errorCtx              : Error context for reporting constructor errors
     *
+    * @throw None
     */
-   GainNChTrim(T         *pX,
-               T         *pG,
-               T         *pM,
-               T         *pY,
-               size_t     width,
-               size_t     height,
-               size_t     gHeight,
-               size_t     inPitchBytes,
-               size_t     outPitchBytes,
-               size_t     isInterleave,
-               ErrorCtxt &errorCtx);
-
-   /**
-    * @brief Creates a AUDIOLIB_gainNChTrim node with a name and ID
-    *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
-    */
-   GainNChTrim(T          *pX,
-               T          *pG,
-               T          *pM,
-               T          *pY,
-               size_t      width,
-               size_t      height,
-               size_t      gHeight,
-               size_t      inPitchBytes,
-               size_t      outPitchBytes,
-               size_t      isInterleave,
-               const char *nodeName,
-               uint32_t    nodeId,
-               ErrorCtxt  &errorCtx);
+   GainNChTrim(const TISP_BufDescList            *pInputs,
+               const TISP_BufDescList            *pOutputs,
+               const GainNChTrimTunableParams<T> *pDefaultTunableParams,
+               const char                        *nodeName,
+               uint32_t                           nodeId,
+               ErrorCtxt                         &errorCtx);
 
    /**
     * @brief Get the address of an input buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pX (input data matrix) - managed by setAddr()
+    * - index 0: input buffer (@ref _in) - managed by setAddr()
     *
     * @param[in]  index : Index of the input buffer (0)
     * @retval     void* : Pointer to the input buffer, or nullptr if the index is invalid
@@ -178,7 +157,7 @@ template <typename T> class GainNChTrim final : public VirtualOp {
     * @brief Get the address of an output buffer
     *
     * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
     *
     * @param[in]  index : Index of the output buffer (0)
     * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
@@ -188,14 +167,14 @@ template <typename T> class GainNChTrim final : public VirtualOp {
    /**
     * @brief Get the number of input buffers
     *
-    * @retval    size_t : The number of input buffers (1: _pX)
+    * @retval    size_t : The number of input buffers (1)
     */
    size_t getNumInputs() const noexcept override;
 
    /**
     * @brief Get the number of output buffers
     *
-    * @retval    size_t : The number of output buffers (1: _pY)
+    * @retval    size_t : The number of output buffers (1)
     */
    size_t getNumOutputs() const noexcept override;
 
@@ -224,7 +203,7 @@ template <typename T> class GainNChTrim final : public VirtualOp {
     * The node strictly validates that the provided `size` argument matches or exceeds the
     * expected byte size for the given parameter before mapping the state into the active node memory.
     *
-    * @param [in] paramId      : Parameter ID to update
+    * @param [in] paramId      : Parameter ID to update (@ref GainNChTrimParamId)
     * @param [in] value        : Pointer to a buffer containing the new parameter value
     * @param [in] size         : The size in bytes of the payload
     * @param [in,out] errorCtx : Error context for reporting errors
@@ -244,7 +223,7 @@ template <typename T> class GainNChTrim final : public VirtualOp {
     * (or `value` is `nullptr`), it safely fails (returns `false`) but injects the exact required
     * byte capacity into `*size`, allowing the application to re-allocate precisely.
     *
-    * @param [in] paramId      : Parameter ID to query
+    * @param [in] paramId      : Parameter ID to query (@ref GainNChTrimParamId)
     * @param [out] value       : Pointer to a buffer where parameters will be stored
     * @param [in,out] size     : Input: Capacity of value buffer in bytes. Output: Actual bytes written or required.
     * @param [in,out] errorCtx : Error context for reporting errors

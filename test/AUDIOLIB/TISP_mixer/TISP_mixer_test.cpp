@@ -242,14 +242,14 @@ int TISP_mixer_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          uint32_t i = 0;
          for (i = 0; i < currPrm.numInput; i++) {
             if (isInterleave == 1) {
-               mixerInput[i].width    = currPrm.inChannels[i]; // Channels
-               mixerInput[i].height   = currPrm.inSamples;     // Samples
-               mixerInput[i].stride_y = currPrm.strideIn0;
+               mixerInput[i].width      = currPrm.inChannels[i]; // Channels
+               mixerInput[i].height     = currPrm.inSamples;     // Samples
+               mixerInput[i].pitchBytes = currPrm.strideIn0;
             }
             else {
-               mixerInput[i].width    = currPrm.inSamples;     // Samples
-               mixerInput[i].height   = currPrm.inChannels[i]; // Channels
-               mixerInput[i].stride_y = currPrm.strideIn0;
+               mixerInput[i].width      = currPrm.inSamples;     // Samples
+               mixerInput[i].height     = currPrm.inChannels[i]; // Channels
+               mixerInput[i].pitchBytes = currPrm.strideIn0;
             }
          }
 
@@ -284,7 +284,7 @@ int TISP_mixer_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          for (i = 0; i < currPrm.numInput; i++) {
             uint32_t input_dim_y_padded = AUDIOLIB_ROW_STRIDE(mixerInput[i].height, eleCount);
-            uint32_t inp0SizeBytes      = input_dim_y_padded * mixerInput[i].stride_y;
+            uint32_t inp0SizeBytes      = input_dim_y_padded * mixerInput[i].pitchBytes;
             auto     input              = myL2Heap.allocate64ByteAligned<uint8_t>(numBlocks * inp0SizeBytes);
             mixerInput[i].pBuf          = input.get();
             inputBuffers.push_back(std::move(input));
@@ -311,11 +311,12 @@ int TISP_mixer_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                if (currPrm.dataType == AUDIOLIB_FLOAT32 || currPrm.dataType == AUDIOLIB_FLOAT64) {
 
                   for (i = 0; i < currPrm.numInput; i++) {
-                     TI_fillBuffer_float(
-                         currPrm.testPattern, 0, mixerInput[i].pBuf + n * mixerInput[i].height * mixerInput[i].stride_y,
-                         currPrm.staticIn[i] + n * mixerInput[i].height * mixerInput[i].width * dataSize,
-                         mixerInput[i].width, mixerInput[i].height, mixerInput[i].stride_y,
-                         AUDIOLIB_sizeof(currPrm.dataType), testPatternString);
+                     TI_fillBuffer_float(currPrm.testPattern, 0,
+                                         mixerInput[i].pBuf + n * mixerInput[i].height * mixerInput[i].pitchBytes,
+                                         currPrm.staticIn[i] +
+                                             n * mixerInput[i].height * mixerInput[i].width * dataSize,
+                                         mixerInput[i].width, mixerInput[i].height, mixerInput[i].pitchBytes,
+                                         AUDIOLIB_sizeof(currPrm.dataType), testPatternString);
                   }
                   TI_fillBuffer_float(currPrm.testPattern, 0, pCoeff.get(), currPrm.staticMixerCoeffs, widthCoeff,
                                       heightCoeff, strideCoeff, AUDIOLIB_sizeof(currPrm.dataType), testPatternString);
@@ -345,7 +346,7 @@ int TISP_mixer_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
                for (uint32_t i = 0; i < currPrm.numInput; i++) {
                   // set address for block to process
-                  kAddr.src[i] = (uint8_t *) mixerInput[i].pBuf + n * mixerInput[i].height * mixerInput[i].stride_y;
+                  kAddr.src[i] = (uint8_t *) mixerInput[i].pBuf + n * mixerInput[i].height * mixerInput[i].pitchBytes;
                }
                kAddr.dst[0] = (uint8_t *) pOut.get() + n * heightOut * strideOut;
                k0->setAddr(kAddr, kAddrMode);
@@ -370,7 +371,8 @@ int TISP_mixer_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                for (size_t n = 0; n < numBlocks; n++) {
                   for (i = 0; i < currPrm.numInput; i++) {
                      // set address for block to process
-                     kAddr.src[i] = (uint8_t *) mixerInput[i].pBuf + n * mixerInput[i].height * mixerInput[i].stride_y;
+                     kAddr.src[i] =
+                         (uint8_t *) mixerInput[i].pBuf + n * mixerInput[i].height * mixerInput[i].pitchBytes;
                   }
                   kAddr.dst[0] = (int8_t *) pOut.get() + n * heightOut * strideOut;
                   k0->setAddr(kAddr, kAddrMode);
@@ -387,7 +389,7 @@ int TISP_mixer_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             for (size_t n = 0; n < numBlocks; n++) {
                for (i = 0; i < currPrm.numInput; i++) {
                   // set address for block to process
-                  kAddr.src[i] = (uint8_t *) mixerInput[i].pBuf + n * mixerInput[i].height * mixerInput[i].stride_y;
+                  kAddr.src[i] = (uint8_t *) mixerInput[i].pBuf + n * mixerInput[i].height * mixerInput[i].pitchBytes;
                }
                kAddr.dst[0] = (int8_t *) pOut.get() + n * heightOut * strideOut;
                k0->setAddr(kAddr, kAddrMode);

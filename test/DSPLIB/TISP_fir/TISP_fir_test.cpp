@@ -176,13 +176,30 @@ int DSPLIB_fir_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
             TISP::ErrorCtxt errorCtx;
-            auto            k0 = std::make_unique<TISP::DSPLIB::Fir<float>>(
-                (float *) pIn.get(), (float *) pState.get(), (float *) pFilter.get(), (float *) pOut.get(),
-                static_cast<uint32_t>(inputSize), static_cast<uint32_t>(filterSize), static_cast<uint32_t>(stateSize),
-                static_cast<uint32_t>(batchSize), static_cast<uint32_t>(inPitch * numBlocks),
-                static_cast<uint32_t>(statePitch), static_cast<uint32_t>(filterPitch),
-                static_cast<uint32_t>(outPitch * numBlocks), static_cast<bool>(enableNchCoefs),
-                static_cast<bool>(enableMMA), static_cast<bool>(enableQ), static_cast<uint32_t>(Q), errorCtx);
+            const TISP::TISP_BufDesc2D inDesc    = {pIn.get(), TISP::Types::kFloat32, inputSize, batchSize,
+                                                    inPitch * numBlocks, 0U};
+            const TISP::TISP_BufDesc2D outDesc   = {pOut.get(), TISP::Types::kFloat32, inputSize, batchSize,
+                                                    outPitch * numBlocks, 0U};
+            const TISP::TISP_BufDesc2D stateDesc = {pState.get(), TISP::Types::kFloat32, stateSize, batchSize,
+                                                    statePitch, 0U};
+
+            const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+            const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+            const TISP::TISP_BufDescList states  = {&stateDesc, 1U};
+
+            TISP::DSPLIB::FirConfig config;
+            config.filterSize      = filterSize;
+            config.enableNchCoefs  = enableNchCoefs;
+            config.coeffPitchBytes = enableMMA ? filterPitchMMA : filterPitch;
+            config.enableMMA       = enableMMA;
+            config.enableQ         = enableQ;
+            config.Q               = Q;
+
+            TISP::DSPLIB::FirTunableParams<float> defaultParams;
+            defaultParams.pCoeffs = reinterpret_cast<float *>(pFilter.get());
+
+            auto k0 = std::make_unique<TISP::DSPLIB::Fir<float>>(&inputs, &outputs, &states, &config,
+                                                                 &defaultParams, "Fir", 0, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
@@ -208,8 +225,6 @@ int DSPLIB_fir_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                // set address for block to process
                kAddrMode    = TISP::kAddrModeInOut;
                kAddr.src[0] = pIn.get() + n * inputSize * sizeof(DSPLIB_F32);
-               kAddr.src[1] = pState.get();
-               kAddr.src[2] = pFilter.get();
                kAddr.dst[0] = pOut.get() + n * outputSize * sizeof(DSPLIB_F32);
 
                k0->setAddr(kAddr, kAddrMode);
@@ -237,8 +252,6 @@ int DSPLIB_fir_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                   // set address for block to process
                   kAddrMode    = TISP::kAddrModeInOut;
                   kAddr.src[0] = pIn.get() + n * inputSize * sizeof(DSPLIB_F32);
-                  kAddr.src[1] = pState.get();
-                  kAddr.src[2] = pFilter.get();
                   kAddr.dst[0] = pOut.get() + n * outputSize * sizeof(DSPLIB_F32);
 
                   k0->setAddr(kAddr, kAddrMode);
@@ -271,8 +284,6 @@ int DSPLIB_fir_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                // set address for block to process
                kAddrMode    = TISP::kAddrModeInOut;
                kAddr.src[0] = pIn.get() + n * inputSize * sizeof(DSPLIB_F32);
-               kAddr.src[1] = pState.get();
-               kAddr.src[2] = pFilter.get();
                kAddr.dst[0] = pOut.get() + n * outputSize * sizeof(DSPLIB_F32);
 
                k0->setAddr(kAddr, kAddrMode);

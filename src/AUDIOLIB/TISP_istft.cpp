@@ -124,8 +124,20 @@ Istft<T>::Istft(T         *pX,
       /* compose the inverse real FFT node: complex spectrum -> real time-domain frames,
        * batched over batchSize frames.  pX (input) is rebound in exec(); pY (=_pIFFTOut) and
        * the butterfly scratch (=_pFftScratch) are fixed.  inMode = !onesided (0 = half spectrum). */
-      _ifftNode = TISP::make_unique_node<TISP::FFTLIB::IFFTR1dBatched<T>>(pX, _pFftScratch, _pIFFTOut, fftSize,
-                                                                          batchSize, !onesided, errorCtx);
+      const uint32_t         inBins      = onesided ? (fftSize + 2u) : (2u * fftSize);
+      const TISP_BufDesc2D   ifftIn      = {pX, ElementDType<T>::value, inBins, batchSize,
+                                             static_cast<size_t>(inBins) * sizeof(T), 0U};
+      const TISP_BufDesc2D   ifftOut     = {_pIFFTOut, ElementDType<T>::value, fftSize, batchSize,
+                                             static_cast<size_t>(fftSize) * sizeof(T), 0U};
+      const TISP_BufDescList ifftInputs  = {&ifftIn, 1U};
+      const TISP_BufDescList ifftOutputs = {&ifftOut, 1U};
+
+      TISP::FFTLIB::IFFTR1dBatchedConfig ifftBuild;
+      ifftBuild.fullSpectrum = !onesided;
+
+      _ifftNode = TISP::make_unique_node<TISP::FFTLIB::IFFTR1dBatched<T>>(
+          &ifftInputs, &ifftOutputs, _pFftScratch, static_cast<size_t>(secondHalfElems) * sizeof(T), &ifftBuild,
+          "IFFTR1dBatched", 0U, errorCtx);
       /* make_unique_node returns null on L2 node-arena exhaustion without touching
        * errorCtx, so a null result must be reported explicitly as a memory error */
       if (_ifftNode == nullptr) {

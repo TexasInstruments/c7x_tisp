@@ -65,7 +65,6 @@ TISP::SuperNode::superNodeVec *TISP_muteNCh_createSuperNode(void            *pIn
                                                             void            *pOutputBlock,
                                                             uint32_t         widthIn,
                                                             uint32_t         heightIn,
-                                                            uint32_t         inChannels,
                                                             uint32_t         inPitch,
                                                             uint32_t         outPitch,
                                                             uint32_t         blockWidth,
@@ -79,10 +78,24 @@ TISP::SuperNode::superNodeVec *TISP_muteNCh_createSuperNode(void            *pIn
                                                             TISP::ErrorCtxt &errorCtx)
 {
    if (dataType == AUDIOLIB_FLOAT32) {
-      auto k0 = std::make_unique<TISP::AUDIOLIB::Mutench<float>>(
-          (float *) pInputBlock0, (float *) pOutputBlock, blockWidth, blockHeight, inChannels,
-          blockWidth * AUDIOLIB_sizeof(dataType), blockWidth * AUDIOLIB_sizeof(dataType), isInterleaved, samplingRate,
-          isMute, fadeTime, fadeType, errorCtx);
+      const TISP::TISP_BufDesc2D inDesc  = {pInputBlock0, TISP::ElementDType<float>::value,       blockWidth,
+                                            blockHeight,  blockWidth * AUDIOLIB_sizeof(dataType), isInterleaved};
+      const TISP::TISP_BufDesc2D outDesc = {pOutputBlock, TISP::ElementDType<float>::value,       blockWidth,
+                                            blockHeight,  blockWidth * AUDIOLIB_sizeof(dataType), isInterleaved};
+
+      const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+      const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+      TISP::AUDIOLIB::MutenchConfig config;
+      config.samplingRate = samplingRate;
+
+      TISP::AUDIOLIB::MutenchTunableParams<float> defaultParams;
+      defaultParams.pIsMute  = isMute;
+      defaultParams.fadeTime = fadeTime;
+      defaultParams.fadeType = fadeType;
+
+      auto k0 = std::make_unique<TISP::AUDIOLIB::Mutench<float>>(&inputs, &outputs, &config, &defaultParams,
+                                                                 "MuteNCh", 0, errorCtx);
 
       if (!errorCtx.isSuccess()) {
          printf("\nError creating Mutench<float> node: %s\n", errorCtx.getMessage());
@@ -171,7 +184,6 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
       size_t   inPitch       = currPrm.inPitch;
       size_t   outPitch      = currPrm.outPitch;
       size_t   datasize      = AUDIOLIB_sizeof(currPrm.dataType);
-      size_t   inChannels    = currPrm.heightIn;
       if (isInterleaved) {
          widthIn  = currPrm.heightIn;
          heightIn = currPrm.widthIn;
@@ -210,10 +222,10 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          TISP::ErrorCtxt errorCtx;
 
-         TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_muteNCh_createSuperNode(
-             currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), widthIn, heightIn, inChannels, inPitch,
-             outPitch, blockWidth, blockHeight, isInterleaved, samplingRate, isMute, fadeTime, fadeType,
-             currPrm.dataType, errorCtx);
+         TISP::SuperNode::superNodeVec *mySuperNodeVec =
+             TISP_muteNCh_createSuperNode(currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), widthIn,
+                                          heightIn, inPitch, outPitch, blockWidth, blockHeight, isInterleaved,
+                                          samplingRate, isMute, fadeTime, fadeType, currPrm.dataType, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -235,10 +247,10 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
           * train the branch predictor                                   */
          for (k = 0; k < NUM_REPS; k++) {
 
-            TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_muteNCh_createSuperNode(
-                currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), widthIn, heightIn, inChannels, inPitch,
-                outPitch, blockWidth, blockHeight, isInterleaved, samplingRate, isMute, fadeTime, fadeType,
-                currPrm.dataType, errorCtx);
+            TISP::SuperNode::superNodeVec *mySuperNodeVec =
+                TISP_muteNCh_createSuperNode(currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), widthIn,
+                                             heightIn, inPitch, outPitch, blockWidth, blockHeight, isInterleaved,
+                                             samplingRate, isMute, fadeTime, fadeType, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -272,10 +284,10 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          for (uint32_t i = 0; i < 1; i++) {
 
-            TISP::SuperNode::superNodeVec *mySuperNodeVec = TISP_muteNCh_createSuperNode(
-                currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), widthIn, heightIn, inChannels, inPitch,
-                outPitch, blockWidth, blockHeight, isInterleaved, samplingRate, isMute, fadeTime, fadeType,
-                currPrm.dataType, errorCtx);
+            TISP::SuperNode::superNodeVec *mySuperNodeVec =
+                TISP_muteNCh_createSuperNode(currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), widthIn,
+                                             heightIn, inPitch, outPitch, blockWidth, blockHeight, isInterleaved,
+                                             samplingRate, isMute, fadeTime, fadeType, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());

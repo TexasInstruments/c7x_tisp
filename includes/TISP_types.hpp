@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 
 namespace TISP {
@@ -109,5 +110,35 @@ template <> struct ElementDType<float> {
 template <> struct ElementDType<double> {
    static constexpr Types value = Types::kFloat64;
 };
+
+/**
+ * @brief Generic 2-D buffer descriptor: pointer, element type, geometry, and channel layout.
+ *
+ * @details Describes one node I/O or state buffer. The geometry fields mirror the per-buffer
+ *          entries of @ref NodeBufParams so a descriptor can be copied into a node's buffer params
+ *          without conversion. For audio buffers, @c isInterleave selects how @c width and @c height
+ *          map to channels and samples:
+ *          - `1` (interleaved)     : rows are samples, columns are channels (@c width = channels).
+ *          - `0` (non-interleaved) : rows are channels, columns are samples (@c height = channels).
+ */
+typedef struct TISP_BufDesc2D_t {
+   void   *pBuf;         /*!< Buffer pointer. */
+   Types   dataType;     /*!< Element data type. */
+   size_t  width;        /*!< Fastest-varying extent (dim_x), in elements. */
+   size_t  height;       /*!< Number of rows (dim_y). */
+   size_t  pitchBytes;   /*!< Row pitch in bytes; must be at least @c width elements. */
+   uint8_t isInterleave; /*!< `1`: interleaved (rows = samples), `0`: non-interleaved (rows = channels). */
+} TISP_BufDesc2D;
+
+/**
+ * @brief A group of buffer descriptors (a node's inputs, outputs, or states).
+ *
+ * @details Entry @c i describes buffer @c i of the group and matches @c SetAddr_t::src[i] (inputs)
+ *          or @c SetAddr_t::dst[i] (outputs). An empty group is `{ nullptr, 0 }`.
+ */
+typedef struct TISP_BufDescList_t {
+   const TISP_BufDesc2D *pDesc;   /*!< Array of @c numBufs descriptors (may be nullptr when @c numBufs is 0). */
+   size_t                numBufs; /*!< Number of descriptors in @c pDesc. */
+} TISP_BufDescList;
 
 } // namespace TISP

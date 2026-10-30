@@ -236,6 +236,8 @@ void execute_graph(void *myGraph)
       // -- Fresh arenas for this test case --
       BumpAllocator appHeap(l2Buffer, sizeof(l2Buffer));
       TwiddleLUT<float>::reset();
+      TISP::handleAllocator().reset();
+      TISP::nodeAllocator().reset();
 
       // -- Allocate per-subgraph buffers from L2SRAM --
       SubgraphBuffers bufs[MAX_SUBGRAPHS] = {};
@@ -284,8 +286,19 @@ void execute_graph(void *myGraph)
 
          // RFFT: half spectrum (outMode=false), batched with numChannels=ch
          snprintf(nameBuf, sizeof(nameBuf), "RFFT_%u", sg);
+         const TISP::TISP_BufDesc2D rfftIn  = {bufs[sg].gained, TISP::Types::kFloat32, N, ch,
+                                            static_cast<size_t>(N) * sizeof(float), 0U};
+         const TISP::TISP_BufDesc2D rfftOut = {bufs[sg].rfftOut, TISP::Types::kFloat32, N + 2u, ch,
+                                            static_cast<size_t>(N + 2u) * sizeof(float), 0U};
+
+         const TISP::TISP_BufDescList rfftInputs  = {&rfftIn, 1U};
+         const TISP::TISP_BufDescList rfftOutputs = {&rfftOut, 1U};
+
+         TISP::FFTLIB::RFFT1dBatchedConfig rfftBuild;
+
          auto rfft = TISP::make_unique_node<TISP::FFTLIB::RFFT1dBatched<float>>(
-             bufs[sg].gained, bufs[sg].rfftTemp, bufs[sg].rfftOut, N, ch, false, nameBuf, 3u * sg + 1u, errorCtx);
+             &rfftInputs, &rfftOutputs, bufs[sg].rfftTemp, 2u * N * ch * sizeof(float), &rfftBuild, nameBuf,
+             3u * sg + 1u, errorCtx);
          if (!errorCtx.isSuccess()) {
             printf("  ERROR: RFFT_%u construction failed: %s\n", sg, errorCtx.getMessage());
             break;
@@ -294,8 +307,19 @@ void execute_graph(void *myGraph)
 
          // IFFT: half spectrum (inMode=false), batched with numChannels=ch
          snprintf(nameBuf, sizeof(nameBuf), "IFFT_%u", sg);
+         const TISP::TISP_BufDesc2D ifftIn  = {bufs[sg].rfftOut, TISP::Types::kFloat32, N + 2u, ch,
+                                            static_cast<size_t>(N + 2u) * sizeof(float), 0U};
+         const TISP::TISP_BufDesc2D ifftOut = {bufs[sg].output, TISP::Types::kFloat32, N, ch,
+                                            static_cast<size_t>(N) * sizeof(float), 0U};
+
+         const TISP::TISP_BufDescList ifftInputs  = {&ifftIn, 1U};
+         const TISP::TISP_BufDescList ifftOutputs = {&ifftOut, 1U};
+
+         TISP::FFTLIB::IFFTR1dBatchedConfig ifftBuild;
+
          auto ifft = TISP::make_unique_node<TISP::FFTLIB::IFFTR1dBatched<float>>(
-             bufs[sg].rfftOut, bufs[sg].ifftTemp, bufs[sg].output, N, ch, false, nameBuf, 3u * sg + 2u, errorCtx);
+             &ifftInputs, &ifftOutputs, bufs[sg].ifftTemp, 2u * N * ch * sizeof(float), &ifftBuild, nameBuf,
+             3u * sg + 2u, errorCtx);
          if (!errorCtx.isSuccess()) {
             printf("  ERROR: IFFT_%u construction failed: %s\n", sg, errorCtx.getMessage());
             break;
@@ -311,12 +335,15 @@ void execute_graph(void *myGraph)
 
       bool allOk = errorCtx.isSuccess();
 
-      if (allOk) {
+      // Twiddle arena exhaustion is reported by the TwiddleLUT through errorCtx during node construction
+      bool twiddleOom = !allOk && (std::strstr(errorCtx.getMessage(), "twiddleLUT") != nullptr);
+
+      if (allOk || twiddleOom) {
          // -- LUT accounting --
          size_t expectedLut = computeExpectedLutBytes(prm);
          size_t lutTotal    = TwiddleLUT<float>::totalBytes();
          size_t naiveLut    = computeNaiveLutBytes(prm);
-         bool   oomDetected = (lutTotal < expectedLut);
+         bool   oomDetected = twiddleOom || (lutTotal < expectedLut);
 
          char checkBuf[256];
 
