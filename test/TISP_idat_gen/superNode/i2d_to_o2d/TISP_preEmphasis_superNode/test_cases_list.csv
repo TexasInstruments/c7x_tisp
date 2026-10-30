@@ -1,0 +1,9 @@
+ID,dType,widthIn,heightIn,inPitch,outPitch,blockWidth,blockHeight,testPattern,isInterleave,alignStride,AM275 SOC,alpha
+1,float,128,64,128,128,32,64,STATIC,0,TRUE,yes,0.97
+2,float,128,32,32,32,32,32,STATIC,1,FALSE,no,0.95
+3,float,256,16,256,256,64,16,STATIC,0,TRUE,no,0.9
+4,float,256,8,8,8,8,64,STATIC,1,FALSE,no,0.5
+5,float,512,8,512,512,128,8,STATIC,0,TRUE,no,0.99
+6,float,512,16,16,16,16,128,STATIC,1,FALSE,no,0.0
+7,float,1024,2,1024,1024,256,2,STATIC,0,TRUE,no,1.0
+8,float,1024,8,8,8,8,256,STATIC,1,FALSE,no,0.8
