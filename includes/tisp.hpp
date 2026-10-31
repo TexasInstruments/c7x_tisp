@@ -61,6 +61,7 @@
 #include "TISP_nullSink.hpp"
 #include "TISP_peakAbsoluteValue.hpp"
 #include "TISP_realImagToComplex.hpp"
+#include "TISP_recip.hpp"
 #include "TISP_rfft1dBatched.hpp"
 #include "TISP_router.hpp"
 #include "TISP_sin.hpp"

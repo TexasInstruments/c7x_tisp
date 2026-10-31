@@ -1,0 +1,9 @@
+/*
+ *  Sends the test parameter structure and number of tests
+ */
+
+void TISP_recip_superNode_getTestParams(TISP_recip_superNode_testParams_t **params, int32_t *numTests)
+{
+   *params   = testParams;
+   *numTests = sizeof(testParams) / sizeof(TISP_recip_superNode_testParams_t);
+}
