@@ -56,6 +56,7 @@
 #include "TISP_mute.hpp"
 #include "TISP_muteNCh.hpp"
 #include "TISP_nlms.hpp"
+#include "TISP_nonZeroCheck.hpp"
 #include "TISP_nullSink.hpp"
 #include "TISP_realImagToComplex.hpp"
 #include "TISP_rfft1dBatched.hpp"
