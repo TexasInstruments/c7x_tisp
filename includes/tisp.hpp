@@ -9,6 +9,7 @@
 #include "TISP_acos.hpp"
 #include "TISP_addConstant.hpp"
 #include "TISP_addNCh.hpp"
+#include "TISP_agc.hpp"
 #include "TISP_asin.hpp"
 #include "TISP_asrc.hpp"
 #include "TISP_atan.hpp"
