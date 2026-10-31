@@ -16,6 +16,7 @@
 #include "TISP_blockCopy.hpp"
 #include "TISP_blockStatistics.hpp"
 #include "TISP_cascadeBiquad.hpp"
+#include "TISP_ceil.hpp"
 #include "TISP_common.hpp"
 #include "TISP_concat.hpp"
 #include "TISP_cos.hpp"
