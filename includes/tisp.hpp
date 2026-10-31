@@ -33,6 +33,7 @@
 #include "TISP_exp.hpp"
 #include "TISP_fft1dBatched.hpp"
 #include "TISP_fir.hpp"
+#include "TISP_floor.hpp"
 #include "TISP_gain.hpp"
 #include "TISP_gainNCh.hpp"
 #include "TISP_gainNChTrim.hpp"
