@@ -78,6 +78,7 @@
 #include "TISP_tableLookup.hpp"
 #include "TISP_tan.hpp"
 #include "TISP_tanh.hpp"
+#include "TISP_thresholdDetector.hpp"
 #include "TISP_typeConversion.hpp"
 #include "TISP_undB20.hpp"
 #include "TISP_util.hpp"
