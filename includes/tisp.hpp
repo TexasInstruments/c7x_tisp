@@ -65,6 +65,7 @@
 #include "TISP_nonZeroCheck.hpp"
 #include "TISP_nullSink.hpp"
 #include "TISP_peakAbsoluteValue.hpp"
+#include "TISP_preEmphasis.hpp"
 #include "TISP_realImagToComplex.hpp"
 #include "TISP_recip.hpp"
 #include "TISP_rfft1dBatched.hpp"
