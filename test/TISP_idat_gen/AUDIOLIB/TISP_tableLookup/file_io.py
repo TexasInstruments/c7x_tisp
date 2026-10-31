@@ -24,7 +24,8 @@ def write_header_file(in0, in1, out, testCase, headerFileName):
     testId = testCase["ID"]
     srcSamples = testCase["srcSamples"]
     tableSamples = testCase["tableSamples"]
-    dType = testCase["dType"]
+    srcDataType = testCase["srcDataType"]
+    tableDataType = testCase["tableDataType"]
     numBlocks = testCase["numBlocks"]
 
     attributes = '__attribute__((section(".staticData"))) static '
@@ -42,7 +43,7 @@ def write_header_file(in0, in1, out, testCase, headerFileName):
         write_attributes(
             f,
             attributesIn0,
-            dType + " " + f"staticRefIn0Case" + str(testId) + "[]=\n",
+            srcDataType + " " + f"staticRefIn0Case" + str(testId) + "[]=\n",
         )
 
         for dimY in range(0, srcSamples * numBlocks):
@@ -58,7 +59,7 @@ def write_header_file(in0, in1, out, testCase, headerFileName):
         write_attributes(
             f,
             attributesIn1,
-            dType + " " + f"staticRefIn1Case" + str(testId) + "[]=\n",
+            tableDataType + " " + f"staticRefIn1Case" + str(testId) + "[]=\n",
         )
 
         for dimY in range(0, tableSamples):
@@ -73,7 +74,7 @@ def write_header_file(in0, in1, out, testCase, headerFileName):
         write_attributes(
             f,
             attributesout,
-            dType + " " + f"staticRefOutCase" + str(testId) + "[]=\n",
+            tableDataType + " " + f"staticRefOutCase" + str(testId) + "[]=\n",
         )
 
         for dimY in range(0, srcSamples * numBlocks):

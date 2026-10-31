@@ -139,9 +139,25 @@ int TISP_tableLookup_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          TISP::ErrorCtxt errorCtx;
 
-         auto k0 = std::make_unique<TISP::AUDIOLIB::Tablelookup<float>>(
-             (float *) pInputBlock0.get(), (float *) pInputBlock1.get(), (float *) pOutputBlock.get(), blockWidth,
-             tableSamples, minVal, maxVal, tableLookupSize, errorCtx);
+         const TISP::TISP_BufDesc2D inDesc = {
+             pInputBlock0.get(), TISP::ElementDType<float>::value, blockWidth, 1U, blockWidth * sizeof(float), 0U};
+         const TISP::TISP_BufDesc2D outDesc = {
+             pOutputBlock.get(), TISP::ElementDType<float>::value, blockWidth, 1U, blockWidth * sizeof(float), 0U};
+
+         const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+         const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+         TISP::AUDIOLIB::TablelookupConfig config;
+         config.tableSamples    = tableSamples;
+         config.minVal          = minVal;
+         config.maxVal          = maxVal;
+         config.tableLookupSize = tableLookupSize;
+
+         TISP::AUDIOLIB::TablelookupTunableParams<float> defaultParams;
+         defaultParams.pTable = (float *) pInputBlock1.get();
+
+         auto k0 = std::make_unique<TISP::AUDIOLIB::Tablelookup<float>>(&inputs, &outputs, &config, &defaultParams,
+                                                                        "Tablelookup", 0, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating Tablelookup<float> node: %s\n", errorCtx.getMessage());

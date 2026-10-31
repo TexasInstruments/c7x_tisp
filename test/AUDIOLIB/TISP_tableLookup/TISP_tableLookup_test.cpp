@@ -53,6 +53,69 @@ __attribute__((section(".ddrData"), aligned(64))) int8_t  ddrBuffer[2048 * 1024]
 
 int16_t volatile volatileSum = 0; // use volatile to keep compiler from removing this operation
 
+template <typename TIn, typename TOut>
+std::unique_ptr<TISP::VirtualOp> TISP_tableLookup_createNode(void            *pIn,
+                                                             void            *pTable,
+                                                             void            *pOut,
+                                                             size_t           srcSamples,
+                                                             size_t           tableSamples,
+                                                             float            minVal,
+                                                             float            maxVal,
+                                                             uint32_t         tableLookupSize,
+                                                             TISP::ErrorCtxt &errorCtx)
+{
+   const TISP::TISP_BufDesc2D inDesc  = {pIn, TISP::ElementDType<TIn>::value, srcSamples,
+                                         1U,  srcSamples * sizeof(TIn),       0U};
+   const TISP::TISP_BufDesc2D outDesc = {pOut, TISP::ElementDType<TOut>::value, srcSamples,
+                                         1U,   srcSamples * sizeof(TOut),       0U};
+
+   const TISP::TISP_BufDescList inputs  = {&inDesc, 1U};
+   const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+   TISP::AUDIOLIB::TablelookupConfig config;
+   config.tableSamples    = tableSamples;
+   config.minVal          = minVal;
+   config.maxVal          = maxVal;
+   config.tableLookupSize = tableLookupSize;
+
+   TISP::AUDIOLIB::TablelookupTunableParams<TOut> defaultParams;
+   defaultParams.pTable = static_cast<TOut *>(pTable);
+
+   return std::make_unique<TISP::AUDIOLIB::Tablelookup<TIn, TOut>>(&inputs, &outputs, &config, &defaultParams,
+                                                                   "Tablelookup", 0, errorCtx);
+}
+
+std::unique_ptr<TISP::VirtualOp> TISP_tableLookup_createKernelObject(void            *pIn,
+                                                                     void            *pTable,
+                                                                     void            *pOut,
+                                                                     size_t           srcSamples,
+                                                                     size_t           tableSamples,
+                                                                     float            minVal,
+                                                                     float            maxVal,
+                                                                     uint32_t         tableLookupSize,
+                                                                     uint32_t         sampleDataType,
+                                                                     uint32_t         tableDataType,
+                                                                     TISP::ErrorCtxt &errorCtx)
+{
+   if ((sampleDataType == AUDIOLIB_FLOAT32) && (tableDataType == AUDIOLIB_FLOAT32)) {
+      return TISP_tableLookup_createNode<float, float>(pIn, pTable, pOut, srcSamples, tableSamples, minVal, maxVal,
+                                                       tableLookupSize, errorCtx);
+   }
+   else if ((sampleDataType == AUDIOLIB_INT32) && (tableDataType == AUDIOLIB_FLOAT32)) {
+      return TISP_tableLookup_createNode<int32_t, float>(pIn, pTable, pOut, srcSamples, tableSamples, minVal, maxVal,
+                                                         tableLookupSize, errorCtx);
+   }
+   else if ((sampleDataType == AUDIOLIB_INT32) && (tableDataType == AUDIOLIB_INT32)) {
+      return TISP_tableLookup_createNode<int32_t, int32_t>(pIn, pTable, pOut, srcSamples, tableSamples, minVal, maxVal,
+                                                           tableLookupSize, errorCtx);
+   }
+   else {
+      errorCtx.setInvalidParameterError("TISP_tableLookup_createKernelObject",
+                                        "unsupported data types for Tablelookup kernel");
+      return nullptr;
+   }
+}
+
 int TISP_tableLookup_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 {
    int32_t  tpi;
@@ -99,21 +162,23 @@ int TISP_tableLookup_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
           * if a comparison was done or not                                   */
          int32_t comparisonDone = 0;
 
-         currentTestFail     = 0;
-         size_t dataSize     = AUDIOLIB_sizeof(currPrm.sampleDataType);
-         size_t srcSamples   = currPrm.srcSamples;
-         size_t tableSamples = currPrm.tableSamples;
-         size_t numBlocks    = currPrm.numBlocks;
-         float  divisor      = (tableSamples - 1) / (maxVal - minVal + 1e-9);
-         size_t inputSize    = numBlocks * srcSamples * dataSize;
-         size_t tableSize    = tableSamples * dataSize;
+         currentTestFail      = 0;
+         size_t dataSize      = AUDIOLIB_sizeof(currPrm.sampleDataType);
+         size_t tableDataSize = AUDIOLIB_sizeof(currPrm.tableDataType);
+         size_t srcSamples    = currPrm.srcSamples;
+         size_t tableSamples  = currPrm.tableSamples;
+         size_t numBlocks     = currPrm.numBlocks;
+         float  divisor       = (tableSamples - 1) / (maxVal - minVal + 1e-9);
+         size_t inputSize     = numBlocks * srcSamples * dataSize;
+         size_t tableSize     = tableSamples * tableDataSize;
+         size_t outputSize    = numBlocks * srcSamples * tableDataSize;
 
          auto pIn          = myL2Heap.allocate64ByteAligned<uint8_t>(inputSize);
          auto pTablelookup = myL2Heap.allocate64ByteAligned<uint8_t>(tableSize);
-         auto pOut         = myL2Heap.allocate64ByteAligned<uint8_t>(inputSize);
+         auto pOut         = myL2Heap.allocate64ByteAligned<uint8_t>(outputSize);
 
          void *pOutCn = (void *) ddrBuffer;
-         memset(pOutCn, 0, inputSize);
+         memset(pOutCn, 0, outputSize);
 
          /* Only run the test if the buffer allocations fit in the heap */
          if (pIn.get() && pTablelookup.get() && pOut.get() && pOutCn) {
@@ -123,19 +188,23 @@ int TISP_tableLookup_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                   TI_fillBuffer_float(prm[tpi].testPattern, 0, pIn.get() + n * srcSamples * dataSize,
                                       prm[tpi].staticIn0 + n * srcSamples * dataSize, srcSamples, 1, 0, dataSize,
                                       testPatternString);
-                  TI_fillBuffer_float(prm[tpi].testPattern, 0, pTablelookup.get() + n * tableSamples * dataSize,
-                                      prm[tpi].staticIn1 + n * tableSamples * dataSize, tableSamples, 1, 0, dataSize,
-                                      testPatternString);
+               }
+               else {
+                  // int32_t source: the samples are table indices; the table is float or int32_t
+                  TI_fillBuffer(prm[tpi].testPattern, 0, pIn.get() + n * srcSamples * dataSize,
+                                prm[tpi].staticIn0 + n * srcSamples * dataSize, srcSamples, 1, 0, dataSize,
+                                testPatternString);
                }
             }
+            TI_fillBuffer(prm[tpi].testPattern, 0, pTablelookup.get(), prm[tpi].staticIn1, tableSamples, 1, 0,
+                          tableDataSize, testPatternString);
 
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
             TISP::ErrorCtxt errorCtx;
-            auto            k0 = std::make_unique<TISP::AUDIOLIB::Tablelookup<float>>(
-                (float *) pIn.get(), (float *) pTablelookup.get(), (float *) pOut.get(),
-                static_cast<uint32_t>(srcSamples), static_cast<uint32_t>(tableSamples), static_cast<float>(minVal),
-                static_cast<float>(maxVal), static_cast<uint32_t>(tableLookupSize), errorCtx);
+            auto            k0 = TISP_tableLookup_createKernelObject(
+                           pIn.get(), pTablelookup.get(), pOut.get(), srcSamples, tableSamples, minVal, maxVal,
+                           static_cast<uint32_t>(tableLookupSize), currPrm.sampleDataType, currPrm.tableDataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
@@ -153,7 +222,7 @@ int TISP_tableLookup_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                kAddrMode    = TISP::kAddrModeInOut;
                kAddr.src[0] = (uint8_t *) pIn.get() + n * srcSamples * dataSize;
                kAddr.src[1] = (uint8_t *) pTablelookup.get();
-               kAddr.dst[0] = (uint8_t *) pOut.get() + n * srcSamples * dataSize;
+               kAddr.dst[0] = (uint8_t *) pOut.get() + n * srcSamples * tableDataSize;
 
                k0->setAddr(kAddr, kAddrMode);
 
@@ -175,7 +244,7 @@ int TISP_tableLookup_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                   kAddrMode    = TISP::kAddrModeInOut;
                   kAddr.src[0] = (uint8_t *) pIn.get() + n * srcSamples * dataSize;
                   kAddr.src[1] = (uint8_t *) pTablelookup.get();
-                  kAddr.dst[0] = (uint8_t *) pOut.get() + n * srcSamples * dataSize;
+                  kAddr.dst[0] = (uint8_t *) pOut.get() + n * srcSamples * tableDataSize;
 
                   TI_profile_clear_cycle_count_single(TI_PROFILE_KERNEL_OPT_WARM);
 
@@ -207,7 +276,7 @@ int TISP_tableLookup_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                kAddrMode    = TISP::kAddrModeInOut;
                kAddr.src[0] = (uint8_t *) pIn.get() + n * srcSamples * dataSize;
                kAddr.src[1] = (uint8_t *) pTablelookup.get();
-               kAddr.dst[0] = (uint8_t *) pOut.get() + n * srcSamples * dataSize;
+               kAddr.dst[0] = (uint8_t *) pOut.get() + n * srcSamples * tableDataSize;
                k0->setAddr(kAddr, kAddrMode);
 
                // run warm instruction cache test
@@ -223,15 +292,22 @@ int TISP_tableLookup_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             for (size_t n = 0; n < numBlocks; n++) {
                AUDIOLIB_tableLookup_cn(pIn.get() + n * srcSamples * dataSize, pTablelookup.get(),
-                                       pOutCn + n * srcSamples * dataSize, currPrm.sampleDataType, srcSamples,
-                                       tableSamples, minVal, divisor);
+                                       pOutCn + n * srcSamples * tableDataSize, currPrm.sampleDataType,
+                                       currPrm.tableDataType, srcSamples, tableSamples, minVal, divisor);
             }
 
             status_nat_vs_opt = TI_TEST_KERNEL_PASS;
             for (size_t n = 0; n < numBlocks; n++) {
-               status_nat_vs_opt &= TI_compare_mem_2D_float((void *) pOut.get() + n * srcSamples * dataSize,
-                                                            (void *) pOutCn + n * srcSamples * dataSize, 0,
-                                                            (double) powf(2, -10), srcSamples, 1, 0, dataSize);
+               if (currPrm.tableDataType == AUDIOLIB_FLOAT32) {
+                  status_nat_vs_opt &= TI_compare_mem_2D_float((void *) pOut.get() + n * srcSamples * tableDataSize,
+                                                               (void *) pOutCn + n * srcSamples * tableDataSize, 0,
+                                                               (double) powf(2, -10), srcSamples, 1, 0, tableDataSize);
+               }
+               else {
+                  status_nat_vs_opt &= TI_compare_mem_2D((void *) pOut.get() + n * srcSamples * tableDataSize,
+                                                         (void *) pOutCn + n * srcSamples * tableDataSize, 0, 0,
+                                                         srcSamples, 1, 0, tableDataSize);
+               }
             }
 
             comparisonDone = 1;
@@ -239,11 +315,16 @@ int TISP_tableLookup_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
                status_ref_vs_opt = TI_TEST_KERNEL_PASS;
                for (size_t n = 0; n < numBlocks; n++) {
-                  if (currPrm.sampleDataType == AUDIOLIB_FLOAT32 || currPrm.sampleDataType == AUDIOLIB_FLOAT64) {
+                  if (currPrm.tableDataType == AUDIOLIB_FLOAT32) {
                      status_ref_vs_opt &= TI_compare_mem_2DDualStride_float(
-                         (void *) pOut.get() + n * srcSamples * dataSize,
-                         (void *) currPrm.staticOut + n * srcSamples * dataSize, 0, (double) powf(2, -10), srcSamples,
-                         1, 0, srcSamples * dataSize, dataSize);
+                         (void *) pOut.get() + n * srcSamples * tableDataSize,
+                         (void *) currPrm.staticOut + n * srcSamples * tableDataSize, 0, (double) powf(2, -10),
+                         srcSamples, 1, 0, srcSamples * tableDataSize, tableDataSize);
+                  }
+                  else {
+                     status_ref_vs_opt &= TI_compare_mem_2D((void *) pOut.get() + n * srcSamples * tableDataSize,
+                                                            (void *) currPrm.staticOut + n * srcSamples * tableDataSize,
+                                                            0, 0, srcSamples, 1, 0, tableDataSize);
                   }
                }
             }
@@ -277,8 +358,8 @@ int TISP_tableLookup_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                     ((float) cycles[TI_PROFILE_KERNEL_OPT]) / ((float) archCycles), !currentTestFail);
 
             TI_profile_add_test(testNum++, currPrm.srcSamples, 0, 0, currentTestFail, desc);
-         TISP::handleAllocator().reset();
-         TISP::nodeAllocator().reset();
+            TISP::handleAllocator().reset();
+            TISP::nodeAllocator().reset();
          }
          else {
             sprintf(desc, "Data size=%d, widthIn size=%d, heightIn size=%d", AUDIOLIB_sizeof(currPrm.sampleDataType),

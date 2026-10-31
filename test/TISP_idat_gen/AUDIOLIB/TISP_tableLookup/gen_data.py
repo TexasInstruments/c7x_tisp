@@ -26,18 +26,25 @@ def gen_testCaseParams(testParamsFile, currPrm):
     """
 
     testId = currPrm["ID"]
-    dType = currPrm["dType"]
+    srcDataType = currPrm["srcDataType"]
+    tableDataType = currPrm["tableDataType"]
     srcSamples = currPrm["srcSamples"]
     tableSamples = currPrm["tableSamples"]
     minVal = currPrm["minVal"]
     maxVal = currPrm["maxVal"]
+    # minVal and maxVal are not used for an int32_t source, so they must be zero
+    if srcDataType != "float" and (float(minVal) != 0 or float(maxVal) != 0):
+        print("Test ID", testId, ": minVal/maxVal not used for int32_t source, setting them to 0")
+        minVal = 0
+        maxVal = 0
     tableLookupSize = currPrm["tableLookupSize"]
     testType = currPrm["testType"]
     demoCase = currPrm["demoCase"]
     outputDataLocation = currPrm["outputDataLocation"]
     numReps = currPrm["numReps"]
     C7100 = currPrm["C7100"]
-    AUDIOLIB_dType = TISP_utils.resolve_AUDIOLIB_dType(dType)
+    AUDIOLIB_srcDataType = TISP_utils.resolve_AUDIOLIB_dType(srcDataType)
+    AUDIOLIB_tableDataType = TISP_utils.resolve_AUDIOLIB_dType(tableDataType)
     numBlocks = currPrm["numBlocks"]
 
     in0 = "staticRefIn0Case" + testId
@@ -63,7 +70,8 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write("%s, // in0 \n" % (in0))
     idatFile.write("%s, // in1 \n" % (in1))
     idatFile.write("%s, // out \n" % (out))
-    idatFile.write("%s, // Sample Data Type \n" % (AUDIOLIB_dType))
+    idatFile.write("%s, // Sample Data Type \n" % (AUDIOLIB_srcDataType))
+    idatFile.write("%s, // Table Data Type \n" % (AUDIOLIB_tableDataType))
     idatFile.write("%d, // Samples per channel \n" % (srcSamples))
     idatFile.write("%d, // Number of Channels \n" % (tableSamples))
     idatFile.write("%s, // minVal \n" % (minVal))
@@ -168,8 +176,16 @@ def gen_test_case_header_file(testCase):
 
     [minVal, maxVal] = [minVal, maxVal]
 
-    src = np.random.uniform(low=minVal - 10, high=maxVal, size=srcSamples * numBlocks)
-    table = np.random.uniform(low=minVal - 10, high=maxVal, size=tableSamples)
+    if testCase["srcDataType"] == "float":
+        src = np.random.uniform(low=minVal - 10, high=maxVal, size=srcSamples * numBlocks)
+        table = np.random.uniform(low=minVal - 10, high=maxVal, size=tableSamples)
+    else:
+        # indices from -10 to tableSamples + 10, so both clamps and in-range entries are exercised
+        src = np.random.randint(low=-10, high=tableSamples + 11, size=srcSamples * numBlocks, dtype=np.int32)
+        if testCase["tableDataType"] == "float":
+            table = np.random.uniform(low=-1.0, high=1.0, size=tableSamples).astype(np.float32)
+        else:
+            table = np.random.randint(low=-1000, high=1000, size=tableSamples, dtype=np.int32)
 
     dst = tableLookupProcess(src, table, minVal, maxVal, tableSamples)
 
