@@ -44,6 +44,7 @@
 #include "TISP_istft.hpp"
 #include "TISP_limiter.hpp"
 #include "TISP_log.hpp"
+#include "TISP_logicalNOT.hpp"
 #include "TISP_logMelSpectrum.hpp"
 #include "TISP_log10.hpp"
 #include "TISP_log2.hpp"
