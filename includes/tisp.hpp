@@ -15,6 +15,7 @@
 #include "TISP_balance.hpp"
 #include "TISP_balanceFader.hpp"
 #include "TISP_binaryLogicGate.hpp"
+#include "TISP_bitwiseANDConst.hpp"
 #include "TISP_blockCopy.hpp"
 #include "TISP_blockStatistics.hpp"
 #include "TISP_cascadeBiquad.hpp"
