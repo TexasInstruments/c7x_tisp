@@ -131,18 +131,18 @@ template <typename T> class Istft final : public VirtualOp {
    /**
     * @brief Creates an ISTFT node.
     *
-    * @param [in]  *pX          : Input complex spectrum
+    * @param [in]  pX           : Input complex spectrum
     *                             [numChannels x numWindows x inBins]. Initializes @ref _pX.
-    * @param [out] *pY          : Output real samples
+    * @param [out] pY           : Output real samples
     *                             [numChannels x numWindows*hopSize]. Initializes @ref _pY.
-    * @param [in]  *pWindow     : Synthesis window [fftSize], caller-owned. When the window
+    * @param [in]  pWindow      : Synthesis window [fftSize], caller-owned. When the window
     *                             is shorter than fftSize, use the center-padded windowGen
     *                             overload to produce a zero-padded fftSize buffer.
     *                             Initializes @ref _pWindow.
-    * @param [in]  *pOlaBuf     : Overlap-add state [(fftSize-hopSize) x numChannels],
+    * @param [in]  pOlaBuf      : Overlap-add state [(fftSize-hopSize) x numChannels],
     *                             caller-owned, persistent. Zero-initialized by the constructor.
     *                             Initializes @ref _pOlaBuf.
-    * @param [in]  *pScratch    : Scratch buffer; size in floats from calcScratchSize().
+    * @param [in]  pScratch     : Scratch buffer; size in floats from calcScratchSize().
     *                             Caller-owned, 64-byte aligned. Split into
     *                             @ref _pIFFTOut, @ref _pFftScratch, and @ref _pEnvelope.
     * @param [in]  fftSize      : FFT length. Initializes @ref _fftSize.

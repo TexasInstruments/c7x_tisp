@@ -22,8 +22,8 @@ namespace misc {
 /**
  *  \class DataConvert
  *  @brief Provides node-level APIs for the block copy kernel
- *  @tparam T        : Supports float
- *  @tparam dmaDir   : Supports `NO_DMA`, `DMA_IN`, `DMA_OUT`, and `DMA_IN`_OUT
+ *  @tparam dTypeIn  : Input data type
+ *  @tparam dTypeOut : Output data type
  */
 
 template <typename dTypeIn, typename dTypeOut> class DataConvert final : public VirtualOp {
@@ -51,8 +51,8 @@ template <typename dTypeIn, typename dTypeOut> class DataConvert final : public 
 
    /**
     * @brief Optimized function that uses SE/SA to perform block copy; this function is not exposed to user
-    * @param [in]  *pX    : Pointer to input 2D block
-    * @param [out] *pY    : Pointer to output 2D block
+    * @param [in]  pX     : Pointer to input 2D block
+    * @param [out] pY     : Pointer to output 2D block
     */
 
    void exec_ci(dTypeIn *pX, dTypeOut *pY);

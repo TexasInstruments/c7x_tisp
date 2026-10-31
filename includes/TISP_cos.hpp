@@ -41,8 +41,8 @@ template <typename T> class Cos final : public VirtualOp {
     * This constructor initializes a node for the MATHLIB_cos kernel.
     *
     * @param [in]  _size    : Length of input array.
-    * @param [in]  *_pIn   : Pointer to the input array.
-    * @param [out] *_pOut  : Pointer to the output array.
+    * @param [in]  _pIn    : Pointer to the input array.
+    * @param [out] _pOut   : Pointer to the output array.
     * @param [in]  errorCtx : Error context for reporting constructor errors
     *
     */

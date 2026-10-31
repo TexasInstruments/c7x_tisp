@@ -63,7 +63,7 @@ template <typename T> class Sinusoidgenerator final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_sinusoidGenerator kernel.
     *
-    * @param [out] *pY             : Pointer to the output matrix.
+    * @param [out] pY              : Pointer to the output matrix.
     *                                Initializes @ref _pY.
     * @param [in]  width           : Width of output matrix.
     * @param [in]  startPhase      : The phase at which the signal starts (in degrees).

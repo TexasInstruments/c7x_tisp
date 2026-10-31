@@ -55,7 +55,7 @@ template <typename T> class Whitenoise final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_whiteNoise kernel.
     *
-    * @param [out] *pY    : Pointer to the output matrix.
+    * @param [out] pY     : Pointer to the output matrix.
     *                       Initializes @ref _pY.
     * @param [in]  width  : Width of output matrix.
     * @param [in]  range  : The output range. Noise will be in [-range, +range].

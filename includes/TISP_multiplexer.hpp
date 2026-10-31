@@ -119,9 +119,9 @@ template <typename T> class Multiplexer final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_multiplexer kernel.
     *
-    * @param [in]  *pX            : Pointer to the input matrix. Interpretation of rows and columns depends on
+    * @param [in]  pX             : Pointer to the input matrix. Interpretation of rows and columns depends on
     * `isInterleave`. Initializes @ref _pX.
-    * @param [out] *pY            : Pointer to the output matrix. Interpretation of rows and columns depends on
+    * @param [out] pY             : Pointer to the output matrix. Interpretation of rows and columns depends on
     * `isInterleave`. Initializes @ref _pY.
     * @param [in]  width          : Width of input matrix.
     * @param [in]  height         : Height of input matrix.

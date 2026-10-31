@@ -92,13 +92,13 @@ template <typename T> class Ssrc final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_ssrc kernel.
     *
-    * @param [in]  *pX                : Pointer to the input matrix.
+    * @param [in]  pX                 : Pointer to the input matrix.
     *                                   Initializes @ref _pX.
-    * @param [in]  *pState            : Pointer to buffer holding the state data.
+    * @param [in]  pState             : Pointer to buffer holding the state data.
     *                                   Initializes @ref _pState.
-    * @param [out] *pFiltCoeffs       : Pointer to the destination buffer where coefficients will be copied.
+    * @param [out] pFiltCoeffs        : Pointer to the destination buffer where coefficients will be copied.
     *                                   Initializes @ref _pFiltCoeffs.
-    * @param [out] *pY                : Pointer to the output matrix.
+    * @param [out] pY                 : Pointer to the output matrix.
     *                                   Initializes @ref _pY.
     * @param [in]  widthIn            : Width of input matrix.
     * @param [in]  heightIn           : Height of input matrix.

@@ -18,10 +18,9 @@ namespace DSPLIB {
 /**@{*/
 
 /**
- *  \class matMul
+ *  \class MatMul
  *  @brief Provides node-level APIs for the DSPLIB_matMul kernel from DSPLIB.
  *  @tparam T        : Supports float and double
- *  @tparam dmaDir   : Supports `NO_DMA`, `DMA_IN`, `DMA_OUT`, and `DMA_IN`_OUT
  */
 
 template <typename T> class MatMul final : public VirtualOp {
@@ -37,9 +36,9 @@ template <typename T> class MatMul final : public VirtualOp {
  public:
    /**
     * @brief Creates a DSPLIB_matMul node
-    * @param [in]  *_pA      : Pointer to input matrix A; initializes @ref pA
-    * @param [in]  *_pB      : Pointer to input matrix B; initializes @ref pB
-    * @param [out] *_pY      : Pointer to output matrix; initializes @ref pY
+    * @param [in]  _pA       : Pointer to input matrix A; initializes @ref pA
+    * @param [in]  _pB       : Pointer to input matrix B; initializes @ref pB
+    * @param [out] _pY       : Pointer to output matrix; initializes @ref pY
     * @param [in]  _widthA    : Width of input matrix A
     * @param [in]  _heightA   : Height of input matrix A
     * @param [in]  _widthB    : Width of input matrix B

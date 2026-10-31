@@ -40,8 +40,8 @@ template <typename T> class BlockCopy final : public VirtualOp {
 
    /**
     * @brief Optimized function that uses SE/SA to perform block copy; this function is not exposed to user
-    * @param [in]  *pX    : Pointer to input 2D block
-    * @param [out] *pY    : Pointer to output 2D block
+    * @param [in]  pX     : Pointer to input 2D block
+    * @param [out] pY     : Pointer to output 2D block
     * @param [in]  width  : Width of input 2D block
     * @param [in]  height : Height of input 2D block
     */
@@ -90,8 +90,8 @@ template <typename T> class BlockCopy final : public VirtualOp {
     *
     * This constructor is called to create the node
     *
-    * @param [in]  *pX    : Pointer to input 2D block; initializes @ref _pX
-    * @param [out] *pY    : Pointer to output 2D block; initializes @ref _pY
+    * @param [in]  pX     : Pointer to input 2D block; initializes @ref _pX
+    * @param [out] pY     : Pointer to output 2D block; initializes @ref _pY
     * @param [in]  width  : Width of input 2D block; initializes @ref _width
     * @param [in]  height : Height of input 2D block; initializes @ref _height
     * @param [in]  errorCtx               : Error context for reporting constructor errors

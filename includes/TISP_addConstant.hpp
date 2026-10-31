@@ -17,7 +17,7 @@ namespace DSPLIB {
 /**@{*/
 
 /**
- *  \class addConstant
+ *  \class AddConstant
  *  @brief Provides node-level APIs for the DSPLIB_addConstant kernel from DSPLIB.
  *  @tparam T        : Supports float
  */
@@ -70,13 +70,13 @@ template <typename T> class AddConstant final : public VirtualOp {
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
    /**
-    * @brief Creates an addConstant node
+    * @brief Creates an AddConstant node
     *
     * This constructor is called to create the node
     *
-    * @param [in]  *pIn0 : Pointer to input constant; initializes @ref _pIn0
-    * @param [in]  *pIn1 : Pointer to address of input vector; initializes @ref _pIn1
-    * @param [out] *pOut : Pointer to address of output vector; initializes @ref _pOut
+    * @param [in]  pIn0  : Pointer to input constant; initializes @ref _pIn0
+    * @param [in]  pIn1  : Pointer to address of input vector; initializes @ref _pIn1
+    * @param [out] pOut  : Pointer to address of output vector; initializes @ref _pOut
     * @param [in]  size  : length of vector; initializes _size
     * @param [in]  errorCtx : Error context for reporting constructor errors
     *

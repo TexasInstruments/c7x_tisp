@@ -87,11 +87,11 @@ template <typename T> class RealimagToComplex final : public VirtualOp {
     *
     * This constructor initializes a node for the DSPLIB_RealimagToComplex kernel.
     *
-    * @param [in]  *pIn0         : Pointer to the input array 0.
+    * @param [in]  pIn0          : Pointer to the input array 0.
     *                              Initializes @ref _pIn0.
-    * @param [in]  *pIn1         : Pointer to the input array 1.
+    * @param [in]  pIn1          : Pointer to the input array 1.
     *                              Initializes @ref _pIn1.
-    * @param [out] *pOut         : Pointer to the output array.
+    * @param [out] pOut          : Pointer to the output array.
     *                              Initializes @ref _pOut.
     * @param [in]  widthIn       : Width of input matrix.
     * @param [in]  heightIn      : Height of input matrix.

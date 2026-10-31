@@ -59,9 +59,9 @@ template <typename T> class Dcsource final : public VirtualOp {
     *
     * This constructor initializes a node for the DSPLIB_blkCopyConst2D kernel.
     *
-    * @param [in]  *pC           : Pointer to input constant value.
+    * @param [in]  pC            : Pointer to input constant value.
     *                              Initializes @ref _pC.
-    * @param [out] *pY           : Pointer to the output matrix.
+    * @param [out] pY            : Pointer to the output matrix.
     *                              Initializes @ref _pY.
     * @param [in]  width         : Width of output matrix.
     * @param [in]  height        : Height of output matrix.

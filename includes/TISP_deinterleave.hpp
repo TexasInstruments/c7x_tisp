@@ -78,8 +78,8 @@ template <typename T> class Deinterleave final : public VirtualOp {
     *
     * This constructor is called to create the node
     *
-    * @param[in]  *pX      : Pointer to input matrix; initializes @ref _pX
-    * @param[out] *pY      : Pointer to output matrix; initializes @ref _pY
+    * @param[in]  pX       : Pointer to input matrix; initializes @ref _pX
+    * @param[out] pY       : Pointer to output matrix; initializes @ref _pY
     * @param[in]  width    : Width of input matrix
     * @param[in]  height   : Height of input matrix
     * @param[in]  inPitchBytes  : Pitch of input matrix in bytes

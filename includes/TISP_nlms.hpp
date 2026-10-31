@@ -69,15 +69,15 @@ template <typename T> class Nlms final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_nlms kernel.
     *
-    * @param [in]  *pIn            : Pointer to the input matrix.
-    * @param [in]  *pInDesired     : Pointer to the desired signal buffer.
-    * @param [in]  *pStateBuffer   : Pointer to circular state buffer.
-    * @param [in]  *pScratchBuffer : Pointer to accumulator buffer.
-    * @param [in]  *pCoefficients  : Pointer to coefficients buffer.
-    * @param [out] *pOut           : Pointer to the output matrix.
-    * @param [in]  *pInD           : Pointer to the deinterleave input matrix.
-    * @param [in]  *pInDesiredD    : Pointer to the deinterleave desired signal buffer.
-    * @param [out] *pOutD          : Pointer to the interleave output matrix.
+    * @param [in]  pIn             : Pointer to the input matrix.
+    * @param [in]  pInDesired      : Pointer to the desired signal buffer.
+    * @param [in]  pStateBuffer    : Pointer to circular state buffer.
+    * @param [in]  pScratchBuffer  : Pointer to accumulator buffer.
+    * @param [in]  pCoefficients   : Pointer to coefficients buffer.
+    * @param [out] pOut            : Pointer to the output matrix.
+    * @param [in]  pInD            : Pointer to the deinterleave input matrix.
+    * @param [in]  pInDesiredD     : Pointer to the deinterleave desired signal buffer.
+    * @param [out] pOutD           : Pointer to the interleave output matrix.
     * @param [in]  widthIn         : Width of input matrix.
     * @param [in]  heightIn        : Height of input matrix.
     * @param [in]  widthS          : Width of state matrix in elements.

@@ -2,9 +2,11 @@
 #
 # Purpose: produce Doxygen XML (GENERATE_XML=YES, GENERATE_HTML=NO)
 # for consumption by Breathe in the Sphinx pipeline.
-# Run from the repository root:
-#   doxygen docs/doxygen/doxyfile_sphinx
-# Output lands in build/docs/xml/ (TISP_DOXYGEN_XML default).
+# Configured by cmake/doxygen.cmake (configure_file @ONLY) for the
+# user_guide target; the @VAR@ placeholders below are substituted there:
+#   OUTPUT_DIRECTORY  = @DOXYGEN_XML_OUT_PARENT@     (e.g. <build>/docs)
+#   INPUT             = @DOXYGEN_SRC_ROOT@/...       (absolute source root)
+# Output lands in <build>/docs/xml/, passed to Sphinx via TISP_DOXYGEN_XML.
 #
 # This file is intentionally minimal -- only the settings that differ
 # from Doxygen defaults or from doxyfile_user_guide are listed.
@@ -18,7 +20,7 @@ PROJECT_BRIEF          = "TI Signal Processing C++ Middleware"
 # ---------------------------------------------------------------------------
 # Output
 # ---------------------------------------------------------------------------
-OUTPUT_DIRECTORY       = build/docs
+OUTPUT_DIRECTORY       = @DOXYGEN_XML_OUT_PARENT@
 OUTPUT_LANGUAGE        = English
 CREATE_SUBDIRS         = NO
 
@@ -27,8 +29,8 @@ CREATE_SUBDIRS         = NO
 # ---------------------------------------------------------------------------
 # Parse the public headers and source files that carry group membership tags.
 # The content_pages headers are NOT needed -- narrative content is ported to RST.
-INPUT                  = includes/ \
-                         src/
+INPUT                  = @DOXYGEN_SRC_ROOT@/includes/ \
+                         @DOXYGEN_SRC_ROOT@/src/
 
 RECURSIVE              = YES
 
@@ -89,3 +91,6 @@ XML_PROGRAMLISTING     = NO
 # Diagrams (disabled for XML-only builds -- speeds things up)
 # ---------------------------------------------------------------------------
 HAVE_DOT               = NO
+
+# Images referenced by @image are copied next to the XML for Sphinx.
+IMAGE_PATH             = @DOXYGEN_SRC_DOCS@/doxygen/images

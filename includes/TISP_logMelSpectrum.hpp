@@ -129,14 +129,14 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
    /**
     * @brief Creates a LogMelSpectrum node.
     *
-    * @param [in]  *pX             : Input waveform [numChannels x numInputSamples]. Initializes @ref _pX.
-    * @param [out] *pY             : Output log-mel [numChannels x numWindows x numMelBins]. Initializes @ref _pY.
-    * @param [in]  *pWindow        : Analysis window [fftSize] (TISP::windowGen). Initializes @ref _pWindow.
-    * @param [in]  *pMel           : Mel filterbank [(fftSize/2+1) x numMelBins] bin-major
+    * @param [in]  pX              : Input waveform [numChannels x numInputSamples]. Initializes @ref _pX.
+    * @param [out] pY              : Output log-mel [numChannels x numWindows x numMelBins]. Initializes @ref _pY.
+    * @param [in]  pWindow         : Analysis window [fftSize] (TISP::windowGen). Initializes @ref _pWindow.
+    * @param [in]  pMel            : Mel filterbank [(fftSize/2+1) x numMelBins] bin-major
     *                                (TISP::melFbankGen). Initializes @ref _pMel.
-    * @param [in]  *pState         : Overlap state [overlapBufSize x numChannels], zero-initialized by the
+    * @param [in]  pState          : Overlap state [overlapBufSize x numChannels], zero-initialized by the
     *                                node; may be null only when overlapBufSize is 0. Initializes @ref _pState.
-    * @param [in]  *pScratch       : Scratch buffer, calcScratchSize() floats, 64-byte aligned.
+    * @param [in]  pScratch        : Scratch buffer, calcScratchSize() floats, 64-byte aligned.
     *                                Initializes @ref _pScratch and the sub-region pointers.
     * @param [in]  fftSize         : FFT length (power of two). Initializes @ref _fftSize.
     * @param [in]  hopSize         : Hop size. Initializes @ref _hopSize.
@@ -237,14 +237,18 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
 
    /**
     * @brief Output frames per exec() before constructing the node.
-    * @param [in] fftSize,hopSize,numInputSamples : geometry.
+    * @param [in] fftSize : geometry.
+    * @param [in] hopSize : geometry.
+    * @param [in] numInputSamples : geometry.
     * @retval uint32_t frame count.
     */
    static uint32_t calcNumWindows(uint32_t fftSize, uint32_t hopSize, uint32_t numInputSamples) noexcept;
 
    /**
     * @brief Overlap buffer size before constructing the node.
-    * @param [in] fftSize,hopSize,numInputSamples : geometry.
+    * @param [in] fftSize : geometry.
+    * @param [in] hopSize : geometry.
+    * @param [in] numInputSamples : geometry.
     * @retval uint32_t overlap size in samples (per channel).
     */
    static uint32_t calcOverlapBufSize(uint32_t fftSize, uint32_t hopSize, uint32_t numInputSamples) noexcept;
@@ -258,7 +262,11 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
 
    /**
     * @brief Scratch buffer size (elements of T) before constructing the node.
-    * @param [in] fftSize,hopSize,numInputSamples,numMelBins,numChannels : geometry.
+    * @param [in] fftSize : geometry.
+    * @param [in] hopSize : geometry.
+    * @param [in] numInputSamples : geometry.
+    * @param [in] numMelBins : geometry.
+    * @param [in] numChannels : geometry.
     * @retval uint32_t scratch size in elements of T.
     */
    static uint32_t calcScratchSize(uint32_t fftSize,
@@ -269,7 +277,11 @@ template <typename T> class LogMelSpectrum final : public VirtualOp {
 
    /**
     * @brief Total memory (kB) across all LogMelSpectrum buffers.
-    * @param [in] fftSize,hopSize,numChannels,numInputSamples,numMelBins : geometry.
+    * @param [in] fftSize : geometry.
+    * @param [in] hopSize : geometry.
+    * @param [in] numChannels : geometry.
+    * @param [in] numInputSamples : geometry.
+    * @param [in] numMelBins : geometry.
     * @retval float total kB.
     */
    static float calcTotalMemKB(uint32_t fftSize,

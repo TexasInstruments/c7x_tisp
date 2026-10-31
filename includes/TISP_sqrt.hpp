@@ -43,9 +43,9 @@ template <typename T> class Sqrt final : public VirtualOp {
     *
     * @param [in]  size  : Length of input array.
     *                      Initializes _size.
-    * @param [in]  *pIn  : Pointer to the input array.
+    * @param [in]  pIn   : Pointer to the input array.
     *                      Initializes @ref _pIn.
-    * @param [out] *pOut : Pointer to the output array.
+    * @param [out] pOut  : Pointer to the output array.
     *                      Initializes @ref _pOut.
     * @param [in]  errorCtx : Error context for reporting constructor errors
     *

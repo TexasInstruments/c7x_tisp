@@ -207,25 +207,25 @@ template <typename T> class Stft final : public VirtualOp {
    /**
     * @brief Creates an STFT node.
     *
-    * @param [in]  *pX              : Pointer to input block [numChannels x numInputSamples].
+    * @param [in]  pX               : Pointer to input block [numChannels x numInputSamples].
     *                                 Real-valued, channel-major layout.
     *                                 Initializes @ref _pX.
-    * @param [out] *pY              : Pointer to output complex spectrum
+    * @param [out] pY               : Pointer to output complex spectrum
     *                                 [numChannels x numWindows x outBins].
     *                                 Complex interleaved (re, im) layout.
     *                                 Initializes @ref _pY.
-    * @param [in]  *pWindow         : Pointer to pre-computed analysis window [fftSize].
+    * @param [in]  pWindow          : Pointer to pre-computed analysis window [fftSize].
     *                                 Caller-owned, persistent. When the analysis
     *                                 window is shorter than fftSize, use the
     *                                 center-padded windowGen overload to produce
     *                                 a zero-padded fftSize buffer.
     *                                 Initializes @ref _pWindow.
-    * @param [in]  *pState          : Pointer to overlap state buffer
+    * @param [in]  pState           : Pointer to overlap state buffer
     *                                 [overlapBufSize x numChannels].
     *                                 Caller-owned, persistent, must be zero-initialized
     *                                 before the first exec() call.
     *                                 Initializes @ref _pState.
-    * @param [in]  *pScratch        : Pointer to scratch buffer. Required size in
+    * @param [in]  pScratch         : Pointer to scratch buffer. Required size in
     *                                 floats is returned by calcScratchSize().
     *                                 Caller-owned, 64-byte aligned, may be reused
     *                                 between nodes. Split internally: first half

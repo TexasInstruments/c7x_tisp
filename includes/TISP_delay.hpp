@@ -81,17 +81,17 @@ template <typename T> class Delay final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_delay kernel.
     *
-    * @param [in]  *pX           : Pointer to the input matrix.
+    * @param [in]  pX            : Pointer to the input matrix.
     *                              Initializes @ref _pX.
-    * @param [in]  *pD           : Pointer to the input delay matrix with shape as follows.
+    * @param [in]  pD            : Pointer to the input delay matrix with shape as follows.
     *                            - If mode = '0':
     *                              - Width = delaySize; Height = height.
     *                            - If mode = '1':
     *                              - Width = (delaySize + width); Height = height.
     *                              Initializes @ref _pD.
-    * @param [in]  *pS           : Pointer to the intermediate scratch memory with the same shape as the input matrix.
+    * @param [in]  pS            : Pointer to the intermediate scratch memory with the same shape as the input matrix.
     *                              initializes @ref _pS.
-    * @param [out] *pY           : Pointer to the output matrix.
+    * @param [out] pY            : Pointer to the output matrix.
     *                              Initializes @ref _pY.
     * @param [in]  width         : Width of input matrix.
     * @param [in]  height        : Height of input matrix.

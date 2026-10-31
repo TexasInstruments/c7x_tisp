@@ -100,6 +100,7 @@ struct NodeInfo {
 
 /**
  * @class VirtualOp
+ * @ingroup NODE
  * @brief Abstract base class for operations (nodes)
  *
  * This class provides a common interface for different operations.

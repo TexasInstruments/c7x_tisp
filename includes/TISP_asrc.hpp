@@ -97,15 +97,15 @@ template <typename T> class Asrc final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_asrc kernel.
     *
-    * @param [in]  *pX                    : Pointer to the input matrix.
+    * @param [in]  pX                     : Pointer to the input matrix.
     *                                       Initializes @ref _pX.
-    * @param [in]  *pNonInterleavedData   : Pointer to buffer holding the intermediate non interleaved data.
+    * @param [in]  pNonInterleavedData    : Pointer to buffer holding the intermediate non interleaved data.
     *                                       Initializes @ref _pNonInterleavedData.
-    * @param [in] *pFiltCoeffs            : Pointer to buffer holding polyphase filter cefficients.
+    * @param [in] pFiltCoeffs             : Pointer to buffer holding polyphase filter cefficients.
     *                                       Initializes @ref _pFiltCoeffs.
-    * @param [in] *pFilterRembuf          : Pointer to buffer holding the filter remaining buffer.
+    * @param [in] pFilterRembuf           : Pointer to buffer holding the filter remaining buffer.
     *                                       Initializes @ref _pFilterRembuf.
-    * @param [out] *pY                    : Pointer to the output matrix.
+    * @param [out] pY                     : Pointer to the output matrix.
     *                                       Initializes @ref _pY.
     * @param [in]  widthIn                : Width of input matrix.
     * @param [in]  heightIn               : Height of input matrix.

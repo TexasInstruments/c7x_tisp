@@ -53,13 +53,13 @@ template <typename T> class Balance final : public VirtualOp {
     *
     * This constructor initializes a node for the AUDIOLIB_balance kernel.
     *
-    * @param [in]  *pXL          : Pointer to the input left matrix.
+    * @param [in]  pXL           : Pointer to the input left matrix.
     *			                         Initializes @ref _pXL.
-    * @param [in]  *pXR          : Pointer to the input right matrix.
+    * @param [in]  pXR           : Pointer to the input right matrix.
     *			                         Initializes @ref _pXR.
-    * @param [out] *pYL          : Pointer to the output left matrix.
+    * @param [out] pYL           : Pointer to the output left matrix.
     *			                         Initializes @ref _pYL.
-    * @param [out] *pYR          : Pointer to the output right matrix.
+    * @param [out] pYR           : Pointer to the output right matrix.
     *			                         Initializes @ref _pYR.
     * @param [in]  widthIn       : Width of input matrix.
     * @param [in]  heightIn      : Height of input matrix.
