@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: LicenseRef-TI-TFL
 
+#include "../common/TISP_bufDesc.hpp"
 #include "../common/TISP_common.hpp"
 #include "TISP_virtualOp.hpp"
 #include <TISP_delayDru.hpp>
@@ -55,52 +56,88 @@ template <typename T> size_t DelayDru<T>::ringBytes(size_t frameSamples, uint32_
 // ─────────────────────────────────────────────────────────────────────────────
 
 template <typename T>
-DelayDru<T>::DelayDru(T         *pIn,
-                      T         *pOut,
-                      void      *pRingDdr,
-                      uint32_t  *pDelaySamples,
-                      size_t     frameSamples,
-                      size_t     numChannels,
-                      void      *pUdmaDrvHandle,
-                      ErrorCtxt &errorCtx)
-    : _pIn(pIn), _pOut(pOut), _pRingDdr(static_cast<uint8_t *>(pRingDdr)),
-      _frameSamples(frameSamples), _numChannels(numChannels), _maxDelay(0), _ringSamplesPerCh(0),
-      _ringBytesPerCh(0), _writeOff(0), _frameBytes(0), _frameBytesTotal(0)
+DelayDru<T>::DelayDru(const TISP_BufDescList *pInputs,
+                      const TISP_BufDescList *pOutputs,
+                      const TISP_BufDescList *pStates,
+                      const DelayDruConfig   *pConfig,
+                      const char             *nodeName,
+                      uint32_t                nodeId,
+                      ErrorCtxt              &errorCtx)
+    : _in{}, _out{}, _ring{}, _frameSamples(0), _numChannels(0), _maxDelay(0),
+      _ringSamplesPerCh(0), _ringBytesPerCh(0), _writeOff(0), _frameBytes(0), _frameBytesTotal(0)
 {
-   if (pIn == nullptr) {
-      errorCtx.setNullPointerError("DelayDru constructor", "input pointer pIn is null");
+   _nodeInfo.setName(nodeName);
+   _nodeInfo.nodeId = nodeId;
+
+   if (pConfig == nullptr) {
+      errorCtx.setNullPointerError("DelayDru constructor", "config pointer pConfig is null");
    }
-   if (pOut == nullptr) {
-      errorCtx.setNullPointerError("DelayDru constructor", "output pointer pOut is null");
-   }
-   if (pRingDdr == nullptr) {
-      errorCtx.setNullPointerError("DelayDru constructor", "ring buffer pointer pRingDdr is null");
-   }
-   if (pDelaySamples == nullptr) {
-      errorCtx.setNullPointerError("DelayDru constructor", "delay size pointer pDelaySamples is null");
-   }
-   if (frameSamples == 0) {
-      errorCtx.setInvalidParameterError("DelayDru constructor", "frameSamples must be greater than zero");
-   }
-   if (numChannels == 0) {
-      errorCtx.setInvalidParameterError("DelayDru constructor", "numChannels must be greater than zero");
+   else if (pConfig->pDelaySamples == nullptr) {
+      errorCtx.setNullPointerError("DelayDru constructor", "delay size pointer pConfig->pDelaySamples is null");
    }
 #if !defined(HOST_EMULATION)
-   if (pUdmaDrvHandle == nullptr) {
-      errorCtx.setNullPointerError("DelayDru constructor", "UDMA driver handle pUdmaDrvHandle is null");
+   else if (pConfig->pUdmaDrvHandle == nullptr) {
+      errorCtx.setNullPointerError("DelayDru constructor", "UDMA driver handle pConfig->pUdmaDrvHandle is null");
    }
-#else
-   (void) pUdmaDrvHandle;
 #endif
+   else {
+      /* Nothing to do here */
+   }
+
+   size_t frameSamples = 0U;
+   size_t numChannels  = 0U;
+
+   // Buffer checks (skipped once an error is set): one input, one output, and one ring
+   if (TISP_checkBufDescList<T>(pInputs, 1U, 1U, "DelayDru constructor (inputs)", errorCtx) &&
+       TISP_checkBufDescList<T>(pOutputs, 1U, 1U, "DelayDru constructor (outputs)", errorCtx) &&
+       TISP_checkBufDescList<T>(pStates, 1U, 1U, "DelayDru constructor (states)", errorCtx)) {
+      const TISP_BufDesc2D &in    = pInputs->pDesc[0];
+      const TISP_BufDesc2D &out   = pOutputs->pDesc[0];
+      const TISP_BufDesc2D &state = pStates->pDesc[0];
+
+      frameSamples = in.width;
+      numChannels  = in.height;
+
+      if ((in.isInterleave != 0U) || (out.isInterleave != 0U)) {
+         errorCtx.setInvalidParameterError("DelayDru constructor", "input and output must be non-interleaved");
+      }
+      else if ((out.width != in.width) || (out.height != in.height)) {
+         errorCtx.setInvalidParameterError("DelayDru constructor", "input and output width and height must match");
+      }
+      else if ((in.pitchBytes != (in.width * sizeof(T))) || (out.pitchBytes != (out.width * sizeof(T)))) {
+         errorCtx.setInvalidParameterError("DelayDru constructor", "input and output rows must be packed");
+      }
+      else if (state.height < numChannels) {
+         errorCtx.setInvalidParameterError("DelayDru constructor", "ring state must have one row per channel");
+      }
+      else {
+         /* Nothing to do here */
+      }
+
+      if (errorCtx.isSuccess()) {
+         _in           = in;
+         _out          = out;
+         _ring         = state;
+         _frameSamples = frameSamples;
+         _numChannels  = numChannels;
+
+         for (size_t ch = 0; ch < numChannels; ch++) {
+            if (pConfig->pDelaySamples[ch] > _maxDelay) { // NOLINT(MISRA.PTR.ARITH)
+               _maxDelay = pConfig->pDelaySamples[ch];    // NOLINT(MISRA.PTR.ARITH)
+            }
+         }
+         if (state.pitchBytes != ringBytes(frameSamples, _maxDelay, numChannels)) {
+            errorCtx.setInvalidParameterError("DelayDru constructor",
+                                              "ring state pitchBytes must equal ringBytes(frameSamples, maxDelay)");
+         }
+      }
+   }
 
    // Only proceed with initialization if all validation checks passed
    if (errorCtx.isSuccess()) {
       _delaySamples = std::make_unique<uint32_t[]>(numChannels);
       for (size_t ch = 0; ch < numChannels; ch++) {
-         _delaySamples[ch] = pDelaySamples[ch];
-         if (pDelaySamples[ch] > _maxDelay) {
-            _maxDelay = pDelaySamples[ch];
-         }
+         _delaySamples[ch] = pConfig->pDelaySamples[ch]; // NOLINT(MISRA.PTR.ARITH)
       }
 
       _ringSamplesPerCh = nextPow2(frameSamples + static_cast<size_t>(_maxDelay));
@@ -123,22 +160,10 @@ DelayDru<T>::DelayDru(T         *pIn,
       (void) snprintf(_nodeInfo.params.data(), _nodeInfo.params.size(),
                       "width=%zu,height=%zu,widthD=%zu,heightD=%zu",
                       frameSamples, numChannels, _ringSamplesPerCh, numChannels);
-      _nodeInfo.setName("DelayDru");
 
-      // Initialize bufParams with node input and output buffer parameters. The DDR
-      // ring is internal/owned state, not exposed via getInputAddr()/getOutputAddr(),
+      // The DDR ring is internal/owned state, not exposed via getInputAddr()/getOutputAddr(),
       // so only the primary frame buffer pIn/pOut is represented here.
-      _nodeInfo.bufParams.inputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isInputInterleave = 0;
-      _nodeInfo.bufParams.widthIn[0]        = frameSamples;
-      _nodeInfo.bufParams.heightIn[0]       = numChannels;
-      _nodeInfo.bufParams.inPitchBytes[0]   = frameSamples * sizeof(T);
-
-      _nodeInfo.bufParams.outputDataType     = ElementDType<T>::value;
-      _nodeInfo.bufParams.isOutputInterleave = 0;
-      _nodeInfo.bufParams.widthOut[0]        = frameSamples;
-      _nodeInfo.bufParams.heightOut[0]       = numChannels;
-      _nodeInfo.bufParams.outPitchBytes[0]   = frameSamples * sizeof(T);
+      TISP_setNodeBufParams(&_nodeInfo.bufParams, pInputs, pOutputs);
 
 #if !defined(HOST_EMULATION)
       _chId            = 0;
@@ -147,7 +172,7 @@ DelayDru<T>::DelayDru(T         *pIn,
       _pTrMemRead      = AlignedBuffer(static_cast<uint8_t *>(memalign(128, DmaUtilsAutoInc3d_getTrMemReq(1))));
 
       // UDMA driver is initialised and owned by the application.
-      _drvHandle = static_cast<Udma_DrvHandle>(pUdmaDrvHandle);
+      _drvHandle = static_cast<Udma_DrvHandle>(pConfig->pUdmaDrvHandle);
       uint32_t retVal = UDMA_SOK;
 
       // Initialise the DmaUtils context for the single channel. TRs themselves
@@ -254,18 +279,18 @@ DelayDru<T>::DelayDru(T         *pIn,
       // props, icnt/dim) into a CSL_UdmapTR; none of that changes frame-to-frame.
       // exec() patches only tr->addr/tr->daddr (via runPreparedTr) and resubmits, so
       // the per-frame prepareTr cost is removed while staying in direct-TR mode.
-      // ioPointers here are placeholders (_pRingDdr is a valid non-null address);
+      // ioPointers here are placeholders (_ring.pBuf is a valid non-null address);
       // they are overwritten every frame before the TR is triggered.
       if (errorCtx.isSuccess()) {
-         _tpWriteInBulk.ioPointers.srcPtr = _pRingDdr;
-         _tpWriteInBulk.ioPointers.dstPtr = _pRingDdr;
+         _tpWriteInBulk.ioPointers.srcPtr = static_cast<uint8_t *>(_ring.pBuf);
+         _tpWriteInBulk.ioPointers.dstPtr = static_cast<uint8_t *>(_ring.pBuf);
          _trPrep.trMem = _pTrMem.get();
          if (DmaUtilsAutoInc3d_prepareTr(&_trPrep, &_tpWriteInBulk) != UDMA_SOK) {
             errorCtx.setLibraryError("DelayDru constructor", "prepareTr (write-in) failed", 0);
          }
 
-         _tpReadOutBulk.ioPointers.srcPtr = _pRingDdr;
-         _tpReadOutBulk.ioPointers.dstPtr = _pRingDdr;
+         _tpReadOutBulk.ioPointers.srcPtr = static_cast<uint8_t *>(_ring.pBuf);
+         _tpReadOutBulk.ioPointers.dstPtr = static_cast<uint8_t *>(_ring.pBuf);
          _trPrep.trMem = _pTrMemRead.get();
          if (errorCtx.isSuccess() &&
              DmaUtilsAutoInc3d_prepareTr(&_trPrep, &_tpReadOutBulk) != UDMA_SOK) {
@@ -278,35 +303,14 @@ DelayDru<T>::DelayDru(T         *pIn,
    }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Name/ID overload — delegates to the primary constructor.
-// ─────────────────────────────────────────────────────────────────────────────
-
-template <typename T>
-DelayDru<T>::DelayDru(T          *pIn,
-                      T          *pOut,
-                      void       *pRingDdr,
-                      uint32_t   *pDelaySamples,
-                      size_t      frameSamples,
-                      size_t      numChannels,
-                      void       *pUdmaDrvHandle,
-                      const char *nodeName,
-                      uint32_t    nodeId,
-                      ErrorCtxt  &errorCtx)
-    : DelayDru(pIn, pOut, pRingDdr, pDelaySamples, frameSamples, numChannels, pUdmaDrvHandle, errorCtx)
-{
-   _nodeInfo.setName(nodeName);
-   _nodeInfo.nodeId = nodeId;
-}
-
 template <typename T> void *DelayDru<T>::getInputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pIn) : nullptr;
+   return (index == 0) ? _in.pBuf : nullptr;
 }
 
 template <typename T> void *DelayDru<T>::getOutputAddr(size_t index) const noexcept
 {
-   return (index == 0) ? static_cast<void *>(_pOut) : nullptr;
+   return (index == 0) ? _out.pBuf : nullptr;
 }
 
 template <typename T> size_t DelayDru<T>::getNumInputs() const noexcept { return 1; }
@@ -316,14 +320,14 @@ template <typename T> size_t DelayDru<T>::getNumOutputs() const noexcept { retur
 template <typename T> void DelayDru<T>::setAddr(SetAddr_t &addr, SetAddrMode_t mode) noexcept
 {
    if (mode == kAddrModeIn) {
-      _pIn = static_cast<T *>(addr.src[0]);
+      _in.pBuf = addr.src[0];
    }
    if (mode == kAddrModeOut) {
-      _pOut = static_cast<T *>(addr.dst[0]);
+      _out.pBuf = addr.dst[0];
    }
    if (mode == kAddrModeInOut) {
-      _pIn  = static_cast<T *>(addr.src[0]);
-      _pOut = static_cast<T *>(addr.dst[0]);
+      _in.pBuf  = addr.src[0];
+      _out.pBuf = addr.dst[0];
    }
 }
 
@@ -364,22 +368,23 @@ template <typename T> void DelayDru<T>::runPreparedTr(uint8_t *trMem, const void
 template <typename T> void DelayDru<T>::exec() noexcept
 {
 #if !defined(HOST_EMULATION)
-   // The DRU reads/writes _pIn/_pOut (L2SRAM) directly and the ring is non-cacheable DDR, so no
-   // cache maintenance is done here. Callers own coherence of _pIn/_pOut with the CPU.
-   uint8_t *pInBytes  = reinterpret_cast<uint8_t *>(_pIn);
-   uint8_t *pOutBytes = reinterpret_cast<uint8_t *>(_pOut);
+   // The DRU reads/writes _in/_out (L2SRAM) directly and the ring is non-cacheable DDR, so no
+   // cache maintenance is done here. Callers own coherence of _in/_out with the CPU.
+   uint8_t *pInBytes  = static_cast<uint8_t *>(_in.pBuf);
+   uint8_t *pOutBytes = static_cast<uint8_t *>(_out.pBuf);
 
    // ---- Write-in first: single SYNC_2D TR, all channels. Must precede read-out so delays
    // shorter than a frame read the current frame's samples; ring >= frame + maxDelay
    // guarantees it never overwrites samples still to be read. ----
    const size_t writeByteOff = _writeOff * sizeof(T);
-   runPreparedTr(_pTrMem.get(), pInBytes, _pRingDdr + writeByteOff);
+   uint8_t *pRingBytes = static_cast<uint8_t *>(_ring.pBuf);
+   runPreparedTr(_pTrMem.get(), pInBytes, pRingBytes + writeByteOff);
 
    // ---- Read-out: one SYNC_1D TR per channel, only pointers move per frame. ----
    for (size_t c = 0; c < _numChannels; c++) {
       const size_t readOff     = (_writeOff + _ringSamplesPerCh - _delaySamples[c]) % _ringSamplesPerCh;
       const size_t readByteOff = readOff * sizeof(T);
-      uint8_t     *ringBase    = _pRingDdr + (_chRingSampOff[c] * sizeof(T)) + readByteOff;
+      uint8_t     *ringBase    = pRingBytes + (_chRingSampOff[c] * sizeof(T)) + readByteOff;
       uint8_t     *outBase     = pOutBytes + (c * _frameBytes);
 
       runPreparedTr(_pTrMemRead.get(), ringBase, outBase);
@@ -390,11 +395,11 @@ template <typename T> void DelayDru<T>::exec() noexcept
    // HOST_EMULATION: CPU ring model — same math as the PoC's App_delayReference,
    // running directly on the caller-allocated pRingDdr heap buffer. _chRingSampOff[c]
    // (precomputed in the ctor) gives each channel's ring base in samples.
-   T *ring = reinterpret_cast<T *>(_pRingDdr);
+   T *ring = static_cast<T *>(_ring.pBuf);
    for (size_t c = 0; c < _numChannels; c++) {
       T           *chRing  = ring + _chRingSampOff[c];
-      const T     *chIn    = _pIn + (c * _frameSamples);
-      T           *chOut   = _pOut + (c * _frameSamples);
+      const T     *chIn    = static_cast<const T *>(_in.pBuf) + (c * _frameSamples);
+      T           *chOut   = static_cast<T *>(_out.pBuf) + (c * _frameSamples);
       const size_t readOff = (_writeOff + _ringSamplesPerCh - _delaySamples[c]) % _ringSamplesPerCh;
 
       for (size_t n = 0; n < _frameSamples; n++) {
@@ -410,14 +415,14 @@ template <typename T> void DelayDru<T>::exec() noexcept
 
 template <typename T> void DelayDru<T>::cleanInternalBuffers() noexcept
 {
-   if (_pRingDdr != nullptr) {
+   if (_ring.pBuf != nullptr) {
       const size_t totalRingBytes = _numChannels * _ringBytesPerCh;
-      std::memset(_pRingDdr, 0, totalRingBytes);
+      std::memset(_ring.pBuf, 0, totalRingBytes);
 #if !defined(HOST_EMULATION)
       // Ring is non-cacheable DDR (memset already lands directly in DDR); the
       // writeback-invalidate here is a safety guard in case the caller placed
       // pRingDdr in cacheable memory.
-      CacheP_wbInv(_pRingDdr, static_cast<int32_t>(totalRingBytes), CacheP_TYPE_ALL);
+      CacheP_wbInv(_ring.pBuf, static_cast<int32_t>(totalRingBytes), CacheP_TYPE_ALL);
 #endif
    }
    _writeOff = 0;
