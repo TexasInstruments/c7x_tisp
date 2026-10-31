@@ -59,6 +59,7 @@
 #include "TISP_nlms.hpp"
 #include "TISP_nonZeroCheck.hpp"
 #include "TISP_nullSink.hpp"
+#include "TISP_peakAbsoluteValue.hpp"
 #include "TISP_realImagToComplex.hpp"
 #include "TISP_rfft1dBatched.hpp"
 #include "TISP_router.hpp"
