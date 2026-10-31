@@ -35,6 +35,7 @@
 #include "TISP_delayDru.hpp"
 #include "TISP_delayNChannel.hpp"
 #include "TISP_div.hpp"
+#include "TISP_envelopeDetector.hpp"
 #include "TISP_exp.hpp"
 #include "TISP_fft1dBatched.hpp"
 #include "TISP_fir.hpp"
