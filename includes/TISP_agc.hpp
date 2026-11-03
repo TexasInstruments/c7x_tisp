@@ -27,6 +27,30 @@ namespace AUDIOLIB {
  *          @c activationThreshold the gain follows @c ratio within [-maxAttenuation, maxGain] dB, below it the gain
  *          is held or, with @c enableRecovery, slews back to 0 dB. Parameters are updatable via @ref setParams
  *          without resetting the gain. Input and output are non-interleaved (one channel per row).
+ *
+ * @par Method
+ * Each call of @ref exec processes one block of M channels x N samples, with
+ * \f$ f_s \f$ = samplingRate and \f$ T_s \f$ = smoothingTime in seconds:
+ *
+ * 1. Mean energy of the block over all channels:
+ * \f[ e = \frac{1}{MN} \sum_{m=0}^{M-1} \sum_{n=0}^{N-1} x_m[n]^2 \f]
+ *
+ * 2. Block-rate smoothing of the energy:
+ * \f[ E \leftarrow (1 - \alpha_B) E + \alpha_B e, \qquad \alpha_B = 1 - e^{-N / (f_s T_s)} \f]
+ *
+ * 3. Target gain from the level \f$ L = 10 \log_{10} E \f$. If \f$ L \geq \f$ activationThreshold:
+ * \f[ G_{dB} = (\mathrm{targetLevel} - L) \left(1 - \frac{1}{\mathrm{ratio}}\right), \qquad
+ *     G = 10^{G_{dB} / 20} \f]
+ * with \f$ G_{dB} \f$ limited to [-maxAttenuation, maxGain]. Below the threshold \f$ G \f$ is held or, with
+ * enableRecovery, moved towards 1 (0 dB) by recoveryRate \f$ \cdot N / f_s \f$ dB per block.
+ *
+ * 4. Sample-rate smoothing of the gain, applied to the input:
+ * \f[ g[k] = G + (1 - \alpha_S)(g[k-1] - G), \qquad \alpha_S = 1 - e^{-1 / (f_s T_s)}, \qquad
+ *     y_m[n] = g[k] \, x_m[n] \f]
+ * where \f$ k = mN + n \f$ runs through the channels in order and carries over from the previous block, so the
+ * gain takes \f$ M N \f$ smoothing steps per block.
+ *
+ * @image html agc_node_kernel.svg "Agc node block diagram" width=1000px
  **/
 
 /**
