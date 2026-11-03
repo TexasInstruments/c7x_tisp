@@ -16,7 +16,8 @@ class AUDIOLIB_downwardExpander:
             T - W/2 <= x <= T + W/2   g_c = (1 - R) * (x - T - W/2)^2 / (2 W)
             x >  T + W/2        g_c = 0
         gain smoothing g_s (dB):
-            g_c > g_s   release: counter = 0, g_s = releaseCoeff * g_s + (1 - releaseCoeff) * g_c
+            g_c > g_s   release: counter = 0, g_s = releaseCoeff * g_s + (1 - releaseCoeff) * g_c - FLT_MIN
+                        (the -FLT_MIN floor applies only when releaseCoeff > 0)
             g_c <= g_s  attack: counter += 1 only if g_c < g_s (unchanged at g_c == g_s);
                         once counter > holdSamples, g_s = attackCoeff * g_s + (1 - attackCoeff) * g_c
         y = x * 10^(g_s / 20)
@@ -104,9 +105,10 @@ class AUDIOLIB_downwardExpander:
 
                 if targetGain > smoothedGain:
                     holdCount = 0
-                    smoothedGain = releaseCoeff * smoothedGain + (1 - releaseCoeff) * targetGain
-                    if abs(smoothedGain) < self.FLT_MIN:
-                        smoothedGain = 0.0
+                    # A release toward 0 dB stops at -FLT_MIN instead of reaching 0 (the C7x flushes
+                    # subnormals), so the next 0 dB target resets the hold counter, as in MATLAB.
+                    releaseFloor = -self.FLT_MIN if releaseCoeff > 0 else 0.0
+                    smoothedGain = releaseCoeff * smoothedGain + ((1 - releaseCoeff) * targetGain + releaseFloor)
                 else:
                     if targetGain < smoothedGain:
                         holdCount += 1

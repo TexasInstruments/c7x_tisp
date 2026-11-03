@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="420" viewBox="0 0 1240 420" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1240" height="420" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <text x="620" y="34" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">AGC: block diagram</text>
+
+  <!-- ===== Audio path ===== -->
+  <rect x="30" y="66" width="140" height="56" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="100" y="91" text-anchor="middle" font-size="15" font-weight="700" fill="#92400e">Input x</text>
+  <text x="100" y="110" text-anchor="middle" font-size="12" fill="#92400e">M channels &#215; N samples</text>
+
+  <line x1="170" y1="94" x2="993" y2="94" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <circle cx="1015" cy="94" r="20" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="1015" y="101" text-anchor="middle" font-size="20" font-weight="700" fill="#0f172a">&#215;</text>
+
+  <line x1="1035" y1="94" x2="1068" y2="94" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="1070" y="66" width="140" height="56" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="1140" y="91" text-anchor="middle" font-size="15" font-weight="700" fill="#92400e">Output y</text>
+  <text x="1140" y="110" text-anchor="middle" font-size="12" fill="#92400e">y = g &#183; x</text>
+
+  <!-- bypass -->
+  <path d="M960,94 C 960,52 1100,52 1100,64" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+  <text x="1030" y="50" text-anchor="middle" font-size="12" fill="#64748b">bypass: input copied to output</text>
+
+  <!-- tap into side chain -->
+  <circle cx="280" cy="94" r="4" fill="#475569"/>
+  <line x1="280" y1="94" x2="280" y2="216" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===== Side chain ===== -->
+  <text x="296" y="196" font-size="13" font-weight="700" fill="#64748b">once per block</text>
+  <line x1="190" y1="203" x2="900" y2="203" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="930" y="196" font-size="13" font-weight="700" fill="#64748b">every sample</text>
+  <line x1="930" y1="203" x2="1100" y2="203" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- 1 energy -->
+  <rect x="190" y="220" width="180" height="96" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="280" y="248" text-anchor="middle" font-size="15" font-weight="700" fill="#115e59">Energy detector</text>
+  <text x="280" y="272" text-anchor="middle" font-size="12.5" fill="#134e4a">mean of x&#178; over all</text>
+  <text x="280" y="290" text-anchor="middle" font-size="12.5" fill="#134e4a">channels and samples</text>
+
+  <line x1="370" y1="268" x2="398" y2="268" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 2 energy smoothing -->
+  <rect x="400" y="220" width="180" height="96" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="490" y="248" text-anchor="middle" font-size="15" font-weight="700" fill="#115e59">Energy smoothing</text>
+  <text x="490" y="272" text-anchor="middle" font-size="12.5" fill="#134e4a">averages the energy</text>
+  <text x="490" y="290" text-anchor="middle" font-size="12.5" fill="#134e4a">across blocks</text>
+  <text x="490" y="340" text-anchor="middle" font-size="12" fill="#64748b">smoothingTime</text>
+
+  <line x1="580" y1="268" x2="608" y2="268" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 3 gain computer -->
+  <rect x="610" y="220" width="290" height="96" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+  <text x="755" y="248" text-anchor="middle" font-size="15" font-weight="700" fill="#6b21a8">Gain computer</text>
+  <text x="755" y="272" text-anchor="middle" font-size="12.5" fill="#3b0764">level above threshold: pull it towards</text>
+  <text x="755" y="290" text-anchor="middle" font-size="12.5" fill="#3b0764">targetLevel, within the gain limits</text>
+  <text x="755" y="307" text-anchor="middle" font-size="12.5" fill="#3b0764">below: hold the gain, or recover to 0 dB</text>
+  <text x="755" y="340" text-anchor="middle" font-size="12" fill="#64748b">targetLevel, ratio, maxGain, maxAttenuation,</text>
+  <text x="755" y="357" text-anchor="middle" font-size="12" fill="#64748b">activationThreshold, enableRecovery, recoveryRate</text>
+
+  <line x1="900" y1="268" x2="928" y2="268" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 4 gain smoothing -->
+  <rect x="930" y="220" width="170" height="96" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="1015" y="248" text-anchor="middle" font-size="15" font-weight="700" fill="#075985">Gain smoothing</text>
+  <text x="1015" y="272" text-anchor="middle" font-size="12.5" fill="#0c4a6e">glides the applied gain</text>
+  <text x="1015" y="290" text-anchor="middle" font-size="12.5" fill="#0c4a6e">towards the target</text>
+  <text x="1015" y="340" text-anchor="middle" font-size="12" fill="#64748b">smoothingTime</text>
+
+  <!-- gain into multiplier -->
+  <line x1="1015" y1="220" x2="1015" y2="116" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="1023" y="170" font-size="13" font-weight="700" fill="#075985">gain g</text>
+
+  <!-- state note -->
+  <text x="620" y="398" text-anchor="middle" font-size="12" fill="#64748b">Smoothed energy and gain carry over between blocks; changing a parameter at run time does not reset them.</text>
+</svg>
