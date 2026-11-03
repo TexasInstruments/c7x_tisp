@@ -18,17 +18,6 @@ namespace DSPLIB {
 /**@{*/
 
 /**
- * @brief Construction-time (non-tunable) parameters of the @ref NonZeroCheck node.
- *
- * @details Fixed for the node's lifetime; required.
- */
-struct NonZeroCheckConfig {
-   uint32_t opType   = 0U; /*!< Reduction: ALL non-zero or ANY non-zero (0 = ALL, 1 = ANY) */
-   uint32_t axisType = 0U; /*!< Axis: ROW reduces down the rows (one result per column position), COLUMN reduces across
-                              each row (0 = ROW, 1 = COLUMN) */
-};
-
-/**
  * \class NonZeroCheck
  * @brief Provides node-level APIs for the DSPLIB_nonZeroCheck kernel from DSPLIB.
  * @tparam T : Supports int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, float and double.
@@ -67,7 +56,20 @@ struct NonZeroCheckConfig {
  *  | Row/Column | c0 | c1 | c2 |
  *  |------------|----|----|----|
  *  |     r0     | 0  | 1  | 1  |
+ *
+ * @image html nonZeroCheck_node_kernel.svg "NonZeroCheck node block diagram" width=1000px
  **/
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref NonZeroCheck node.
+ *
+ * @details Fixed for the node's lifetime; required.
+ */
+struct NonZeroCheckConfig {
+   uint32_t opType   = 0U; /*!< Reduction: ALL non-zero or ANY non-zero (0 = ALL, 1 = ANY) */
+   uint32_t axisType = 0U; /*!< Axis: ROW reduces down the rows (one result per column position), COLUMN reduces across
+                              each row (0 = ROW, 1 = COLUMN) */
+};
 
 template <typename T> class NonZeroCheck final : public VirtualOp {
 

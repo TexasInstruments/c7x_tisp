@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="394" viewBox="0 0 1560 394" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1560" height="394" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <text x="780" y="34" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">Recip: block diagram</text>
+
+  <rect x="30" y="161" width="180" height="104" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="120" y="187" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Input x</text>
+  <text x="120" y="211" text-anchor="middle" font-size="12.5" fill="#92400e">width × height</text>
+  <text x="120" y="230" text-anchor="middle" font-size="12.5" fill="#92400e">int16_t, float, double</text>
+  <rect x="1350" y="161" width="180" height="104" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="1440" y="187" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Output y</text>
+  <text x="1440" y="211" text-anchor="middle" font-size="12.5" fill="#92400e">float, double: same</text>
+  <text x="1440" y="230" text-anchor="middle" font-size="12.5" fill="#92400e">size as input</text>
+  <text x="1440" y="249" text-anchor="middle" font-size="12.5" fill="#92400e">int16_t: 2× width</text>
+  <text x="250" y="78" font-size="12.5" font-weight="700" fill="#64748b">float, double</text>
+  <rect x="250" y="86" width="1060" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="780" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Divide</text>
+  <text x="780" y="136" text-anchor="middle" font-size="12.5" fill="#115e59">out = 1 / x</text>
+  <text x="780" y="155" text-anchor="middle" font-size="12.5" fill="#115e59">for every element</text>
+  <path d="M210,213 C 230,213 230,138 248,138" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M1310,138 C 1330,138 1330,213 1348,213" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="250" y="228" font-size="12.5" font-weight="700" fill="#64748b">int16_t (Q15), per element</text>
+  <rect x="250" y="236" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="340" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Take magnitude</text>
+  <text x="340" y="286" text-anchor="middle" font-size="12.5" fill="#115e59">a = |x|</text>
+  <text x="340" y="305" text-anchor="middle" font-size="12.5" fill="#115e59">remember the sign</text>
+  <line x1="430" y1="288" x2="468" y2="288" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="470" y="236" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="560" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Normalise</text>
+  <text x="560" y="286" text-anchor="middle" font-size="12.5" fill="#115e59">shift a left until</text>
+  <text x="560" y="305" text-anchor="middle" font-size="12.5" fill="#115e59">bit 30 is set</text>
+  <line x1="650" y1="288" x2="688" y2="288" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="690" y="236" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="780" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Divide</text>
+  <text x="780" y="286" text-anchor="middle" font-size="12.5" fill="#115e59">15 conditional-subtract</text>
+  <text x="780" y="305" text-anchor="middle" font-size="12.5" fill="#115e59">steps: 0x80000000 / a</text>
+  <line x1="870" y1="288" x2="908" y2="288" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="910" y="236" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="1000" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Split result</text>
+  <text x="1000" y="286" text-anchor="middle" font-size="12.5" fill="#115e59">exp = shift − 15</text>
+  <text x="1000" y="305" text-anchor="middle" font-size="12.5" fill="#115e59">frac = low 15 bits, sign</text>
+  <line x1="1090" y1="288" x2="1128" y2="288" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="1130" y="236" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="1220" y="262" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Store</text>
+  <text x="1220" y="286" text-anchor="middle" font-size="12.5" fill="#115e59">HSTACK: exp.., frac..</text>
+  <text x="1220" y="305" text-anchor="middle" font-size="12.5" fill="#115e59">INTERLEAVE: exp, frac</text>
+  <path d="M210,213 C 230,213 230,288 248,288" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <path d="M1310,288 C 1330,288 1330,213 1348,213" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="780" y="384" text-anchor="middle" font-size="12" fill="#64748b">storeStyle: 0 LINEAR (float, double), 1 HSTACK or 2 INTERLEAVE (int16_t)</text>
+</svg>

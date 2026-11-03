@@ -18,15 +18,6 @@ namespace AUDIOLIB {
 /**@{*/
 
 /**
- * @brief Construction-time (non-tunable) parameters of the @ref PreEmphasis node.
- *
- * @details Required; sets the filter coefficient.
- */
-struct PreEmphasisConfig {
-   float alpha = 0.97f; /*!< Pre-emphasis coefficient, range [0, 1]. */
-};
-
-/**
  * \class PreEmphasis
  * @brief Provides node-level APIs for the AUDIOLIB_preEmphasis kernel from AUDIOLIB.
  * @tparam T : Supports float.
@@ -34,7 +25,18 @@ struct PreEmphasisConfig {
  * @details Applies the pre-emphasis filter y[n] = x[n] - alpha * x[n-1] to every channel and writes the output;
  *          the filter state carries across frames. Input and output share one layout (interleaved or
  *          non-interleaved), hold at most 64 channels and must be different buffers.
+ *
+ * @image html preEmphasis_node_kernel.svg "PreEmphasis node block diagram" width=1000px
  **/
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref PreEmphasis node.
+ *
+ * @details Required; sets the filter coefficient.
+ */
+struct PreEmphasisConfig {
+   float alpha = 0.97f; /*!< Pre-emphasis coefficient, range [0, 1]. */
+};
 
 template <typename T> class PreEmphasis final : public VirtualOp {
 
