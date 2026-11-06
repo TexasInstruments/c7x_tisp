@@ -19,10 +19,11 @@ common_dir_superNode = os.path.join(current_dir, "../../../../common")
 # Add both common directories to the Python path
 sys.path.append(common_dir_gen)
 sys.path.append(common_dir_superNode)
+sys.path.append("../../../DSPLIB/TISP_cascadeBiquad")  # the cascadeBiquad node model
 
 from TISP_file_io import TensorToCppHeader
 import TISP_utils
-from cascadeBiquad import NChannelCascadeBiquad
+from cascadeBiquad import CascadeBiquad
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -191,87 +192,41 @@ def gen_test_case_header_file(testCase):
     filterSize = testCase["filterSize"]
     numChannels = testCase["numChannels"]
     cascadeStages = testCase["numStages"]
+    enableNChCoeffs = testCase["enableNChCoeffs"]
 
-    if dTypeIn == "int8_t" or dTypeIn == "uint8_t":
-        bits = 8
-    elif dTypeIn == "int16_t" or dTypeIn == "uint16_t":
-        bits = 16
-    elif dTypeIn == "int32_t" or dTypeIn == "uint32_t" or dTypeIn == "float":
-        bits = 32
-    else:
-        bits = 64
+    if dTypeIn != "float":
+        raise ValueError("Unsupported data type: %s" % dTypeIn)
 
-    # unsigned integer
-    if dTypeIn[0] == "u":
-        minVal = 0
-        maxVal = (2**bits) - 1
-    else:
-        minVal = -(2 ** (bits - 1))
-        maxVal = 2 ** (bits - 1)
-
-    minVal = -1
-    maxVal = 1
-
-    if dTypeIn == "int8_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("int8")
-    elif dTypeIn == "int16_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("int16")
-    elif dTypeIn == "int32_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("int32")
-    elif dTypeIn == "int64_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("int64")
-    elif dTypeIn == "uint8_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("uint8")
-    elif dTypeIn == "uint16_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("uint16")
-    elif dTypeIn == "uint32_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("uint32")
-    elif dTypeIn == "uint64_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("uint64")
-    elif dTypeIn == "float":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("float")
-    elif dTypeIn == "double":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(dataSize, numChannels)
-        ).astype("double")
-    # # normalize coefficients
-    # filterSum = np.sum(np.abs(filterData), axis=1)
-    # filterNorm = filterData / filterSum[:, None]
-    # filterData = filterNorm
-
-    fs = 48000
-    cutoff_cascade = 5000
-
-    myCascadeBiquad = NChannelCascadeBiquad(
-        fs, cutoff_cascade, cascadeStages, numChannels
+    # SDK test signal and filter coefficients (the coefficients are a constructor argument)
+    (inputData, pCoeffs, _sosCoefs, _zi, _tifCoefs, _tifGains) = (
+        CascadeBiquad.generate_inputs(
+            dataType=dTypeIn,
+            dataSize=dataSize,
+            numChannels=numChannels,
+            numStages=cascadeStages,
+            enableNChCoeffs="True" if enableNChCoeffs else "False",
+            biquadForm="DSPLIB_BIQUAD_TDF2",
+            numExecReps=1,
+        )
     )
-    outputData = myCascadeBiquad.execute(inputData)
+
+    kernel = CascadeBiquad(
+        num_channels=numChannels,
+        num_samples=dataSize,
+        in_dtype=inputData.dtype.name,
+        numStages=cascadeStages,
+        biquadForm="DSPLIB_BIQUAD_TDF2",
+        pCoeffs=pCoeffs,
+    )
+    outputData = kernel.exec(inputData)
 
     headerFileName = f"../../../../superNode/i2d_to_o2d/TISP_cascadeBiquad_superNode/test_data/staticRefCase{str(testId)}.h"
     tensor_to_cpp_header = TensorToCppHeader(headerFileName, mode="new")
     tensor_to_cpp_header.write_tensor_to_header(
         inputData, f"staticRefInCase{str(testId)}", "float"
     )
-    myCascadeBiquad.write_coeffs_to_file(
-        headerFileName, f"staticRefFilterCase{str(testId)}"
+    tensor_to_cpp_header.write_tensor_to_header(
+        pCoeffs, f"staticRefFilterCase{str(testId)}", "float"
     )
     tensor_to_cpp_header.write_tensor_to_header(
         outputData, f"staticRefOutCase{str(testId)}", "float"

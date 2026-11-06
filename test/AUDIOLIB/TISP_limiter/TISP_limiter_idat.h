@@ -21,6 +21,7 @@ typedef struct {
      uint32_t pitchS;
      uint32_t pitchY;
      uint32_t bypassMode;
+     uint32_t numBlocks;
      void* staticIn;
      void* staticOut;
      void* staticGainOut;

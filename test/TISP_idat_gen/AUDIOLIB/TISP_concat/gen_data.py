@@ -15,6 +15,9 @@ import concat as c
 
 np.random.seed(42)
 
+# C dtype names of the CSV -> numpy dtype names
+_NP_DTYPES = {"float": "float32", "double": "float64"}
+
 
 def gen_testCaseParams(testParamsFile, currPrm):
     """Generate and write test case parameters to idat file
@@ -194,22 +197,20 @@ def gen_test_case_header_file(testCase):
     # Per-input channel counts (each input may have a different channel count)
     inChannelsList = ast.literal_eval(testCase["inChannels"])
 
-    # 1. Generate individual input arrays using the concat module
-    individual_inputs = c.generate_inputs(
-        in_channels_list=inChannelsList,
+    # 1. Build the model and generate the individual input arrays
+    model = c.Concat(
         num_samples=inSamples,
-        dtype=dType,
-        is_input_interleave=isInterleave,
+        in_dtype=_NP_DTYPES[dType],
+        is_interleaved=isInterleave,
+    )
+    individual_inputs = model.generate_inputs(
+        in_channels_list=inChannelsList,
         min_val=minVal,
-        max_val=maxVal
+        max_val=maxVal,
     )
 
-    # 2. Aggregate inputs using the concat module
-    final_merged_output = c.concat_aggregator(
-        individual_inputs=individual_inputs,
-        is_input_interleave=isInterleave,
-        is_output_interleave=isInterleave
-    )
+    # 2. Concatenate the inputs (one frame)
+    final_merged_output = model.exec(*individual_inputs)
 
     # 3. Write the individual inputs and the final merged output to the header file
     headerFileName = f"staticRefCase{testId}.h"

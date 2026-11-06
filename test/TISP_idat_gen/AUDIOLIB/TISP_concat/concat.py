@@ -47,7 +47,9 @@ def generate_inputs(
     if seed is not None:
         np.random.seed(seed)
     
-    np_dtype = np.float32 if dtype.startswith('f') else np.float64
+    # Accepts numpy names ("float32", "float64", ...) and the legacy C names
+    # ("float", "double").
+    np_dtype = {"float": np.float32, "double": np.float64}.get(dtype) or np.dtype(dtype)
     
     individual_inputs = []
     for num_ch in in_channels_list:
@@ -76,3 +78,35 @@ def get_output_shape(
         return (num_samples, total_channels)
     else:
         return (total_channels, num_samples)
+
+
+class Concat:
+    """Reference model of the concat kernel (stack input channels)."""
+
+    def __init__(self, *, num_samples=None, in_dtype=None, is_interleaved=False, **_):
+        self.num_samples = num_samples
+        self.in_dtype = in_dtype
+        self.is_interleaved = is_interleaved
+        self.init()
+
+    def init(self):
+        """Normalise the layout flag once (called by the constructor)."""
+        self.is_interleaved = bool(self.is_interleaved)
+
+    def exec(self, *inputs: np.ndarray) -> np.ndarray:
+        """Concatenate the input buffers along the channel axis."""
+        return concat_aggregator(
+            list(inputs), self.is_interleaved, self.is_interleaved
+        )
+
+    def generate_inputs(self, in_channels_list, min_val=-10.0, max_val=10.0, seed=None):
+        """SDK test signal: one random array per input (for gen_data.py only)."""
+        return generate_inputs(
+            in_channels_list=in_channels_list,
+            num_samples=self.num_samples,
+            dtype=self.in_dtype,
+            is_input_interleave=self.is_interleaved,
+            min_val=min_val,
+            max_val=max_val,
+            seed=seed,
+        )

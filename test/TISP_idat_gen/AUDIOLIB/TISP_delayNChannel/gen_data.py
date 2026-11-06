@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Texas Instruments Incorporated
+#
+# SPDX-License-Identifier: LicenseRef-TI-TFL
+
 from __future__ import print_function
 from subprocess import call
 from sys import platform
@@ -10,6 +14,12 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from delayNChannel import DelayNChannel
+
+
+def np_dtype(dType):
+    """SDK C type name from the CSV -> numpy dtype name"""
+    return {"float": "float32", "double": "float64"}[dType]
 
 
 def get_soc_guard(am275_soc_value):
@@ -189,162 +199,30 @@ def gen_test_case_header_file(testCase):
     maxDelay = testCase["maxDelay"]
     numBlocks = testCase["numBlocks"]
 
-    if dType == "int8_t" or dType == "uint8_t":
-        bits = 8
-    elif dType == "int16_t" or dType == "uint16_t":
-        bits = 16
-    elif dType == "int32_t" or dType == "uint32_t":
-        bits = 32
-    else:
-        bits = 32
+    # SDK test signal and per-channel delay sizes (in the kernel's layout)
+    inputBuffTemp, delaySize = DelayNChannel.generate_inputs(
+        dType, interleave, numChannels, numSamples, maxDelay, numBlocks
+    )
 
-    # unsigned integer
-    if dType[0] == "u":
-        minVal = 0
-        maxVal = (2**bits) - 1
-    else:
-        minVal = -(2 ** (bits - 1))
-        maxVal = 2 ** (bits - 1)
+    # Build the model with the case's values, then process frame by frame
+    kernel = DelayNChannel(
+        num_channels=numChannels,
+        num_samples=numSamples,
+        in_dtype=np_dtype(dType),
+        is_interleaved=interleave,
+        mode=mode,
+        pDelaySize=delaySize,
+    )
+    delayBuff = kernel.delayBuff
+    delayBuffSize = kernel.delayBuffSize
+    outBuff = np.zeros_like(inputBuffTemp)
 
-    minDelaySize = 1
-    maxDelaySize = maxDelay
-
-    if interleave == 1:
-        if dType == "float":
-            inputBuff = np.random.uniform(
-                low=minVal, high=maxVal, size=(numBlocks * numSamples, numChannels)
-            ).astype("float32")
-
-        elif dType == "double":
-            inputBuff = np.random.uniform(
-                low=minVal, high=maxVal, size=(numBlocks * numSamples, numChannels)
-            ).astype("double")
-
+    for frame in range(numBlocks):
+        if interleave == 1:
+            sl = (slice(frame * numSamples, (frame + 1) * numSamples), slice(None))
         else:
-            raise ValueError(f"Unsupported data type: {dType}")
-
-    else:
-        if dType == "float":
-            inputBuff = np.random.randint(
-                low=minVal, high=maxVal, size=(numChannels, numBlocks * numSamples)
-            ).astype("float32")
-
-        elif dType == "double":
-            inputBuff = np.random.randint(
-                low=minVal, high=maxVal, size=(numChannels, numBlocks * numSamples)
-            ).astype("double")
-
-        else:
-            raise ValueError(f"Unsupported data type: {dType}")
-
-    delaySize = np.random.randint(
-        low=minDelaySize, high=maxDelaySize, size=(numChannels)
-    ).astype("uint32")
-    if maxDelay not in delaySize:
-        delaySize[numChannels - 1] = maxDelay
-    np.random.shuffle(delaySize)
-
-    # Derive the maximum delay from the generated per-channel delay sizes (replaces the
-    # removed maxDelay kernel parameter) to size the delay buffer.
-    maxDelay = int(np.max(delaySize))
-
-    if mode == 0:
-        delayBuffSize = numSamples + maxDelay
-        delayBuff = np.zeros((numChannels, delayBuffSize), dtype=dType)
-    elif mode == 1:
-        if (numSamples + maxDelay) < 512:
-            delayBuffSize = 512
-        else:
-            delayBuffSize = 2 ** int(np.ceil(np.log2(numSamples + maxDelay)))
-        delayBuff = np.zeros((numChannels, delayBuffSize), dtype=dType)
-
-    outBuff = np.zeros((numChannels, numBlocks * numSamples), dtype=inputBuff.dtype)
-
-    inputBuffTemp = inputBuff
-
-    if interleave == 1:
-        inputBuff = inputBuff.T
-
-    if mode == 0:
-        for numExecRep in range(numBlocks):
-            for ch in range(numChannels):
-                if delaySize[ch] < numSamples:
-                    for i in range(delaySize[ch]):
-                        outBuff[ch, numExecRep * numSamples + i] = delayBuff[ch, i]
-                    for i in range(numSamples - delaySize[ch]):
-                        outBuff[ch, numExecRep * numSamples + delaySize[ch] + i] = (
-                            inputBuff[ch, numExecRep * numSamples + i]
-                        )
-                    if delaySize[ch] > 0:
-                        for i in range(delaySize[ch]):
-                            delayBuff[ch, i] = inputBuff[
-                                ch,
-                                numExecRep * numSamples
-                                + (numSamples - delaySize[ch])
-                                + i,
-                            ]
-                else:
-                    for i in range(numSamples):
-                        outBuff[ch, numExecRep * numSamples + i] = delayBuff[ch, i]
-                    for i in range(delaySize[ch] - numSamples):
-                        delayBuff[ch, i] = delayBuff[ch, numSamples + i]
-                    for i in range(numSamples):
-                        delayBuff[ch, (delaySize[ch] - numSamples) + i] = inputBuff[
-                            ch, numExecRep * numSamples + i
-                        ]
-    elif mode == 1:
-        readIdx = [0] * numChannels
-        writeIdx = [0] * numChannels
-        for ch in range(numChannels):
-            writeIdx[ch] = delaySize[ch]
-
-        for numExecRep in range(numBlocks):
-            for ch in range(numChannels):
-                # Write Delay Buffer
-                writeSampleCnt1 = min((delayBuffSize - writeIdx[ch]), numSamples)
-                writeSampleCnt2 = numSamples - writeSampleCnt1
-                for i in range(writeSampleCnt1):
-                    delayBuff[ch, writeIdx[ch] + i] = inputBuff[
-                        ch, numExecRep * numSamples + i
-                    ]
-                if (writeIdx[ch] + numSamples) >= delayBuffSize:
-                    writeIdx[ch] = 0
-                else:
-                    writeIdx[ch] = writeIdx[ch] + numSamples
-                if writeSampleCnt2 > 0:
-                    for i in range(writeSampleCnt2):
-                        delayBuff[ch, i] = inputBuff[
-                            ch,
-                            (numExecRep * numSamples)
-                            + (writeSampleCnt1 - writeIdx[ch])
-                            + i,
-                        ]
-                    writeIdx[ch] = writeSampleCnt2
-
-                # Read Delay Buffer
-                readSampleCnt1 = min((delayBuffSize - readIdx[ch]), numSamples)
-                readSampleCnt2 = numSamples - readSampleCnt1
-                for i in range(readSampleCnt1):
-                    outBuff[ch, numExecRep * numSamples + i] = delayBuff[
-                        ch, readIdx[ch] + i
-                    ]
-                if (readIdx[ch] + numSamples) >= delayBuffSize:
-                    readIdx[ch] = 0
-                else:
-                    readIdx[ch] = readIdx[ch] + numSamples
-
-                if readSampleCnt2 > 0:
-                    for i in range(readSampleCnt2):
-                        outBuff[
-                            ch,
-                            (numExecRep * numSamples)
-                            + (readSampleCnt1 - readIdx[ch])
-                            + i,
-                        ] = delayBuff[ch, i]
-                    readIdx[ch] = readSampleCnt2
-
-    if interleave == 1:
-        outBuff = outBuff.T
+            sl = (slice(None), slice(frame * numSamples, (frame + 1) * numSamples))
+        outBuff[sl] = kernel.exec(inputBuffTemp[sl])
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(

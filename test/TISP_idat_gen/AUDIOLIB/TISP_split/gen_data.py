@@ -16,7 +16,7 @@ import file_io
 
 
 
-from split import TISP_split
+from split import Split
 
 
 def gen_testCaseParams(idatFile, currPrm):
@@ -229,13 +229,16 @@ def gen_test_case_header_file(testCase):
     totalInChannels = testCase["totalInputChannels"]
     outChannelsList = testCase["outChannelsList"]
 
-    # Create an instance of TISP_split
+    # Build the model with the case's values
     isInputInterleave = int(testCase.get("isInterleave", 1))
-    split_processor = TISP_split(
-        dType=dType,
-        outChannelsList=outChannelsList,
-        numSamples=inSamples,
-        isInputInterleave=isInputInterleave
+    npDtype = _NP_DTYPES.get(dType, dType)
+    split_processor = Split(
+        num_samples=inSamples,
+        num_channels=totalInChannels,
+        in_dtype=npDtype,
+        is_interleaved=isInputInterleave,
+        num_outputs=numOutputs,
+        out_channels_list=outChannelsList,
     )
 
     # [minVal, maxVal] = TISP_utils.minMaxVal(dType)
@@ -247,16 +250,15 @@ def gen_test_case_header_file(testCase):
 
     if dType[0] == "i" or dType[0] == "u":
         in0_flat = np.random.randint(low=minVal, high=maxVal, size=aggregated_size).astype("int")
-        in0 = in0_flat.reshape((1, aggregated_size))
-        out = split_processor.exec(in0)
     elif dType[0] == "f":
         in0_flat = np.random.uniform(low=minVal, high=maxVal, size=aggregated_size).astype("float32")
-        in0 = in0_flat.reshape((1, aggregated_size))
-        out = split_processor.exec(in0)
     elif dType[0] == "d":
         in0_flat = np.random.uniform(low=minVal, high=maxVal, size=aggregated_size).astype("double")
-        in0 = in0_flat.reshape((1, aggregated_size))
-        out = split_processor.exec(in0)
+
+    # One frame in the kernel's layout, split into one array per output
+    frame_shape = (inSamples, totalInChannels) if isInputInterleave else (totalInChannels, inSamples)
+    outs = split_processor.exec(in0_flat.reshape(frame_shape))
+    out = [o.flatten().tolist() for o in outs]
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     # For DEINTERLEAVED: reshape to (totalInChannels, inSamples) before file writing
@@ -272,6 +274,9 @@ def gen_test_case_header_file(testCase):
         tempbuf.append(np.max(out[i]))
     # return [np.min(out), np.max(out)]
     return tempbuf
+
+# C dtype names of the CSV -> numpy dtype names
+_NP_DTYPES = {"float": "float32", "double": "float64"}
 
 # Parse command line arguments
 parser = argparse.ArgumentParser()

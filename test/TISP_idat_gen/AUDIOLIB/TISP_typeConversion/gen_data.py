@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Texas Instruments Incorporated
+#
+# SPDX-License-Identifier: LicenseRef-TI-TFL
+
 from __future__ import print_function
 from subprocess import call
 from sys import platform
@@ -10,6 +14,11 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import AUDIOLIB_utils
 import TISP_utils
 import file_io
+from typeConversion import TypeConversion
+
+# CSV C type names -> numpy dtype names used by the reference model
+NP_DTYPE = {"float": "float32", "double": "float64", "int16_t": "int16", "int32_t": "int32"}
+
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -180,245 +189,18 @@ def gen_test_case_header_file(testCase):
     numBlocks = testCase["numBlocks"]
     testQ31 = testCase["testQ31"]
 
-    # [minVal, maxVal] = AUDIOLIB_utils.minMaxVal(dType)
-    [minVal, maxVal] = [-10, 10]
-
-    # if dType[0] == "f":
-    if inDtype == "int16_t" and outDtype == "float":
-        [minVal, maxVal] = [-32768, 32767]
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("int16")
-        out = in0.astype(np.float32) / 32768.0
-
-    # elif dType[0] == "d":
-    elif inDtype == "int16_t" and outDtype == "double":
-        [minVal, maxVal] = [-32768, 32767]
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("int16")
-        out = in0.astype(np.float64) / 32768.0
-
-    elif inDtype == "float" and outDtype == "int16_t":
-
-        mulFactor = 32768.0
-        minVal = -32768
-        maxVal = 32767
-
-        in0 = np.random.uniform(
-            low=-1.0, high=1.1, size=(inChannels * numBlocks, inSamples)
-        ).astype(np.float32)
-        out = np.zeros((inChannels * numBlocks, inSamples), dtype=np.int32)
-
-        for i in range(inChannels * numBlocks):
-            for j in range(inSamples):
-                val = in0[i][j]
-                mulVal = val * mulFactor
-                intPart = int(mulVal)
-                fracPart = mulVal - intPart
-
-                if (intPart % 2 == 0) and (abs(fracPart) == 0.5):
-                    aInt = intPart
-                elif val < 0:
-                    aInt = int(mulVal - 0.5)
-                else:
-                    aInt = int(mulVal + 0.5)
-
-                # Saturate to 32-bit signed int range
-                if aInt > maxVal:
-                    aInt = maxVal
-                if aInt < minVal:
-                    aInt = minVal
-
-                out[i][j] = aInt
-
-    elif inDtype == "double" and outDtype == "int16_t":
-        # Generate the input array
-        mulFactor = 32768.0
-        minVal = -32768
-        maxVal = 32767
-
-        in0 = np.random.uniform(
-            low=-1.0, high=1.1, size=(inChannels * numBlocks, inSamples)
-        ).astype(np.double)
-        out = np.zeros((inChannels * numBlocks, inSamples), dtype=np.int32)
-
-        for i in range(inChannels * numBlocks):
-            for j in range(inSamples):
-                val = in0[i][j]
-                mulVal = val * mulFactor
-                intPart = int(mulVal)
-                fracPart = mulVal - intPart
-
-                if (intPart % 2 == 0) and (abs(fracPart) == 0.5):
-                    aInt = intPart
-                elif val < 0:
-                    aInt = int(mulVal - 0.5)
-                else:
-                    aInt = int(mulVal + 0.5)
-
-                # Saturate to 32-bit signed int range
-                if aInt > maxVal:
-                    aInt = maxVal
-                if aInt < minVal:
-                    aInt = minVal
-
-                out[i][j] = aInt
-
-    elif inDtype == "int32_t" and outDtype == "float" and testQ31 == 0:
-        [minVal, maxVal] = [-8388608, +8388607]
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("int32")
-        out = in0.astype(np.float32) / (8388608.0)
-
-    elif inDtype == "int32_t" and outDtype == "double" and testQ31 == 0:
-        [minVal, maxVal] = [-8388608, +8388607]
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("int32")
-        out = in0.astype(np.double) / (8388608.0)
-
-    elif inDtype == "int32_t" and outDtype == "float" and testQ31 == 1:
-        [minVal, maxVal] = [-2147483648, +2147483647]
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("int32")
-        out = in0.astype(np.float32) / (2147483648.0)
-
-    elif inDtype == "int32_t" and outDtype == "double" and testQ31 == 1:
-        [minVal, maxVal] = [-2147483648, +2147483647]
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("int32")
-        out = in0.astype(np.double) / (2147483648.0)
-
-    elif inDtype == "float" and outDtype == "int32_t" and testQ31 == 0:
-        mulFactor = 8388608.0
-        minVal = -8388608
-        maxVal = 8388607
-
-        in0 = np.random.uniform(
-            low=-1.0, high=1.1, size=(inChannels * numBlocks, inSamples)
-        ).astype(np.float32)
-        out = np.zeros((inChannels * numBlocks, inSamples), dtype=np.int32)
-
-        for i in range(inChannels * numBlocks):
-            for j in range(inSamples):
-                val = in0[i][j]
-                mulVal = val * mulFactor
-                intPart = int(mulVal)
-                fracPart = mulVal - intPart
-
-                if (intPart % 2 == 0) and (abs(fracPart) == 0.5):
-                    aInt = intPart
-                elif val < 0:
-                    aInt = int(mulVal - 0.5)
-                else:
-                    aInt = int(mulVal + 0.5)
-
-                # Saturate to 32-bit signed int range
-                if aInt > maxVal:
-                    aInt = maxVal
-                if aInt < minVal:
-                    aInt = minVal
-
-                out[i][j] = aInt
-
-    elif inDtype == "float" and outDtype == "int32_t" and testQ31 == 1:
-        mulFactor = 2147483648
-        minVal = -2147483648
-        maxVal = 2147483647
-
-        in0 = np.random.uniform(
-            low=-1.0, high=1.1, size=(inChannels * numBlocks, inSamples)
-        ).astype(np.float32)
-        out = np.zeros((inChannels * numBlocks, inSamples), dtype=np.int32)
-
-        for i in range(inChannels * numBlocks):
-            for j in range(inSamples):
-                val = in0[i][j]
-                mulVal = val * mulFactor
-                intPart = int(mulVal)
-                fracPart = mulVal - intPart
-
-                if (intPart % 2 == 0) and (abs(fracPart) == 0.5):
-                    aInt = intPart
-                elif val < 0:
-                    aInt = int(mulVal - 0.5)
-                else:
-                    aInt = int(mulVal + 0.5)
-
-                # Saturate to 32-bit signed int range
-                if aInt > maxVal:
-                    aInt = maxVal
-                if aInt < minVal:
-                    aInt = minVal
-
-                out[i][j] = aInt
-    elif inDtype == "double" and outDtype == "int32_t" and testQ31 == 1:
-        mulFactor = 2147483648
-        minVal = -2147483648
-        maxVal = 2147483647
-
-        in0 = np.random.uniform(
-            low=-1.0, high=1.1, size=(inChannels * numBlocks, inSamples)
-        ).astype(np.double)
-        out = np.zeros((inChannels * numBlocks, inSamples), dtype=np.int32)
-
-        for i in range(inChannels * numBlocks):
-            for j in range(inSamples):
-                val = in0[i][j]
-                mulVal = val * mulFactor
-                intPart = int(mulVal)
-                fracPart = mulVal - intPart
-
-                if (intPart % 2 == 0) and (abs(fracPart) == 0.5):
-                    aInt = intPart
-                elif val < 0:
-                    aInt = int(mulVal - 0.5)
-                else:
-                    aInt = int(mulVal + 0.5)
-
-                # Saturate to 32-bit signed int range
-                if aInt > maxVal:
-                    aInt = maxVal
-                if aInt < minVal:
-                    aInt = minVal
-
-                out[i][j] = aInt
-
-    else:
-        mulFactor = 8388608.0
-        minVal = -8388608
-        maxVal = 8388607
-
-        in0 = np.random.uniform(
-            low=-1.0, high=1.1, size=(inChannels * numBlocks, inSamples)
-        ).astype(np.double)
-        out = np.zeros((inChannels * numBlocks, inSamples), dtype=np.int32)
-
-        for i in range(inChannels * numBlocks):
-            for j in range(inSamples):
-                val = in0[i][j]
-                mulVal = val * mulFactor
-                intPart = int(mulVal)
-                fracPart = mulVal - intPart
-
-                if (intPart % 2 == 0) and (abs(fracPart) == 0.5):
-                    aInt = intPart
-                elif val < 0:
-                    aInt = int(mulVal - 0.5)
-                else:
-                    aInt = int(mulVal + 0.5)
-
-                # Saturate to 32-bit signed int range
-                if aInt > maxVal:
-                    aInt = maxVal
-                if aInt < minVal:
-                    aInt = minVal
-
-                out[i][j] = aInt
+    kernel = TypeConversion(
+        rows=inChannels,
+        cols=inSamples,
+        in_dtype=NP_DTYPE[inDtype],
+        out_dtype=NP_DTYPE[outDtype],
+        testQ31=testQ31,
+    )
+    in0 = kernel.generate_inputs(num_blocks=numBlocks)
+    out_frames = []
+    for frame in range(numBlocks):
+        out_frames.append(kernel.exec(in0[frame * inChannels : (frame + 1) * inChannels]))
+    out = np.concatenate(out_frames, axis=0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

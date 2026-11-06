@@ -76,7 +76,7 @@ namespace AUDIOLIB {
 enum class GainNChTrimParamId : uint16_t {
    kBypass     = 0, /**< kBypass: uint32_t bypass mode; `0` applies the gain, `1` copies input to output */
    kGainValues = 1, /**< kGainValues: Gain values to set/get for each channel */
-   kMasterGain = 2, /**< kMasterGain: Master gain scalar (float) to set/get */
+   kMasterGain = 2, /**< kMasterGain: Master gain scalar to set/get */
    kAll        = 3  /**< kAll: all tunable params as one @ref GainNChTrimTunableParams payload */
 };
 

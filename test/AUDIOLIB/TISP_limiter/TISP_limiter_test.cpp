@@ -61,7 +61,7 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
    uint32_t numReps;
 
    uint32_t testNum;
-   uint64_t estCycles  = 0;
+   uint64_t estCycles = 0;
 
    TISP_limiter_testParams_t *prm;
    TISP_limiter_testParams_t  currPrm;
@@ -101,17 +101,20 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          size_t inputSize, gainSize, outputSize, scratchBufSize;
          size_t paramSize;
 
-         inputSize      = blockSize * numChannels * dataSize;
+         size_t numBlocks = currPrm.numBlocks;
+
+         // input/output hold numBlocks back-to-back blocks; the envelope (pGainState) carries over between them
+         inputSize      = numBlocks * blockSize * numChannels * dataSize;
          gainSize       = numChannels * dataSize;
-         outputSize     = blockSize * numChannels * dataSize;
+         outputSize     = numBlocks * blockSize * numChannels * dataSize;
          scratchBufSize = blockSize * numChannels * dataSize;
          paramSize      = numChannels * dataSize;
 
          // TODO: add pitch to test case csv
-         size_t   pitchX        = currPrm.pitchX;
-         size_t   pitchS        = currPrm.pitchS;
-         size_t   pitchY        = currPrm.pitchY;
-         uint32_t bypassMode    = currPrm.bypassMode;
+         size_t   pitchX     = currPrm.pitchX;
+         size_t   pitchS     = currPrm.pitchS;
+         size_t   pitchY     = currPrm.pitchY;
+         uint32_t bypassMode = currPrm.bypassMode;
 
          auto pIn           = myL2Heap.allocate64ByteAligned<uint8_t>(inputSize);
          auto pScratch      = myL2Heap.allocate64ByteAligned<uint8_t>(scratchBufSize);
@@ -132,13 +135,15 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          /* Only run the test if the buffer allocations fit in the heap */
          if (pIn.get() && pScratch.get() && pGainState.get() && pOut.get() && pThreshold_dB.get() &&
-             pKneeWidth_dB.get() &&
-             pAttackCoeff.get() && pReleaseCoeff.get() && pOutCn && pGainCn) {
+             pKneeWidth_dB.get() && pAttackCoeff.get() && pReleaseCoeff.get() && pOutCn && pGainCn) {
 
             if (currPrm.dataType == AUDIOLIB_FLOAT32 || currPrm.dataType == AUDIOLIB_FLOAT64) {
-               // fill input buffer
-               TI_fillBuffer_float(prm[tpi].testPattern, 0, pIn.get(), prm[tpi].staticIn, numChannels, blockSize,
-                                   pitchX, dataSize, testPatternString);
+               // fill input buffer, one block at a time
+               for (size_t n = 0; n < numBlocks; n++) {
+                  TI_fillBuffer_float(prm[tpi].testPattern, 0, (uint8_t *) pIn.get() + n * blockSize * pitchX,
+                                      (uint8_t *) prm[tpi].staticIn + n * blockSize * pitchX, numChannels, blockSize,
+                                      pitchX, dataSize, testPatternString);
+               }
 
                // fill parameter buffers
                TI_fillBuffer_float(prm[tpi].testPattern, 0, pThreshold_dB.get(), prm[tpi].threshold_dB, numChannels, 1,
@@ -196,15 +201,15 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::SetAddr_t     kAddr;
             TISP::SetAddrMode_t kAddrMode;
 
-            // set address for block to process
+            // Envelope persists across exec(), so reset it once before the first block.
+            k0->cleanInternalBuffers();
+
+            // set address for block 0
             kAddrMode    = TISP::kAddrModeInOut;
             kAddr.src[0] = (uint8_t *) pIn.get();
             kAddr.dst[0] = (uint8_t *) pOut.get();
-
             k0->setAddr(kAddr, kAddrMode);
 
-            // Envelope persists across exec(), so reset it before each timed run.
-            k0->cleanInternalBuffers();
             TI_profile_start(TI_PROFILE_KERNEL_OPT);
 
             // Execute the kernel
@@ -214,19 +219,17 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             /* The following for loop is to call kernel repeatedly so as to
              * train the branch predictor                                   */
-            uint32_t k = 0;
-            for (k = 0; k < 1; k++) {
+            for (size_t n = 1; n + 1 < numBlocks; n++) {
+
                // set address for block to process
                kAddrMode    = TISP::kAddrModeInOut;
-               kAddr.src[0] = (uint8_t *) pIn.get();
-               kAddr.dst[0] = (uint8_t *) pOut.get();
+               kAddr.src[0] = (uint8_t *) pIn.get() + n * blockSize * pitchX;
+               kAddr.dst[0] = (uint8_t *) pOut.get() + n * blockSize * pitchY;
 
                TI_profile_clear_cycle_count_single(TI_PROFILE_KERNEL_OPT_WARM);
 
                k0->setAddr(kAddr, kAddrMode);
 
-               // Envelope persists across exec(), so reset it before each timed run.
-               k0->cleanInternalBuffers();
                TI_profile_start(TI_PROFILE_KERNEL_OPT_WARM);
 
                // Execute the kernel
@@ -235,10 +238,47 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
                TI_profile_stop();
             }
 
+            if (numBlocks > 1) {
+               // run the last block for the warm instruction cache test
+               kAddrMode    = TISP::kAddrModeInOut;
+               kAddr.src[0] = (uint8_t *) pIn.get() + (numBlocks - 1) * blockSize * pitchX;
+               kAddr.dst[0] = (uint8_t *) pOut.get() + (numBlocks - 1) * blockSize * pitchY;
+               k0->setAddr(kAddr, kAddrMode);
+
+               TI_profile_start(TI_PROFILE_KERNEL_OPT_WARMWRB);
+
+               // Execute the kernel
+               k0->exec();
+
+               TI_profile_stop();
+            }
+            else {
+               // Single block: there is no later block to time, so re-run block 0 from a reset envelope
+               for (int rep = 0; rep < 2; rep++) {
+                  kAddrMode    = TISP::kAddrModeInOut;
+                  kAddr.src[0] = (uint8_t *) pIn.get();
+                  kAddr.dst[0] = (uint8_t *) pOut.get();
+                  k0->setAddr(kAddr, kAddrMode);
+                  k0->cleanInternalBuffers();
+
+                  if (rep == 0) {
+                     TI_profile_clear_cycle_count_single(TI_PROFILE_KERNEL_OPT_WARM);
+                     TI_profile_start(TI_PROFILE_KERNEL_OPT_WARM);
+                  }
+                  else {
+                     TI_profile_start(TI_PROFILE_KERNEL_OPT_WARMWRB);
+                  }
+
+                  k0->exec();
+
+                  TI_profile_stop();
+               }
+            }
+
             // get output to L1D
             int16_t outSum   = 0;
             int8_t *pOutTemp = (int8_t *) pOut.get(); // treat output as bytes to be data type agnostic
-            for (k = 0; k < blockSize * numChannels; k++) {
+            for (size_t k = 0; k < outputSize; k++) {
                outSum += *pOutTemp;
                pOutTemp++;
             }
@@ -246,55 +286,44 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             // dummy store of outSum to insure that the compiler does not remove it.
             volatileSum = outSum;
 
-            // set address for block to process
-            kAddrMode    = TISP::kAddrModeInOut;
-            kAddr.src[0] = (uint8_t *) pIn.get();
-            kAddr.dst[0] = (uint8_t *) pOut.get();
-            k0->setAddr(kAddr, kAddrMode);
+            // C native implementation carries its own envelope across the blocks
+            TISP_limiter_init_cn<float>(pGainCn, numChannels);
+            for (size_t n = 0; n < numBlocks; n++) {
+               uint8_t *pSrcCn = (uint8_t *) pIn.get() + n * blockSize * pitchX;
+               uint8_t *pDstCn = (uint8_t *) pOutCn + n * blockSize * pitchY;
 
-            // run warm instruction cache test
-            // Envelope persists across exec(), so reset it before each timed run.
-            k0->cleanInternalBuffers();
-            TI_profile_start(TI_PROFILE_KERNEL_OPT_WARMWRB);
-
-            // Execute the kernel
-            k0->exec();
-
-            TI_profile_stop();
-
-            if (bypassMode != 0U) {
-               // bypass copies the input to the output, leaving the limiter gain unapplied
-               uint8_t *pSrcCn     = (uint8_t *) pIn.get();
-               uint8_t *pDstCn     = (uint8_t *) pOutCn;
-               for (size_t i = 0; i < blockSize; i++) {
-                  memcpy(&pDstCn[i * pitchY], &pSrcCn[i * pitchX], numChannels * dataSize);
+               if (bypassMode != 0U) {
+                  // bypass copies the input to the output, leaving the limiter gain unapplied
+                  for (size_t i = 0; i < blockSize; i++) {
+                     memcpy(&pDstCn[i * pitchY], &pSrcCn[i * pitchX], numChannels * dataSize);
+                  }
                }
-            }
-            else {
-               // Run C native implementation for comparison
-               TISP_limiter_exec_cn<float>((float *) pIn.get(), (float *) pGainCn, (float *) pScratchCn,
-                                           (float *) pOutCn, (float *) pThreshold_dB.get(),
-                                           (float *) pKneeWidth_dB.get(), (float *) pAttackCoeff.get(),
-                                           (float *) pReleaseCoeff.get(), numChannels, blockSize, pitchX, pitchS,
-                                           pitchY);
+               else {
+                  TISP_limiter_exec_cn<float>(
+                      (float *) pSrcCn, (float *) pGainCn, (float *) pScratchCn, (float *) pDstCn,
+                      (float *) pThreshold_dB.get(), (float *) pKneeWidth_dB.get(), (float *) pAttackCoeff.get(),
+                      (float *) pReleaseCoeff.get(), numChannels, blockSize, pitchX, pitchS, pitchY);
+               }
             }
 
             status_nat_vs_opt = TI_TEST_KERNEL_PASS;
 
             status_nat_vs_opt &= TI_compare_mem_2D_float((void *) pOut.get(), (void *) pOutCn, 0, (double) 1e-2,
-                                                         numChannels, blockSize, pitchY, dataSize);
+                                                         numChannels, numBlocks * blockSize, pitchY, dataSize);
 
             if (currPrm.staticOut != nullptr) {
                status_ref_vs_opt = TI_TEST_KERNEL_PASS;
 
-               status_ref_vs_opt &= TI_compare_mem_2D_float((void *) pOut.get(), (void *) currPrm.staticOut, 0,
-                                                            (double) 1e-2, numChannels, blockSize, pitchY, dataSize);
+               status_ref_vs_opt &=
+                   TI_compare_mem_2D_float((void *) pOut.get(), (void *) currPrm.staticOut, 0, (double) 1e-2,
+                                           numChannels, numBlocks * blockSize, pitchY, dataSize);
 
                // compare python vs natc
                status_ref_vs_nat = TI_TEST_KERNEL_PASS;
 
-               status_ref_vs_nat &= TI_compare_mem_2D_float((void *) pOutCn, (void *) currPrm.staticOut, 0,
-                                                            (double) 1e-2, numChannels, blockSize, pitchY, dataSize);
+               status_ref_vs_nat &=
+                   TI_compare_mem_2D_float((void *) pOutCn, (void *) currPrm.staticOut, 0, (double) 1e-2, numChannels,
+                                           numBlocks * blockSize, pitchY, dataSize);
             }
             else {
                /* Set to pass since it wasn't supposed to run. */
@@ -318,17 +347,18 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             int32_t warmCycles = pProfile[3 * tpi + 1];
 
-            sprintf(desc, "%s generated input | Num Channels=%d | BlockSize = %d\n",
-                    testPatternString, currPrm.numChannels, currPrm.blockSize);
+            sprintf(desc, "%s generated input | Num Channels=%d | BlockSize = %d\n", testPatternString,
+                    currPrm.numChannels, currPrm.blockSize);
 
             // write to CSV, must happen prior to write to screen because
             // TI_profile_formula_add clears values in counters
             fprintf(fpOutputCSV, "TISP_limiter, %d, %d, %zu, %zu, %d, %lu, %d\n", testNum, currPrm.testPattern,
                     numChannels, blockSize, warmCycles, estCycles, !currentTestFail);
 
-            TI_profile_add_test(testNum++, currPrm.blockSize * currPrm.numChannels, 0, 0, currentTestFail, desc);
-         TISP::handleAllocator().reset();
-         TISP::nodeAllocator().reset();
+            TI_profile_add_test(testNum++, numBlocks * currPrm.blockSize * currPrm.numChannels, 0, 0, currentTestFail,
+                                desc);
+            TISP::handleAllocator().reset();
+            TISP::nodeAllocator().reset();
          }
          else {
             sprintf(desc, "Data size=%d, blockSize=%d, numChannels=%d", AUDIOLIB_sizeof(currPrm.dataType),
@@ -338,8 +368,8 @@ int TISP_limiter_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             // TI_profile_add_test
             TI_profile_clear_run_stats();
          } // end of memory allocation successful?
-      }    // end repetitions
-   }       // end idat test cases
+      } // end repetitions
+   } // end idat test cases
 
    /* Close results CSV */
    fclose(fpOutputCSV);

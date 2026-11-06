@@ -7,8 +7,14 @@ import numpy as np
 import csv
 
 sys.path.append("../../../common")
+sys.path.append("../../../AUDIOLIB/TISP_gainNCh")  # the gainNCh node model
 import TISP_utils
 import file_io
+from gainNCh import GainNCh
+
+# CSV C type names -> numpy dtype names used by the reference model
+NP_DTYPE = {"float": "float32", "double": "float64", "int16_t": "int16", "int32_t": "int32"}
+
 
 
 def get_soc_guard(am275_soc_value):
@@ -172,26 +178,36 @@ def gen_test_case_header_file(testCase):
     # [minVal, maxVal] = AUDIOLIB_utils.minMaxVal(dType)
     [minVal, maxVal] = [-10, 10]
 
-    if dType[0] == "f":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn, widthIn)
-        ).astype("float32")
-        in1 = np.random.uniform(low=minVal, high=maxVal, size=(heightIn)).astype(
-            "float32"
-        )
+    npDtype = NP_DTYPE[dType]
 
-    elif dType[0] == "d":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn, widthIn)
-        ).astype("double")
-        in1 = np.random.uniform(low=minVal, high=maxVal, size=heightIn).astype("double")
+    in0, gains = GainNCh.generate_inputs(
+        num_samples=widthIn,
+        num_channels=heightIn,
+        in_dtype=npDtype,
+        is_interleaved=isInterleave,
+        num_blocks=1,
+        min_val=minVal,
+        max_val=maxVal,
+    )
 
-    # in1 = np.tile(in1 , numBlocks)
-    if not isInterleave:
-        out = in0 * in1[:, np.newaxis]
-    else:
-        in0 = in0.T
-        out = in0 * in1
+    kernel = GainNCh(
+        num_samples=widthIn,
+        num_channels=heightIn,
+        in_dtype=npDtype,
+        is_interleaved=isInterleave,
+        pGains=gains,
+        bypassMode=0,
+    )
+
+    out_frames = []
+    for frame in range(1):
+        lo, hi = frame * heightIn, (frame + 1) * heightIn
+        if isInterleave == 1:
+            out_frames.append(kernel.exec(in0[:, lo:hi]))
+        else:
+            out_frames.append(kernel.exec(in0[lo:hi]))
+    out = np.concatenate(out_frames, axis=1 if isInterleave == 1 else 0)
+    in1 = np.tile(gains, 1)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, in1, out, testCase, headerFileName)
