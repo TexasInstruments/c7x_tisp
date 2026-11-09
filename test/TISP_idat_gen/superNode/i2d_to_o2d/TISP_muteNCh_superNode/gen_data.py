@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Texas Instruments Incorporated
+#
+# SPDX-License-Identifier: LicenseRef-TI-TFL
+
 from __future__ import print_function
 from subprocess import call
 from sys import platform
@@ -9,7 +13,7 @@ import re
 import pandas as pd
 
 sys.path.append("../../../common")
-sys.path.append("../../../AUDIOLIB/TISP_muteNCh")  # the muteNCh node model
+sys.path.append("../../../AUDIOLIB/TISP_muteNCh")  # the muteNCh gain model
 import TISP_utils
 import file_io
 from muteNCh import MuteNCh
@@ -45,7 +49,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     AUDIOLIB_dType = TISP_utils.resolve_AUDIOLIB_dType(dType)
 
     # Map fadeType string to integer
-    fadeType_map = {"LINEAR": 0, "SMOOTH": 1, "HARD": 2}
+    fadeType_map = {"LINEAR": 0, "SMOOTH": 1, "HARD": 2, "SYMMETRIC": 3}
     fadeType_int = fadeType_map[fadeType]
 
     if testType in ["STATIC", "SINE"]:
@@ -69,7 +73,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write("%s, // Sampling Rate \n" % (samplingRate))
     idatFile.write("%s, // fadeTime \n" % (fadeTime))
     idatFile.write("%d, // isInterleaved \n" % (int(isInterleaved)))
-    idatFile.write("%d, // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)\n" % (fadeType_int))
+    idatFile.write("%d, // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD, 3=SYMMETRIC)\n" % (fadeType_int))
     idatFile.write(
         "AUDIOLIB_CALC_STRIDE(%s * sizeof(%s), AUDIOLIB_ALIGN_SHIFT_64BYTES), // inPitch \n"
         % (inPitch, AUDIOLIB_dType)
@@ -166,12 +170,12 @@ def process_test_case(testCase):
             f"Invalid isInterleaved value {testCase['isInterleaved']} for test ID {testCase['ID']}"
         )
     # Validate fadeType
-    if testCase["fadeType"] not in ["LINEAR", "SMOOTH", "HARD"]:
+    if testCase["fadeType"] not in ["LINEAR", "SMOOTH", "HARD", "SYMMETRIC"]:
         raise ValueError(
             f"Invalid fadeType value {testCase['fadeType']} for test ID {testCase['ID']}"
         )
-    # Set initialGain and targetGain based on isMuted array
-    testCase["initialGain"] = [1.0 if m == 1 else 0.0 for m in isMuted]
+    # Every channel's gain is 0 after the kernel init; set() fades each channel from there to its target
+    testCase["initialGain"] = [0.0] * len(isMuted)
     testCase["targetGain"] = [1.0 - m for m in isMuted]
     return testCase
 
@@ -210,15 +214,16 @@ def gen_test_case_header_file(testCase):
 
     [minVal, maxVal] = [-10, 10]
 
-    kernel = MuteNCh(
+    # Generate input samples for all channels
+    kernel = MuteNCh.from_legacy(
         num_samples=widthIn,
         num_channels=heightIn,
-        in_dtype="float32",
         is_interleaved=isInterleaved,
-        samplingRate=samplingRate,
-        fadeTime=fadeTime,
-        fadeType={"LINEAR": 0, "SMOOTH": 1, "HARD": 2}[fadeType],
-        pIsMute=testCase["isMuted"],
+        sampling_rate=samplingRate,
+        fade_time=fadeTime,
+        fade_type=fadeType,
+        target_gain=testCase["targetGain"],
+        initial_gain=testCase["initialGain"],
     )
     pInLocal = kernel.generate_inputs(
         test_type=testType,

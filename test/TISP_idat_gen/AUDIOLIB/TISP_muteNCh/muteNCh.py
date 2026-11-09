@@ -6,10 +6,13 @@ import numpy as np
 
 
 class MuteNCh:
-    """Reference model of the muteNCh kernel (per-channel gain fade / mute)."""
+    """Reference model of the muteNCh kernel (per-channel gain fade / mute).
+
+    Shared by the TISP_muteNCh and TISP_isolateNCh generators and their supernodes.
+    """
 
     # fadeType enum key (as the kernel / master JSON passes it) -> fade label
-    FADE_TYPES = {0: "LINEAR", 1: "SMOOTH", 2: "HARD"}
+    FADE_TYPES = {0: "LINEAR", 1: "SMOOTH", 2: "HARD", 3: "SYMMETRIC"}
 
     def __init__(
         self,
@@ -43,6 +46,43 @@ class MuteNCh:
         self.frame_size = self.num_samples
         self.init()
 
+    @classmethod
+    def from_legacy(
+        cls,
+        *,
+        num_samples,
+        num_channels,
+        is_interleaved,
+        sampling_rate,
+        fade_time,
+        fade_type,
+        target_gain,
+        initial_gain,
+        bypass_mode=False,
+        in_dtype="float32",
+    ):
+        """Build the model from explicit target / initial gains and a fade label.
+
+        For callers whose gains are not the 1 - pIsMute / (pIsMute == 1) pair (isolateNCh):
+        fade_type is the label ("LINEAR", "SMOOTH", "HARD", ...), not the enum key.
+        """
+        self = cls(
+            num_samples=num_samples,
+            num_channels=num_channels,
+            in_dtype=in_dtype,
+            is_interleaved=is_interleaved,
+            samplingRate=sampling_rate,
+            fadeTime=fade_time,
+            fadeType=0,
+            pIsMute=np.zeros(num_channels),
+            bypassMode=bypass_mode,
+        )
+        self.fade_type = fade_type
+        self.target_gain = np.asarray(target_gain, dtype=np.float64)
+        self.initial_gain = np.asarray(initial_gain, dtype=np.float64)
+        self.init()
+        return self
+
     def init(self):
         """Create the per-channel gain state from the initial gain (called by the constructor)."""
         self.reset()
@@ -58,6 +98,8 @@ class MuteNCh:
             "linear": init.copy(),
             # last output gain sample used by the SMOOTH fade
             "smooth": init.copy(),
+            # running gain used by the SYMMETRIC fade
+            "symmetric": init.astype(np.float32),
         }
         # gains applied by the most recent exec() (num_channels, num_samples), for test-data dumps
         self.last_gain_frame = None
@@ -160,6 +202,27 @@ class MuteNCh:
                         )
                         prevGain = pFrameGain[ch, j]
                 state["smooth"][ch] = pFrameGain[ch, frameSize - 1]
+            elif fadeType == "SYMMETRIC":
+                # Constant ratio per sample between the floor (-200 dB) and 1, in float32 as the kernel computes it
+                floor = np.float32(1e-10)
+                totalFadeSamples = (
+                    np.float32(fadeTime) * np.float32(samplingRate)
+                ) / np.float32(1000.0)
+                if totalFadeSamples <= 0:
+                    pFrameGain[ch, :] = targ_g
+                else:
+                    ratioUp = np.float32(
+                        np.power(np.float32(1.0) / floor, np.float32(1.0) / totalFadeSamples)
+                    )
+                    ratio = ratioUp if targ_g == 1.0 else np.float32(np.float32(1.0) / ratioUp)
+                    curr_g = state["symmetric"][ch]
+                    if frame == 0:
+                        # set() starts the ramp from the running gain, no lower than one ratio step below the floor
+                        curr_g = max(np.float32(curr_g), np.float32(floor / ratio))
+                    for i in range(frameSize):
+                        curr_g = min(max(np.float32(curr_g * ratio), floor), np.float32(1.0))
+                        pFrameGain[ch, i] = curr_g if curr_g > floor else 0.0
+                    state["symmetric"][ch] = curr_g
 
         state["frame"] = frame + 1
         return pFrameGain

@@ -202,7 +202,7 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          }
       }
       else {
-         // Handle null: zero out or error
+         // No mute flags means the case has no reference output and is not checked: start with no channel muted
          for (uint32_t ch = 0; ch < currPrm.heightIn; ch++) {
             muteCh[ch] = 0;
          }
@@ -225,12 +225,13 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          TISP::SuperNode::superNodeVec *mySuperNodeVec =
              TISP_muteNCh_createSuperNode(currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), widthIn,
                                           heightIn, inPitch, outPitch, blockWidth, blockHeight, isInterleaved,
-                                          samplingRate, isMute, fadeTime, fadeType, currPrm.dataType, errorCtx);
+                                          samplingRate, muteCh, fadeTime, fadeType, currPrm.dataType, errorCtx);
 
          if (!errorCtx.isSuccess()) {
             printf("\nError creating supernode: %s\n", errorCtx.getMessage());
             currentTestFail = 1;
             fail            = 1;
+            free(muteCh);
             continue;
          }
 
@@ -250,7 +251,7 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::SuperNode::superNodeVec *mySuperNodeVec =
                 TISP_muteNCh_createSuperNode(currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), widthIn,
                                              heightIn, inPitch, outPitch, blockWidth, blockHeight, isInterleaved,
-                                             samplingRate, isMute, fadeTime, fadeType, currPrm.dataType, errorCtx);
+                                             samplingRate, muteCh, fadeTime, fadeType, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -287,7 +288,7 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::SuperNode::superNodeVec *mySuperNodeVec =
                 TISP_muteNCh_createSuperNode(currPrm.staticIn0, pOut, pInputBlock0.get(), pOutputBlock.get(), widthIn,
                                              heightIn, inPitch, outPitch, blockWidth, blockHeight, isInterleaved,
-                                             samplingRate, isMute, fadeTime, fadeType, currPrm.dataType, errorCtx);
+                                             samplingRate, muteCh, fadeTime, fadeType, currPrm.dataType, errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating supernode: %s\n", errorCtx.getMessage());
@@ -303,6 +304,8 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TISP::execute::graph(mySuperNodeVec);
 
             TI_profile_stop();
+
+            TISP_muteNCh_deleteSuperNode(mySuperNodeVec);
          }
 
          if (currPrm.staticOut != nullptr) {
@@ -355,6 +358,9 @@ int TISP_muteNCh_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          // TI_profile_add_test
          TI_profile_clear_run_stats();
       } // end of memory allocation successful?
+
+      // release the mute flags of this test case
+      free(muteCh);
 
    } // end idat test cases
 

@@ -26,15 +26,16 @@ namespace AUDIOLIB {
  * non-interleaved) by applying a per-channel gain factor and writes the resulting values to the output buffer.
  * <br> The gain factor transitions between 1.0 (unmuted) and 0.0 (muted). To avoid
  * audible clicks, the transition can be smoothed over a specified `fadeTime`. The kernel
- * supports three distinct fade behaviors for each channel.
+ * supports four distinct fade behaviors for each channel.
  *
  * <b>fadeType: </b>
  *
- *  | fadeType |   Operation  |
- *  |----------|--------------|
- *  |    0     |  Linear fade |
- *  |    1     |  Smooth fade |
- *  |    2     |   Hard fade  |
+ *  | fadeType |    Operation    |
+ *  |----------|-----------------|
+ *  |    0     |   Linear fade   |
+ *  |    1     |   Smooth fade   |
+ *  |    2     |    Hard fade    |
+ *  |    3     | Symmetric fade  |
  *
  */
 
@@ -74,7 +75,7 @@ template <typename T> struct MutenchTunableParams {
    uint32_t *pIsMute = nullptr; /*!< Caller-owned array, one flag per channel (`1`: engage mute (fade-out), `0`:
                                      disengage mute (fade-in)); required, must outlive the node. */
    float    fadeTime   = 0.0F;  /*!< Fade-in or fade-out ramp in milliseconds; `0` gives a hard (instant) mute. */
-   uint32_t fadeType   = 0U;    /*!< Fade curve: `0` linear, `1` smooth, `2` hard. */
+   uint32_t fadeType   = 0U;    /*!< Fade curve: `0` linear, `1` smooth, `2` hard, `3` symmetric. */
    uint32_t bypassMode = 0U;    /*!< `0`: apply the mute, `1`: copy input to output. */
 };
 
@@ -111,7 +112,7 @@ template <typename T> class Mutench final : public VirtualOp {
     *                                    initial input pointer, rebound later by @ref setAddr.
     * @param [in] pOutputs              : Output buffer descriptors; exactly one buffer with the same layout as
     *                                    the input.
-    * @param [in] pConfig          : Construction-time parameters; required.
+    * @param [in] pConfig               : Construction-time parameters; required.
     * @param [in] pDefaultTunableParams : Initial tunable parameters; required, with a non-null @c pIsMute.
     * @param [in] nodeName              : Name of the node
     * @param [in] nodeId                : ID of the node
@@ -121,7 +122,7 @@ template <typename T> class Mutench final : public VirtualOp {
     */
    Mutench(const TISP_BufDescList        *pInputs,
            const TISP_BufDescList        *pOutputs,
-           const MutenchConfig      *pConfig,
+           const MutenchConfig           *pConfig,
            const MutenchTunableParams<T> *pDefaultTunableParams,
            const char                    *nodeName,
            uint32_t                       nodeId,

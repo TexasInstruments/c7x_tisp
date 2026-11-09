@@ -18,7 +18,7 @@ namespace AUDIOLIB {
 template <typename T>
 Mutench<T>::Mutench(const TISP_BufDescList        *pInputs,
                     const TISP_BufDescList        *pOutputs,
-                    const MutenchConfig      *pConfig,
+                    const MutenchConfig           *pConfig,
                     const MutenchTunableParams<T> *pDefaultTunableParams,
                     const char                    *nodeName,
                     uint32_t                       nodeId,

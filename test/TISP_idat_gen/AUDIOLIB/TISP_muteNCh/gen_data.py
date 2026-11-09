@@ -51,7 +51,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     AUDIOLIB_dType = TISP_utils.resolve_AUDIOLIB_dType(dType)
 
     # Map fadeType string to integer
-    fadeType_map = {"LINEAR": 0, "SMOOTH": 1, "HARD": 2}
+    fadeType_map = {"LINEAR": 0, "SMOOTH": 1, "HARD": 2, "SYMMETRIC": 3}
     fadeType_int = fadeType_map[fadeType]
 
     if testType in ["STATIC", "SINE"]:
@@ -88,7 +88,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write("%s, // Sampling Rate \n" % (samplingRate))
     idatFile.write("%s, // fadeTime \n" % (fadeTime))
     idatFile.write("%d, // isInterleaved \n" % (int(isInterleaved)))
-    idatFile.write("%d, // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD)\n" % (fadeType_int))
+    idatFile.write("%d, // fadeType (0=LINEAR, 1=SMOOTH, 2=HARD, 3=SYMMETRIC)\n" % (fadeType_int))
     idatFile.write("%d, // bypassMode \n" % (bypassMode))
     idatFile.write(
         "AUDIOLIB_CALC_STRIDE(%s * sizeof(%s), AUDIOLIB_ALIGN_SHIFT_64BYTES), // strideInElements \n"
@@ -186,12 +186,12 @@ def process_test_case(testCase):
             f"Invalid isInterleaved value {testCase['isInterleaved']} for test ID {testCase['ID']}"
         )
     # Validate fadeType
-    if testCase["fadeType"] not in ["LINEAR", "SMOOTH", "HARD"]:
+    if testCase["fadeType"] not in ["LINEAR", "SMOOTH", "HARD", "SYMMETRIC"]:
         raise ValueError(
             f"Invalid fadeType value {testCase['fadeType']} for test ID {testCase['ID']}"
         )
-    # Set initialGain and targetGain based on isMuted array
-    testCase["initialGain"] = [1.0 if m == 1 else 0.0 for m in isMuted]
+    # Every channel's gain is 0 after the kernel init; set() fades each channel from there to its target
+    testCase["initialGain"] = [0.0] * len(isMuted)
     testCase["targetGain"] = [1.0 - m for m in isMuted]
     return testCase
 
@@ -227,16 +227,16 @@ def gen_test_case_header_file(testCase):
     [minVal, maxVal] = [-10, 10]
 
     # Generate input samples for all channels
-    kernel = MuteNCh(
+    kernel = MuteNCh.from_legacy(
         num_samples=numSamples,
         num_channels=numChannels,
-        in_dtype="float32",
         is_interleaved=isInterleaved,
-        samplingRate=samplingRate,
-        fadeTime=fadeTime,
-        fadeType={"LINEAR": 0, "SMOOTH": 1, "HARD": 2}[fadeType],
-        pIsMute=testCase["isMuted"],
-        bypassMode=bypassMode,
+        sampling_rate=samplingRate,
+        fade_time=fadeTime,
+        fade_type=fadeType,
+        target_gain=testCase["targetGain"],
+        initial_gain=testCase["initialGain"],
+        bypass_mode=bypassMode,
     )
     pInLocal = kernel.generate_inputs(
         test_type=testType,
@@ -251,7 +251,6 @@ def gen_test_case_header_file(testCase):
     pCurrentGain = np.zeros((numChannels, totalSamplesPerChannel), dtype=np.float32)
     pOutLocal = np.zeros((numBlocks, samplesPerFrame), dtype=np.float32)
     for frame in range(numBlocks):
-        # exec applies the gains; bypass copies input to output
         pOutLocal[frame, :] = kernel.exec(pInLocal[frame, :])
         frameGain = kernel.last_gain_frame
         pCurrentGain[:, frame * frameSize : (frame + 1) * frameSize] = frameGain

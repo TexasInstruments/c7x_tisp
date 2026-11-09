@@ -18,6 +18,9 @@
 #define ALPHA_COEFF_INDEX 16
 #endif
 
+// Lowest gain of the symmetric fade (-200 dB): the output is 0 while the gain sits on it
+#define MUTENCH_CN_SYMMETRIC_FLOOR (1e-10f)
+
 int32_t *getBypassSmoothing();
 float   *getGainStep();
 float   *getAlphaMultiplier();
@@ -39,10 +42,10 @@ void AUDIOLIB_muteNCh_cn_set(uint32_t *isMute,
    float   *currentGain          = getCurrentGain();
    float   *targetGain           = getTargetGain();
 
+   // currentGain is kept: as in the kernel, every fade starts from where its channel is
    for (uint32_t ch = 0; ch < inChannels; ch++) {
-      int32_t mute    = isMute[ch];
-      currentGain[ch] = (mute == 0) ? 0.0f : 1.0f;
-      targetGain[ch]  = (mute == 0) ? 1.0f : 0.0f;
+      int32_t mute   = isMute[ch];
+      targetGain[ch] = (mute == 0) ? 1.0f : 0.0f;
    }
 
    float alphaCoeff[ALPHA_COEFF_INDEX];
@@ -56,7 +59,7 @@ void AUDIOLIB_muteNCh_cn_set(uint32_t *isMute,
 
       if (!*bypassSmoothing) {
          for (uint32_t ch = 0; ch < inChannels; ch++) {
-            gainStep[ch] = (targetGain[ch] - currentGain[ch]) * reciprocalMaxFadeSamples;
+            gainStep[ch] = (targetGain[ch] - (1.0f - targetGain[ch])) * reciprocalMaxFadeSamples;
          }
          for (int i = 0; i < ALPHA_COEFF_INDEX; i++) {
             if (isInterleaved) {
@@ -91,6 +94,35 @@ void AUDIOLIB_muteNCh_cn_set(uint32_t *isMute,
       *bypassSmoothing = (int32_t) 1;
       break;
    }
+
+   case 3: {
+      float totalFadeSamples = (fadeTime * samplingRate) / 1000.0f;
+      *bypassSmoothing       = (int32_t) (fadeTime == 0.0f || totalFadeSamples <= 0);
+
+      if (!*bypassSmoothing) {
+         // Constant ratio per sample: the full floor-to-unity span takes fadeTime in either direction
+         float ratioUp = powf(1.0f / MUTENCH_CN_SYMMETRIC_FLOOR, 1.0f / totalFadeSamples);
+         for (uint32_t ch = 0; ch < inChannels; ch++) {
+            gainStep[ch] = (targetGain[ch] == 1.0f) ? ratioUp : 1.0f / ratioUp;
+            // The ramp starts from the running gain, no lower than one ratio step below the floor
+            currentGain[ch] = fmaxf(currentGain[ch], MUTENCH_CN_SYMMETRIC_FLOOR / gainStep[ch]);
+         }
+      }
+      break;
+   }
+
+   default: {
+      // Unknown fade type: fall back to a hard change
+      *bypassSmoothing = (int32_t) 1;
+      break;
+   }
+   }
+
+   // A hard change puts every channel on its target at once, so a later fade starts from there
+   if (*bypassSmoothing != 0) {
+      for (uint32_t ch = 0; ch < inChannels; ch++) {
+         currentGain[ch] = targetGain[ch];
+      }
    }
 
    return;
@@ -243,6 +275,57 @@ void AUDIOLIB_muteNChSmoothFade_exec_cn(void  *pIn,
    return;
 }
 
+template <typename dataType>
+void AUDIOLIB_muteNChSymmetricFade_exec_cn(void  *pIn,
+                                           void  *pOut,
+                                           size_t widthIn,
+                                           size_t heightIn,
+                                           size_t strideInElements,
+                                           size_t strideOutElements,
+                                           size_t isInterleaved)
+{
+   /* Typecast void pointers to respective data type */
+   dataType *restrict pInLocal  = (dataType *) pIn;
+   dataType *restrict pOutLocal = (dataType *) pOut;
+
+   float *currentGain = getCurrentGain();
+   float *gainStep    = getGainStep();
+
+   float localCurrentGain[heightIn]; // Local copy per channel for this frame
+   for (uint32_t ch = 0; ch < heightIn; ch++) {
+      localCurrentGain[ch] = currentGain[ch];
+   }
+
+   if (isInterleaved) {
+      // Interleaved: [ch0_s0, ch1_s0, ..., ch0_s1, ...]
+      for (uint32_t j = 0; j < widthIn; j++) {
+         for (uint32_t c = 0; c < heightIn; c++) {
+            // The ramp moves geometrically, clamped to [floor, 1]; the floor is the fully muted state
+            localCurrentGain[c] = fminf(fmaxf(localCurrentGain[c] * gainStep[c], MUTENCH_CN_SYMMETRIC_FLOOR), 1.0f);
+            float appliedGain   = (localCurrentGain[c] > MUTENCH_CN_SYMMETRIC_FLOOR) ? localCurrentGain[c] : 0.0f;
+            pOutLocal[j * strideOutElements + c] = pInLocal[j * strideInElements + c] * appliedGain;
+         }
+      }
+   }
+   else {
+      // Non-interleaved: [ch0_s0, ch0_s1, ..., ch1_s0, ...]
+      for (uint32_t j = 0; j < widthIn; j++) {
+         for (uint32_t c = 0; c < heightIn; c++) {
+            localCurrentGain[c] = fminf(fmaxf(localCurrentGain[c] * gainStep[c], MUTENCH_CN_SYMMETRIC_FLOOR), 1.0f);
+            float appliedGain   = (localCurrentGain[c] > MUTENCH_CN_SYMMETRIC_FLOOR) ? localCurrentGain[c] : 0.0f;
+            pOutLocal[c * strideOutElements + j] = pInLocal[c * strideInElements + j] * appliedGain;
+         }
+      }
+   }
+
+   // Save updated currentGains back
+   for (uint32_t ch = 0; ch < heightIn; ch++) {
+      currentGain[ch] = localCurrentGain[ch];
+   }
+
+   return;
+}
+
 template void AUDIOLIB_muteNChHard_exec_cn<float>(void  *pIn,
                                                   void  *pOut,
                                                   size_t widthIn,
@@ -266,6 +349,14 @@ template void AUDIOLIB_muteNChSmoothFade_exec_cn<float>(void  *pIn,
                                                         size_t strideInElements,
                                                         size_t strideOutElements,
                                                         size_t isInterleaved);
+
+template void AUDIOLIB_muteNChSymmetricFade_exec_cn<float>(void  *pIn,
+                                                           void  *pOut,
+                                                           size_t widthIn,
+                                                           size_t heightIn,
+                                                           size_t strideInElements,
+                                                           size_t strideOutElements,
+                                                           size_t isInterleaved);
 
 void AUDIOLIB_muteNCh_cn(void    *pIn,
                          void    *pOut,
@@ -293,6 +384,17 @@ void AUDIOLIB_muteNCh_cn(void    *pIn,
       case 1:
          AUDIOLIB_muteNChSmoothFade_exec_cn<float>(pIn, pOut, widthIn, heightIn, strideInElements, strideOutElements,
                                                    isInterleaved);
+         break;
+
+      case 3:
+         AUDIOLIB_muteNChSymmetricFade_exec_cn<float>(pIn, pOut, widthIn, heightIn, strideInElements, strideOutElements,
+                                                      isInterleaved);
+         break;
+
+      case 2:
+      default:
+         // Hard (2) is normally handled by bypassSmoothing; an unknown fade type also lands here
+         AUDIOLIB_muteNChHard_exec_cn<float>(pIn, pOut, widthIn, heightIn, strideInElements, strideOutElements, isInterleaved);
          break;
       }
    }
