@@ -19,6 +19,7 @@ typedef struct {
    uint8_t  testPattern; /* 0: constant, 1: sequential, 2: sequential_negative, 3: random etc.*/
    void    *staticOut;
    uint32_t numSamples;
+   uint32_t numChannels;
    uint32_t seed;
    float    range;
    uint32_t dataType;

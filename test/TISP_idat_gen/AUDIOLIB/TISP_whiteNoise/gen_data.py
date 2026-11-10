@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Texas Instruments Incorporated
+#
+# SPDX-License-Identifier: LicenseRef-TI-TFL
+
 from __future__ import print_function
 from subprocess import call
 from sys import platform
@@ -7,7 +11,7 @@ import numpy as np
 import math
 import csv
 import os
-from process import generate_white_noise
+from whiteNoise import WhiteNoise
 
 sys.path.append("../../common")
 import TISP_utils
@@ -21,6 +25,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     testId = currPrm["ID"]
     dType = currPrm["dType"]
     numSamples = currPrm["numSamples"]
+    numChannels = currPrm["numChannels"]
     seed = currPrm["seed"]
     range_val = currPrm["range"]
     samplingRate = currPrm["samplingRate"]
@@ -53,6 +58,7 @@ def gen_testCaseParams(testParamsFile, currPrm):
     idatFile.write("%s, // Test pattern \n" % (testType))
     idatFile.write("%s, // Output buffer \n" % (out))
     idatFile.write("%s, // numSamples \n" % (numSamples))
+    idatFile.write("%s, // numChannels \n" % (numChannels))
     idatFile.write("%s, // seed \n" % (seed))
     idatFile.write("%s, // range \n" % (range_val))
     idatFile.write("%s, // precision \n" % (TISP_utils.resolve_AUDIOLIB_dType(dType)))
@@ -122,6 +128,7 @@ def process_test_case(testCase):
     # print(testCase.keys())
     testCase["testId"] = int(testCase["ID"])
     testCase["numSamples"] = int(testCase["numSamples"])
+    testCase["numChannels"] = int(testCase["numChannels"])
     testCase["seed"] = int(testCase["seed"])
     testCase["range"] = float(testCase["range"])
     testCase["samplingRate"] = int(testCase["samplingRate"])
@@ -150,15 +157,17 @@ def gen_test_case_header_file(testCase):
     testId = testCase["ID"]
     dType = testCase["dType"]
     numSamples = testCase["numSamples"]
+    numChannels = testCase["numChannels"]
     seed = testCase["seed"]
     range_val = testCase["range"]
     plotSignals = testCase["plotSignals"]
     numBlocks = testCase["numBlocks"]
 
-    target_dtype = np.float32 if dType == "float" else np.float64
+    kernel = WhiteNoise(numSamples, numChannels, seed, range_val, dType)
 
-    out = generate_white_noise(numSamples, numBlocks, seed, range_val, target_dtype)
-    totalSamples = numSamples * numBlocks
+    # Generate frame by frame; the LCG state is carried between frames
+    out = np.concatenate([kernel.generate_frame() for frame in range(numBlocks)])
+    totalSamples = numSamples * numChannels * numBlocks
 
     if plotSignals == "TRUE":
         file_io.plot_Signals(out, totalSamples, testId)
