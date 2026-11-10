@@ -11,11 +11,14 @@ import numpy as np
 import math
 import csv
 import os
-from whiteNoise import WhiteNoise
 
 sys.path.append("../../common")
 import TISP_utils
 import file_io
+from whiteNoise import WhiteNoise
+
+# CSV C type names -> numpy dtype names used by the reference model
+NP_DTYPE = {"float": "float32", "double": "float64"}
 
 
 # ===============================================================
@@ -163,10 +166,16 @@ def gen_test_case_header_file(testCase):
     plotSignals = testCase["plotSignals"]
     numBlocks = testCase["numBlocks"]
 
-    kernel = WhiteNoise(numSamples, numChannels, seed, range_val, dType)
+    kernel = WhiteNoise(
+        num_samples=numSamples,
+        num_channels=numChannels,
+        seed=seed,
+        range_val=range_val,
+        in_dtype=NP_DTYPE[dType],
+    )
 
     # Generate frame by frame; the LCG state is carried between frames
-    out = np.concatenate([kernel.generate_frame() for frame in range(numBlocks)])
+    out = np.concatenate([kernel.exec() for _ in range(numBlocks)])
     totalSamples = numSamples * numChannels * numBlocks
 
     if plotSignals == "TRUE":

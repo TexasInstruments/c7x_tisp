@@ -18,16 +18,6 @@ namespace AUDIOLIB {
 /**@{*/
 
 /**
- * @brief Construction-time (non-tunable) parameters of the @ref Whitenoise node.
- *
- * @details Required; sets the output range and the generator seed.
- */
-struct WhitenoiseConfig {
-   float    range = 1.0f; /*!< The output range; must be greater than zero. Noise will be in [-range, +range]. */
-   uint32_t seed  = 1U;   /*!< The initial 32-bit seed for the LCG. Any value, including 0, is valid. */
-};
-
-/**
  * \class Whitenoise
  * @brief Provides node-level APIs for the AUDIOLIB_whiteNoise kernel from AUDIOLIB.
  * @tparam T : Supports float.
@@ -49,6 +39,16 @@ struct WhitenoiseConfig {
  *
  * @image html whiteNoise_node_multichannel.svg "Whitenoise node: multichannel noise from one seed" width=900px
  **/
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref Whitenoise node.
+ *
+ * @details Required; sets the output range and the generator seed.
+ */
+struct WhitenoiseConfig {
+   float    range = 1.0f; /*!< The output range; must be greater than zero. Noise will be in [-range, +range]. */
+   uint32_t seed  = 1U;   /*!< The initial 32-bit seed for the LCG. Any value, including 0, is valid. */
+};
 
 template <typename T> class Whitenoise final : public VirtualOp {
 
