@@ -127,7 +127,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         1,                       // test ID
     },
@@ -142,7 +142,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         2,                       // test ID
     },
@@ -157,7 +157,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         3,                       // test ID
     },
@@ -172,7 +172,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         4,                       // test ID
     },
@@ -187,7 +187,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         5,                       // test ID
     },
@@ -202,7 +202,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         6,                       // test ID
     },
@@ -217,7 +217,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         7,                       // test ID
     },
@@ -232,7 +232,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         4,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         8,                       // test ID
     },
@@ -247,7 +247,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         4,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         9,                       // test ID
     },
@@ -262,7 +262,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         8,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         10,                      // test ID
     },
@@ -277,7 +277,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         11,                      // test ID
     },
@@ -292,7 +292,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         12,                      // test ID
     },
@@ -307,7 +307,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         13,                      // test ID
     },
@@ -322,7 +322,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         14,                      // test ID
     },
@@ -337,7 +337,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         15,                      // test ID
     },
@@ -352,7 +352,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         16,                      // test ID
     },
@@ -367,7 +367,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         17,                      // test ID
     },
@@ -382,7 +382,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         18,                      // test ID
     },
@@ -397,7 +397,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         19,                      // test ID
     },
@@ -412,7 +412,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         4,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         20,                      // test ID
     },
@@ -427,7 +427,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         4,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         21,                      // test ID
     },
@@ -442,7 +442,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         8,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         22,                      // test ID
     },
@@ -457,7 +457,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         23,                      // test ID
     },
@@ -472,7 +472,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         24,                      // test ID
     },
@@ -487,7 +487,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         25,                      // test ID
     },
@@ -502,7 +502,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         26,                      // test ID
     },
@@ -517,7 +517,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         27,                      // test ID
     },
@@ -532,7 +532,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         4,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         28,                      // test ID
     },
@@ -547,7 +547,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         8,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         29,                      // test ID
     },
@@ -562,7 +562,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         8,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         30,                      // test ID
     },
@@ -577,7 +577,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         16,                      // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         31,                      // test ID
     },
@@ -592,7 +592,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         32,                      // test ID
     },
@@ -607,7 +607,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         4,                       // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         33,                      // test ID
     },
@@ -622,7 +622,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         16,                      // numChannels
         1,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         34,                      // test ID
     },
@@ -637,7 +637,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         35,                      // test ID
     },
@@ -652,7 +652,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         36,                      // test ID
     },
@@ -667,7 +667,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         37,                      // test ID
     },
@@ -682,7 +682,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         4,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         38,                      // test ID
     },
@@ -697,7 +697,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         8,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         39,                      // test ID
     },
@@ -712,7 +712,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         8,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         40,                      // test ID
     },
@@ -727,7 +727,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         16,                      // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         41,                      // test ID
     },
@@ -742,7 +742,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         42,                      // test ID
     },
@@ -757,7 +757,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         4,                       // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         43,                      // test ID
     },
@@ -772,7 +772,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         16,                      // numChannels
         0,                       // fullSpectrum
         1,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         44,                      // test ID
     },
@@ -787,7 +787,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         1,                       // numChannels
         1,                       // fullSpectrum
         4,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         45,                      // test ID
     },
@@ -802,7 +802,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         2,                       // numChannels
         0,                       // fullSpectrum
         3,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         46,                      // test ID
     },
@@ -817,7 +817,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         3,                       // numChannels
         1,                       // fullSpectrum
         3,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         47,                      // test ID
     },
@@ -832,7 +832,7 @@ static TISP_ifftr1dBatched_testParams_t testParams[] = {
         4,                       // numChannels
         0,                       // fullSpectrum
         2,                       // numBlocks
-        DSPLIB_TEST_OUTPUT_HEAP, // Output data location
+        FFTLIB_TEST_OUTPUT_HEAP, // Output data location
         1,                       // number of reps.
         48,                      // test ID
     },

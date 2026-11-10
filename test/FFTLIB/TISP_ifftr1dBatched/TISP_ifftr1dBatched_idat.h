@@ -6,6 +6,7 @@
 
 #define TISP_IFFTR1DBATCHED_IXX_OXX_IDAT_H
 
+#include <fftlib.h>
 #include "../common/TISP_test.h"
 
 #ifdef __cplusplus

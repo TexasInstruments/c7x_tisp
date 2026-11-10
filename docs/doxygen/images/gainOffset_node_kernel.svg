@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="250" viewBox="0 0 900 250" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="900" height="250" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <text x="450" y="34" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">GainOffset: block diagram</text>
+
+  <!-- input -->
+  <rect x="30" y="122" width="150" height="56" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="105" y="147" text-anchor="middle" font-size="15" font-weight="700" fill="#92400e">Input x</text>
+  <text x="105" y="166" text-anchor="middle" font-size="12" fill="#92400e">channels &#215; samples</text>
+
+  <line x1="180" y1="150" x2="306" y2="150" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="243" y="140" text-anchor="middle" font-size="13" font-style="italic" fill="#64748b">e.g. 3</text>
+
+  <!-- multiply by gain -->
+  <rect x="270" y="62" width="120" height="38" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="330" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">gain = 2</text>
+  <line x1="330" y1="100" x2="330" y2="126" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <circle cx="330" cy="150" r="22" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="330" y="158" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">&#215;</text>
+
+  <line x1="352" y1="150" x2="506" y2="150" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="430" y="140" text-anchor="middle" font-size="13" font-style="italic" fill="#64748b">6</text>
+
+  <!-- add offset -->
+  <rect x="470" y="62" width="120" height="38" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="530" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#14532d">offset = 0.5</text>
+  <line x1="530" y1="100" x2="530" y2="126" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <circle cx="530" cy="150" r="22" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="530" y="158" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">+</text>
+
+  <line x1="552" y1="150" x2="688" y2="150" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="620" y="140" text-anchor="middle" font-size="13" font-style="italic" fill="#64748b">6.5</text>
+
+  <!-- output -->
+  <rect x="690" y="122" width="180" height="56" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="780" y="147" text-anchor="middle" font-size="15" font-weight="700" fill="#92400e">Output y</text>
+  <text x="780" y="166" text-anchor="middle" font-size="12" fill="#92400e">y = gain &#183; x + offset</text>
+
+  <text x="450" y="222" text-anchor="middle" font-size="13" fill="#64748b">Same gain and offset for every channel and every sample</text>
+</svg>
