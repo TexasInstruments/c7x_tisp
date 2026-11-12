@@ -18,15 +18,6 @@ namespace AUDIOLIB {
 /**@{*/
 
 /**
- * @brief Construction-time (non-tunable) parameters of the @ref DeEmphasis node.
- *
- * @details Required; sets the filter coefficient.
- */
-struct DeEmphasisConfig {
-   float alpha = 0.97f; /*!< De-emphasis feedback coefficient, range [0, 1]. */
-};
-
-/**
  * \class DeEmphasis
  * @brief Provides node-level APIs for the AUDIOLIB_deEmphasis kernel from AUDIOLIB.
  * @tparam T : Supports float.
@@ -35,7 +26,18 @@ struct DeEmphasisConfig {
  *          the filter state carries across frames. Input and output share one layout (interleaved or
  *          non-interleaved), hold at most 64 channels and must be different buffers. When interleaved,
  *          the output pitch must cover the channel count rounded up to 8.
+ *
+ * @image html deEmphasis_node_kernel.svg "DeEmphasis node block diagram" width=1000px
  **/
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref DeEmphasis node.
+ *
+ * @details Required; sets the filter coefficient.
+ */
+struct DeEmphasisConfig {
+   float alpha = 0.97f; /*!< De-emphasis feedback coefficient, range [0, 1]. */
+};
 
 template <typename T> class DeEmphasis final : public VirtualOp {
 

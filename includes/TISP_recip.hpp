@@ -18,17 +18,6 @@ namespace DSPLIB {
 /**@{*/
 
 /**
- * @brief Construction-time (non-tunable) parameters of the @ref Recip node.
- *
- * @details Fixed for the node's lifetime; required.
- */
-struct RecipConfig {
-   uint32_t storeStyle =
-       0U; /*!< Output store style: LINEAR for float and double; HSTACK (exp0..expN-1, frac0..fracN-1) or INTERLEAVE
-              (exp0, frac0, exp1, frac1, ...) for int16 (0 = LINEAR, 1 = HSTACK, 2 = INTERLEAVE) */
-};
-
-/**
  * \class Recip
  * @brief Provides node-level APIs for the DSPLIB_recip kernel from DSPLIB.
  * @tparam T : Supports int16_t, float and double.
@@ -64,7 +53,20 @@ struct RecipConfig {
  *  |     r1     | 6  | 0  | 14 | 16777 | -32767 | 21845  |
  *
  * (The output values are those of the Python reference of the DSPLIB_recip test data generator.)
+ *
+ * @image html recip_node_kernel.svg "Recip node block diagram" width=1000px
  **/
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref Recip node.
+ *
+ * @details Fixed for the node's lifetime; required.
+ */
+struct RecipConfig {
+   uint32_t storeStyle =
+       0U; /*!< Output store style: LINEAR for float and double; HSTACK (exp0..expN-1, frac0..fracN-1) or INTERLEAVE
+              (exp0, frac0, exp1, frac1, ...) for int16 (0 = LINEAR, 1 = HSTACK, 2 = INTERLEAVE) */
+};
 
 template <typename T> class Recip final : public VirtualOp {
 

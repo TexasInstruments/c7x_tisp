@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="222" viewBox="0 0 1560 222" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1560" height="222" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <text x="780" y="34" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">RFFT1dBatched: block diagram</text>
+
+  <rect x="30" y="86" width="180" height="104" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="120" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Input x</text>
+  <text x="120" y="136" text-anchor="middle" font-size="12.5" fill="#92400e">M channels × numPoints</text>
+  <text x="120" y="155" text-anchor="middle" font-size="12.5" fill="#92400e">real samples</text>
+  <rect x="1350" y="86" width="180" height="104" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="1440" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">Output X</text>
+  <text x="1440" y="136" text-anchor="middle" font-size="12.5" fill="#92400e">complex bins</text>
+  <text x="1440" y="155" text-anchor="middle" font-size="12.5" fill="#92400e">interleaved re/im</text>
+  <text x="250" y="78" font-size="12.5" font-weight="700" fill="#64748b">per channel (row)</text>
+  <rect x="250" y="86" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="340" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Pack real input</text>
+  <text x="340" y="136" text-anchor="middle" font-size="12.5" fill="#115e59">numPoints reals viewed as</text>
+  <text x="340" y="155" text-anchor="middle" font-size="12.5" fill="#115e59">numPoints/2 complex</text>
+  <line x1="430" y1="138" x2="468" y2="138" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="470" y="86" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="560" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Complex FFT</text>
+  <text x="560" y="136" text-anchor="middle" font-size="12.5" fill="#115e59">numPoints/2 points</text>
+  <text x="560" y="155" text-anchor="middle" font-size="12.5" fill="#115e59">twiddle factors</text>
+  <line x1="650" y1="138" x2="688" y2="138" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="690" y="86" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="780" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Scratch buffer</text>
+  <text x="780" y="136" text-anchor="middle" font-size="12.5" fill="#115e59">intermediate complex</text>
+  <text x="780" y="155" text-anchor="middle" font-size="12.5" fill="#115e59">FFT result</text>
+  <line x1="870" y1="138" x2="908" y2="138" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="910" y="86" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="1000" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Split step</text>
+  <text x="1000" y="136" text-anchor="middle" font-size="12.5" fill="#115e59">split factors turn it</text>
+  <text x="1000" y="155" text-anchor="middle" font-size="12.5" fill="#115e59">into the real-FFT bins</text>
+  <line x1="1090" y1="138" x2="1128" y2="138" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="1130" y="86" width="180" height="104" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="1220" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#115e59">Select bins</text>
+  <text x="1220" y="136" text-anchor="middle" font-size="12.5" fill="#115e59">fullSpectrum: numPoints</text>
+  <text x="1220" y="155" text-anchor="middle" font-size="12.5" fill="#115e59">else numPoints/2 + 1</text>
+  <line x1="210" y1="138" x2="248" y2="138" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="1310" y1="138" x2="1348" y2="138" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+</svg>

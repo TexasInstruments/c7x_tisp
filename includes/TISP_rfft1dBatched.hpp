@@ -23,15 +23,6 @@ namespace FFTLIB {
 /**@{*/
 
 /**
- * @brief Construction-time (non-tunable) parameters of the @ref RFFT1dBatched node.
- *
- * @details Required; selects the output spectrum.
- */
-struct RFFT1dBatchedConfig {
-   bool fullSpectrum = false; /*!< `true`: `numPoints` output bins, `false`: `numPoints / 2 + 1` bins. */
-};
-
-/**
  *  \class RFFT1dBatched
  *  @brief Provides node-level APIs for the FFTLIB_rfft1dBatched kernel from FFTLIB.
  *
@@ -39,7 +30,18 @@ struct RFFT1dBatchedConfig {
  *
  *  @details Computes the FFT of every real channel (row); each output row holds the complex bins as interleaved
  *           real/imaginary pairs.
+ *
+ * @image html rfft1dBatched_node_kernel.svg "RFFT1dBatched node block diagram" width=1000px
  */
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref RFFT1dBatched node.
+ *
+ * @details Required; selects the output spectrum.
+ */
+struct RFFT1dBatchedConfig {
+   bool fullSpectrum = false; /*!< `true`: `numPoints` output bins, `false`: `numPoints / 2 + 1` bins. */
+};
 
 template <typename T> class RFFT1dBatched final : public VirtualOp {
 

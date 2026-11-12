@@ -18,15 +18,6 @@ namespace AUDIOLIB {
 /**@{*/
 
 /**
- * @brief Construction-time (non-tunable) parameters of the @ref TypeConversion node.
- *
- * @details Required; selects the fixed-point scaling.
- */
-struct TypeConversionConfig {
-   uint8_t testQ31 = 0U; /*!< int32_t conversions only: `1` uses a 2^31 (Q31) scale, `0` a 2^23 (Q23) scale. */
-};
-
-/**
  * \class TypeConversion
  * @brief Provides node-level APIs for the AUDIOLIB_typeConversion kernel from AUDIOLIB.
  * @tparam Tin  : Supports int16_t, int32_t, float and double.
@@ -70,7 +61,17 @@ struct TypeConversionConfig {
  *  |      .         |   .   |   .   | ... |    .    |
  *  |      chM-1     | 900.0 |1050.0 | ... |  105.0  |
  *
+ * @image html typeConversion_node_kernel.svg "TypeConversion node block diagram" width=1000px
  */
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref TypeConversion node.
+ *
+ * @details Required; selects the fixed-point scaling.
+ */
+struct TypeConversionConfig {
+   uint8_t testQ31 = 0U; /*!< int32_t conversions only: `1` uses a 2^31 (Q31) scale, `0` a 2^23 (Q23) scale. */
+};
 
 template <typename Tin, typename Tout> class TypeConversion final : public VirtualOp {
 

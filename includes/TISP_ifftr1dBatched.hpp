@@ -24,15 +24,6 @@ namespace FFTLIB {
 /**@{*/
 
 /**
- * @brief Construction-time (non-tunable) parameters of the @ref IFFTR1dBatched node.
- *
- * @details Required; selects the input spectrum.
- */
-struct IFFTR1dBatchedConfig {
-   bool fullSpectrum = false; /*!< `true`: `numPoints` input bins, `false`: `numPoints / 2 + 1` bins. */
-};
-
-/**
  *  \class IFFTR1dBatched
  *  @brief Provides node-level APIs for the FFTLIB_IFFTR1dBatched kernel from FFTLIB. Assumes complex float data that is
  *         stored in interleaved fashion.
@@ -40,7 +31,18 @@ struct IFFTR1dBatchedConfig {
  *
  *  @details Computes the real inverse FFT of every channel (row); each input row holds the complex bins as
  *           interleaved real/imaginary pairs.
+ *
+ * @image html ifftr1dBatched_node_kernel.svg "IFFTR1dBatched node block diagram" width=1000px
  */
+
+/**
+ * @brief Construction-time (non-tunable) parameters of the @ref IFFTR1dBatched node.
+ *
+ * @details Required; selects the input spectrum.
+ */
+struct IFFTR1dBatchedConfig {
+   bool fullSpectrum = false; /*!< `true`: `numPoints` input bins, `false`: `numPoints / 2 + 1` bins. */
+};
 
 template <typename T> class IFFTR1dBatched final : public VirtualOp {
 
