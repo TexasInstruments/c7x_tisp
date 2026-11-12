@@ -97,11 +97,13 @@ int TISP_whiteNoise_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
          currentTestFail   = 0;
          size_t dataSize   = AUDIOLIB_sizeof(currPrm.dataType);
-         size_t widthOut   = currPrm.numSamples;
-         size_t numBlocks  = currPrm.numBlocks;
-         size_t seed       = currPrm.seed;
-         float  range      = currPrm.range;
-         size_t outputSize = numBlocks * widthOut * currPrm.dataType;
+         size_t widthOut    = currPrm.numSamples;
+         size_t numChannels = currPrm.numChannels;
+         size_t numBlocks   = currPrm.numBlocks;
+         size_t seed        = currPrm.seed;
+         float  range       = currPrm.range;
+         size_t frameSize   = widthOut * numChannels * dataSize; // bytes per frame: numChannels rows of widthOut
+         size_t outputSize  = numBlocks * frameSize;
 
          auto pOut = myL2Heap.allocate64ByteAligned<uint8_t>(outputSize);
 
@@ -116,9 +118,18 @@ int TISP_whiteNoise_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             TI_profile_start(TI_PROFILE_KERNEL_INIT);
 
             TISP::ErrorCtxt errorCtx;
-            auto            k0 = std::make_unique<TISP::AUDIOLIB::Whitenoise<float>>(
-                (float *) pOut.get(), static_cast<uint32_t>(widthOut), static_cast<float>(range),
-                static_cast<uint32_t>(seed), errorCtx);
+
+            // One non-interleaved output buffer: numChannels rows of widthOut samples, packed
+            const TISP::TISP_BufDesc2D   outDesc = {pOut.get(), TISP::ElementDType<float>::value, widthOut, numChannels,
+                                                    widthOut * dataSize, 0U};
+            const TISP::TISP_BufDescList outputs = {&outDesc, 1U};
+
+            TISP::AUDIOLIB::WhitenoiseConfig config;
+            config.range = range;
+            config.seed  = static_cast<uint32_t>(seed);
+
+            auto k0 = std::make_unique<TISP::AUDIOLIB::Whitenoise<float>>(nullptr, &outputs, &config, "Whitenoise", 0,
+                                                                          errorCtx);
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
@@ -150,7 +161,7 @@ int TISP_whiteNoise_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
                // set address for block to process
                kAddrMode    = TISP::kAddrModeOut;
-               kAddr.dst[0] = (uint8_t *) pOut.get() + (k + 1) * widthOut * currPrm.dataType;
+               kAddr.dst[0] = (uint8_t *) pOut.get() + (k + 1) * frameSize;
 
                TI_profile_clear_cycle_count_single(TI_PROFILE_KERNEL_OPT_WARM);
 
@@ -178,7 +189,7 @@ int TISP_whiteNoise_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             if (numBlocks != 1) {
                // set address for block to process
                kAddrMode    = TISP::kAddrModeOut;
-               kAddr.dst[0] = (uint8_t *) pOut.get() + (numBlocks - 1) * widthOut * currPrm.dataType;
+               kAddr.dst[0] = (uint8_t *) pOut.get() + (numBlocks - 1) * frameSize;
                k0->setAddr(kAddr, kAddrMode);
 
                // run warm instruction cache test
@@ -189,20 +200,18 @@ int TISP_whiteNoise_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
                TI_profile_stop();
             }
-            outputSize = widthOut;
-
             seedCn = seed;
             for (size_t n = 0; n < numBlocks; n++) {
-               AUDIOLIB_whiteNoise_cn((void *) ((int8_t *) pOutCn + n * widthOut * currPrm.dataType), currPrm.dataType,
-                                      widthOut, range);
+               AUDIOLIB_whiteNoise_cn((void *) ((int8_t *) pOutCn + n * frameSize), currPrm.dataType, widthOut,
+                                      numChannels, range);
             }
 
             status_nat_vs_opt = TI_TEST_KERNEL_PASS;
             for (size_t n = 0; n < numBlocks; n++) {
                status_nat_vs_opt &=
-                   TI_compare_mem_2D_float((void *) ((int8_t *) pOut.get() + n * widthOut * currPrm.dataType),
-                                           (void *) ((int8_t *) pOutCn + n * widthOut * currPrm.dataType), 0.01,
-                                           (double) powf(2, -10), widthOut, 1, 0, dataSize);
+                   TI_compare_mem_2D_float((void *) ((int8_t *) pOut.get() + n * frameSize),
+                                           (void *) ((int8_t *) pOutCn + n * frameSize), 0.01, (double) powf(2, -10),
+                                           widthOut, numChannels, widthOut * dataSize, dataSize);
             }
 
             comparisonDone = 1;
@@ -213,9 +222,10 @@ int TISP_whiteNoise_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
                   if (currPrm.dataType == AUDIOLIB_FLOAT32 || currPrm.dataType == AUDIOLIB_FLOAT64) {
                      status_ref_vs_opt &= TI_compare_mem_2DDualStride_float(
-                         (void *) ((int8_t *) pOut.get() + n * widthOut * currPrm.dataType),
-                         (void *) ((float *) currPrm.staticOut + n * widthOut), 0.01, (double) powf(2, -10), widthOut,
-                         1, 0, 0, dataSize);
+                         (void *) ((int8_t *) pOut.get() + n * frameSize),
+                         (void *) ((float *) currPrm.staticOut + n * widthOut * numChannels), 0.01,
+                         (double) powf(2, -10), widthOut, numChannels, widthOut * dataSize, widthOut * dataSize,
+                         dataSize);
                   }
                }
             }
@@ -244,16 +254,17 @@ int TISP_whiteNoise_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             fprintf(fpOutputCSV,
                     "TISP_whiteNoise, %d, %d,  "
                     "%d, %d, %lu, %d, %.2f, %d\n",
-                    testNum, currPrm.testPattern, currPrm.numSamples, 1, archCycles, pProfile[3 * tpi + 1],
+                    testNum, currPrm.testPattern, currPrm.numSamples, currPrm.numChannels, archCycles,
+                    pProfile[3 * tpi + 1],
                     ((float) cycles[TI_PROFILE_KERNEL_OPT]) / ((float) archCycles), !currentTestFail);
 
-            TI_profile_add_test(testNum++, currPrm.numSamples, 0, 0, currentTestFail, desc);
+            TI_profile_add_test(testNum++, currPrm.numSamples * currPrm.numChannels, 0, 0, currentTestFail, desc);
          TISP::handleAllocator().reset();
          TISP::nodeAllocator().reset();
          }
          else {
             sprintf(desc, "Data size=%d, widthOut size=%d, heightIn size=%d", AUDIOLIB_sizeof(currPrm.dataType),
-                    currPrm.numSamples, 1);
+                    currPrm.numSamples, currPrm.numChannels);
             TI_profile_skip_test(desc);
             // clear the counters between runs; normally handled by
             // TI_profile_add_test

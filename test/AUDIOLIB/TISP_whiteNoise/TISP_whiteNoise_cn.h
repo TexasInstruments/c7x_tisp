@@ -11,4 +11,4 @@
 
 #include "TISP_whiteNoise.hpp"
 
-void AUDIOLIB_whiteNoise_cn(void *pOut, uint32_t data_type, size_t widthOut, float range);
+void AUDIOLIB_whiteNoise_cn(void *pOut, uint32_t data_type, size_t widthOut, size_t numChannels, float range);

@@ -18,6 +18,16 @@ namespace AUDIOLIB {
 /**@{*/
 
 /**
+ * @brief Construction-time (non-tunable) parameters of the @ref Whitenoise node.
+ *
+ * @details Required; sets the output range and the generator seed.
+ */
+struct WhitenoiseConfig {
+   float    range = 1.0f; /*!< The output range; must be greater than zero. Noise will be in [-range, +range]. */
+   uint32_t seed  = 1U;   /*!< The initial 32-bit seed for the LCG. Any value, including 0, is valid. */
+};
+
+/**
  * \class Whitenoise
  * @brief Provides node-level APIs for the AUDIOLIB_whiteNoise kernel from AUDIOLIB.
  * @tparam T : Supports float.
@@ -30,54 +40,83 @@ namespace AUDIOLIB {
  * - \f$ c = 1013904223 \f$
  * - \f$ m = 2^{32} \f$
  *
- * The 32-bit integer value normalized by first converting into a floating-point number within the range [0.0, 1.0) by
- * dividing it by 2^{32}.
+ * Each 32-bit value \f$ x \f$ is centred on zero and scaled to the output range:
+ * \f$ y = \frac{x - 2^{31}}{2^{31}} \cdot range \f$, in [-range, +range].
  *
- * Then, the normalized value is scaled to fit within the desired output range.
+ * The node has no inputs. The output is non-interleaved, one row per channel, at most
+ * AUDIOLIB_WHITENOISEGENERATOR_MAX_NUM_CHANNELS channels. Each channel runs its own LCG sequence, all derived from the
+ * one seed: channel 0 gives the single-channel output and the channels are mutually uncorrelated.
  *
- */
+ * @image html whiteNoise_node_multichannel.svg "Whitenoise node: multichannel noise from one seed" width=900px
+ **/
 
 template <typename T> class Whitenoise final : public VirtualOp {
 
-   T *_pY; /*!< Pointer to output matrix. */
+   NodeInfo       _nodeInfo; /*!< Node name, parameters, buffer params, and ID */
+   TISP_BufDesc2D _out;      /*!< Output buffer descriptor; @ref setAddr rebinds its pBuf */
 
-   size_t   _width;
-   float    _range;
-   uint32_t _seed;
-
-   NodeInfo _nodeInfo; /*!< Node name, parameters, and ID */
-
-   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_whiteNoise kernel. */
+   TISP::HandlePtr<char> _handle; /*!< Handle to low level AUDIOLIB_whiteNoise kernel */
 
  public:
    /**
     * @brief Creates an AUDIOLIB_whiteNoise node.
     *
-    * This constructor initializes a node for the AUDIOLIB_whiteNoise kernel.
+    * @details Validates the buffer descriptors and initializes the AUDIOLIB_whiteNoise kernel for @c height
+    *          channels of @c width samples.
     *
-    * @param [out] pY     : Pointer to the output matrix.
-    *                       Initializes @ref _pY.
-    * @param [in]  width  : Width of output matrix.
-    * @param [in]  range  : The output range. Noise will be in [-range, +range].
-    * @param [in]  seed   : The initial 32-bit seed for the LCG.
-    * @param [in]  errorCtx  : Error context for reporting constructor errors
+    * @param [in] pInputs  : Input buffer descriptors; none: `nullptr` or an empty group `{ nullptr, 0 }`.
+    * @param [in] pOutputs : Output buffer descriptors; exactly one non-interleaved buffer, one row per channel.
+    *                        Its @c pBuf is the initial output pointer, rebound later by @ref setAddr.
+    * @param [in] pConfig  : Construction-time parameters; required.
+    * @param [in] nodeName : Name of the node
+    * @param [in] nodeId   : ID of the node
+    * @param [in] errorCtx : Error context for reporting constructor errors
     *
+    * @throw None
     */
-   Whitenoise(T *pY, size_t width, float range, uint32_t seed, ErrorCtxt &errorCtx);
+   Whitenoise(const TISP_BufDescList *pInputs,
+              const TISP_BufDescList *pOutputs,
+              const WhitenoiseConfig *pConfig,
+              const char             *nodeName,
+              uint32_t                nodeId,
+              ErrorCtxt              &errorCtx);
 
    /**
-    * @brief Creates an AUDIOLIB_whiteNoise node with a name and ID
+    * @brief Get the address of an output buffer
     *
-    * Convenience overload -- same as the primary constructor, but also takes
-    * @c nodeName and @c nodeId.
+    * Buffer Address Mapping:
+    * - index 0: output buffer (@ref _out) - managed by setAddr()
+    *
+    * @param[in]  index : Index of the output buffer (0)
+    * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
     */
-   Whitenoise(T          *pY,
-              size_t      width,
-              float       range,
-              uint32_t    seed,
-              const char *nodeName,
-              uint32_t    nodeId,
-              ErrorCtxt  &errorCtx);
+   void *getOutputAddr(size_t index) const noexcept override;
+
+   /**
+    * @brief Get the number of output buffers
+    *
+    * @retval    size_t : The number of output buffers (1: output buffer)
+    */
+   size_t getNumOutputs() const noexcept override;
+
+   /**
+    * @brief Set the destination address for the operation
+    *
+    * This function sets the output (destination) address for the operation.
+    * This kernel has no inputs; only the output buffer address is relevant.
+    *
+    * @param [in] addrs : Structure containing the destination address
+    * @param [in] mode  : Mode of address setting (output)
+    */
+   void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
+
+   /**
+    * @brief Execute the operation
+    *
+    * This function performs the actual operation.
+    *
+    */
+   void exec() noexcept override;
 
    /**
     * @brief Get the name of the node
@@ -116,49 +155,11 @@ template <typename T> class Whitenoise final : public VirtualOp {
    const NodeBufParams &getNodeBufParams() const noexcept override { return _nodeInfo.getNodeBufParams(); }
 
    /**
-    * @brief Get the address of an output buffer
-    *
-    * Buffer Address Mapping:
-    * - index 0: _pY (output data matrix) - managed by setAddr()
-    *
-    * @param[in]  index : Index of the output buffer (0)
-    * @retval     void* : Pointer to the output buffer, or nullptr if the index is invalid
-    */
-   void *getOutputAddr(size_t index) const noexcept override;
-
-   /**
-    * @brief Get the number of output buffers
-    *
-    * @retval    size_t : The number of output buffers (1: _pY)
-    */
-   size_t getNumOutputs() const noexcept override;
-
-   /**
-    * @brief Set source and destination addresses for the operation
-    *
-    * This function sets the source and destination addresses for the operation.
-    *
-    * @param [in] addrs  : Structure containing source and destination addresses
-    * @param [in] mode   : Mode of address setting (input, output, or both)
-    */
-   void setAddr(SetAddr_t &addrs, SetAddrMode_t mode) noexcept override;
-
-   /**
-    * @brief Execute the operation
-    *
-    * This function performs the actual operation.
-    *
-    */
-
-   void exec() noexcept override;
-
-   /**
     * @brief Destructor
     *
     * This destructor is set to default
     *
     */
-
    ~Whitenoise() = default;
 };
 

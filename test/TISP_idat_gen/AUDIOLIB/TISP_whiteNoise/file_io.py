@@ -107,9 +107,11 @@ def write_header_file(out, testCase, headerFileName):
         headerFileName (str): The name for the output .h file.
     """
     testId = testCase["ID"]
-    numSamples = testCase["numSamples"]  # Samples *per frame*
+    numSamples = testCase["numSamples"]  # Samples per channel *per frame*
+    numChannels = testCase["numChannels"]  # Channels (rows) per frame
     numBlocks = testCase["numBlocks"]  # Number of frames
-    totalSamples = numSamples * numBlocks  # Total samples in the 'out' array
+    frameLength = numSamples * numChannels  # Samples per frame, channel after channel
+    totalSamples = frameLength * numBlocks  # Total samples in the 'out' array
 
     dType = testCase["dType"]
 
@@ -129,14 +131,14 @@ def write_header_file(out, testCase, headerFileName):
         )
 
         f.write(
-            f"    /* Frame-based output: {numBlocks} frames, {numSamples} samples per frame */\n"
+            f"    /* Frame-based output: {numBlocks} frames, {numChannels} channels of {numSamples} samples per frame */\n"
         )
 
         # Loop frame by frame to write data with comments
         for frame in range(numBlocks):
             f.write(f"    /* Frame {frame} */\n")
-            start_idx = frame * numSamples
-            end_idx = (frame + 1) * numSamples
+            start_idx = frame * frameLength
+            end_idx = (frame + 1) * frameLength
 
             frame_samples = ", ".join(f"{x:}" for x in out[start_idx:end_idx])
             f.write("    " + frame_samples + ",\n")
