@@ -108,10 +108,13 @@ int TISP_whiteNoise_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          auto pOut = myL2Heap.allocate64ByteAligned<uint8_t>(outputSize);
 
          void *pOutCn = (void *) ddrBuffer;
-         memset(pOutCn, 0, outputSize);
 
-         /* Only run the test if the buffer allocations fit in the heap */
-         if (pOut.get() && pOutCn) {
+         bool ddrFits = (outputSize <= sizeof(ddrBuffer));
+
+         /* Only run the test if the buffer allocations fit in the heap and DDR */
+         if (pOut.get() && pOutCn && ddrFits) {
+            memset(pOutCn, 0, outputSize);
+
             if (prm[tpi].testPattern == STATIC) {
                sprintf(testPatternString, "STATIC");
             }
