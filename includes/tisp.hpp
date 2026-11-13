@@ -73,6 +73,7 @@
 #include "TISP_recip.hpp"
 #include "TISP_rfft1dBatched.hpp"
 #include "TISP_rmsSmoothed.hpp"
+#include "TISP_round.hpp"
 #include "TISP_router.hpp"
 #include "TISP_sin.hpp"
 #include "TISP_sinh.hpp"
