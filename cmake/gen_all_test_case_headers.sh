@@ -14,6 +14,7 @@ export THIS_SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)
 export REPO_WORK_DIR=${THIS_SCRIPT_DIR}/../
 
 declare -a kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/DSPLIB/ -mindepth 1 -maxdepth 1 -type d ! \( -iname  "common" -o -iname "__pycache__" \) | grep -o -P '.{0}test/.*' | cut -c 20-))
+kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/FFTLIB/ -mindepth 1 -maxdepth 1 -type d ! \( -iname "common" -o -iname "__pycache__" \) | grep -o -P '.{0}test/.*' | cut -c 20-))
 kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/AUDIOLIB/ -mindepth 1 -maxdepth 1 -type d ! \( -iname "common" -o -iname "__pycache__" \) | grep -o -P '.{0}test/.*' | cut -c 20-))
 kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/MATHLIB/ -mindepth 1 -maxdepth 1 -type d ! \( -iname "common" -o -iname "__pycache__" \) | grep -o -P '.{0}test/.*' | cut -c 20-))
 kernels_target+=($(find ${REPO_WORK_DIR}/test/TISP_idat_gen/superNode/ -mindepth 2 -maxdepth 2 -type d ! \( -iname "common" -o -iname "__pycache__" \) | grep -o -P '.{0}test/.*' | cut -c 20-))

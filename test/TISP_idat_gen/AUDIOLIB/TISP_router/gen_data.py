@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Texas Instruments Incorporated
+#
+# SPDX-License-Identifier: LicenseRef-TI-TFL
+
 from __future__ import print_function
 from subprocess import call
 from sys import platform
@@ -11,6 +15,11 @@ sys.path.append("../../common")
 import TISP_utils
 import file_io
 import os
+from router import Router
+
+# CSV C type names -> numpy dtype names used by the reference model
+NP_DTYPE = {"float": "float32", "double": "float64", "int16_t": "int16", "int32_t": "int32"}
+
 import pandas as pd
 import ast
 
@@ -199,45 +208,24 @@ def gen_test_case_header_file(testCase):
     # [minVal, maxVal] = TISP_utils.minMaxVal(dType)
     [minVal, maxVal] = [-10, 10]
 
-    output = []
+    kernel = Router(
+        num_samples=inSamples,
+        num_channels=inChannels,
+        num_out_channels=len(outChannels),
+        in_dtype=NP_DTYPE[dType],
+        is_interleaved=isInterleave,
+        pChannelIndices=outChannels,
+    )
+    in0 = kernel.generate_inputs(num_blocks=numBlocks, min_val=minVal, max_val=maxVal)
 
-    if isInterleave == 1:
-        if dType[0] == "f":
-            in0 = np.random.uniform(
-                low=minVal, high=maxVal, size=(inSamples, inChannels * numBlocks)
-            ).astype("float32")
-
-        elif dType[0] == "d":
-            in0 = np.random.uniform(
-                low=minVal, high=maxVal, size=(inSamples, inChannels * numBlocks)
-            ).astype("double")
-        for i in range(numBlocks):
-            for ch in outChannels:
-                if 0 <= ch < inChannels:  # valid channel index
-                    output.append(in0[:, i * inChannels + ch])
-                else:  # invalid → pad with zeros
-                    output.append(np.zeros(in0.shape[0], dtype=in0.dtype))
-
-        output = np.stack(output, axis=1)
-
-    else:
-        if dType[0] == "f":
-            in0 = np.random.uniform(
-                low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-            ).astype("float32")
-
-        elif dType[0] == "d":
-            in0 = np.random.uniform(
-                low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-            ).astype("double")
-        for i in range(numBlocks):
-            for ch in outChannels:
-                if 0 <= ch < inChannels:  # valid channel index
-                    output.append(in0[i * inChannels + ch, :])
-                else:  # invalid → pad with zeros
-                    output.append(np.zeros(inSamples, dtype=in0.dtype))
-
-        output = np.vstack(output)
+    output_frames = []
+    for frame in range(numBlocks):
+        lo, hi = frame * inChannels, (frame + 1) * inChannels
+        if isInterleave == 1:
+            output_frames.append(kernel.exec(in0[:, lo:hi]))
+        else:
+            output_frames.append(kernel.exec(in0[lo:hi]))
+    output = np.concatenate(output_frames, axis=1 if isInterleave == 1 else 0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, outChannels, output, testCase, headerFileName)

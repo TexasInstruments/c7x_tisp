@@ -2713,6 +2713,46 @@
 #include "test_data/staticRefCase677.h"
 #endif
 
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 678))
+#include "test_data/staticRefCase678.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 679))
+#include "test_data/staticRefCase679.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 680))
+#include "test_data/staticRefCase680.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 681))
+#include "test_data/staticRefCase681.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 682))
+#include "test_data/staticRefCase682.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 683))
+#include "test_data/staticRefCase683.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 684))
+#include "test_data/staticRefCase684.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 685))
+#include "test_data/staticRefCase685.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 686))
+#include "test_data/staticRefCase686.h"
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 687))
+#include "test_data/staticRefCase687.h"
+#endif
+
 static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
 #if (defined(ALL_TEST_CASES) || (TEST_CASE == 1) || (TEST_CATEGORY == 1))
    {
@@ -18750,6 +18790,242 @@ static DSPLIB_cascadeBiquad_testParams_t testParams[] = {
     DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
     1,                                                // Number of repetitions
     677,                                              // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 678) || (TEST_CATEGORY == 315))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase678,                               // Input vector
+    staticRefFilterCoefCase678,                       // Filter coefficient vector
+    staticRefOutCase678,                              // Output vector
+    staticRefFilterCoefOptCase678,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    64,                                               // dataSize
+    2,                                                // numChannels
+    8,                                                // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    8,                                                // dataPitch
+    8,                                                // filterVarPitch
+    0,                                                // enableNChCoeffs
+    0,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    678,                                              // test ID
+    },
+#endif
+
+#if (!defined(EVM_TEST) && (defined(ALL_TEST_CASES) || (TEST_CASE == 679) || (TEST_CATEGORY == 315))) ||               \
+    (defined(EVM_TEST) && (SOC != AM275) && (defined(ALL_TEST_CASES) || (TEST_CASE == 679) || (TEST_CATEGORY == 315)))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase679,                               // Input vector
+    staticRefFilterCoefCase679,                       // Filter coefficient vector
+    staticRefOutCase679,                              // Output vector
+    staticRefFilterCoefOptCase679,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    128,                                              // dataSize
+    12,                                               // numChannels
+    8,                                                // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    48,                                               // dataPitch
+    48,                                               // filterVarPitch
+    0,                                                // enableNChCoeffs
+    0,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    679,                                              // test ID
+    },
+#endif
+
+#if (!defined(EVM_TEST) && (defined(ALL_TEST_CASES) || (TEST_CASE == 680) || (TEST_CATEGORY == 315))) ||               \
+    (defined(EVM_TEST) && (SOC != AM275) && (defined(ALL_TEST_CASES) || (TEST_CASE == 680) || (TEST_CATEGORY == 315)))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase680,                               // Input vector
+    staticRefFilterCoefCase680,                       // Filter coefficient vector
+    staticRefOutCase680,                              // Output vector
+    staticRefFilterCoefOptCase680,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    64,                                               // dataSize
+    2,                                                // numChannels
+    8,                                                // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    8,                                                // dataPitch
+    8,                                                // filterVarPitch
+    0,                                                // enableNChCoeffs
+    1,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    680,                                              // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 681) || (TEST_CATEGORY == 315))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase681,                               // Input vector
+    staticRefFilterCoefCase681,                       // Filter coefficient vector
+    staticRefOutCase681,                              // Output vector
+    staticRefFilterCoefOptCase681,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    64,                                               // dataSize
+    2,                                                // numChannels
+    9,                                                // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    8,                                                // dataPitch
+    8,                                                // filterVarPitch
+    0,                                                // enableNChCoeffs
+    0,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    681,                                              // test ID
+    },
+#endif
+
+#if (!defined(EVM_TEST) && (defined(ALL_TEST_CASES) || (TEST_CASE == 682) || (TEST_CATEGORY == 315))) ||               \
+    (defined(EVM_TEST) && (SOC != AM275) && (defined(ALL_TEST_CASES) || (TEST_CASE == 682) || (TEST_CATEGORY == 315)))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase682,                               // Input vector
+    staticRefFilterCoefCase682,                       // Filter coefficient vector
+    staticRefOutCase682,                              // Output vector
+    staticRefFilterCoefOptCase682,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    64,                                               // dataSize
+    2,                                                // numChannels
+    13,                                               // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    8,                                                // dataPitch
+    8,                                                // filterVarPitch
+    0,                                                // enableNChCoeffs
+    0,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    682,                                              // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 683) || (TEST_CATEGORY == 316))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase683,                               // Input vector
+    staticRefFilterCoefCase683,                       // Filter coefficient vector
+    staticRefOutCase683,                              // Output vector
+    staticRefFilterCoefOptCase683,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    64,                                               // dataSize
+    2,                                                // numChannels
+    8,                                                // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    8,                                                // dataPitch
+    8,                                                // filterVarPitch
+    1,                                                // enableNChCoeffs
+    0,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    683,                                              // test ID
+    },
+#endif
+
+#if (!defined(EVM_TEST) && (defined(ALL_TEST_CASES) || (TEST_CASE == 684) || (TEST_CATEGORY == 316))) ||               \
+    (defined(EVM_TEST) && (SOC != AM275) && (defined(ALL_TEST_CASES) || (TEST_CASE == 684) || (TEST_CATEGORY == 316)))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase684,                               // Input vector
+    staticRefFilterCoefCase684,                       // Filter coefficient vector
+    staticRefOutCase684,                              // Output vector
+    staticRefFilterCoefOptCase684,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    128,                                              // dataSize
+    12,                                               // numChannels
+    8,                                                // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    48,                                               // dataPitch
+    48,                                               // filterVarPitch
+    1,                                                // enableNChCoeffs
+    0,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    684,                                              // test ID
+    },
+#endif
+
+#if (!defined(EVM_TEST) && (defined(ALL_TEST_CASES) || (TEST_CASE == 685) || (TEST_CATEGORY == 316))) ||               \
+    (defined(EVM_TEST) && (SOC != AM275) && (defined(ALL_TEST_CASES) || (TEST_CASE == 685) || (TEST_CATEGORY == 316)))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase685,                               // Input vector
+    staticRefFilterCoefCase685,                       // Filter coefficient vector
+    staticRefOutCase685,                              // Output vector
+    staticRefFilterCoefOptCase685,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    64,                                               // dataSize
+    2,                                                // numChannels
+    8,                                                // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    8,                                                // dataPitch
+    8,                                                // filterVarPitch
+    1,                                                // enableNChCoeffs
+    1,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    685,                                              // test ID
+    },
+#endif
+
+#if (defined(ALL_TEST_CASES) || (TEST_CASE == 686) || (TEST_CATEGORY == 316))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase686,                               // Input vector
+    staticRefFilterCoefCase686,                       // Filter coefficient vector
+    staticRefOutCase686,                              // Output vector
+    staticRefFilterCoefOptCase686,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    64,                                               // dataSize
+    2,                                                // numChannels
+    9,                                                // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    8,                                                // dataPitch
+    8,                                                // filterVarPitch
+    1,                                                // enableNChCoeffs
+    0,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    686,                                              // test ID
+    },
+#endif
+
+#if (!defined(EVM_TEST) && (defined(ALL_TEST_CASES) || (TEST_CASE == 687) || (TEST_CATEGORY == 316))) ||               \
+    (defined(EVM_TEST) && (SOC != AM275) && (defined(ALL_TEST_CASES) || (TEST_CASE == 687) || (TEST_CATEGORY == 316)))
+   {
+    STATIC,                                           // Test pattern
+    staticRefInCase687,                               // Input vector
+    staticRefFilterCoefCase687,                       // Filter coefficient vector
+    staticRefOutCase687,                              // Output vector
+    staticRefFilterCoefOptCase687,                    // Optimized filter coefficient vector
+    DSPLIB_FLOAT32,                                   // dataType
+    64,                                               // dataSize
+    2,                                                // numChannels
+    13,                                               // numStages
+    DSPLIB_BIQUAD_TIF,                                // biquadForm
+    8,                                                // dataPitch
+    8,                                                // filterVarPitch
+    1,                                                // enableNChCoeffs
+    0,                                                // enableCalcCoeffs
+    0,                                                // bypassMode
+    DSPLIB_TEST_OUTPUT_HEAP,                          // Output data location
+    1,                                                // Number of repetitions
+    687,                                              // test ID
     },
 #endif
 

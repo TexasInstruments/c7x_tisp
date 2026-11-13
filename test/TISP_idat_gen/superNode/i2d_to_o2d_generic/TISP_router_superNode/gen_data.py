@@ -7,9 +7,15 @@ import numpy as np
 import csv
 
 sys.path.append("../../../common")
+sys.path.append("../../../AUDIOLIB/TISP_router")  # the router node model
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from router import Router
+
+# CSV C type names -> numpy dtype names used by the reference model
+NP_DTYPE = {"float": "float32", "double": "float64", "int16_t": "int16", "int32_t": "int32"}
+
 import os
 import pandas as pd
 import ast
@@ -189,42 +195,24 @@ def gen_test_case_header_file(testCase):
     # [minVal, maxVal] = AUDIOLIB_utils.minMaxVal(dType)
     [minVal, maxVal] = [-10, 10]
 
-    output = []
-    if isInterleave == 1:
-        if dType[0] == "f":
-            in0 = np.random.uniform(
-                low=minVal, high=maxVal, size=(widthIn, heightIn)
-            ).astype("float32")
+    kernel = Router(
+        num_samples=widthIn,
+        num_channels=heightIn,
+        num_out_channels=len(outChannels),
+        in_dtype=NP_DTYPE[dType],
+        is_interleaved=isInterleave,
+        pChannelIndices=outChannels,
+    )
+    in0 = kernel.generate_inputs(num_blocks=1, min_val=minVal, max_val=maxVal)
 
-        elif dType[0] == "d":
-            in0 = np.random.uniform(
-                low=minVal, high=maxVal, size=(widthIn, heightIn)
-            ).astype("double")
-        for ch in outChannels:
-            if 0 <= ch < heightIn:  # valid channel index
-                output.append(in0[:, ch])
-            else:  # invalid → pad with zeros
-                output.append(np.zeros(in0.shape[0], dtype=in0.dtype))
-
-        output = np.stack(output, axis=1)
-
-    else:
-        if dType[0] == "f":
-            in0 = np.random.uniform(
-                low=minVal, high=maxVal, size=(heightIn, widthIn)
-            ).astype("float32")
-
-        elif dType[0] == "d":
-            in0 = np.random.uniform(
-                low=minVal, high=maxVal, size=(heightIn, widthIn)
-            ).astype("double")
-        for ch in outChannels:
-            if 0 <= ch < heightIn:  # valid channel index
-                output.append(in0[ch, :])
-            else:  # invalid → pad with zeros
-                output.append(np.zeros(widthIn, dtype=in0.dtype))
-
-        output = np.vstack(output)
+    output_frames = []
+    for frame in range(1):
+        lo, hi = frame * heightIn, (frame + 1) * heightIn
+        if isInterleave == 1:
+            output_frames.append(kernel.exec(in0[:, lo:hi]))
+        else:
+            output_frames.append(kernel.exec(in0[lo:hi]))
+    output = np.concatenate(output_frames, axis=1 if isInterleave == 1 else 0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, outChannels, output, testCase, headerFileName)

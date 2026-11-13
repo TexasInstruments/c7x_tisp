@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Texas Instruments Incorporated
+#
+# SPDX-License-Identifier: LicenseRef-TI-TFL
+
 from __future__ import print_function
 from subprocess import call
 from sys import platform
@@ -10,50 +14,7 @@ sys.path.append("../../common")
 import TISP_utils
 import file_io
 
-from scipy import signal
-import math
-import matplotlib.pyplot as plt
-import warnings
-
-# Number of coefficients per biquad, including a0 coefficieint
-NUM_COEFS_PER_BIQUAD_FULL = 6
-# Number of coefficients per biquad, excluding a0 coefficieint
-NUM_COEFS_PER_BIQUAD = NUM_COEFS_PER_BIQUAD_FULL - 1
-# Number of coefficients per TI biquad
-NUM_COEFS_PER_TI_BIQUAD = NUM_COEFS_PER_BIQUAD - 1
-
-# Number of states variables per DF2/TDF2 biquad
-NUM_STATES_PER_DF2_BIQUAD = 2
-
-# Number of stages per stage group
-NUM_STAGES_PER_STAGE_GROUP = 7
-
-# Cutoff frequencies normalized to Nyquist frequency
-LPF_MIN_FREQ = 0.25  # Low pass filter cutoff minium frequency
-LPF_RNG_FREQ = 0.25  # Low pass filter cutoff frequency range
-HPF_MIN_FREQ = 0.5  # Low pass filter cutoff minium frequency
-HPF_RNG_FREQ = 0.25  # Low pass filter cutoff frequency range
-BF_LOW_MIN_FREQ = 0.25  # Bandpass/bandstop low cutoff minium frequency
-BF_LOW_RNG_FREQ = 0.15  # Bandpass/bandstop low cutoff frequency range
-BF_HIGH_MIN_FREQ = 0.6  # Bandpass/bandstop high cutoff minium frequency
-BF_HIGH_RNG_FREQ = 0.15  # Bandpass/bandstop high cutoff frequency range
-
-ENABLE_DEBUG_PRINT = 0  # Set to 1 to enable debug print
-ENABLE_DEBUG_PLOT = 0  # Set to 1 to enable debug plot
-
-
-# Define function to catch a warning
-def catch_warning(func, *args, **kwargs):
-    with warnings.catch_warnings(record=True) as w:
-        result = func(*args, **kwargs)
-        if w:
-            for warning in w:
-                print("Warning caught:")
-                print(warning.message)
-                print(warning.category)
-                print(warning.filename)
-                print(warning.lineno)
-    return result
+from cascadeBiquad import CascadeBiquad
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -220,64 +181,8 @@ def process_test_case(testCase):
     return testCase
 
 
-def gen_tif_biquad_coefficients(
-    sosCoefs,
-    numCoefsPerTiBiquad=NUM_COEFS_PER_TI_BIQUAD,
-    numStagesPerStageGroup=NUM_STAGES_PER_STAGE_GROUP,
-):
-    """Generate TI biquad form coefficients
-
-    Args:
-        param1: 3D array of SOS coefficients.
-                    Dim1: Number of SOS stages.
-                    Dim2: Number of coefficients per stage (6).
-                    Dim3: Number of channels.
-        param2 (int): Number of coefficients per TI biquad.
-        param3 (int): Number of stages per TI stage group.
-
-    Returns:
-        numpy.ndarray: 3D array of TI biquad coefficients
-                    Dim1: Number of stages.
-                    Dim2: Number of TI coefficients per stage (4).
-                    Dim3: Number of channels.
-        numpy.ndarray: 2D array of TI biquad gains
-                    Dim1: Number of stage groups.
-                    Dim2: Number of channels.
-
-    """
-
-    # Get parameters
-    numStages = sosCoefs.shape[0]
-    numChannels = sosCoefs.shape[2]
-
-    ti_biquad_coefs = np.zeros((numStages, numCoefsPerTiBiquad, numChannels))
-    for ch in range(numChannels):
-        # Calculate biquad coefficients for each channel
-        b0_r = 1 / sosCoefs[:, 0, ch]
-        ti_biquad_coefs[:, [0, 1], ch] = b0_r[:, None] * sosCoefs[:, [1, 2], ch]
-        ti_biquad_coefs[:, [2, 3], ch] = -sosCoefs[:, [4, 5], ch]
-        ti_biquad_coefs[:, 0, ch] = (
-            ti_biquad_coefs[:, 0, ch] + ti_biquad_coefs[:, 2, ch]
-        )
-        ti_biquad_coefs[:, 1, ch] = (
-            ti_biquad_coefs[:, 1, ch] + ti_biquad_coefs[:, 3, ch]
-        )
-
-    # Compute aggregate gain
-    numStageGroups = math.ceil(numStages / numStagesPerStageGroup)
-    ti_gains = np.zeros((numStageGroups, numChannels))
-    for ch in range(numChannels):
-        for i in range(numStageGroups):
-            start_idx = i * numStagesPerStageGroup
-            end_idx = min((i + 1) * numStagesPerStageGroup, numStages)
-            stage_group_sos_coefs = sosCoefs[start_idx:end_idx, :, ch]
-            ti_gains[i, ch] = np.prod(stage_group_sos_coefs[:, 0])
-
-    return ti_biquad_coefs, ti_gains
-
-
 def gen_test_case_header_file(testCase):
-    """Generate test case and write out input, filter, and output tensor
+    """Generate test case data and write out input, filter, and output tensor
     into a header file usable in C/C++ code.
 
     Args:
@@ -289,203 +194,50 @@ def gen_test_case_header_file(testCase):
 
     """
 
-    ##############################
-    # Get test parameter of case #
-    ##############################
-
     testId = testCase["ID"]
-    dataType = testCase["dataType"]
-    dataSize = testCase["dataSize"]
-    numChannels = testCase["numChannels"]
-    numStages = testCase["numStages"]
-    enableNChCoeffs = testCase["enableNChCoeffs"]
-    biquadForm = testCase["biquadForm"]
+
     numExecReps = testCase["numExecReps"]
+    dataSize = testCase["dataSize"]
 
-    if ENABLE_DEBUG_PRINT:
-        # Print the test case parameters
-        print("Test case parameters:")
-        print("ID: ", testId)
-        print("dataType: ", dataType)
-        print("dataSize: ", dataSize)
-        print("numChannels: ", numChannels)
-        print("numStages: ", numStages)
-        print("enableNChCoeffs: ", enableNChCoeffs)
+    # SDK test signal and filter coefficients (the coefficients are a constructor argument)
+    (
+        inputData,
+        pCoeffs,
+        sosCoefs,
+        zi,
+        tifBiquadCascadeCoefs,
+        tifBiquadCascadeGains,
+    ) = CascadeBiquad.generate_inputs(
+        dataType=testCase["dataType"],
+        dataSize=dataSize,
+        numChannels=testCase["numChannels"],
+        numStages=testCase["numStages"],
+        enableNChCoeffs=testCase["enableNChCoeffs"],
+        biquadForm=testCase["biquadForm"],
+        numExecReps=numExecReps,
+        # optional: spread the gain over all stages so that b0 != 1 in every stage
+        nonUnitB0=testCase.get("nonUnitB0", "False") == "True",
+    )
 
-    if ENABLE_DEBUG_PLOT:
-        chanSel = np.random.randint(0, numChannels)  # select random channel for display
-        sampFreq = 48000.0  # 48 kHz sampling rate
-        dataSize = 48000  # 1 sec of data @ 48 kHz
+    # Build the model with the case's values (the reference runs in the precision the
+    # test signal is generated in: "float" is generated, and filtered, as float64)
+    kernel = CascadeBiquad(
+        num_channels=testCase["numChannels"],
+        num_samples=dataSize,
+        in_dtype=inputData.dtype.name,
+        numStages=testCase["numStages"],
+        biquadForm=testCase["biquadForm"],
+        pCoeffs=pCoeffs,
+        bypassMode=testCase["bypassMode"],
+    )
 
-    if dataType == "float":
-        bits = 32
-        bytes = bits // 8
-    else:
-        raise ValueError("Unsupported data type: %s" % dataType)
-
-    #
-    # Generate filter coefficients
-    #
-
-    # Set number of channels for coefficients generation
-    if enableNChCoeffs == "False":
-        # All channels use the same coefficients
-        filterNumChannels = 1
-    else:
-        # Different coefficients for each channel
-        filterNumChannels = numChannels
-    # Initialize filter types
-    filterTypes = ["low", "high", "bandpass", "bandstop"]  # butterworth filter types
-    filterType = []
-    # Initialize filter order and cutoff
-    filterOrder = np.zeros(filterNumChannels)
-    filterCutoff = np.zeros((filterNumChannels, 2))
-    # Initialize biquad coefficients
-    bCoefs = np.zeros((filterNumChannels, 2 * numStages + 1))
-    aCoefs = np.zeros((filterNumChannels, 2 * numStages + 1))
-    # Initialize SOS coefficients
-    sosCoefs = np.zeros((numStages, NUM_COEFS_PER_BIQUAD_FULL, filterNumChannels))
-    # Loop over channels for filter coefficient generation
-    for ch in range(filterNumChannels):
-        # Randomly select filter type
-        filterType.append(np.random.choice(filterTypes))
-
-        # Set filter order based on filter type
-        # Randomly generate filter cutoffs based on filter type
-        if filterType[ch] == "low":
-            filterOrder[ch] = 2 * numStages
-            filterCutoff[ch, 0] = LPF_MIN_FREQ + np.random.rand() * LPF_RNG_FREQ
-
-            # design filter coefficients
-            [b, a] = signal.butter(
-                filterOrder[ch], filterCutoff[ch, 0], btype=filterType[ch]
-            )
-            bCoefs[ch, : len(b)] = b
-            aCoefs[ch, : len(a)] = a
-
-        elif filterType[ch] == "high":
-            filterOrder[ch] = 2 * numStages
-            filterCutoff[ch, 0] = HPF_MIN_FREQ + np.random.rand() * HPF_RNG_FREQ
-
-            # design filter coefficients
-            [b, a] = signal.butter(
-                filterOrder[ch], filterCutoff[ch, 0], btype=filterType[ch]
-            )
-            bCoefs[ch, : len(b)] = b
-            aCoefs[ch, : len(a)] = a
-
-        elif filterType[ch] == "bandpass" or filterType[ch] == "bandstop":
-            filterOrder[ch] = numStages
-            filterCutoff[ch, 0] = BF_LOW_MIN_FREQ + np.random.rand() * BF_LOW_RNG_FREQ
-            filterCutoff[ch, 1] = BF_HIGH_MIN_FREQ + np.random.rand() * BF_HIGH_RNG_FREQ
-
-            # design filter coefficients
-            [b, a] = signal.butter(
-                filterOrder[ch],
-                [filterCutoff[ch, 0], filterCutoff[ch, 1]],
-                btype=filterType[ch],
-            )
-
-            bCoefs[ch, : len(b)] = b
-            aCoefs[ch, : len(a)] = a
-
-        else:
-            raise ValueError("Unsupported filter type: %s" % filterType[ch])
-
-        # Design 2nd order sections
-        sosChan = signal.tf2sos(bCoefs[ch, : len(b)], aCoefs[ch, : len(a)])
-        # sosChan = catch_warning(signal.tf2sos, bCoefs[ch, :len(b)], aCoefs[ch, :len(a)])
-        sosCoefs[:, :, ch] = sosChan
-
-    if ENABLE_DEBUG_PRINT:
-        print("filterType: ", filterType)
-        print("filterOrder: ", filterOrder)
-        print("filterCutoff: ", filterCutoff)
-        print("bCoefs: ", bCoefs)
-        print("bCoefs shape: ", bCoefs.shape)
-        print("aCoefs: ", aCoefs)
-        print("aCoefs shape: ", aCoefs.shape)
-        print("sosCoefs shape: ", sosCoefs.shape)
-        print("sosCoefs: ", sosCoefs)
-
-    if ENABLE_DEBUG_PLOT:
-        # Plot filter frequency response for selected channel
-        if enableNChCoeffs == "False":
-            [w, h] = signal.freqz(bCoefs[0, :], aCoefs[0, :], worN=2000)
-            plt.plot(w, np.abs(h))
-        else:
-            [w, h] = signal.freqz(bCoefs[chanSel, :], aCoefs[chanSel, :], worN=2000)
-            plt.plot(w, np.abs(h))
-
-    # Generate input data
-    inputData = np.random.uniform(
-        low=-1.0, high=1.0, size=(numExecReps * dataSize, numChannels)
-    ).astype("float")
-
-    if ENABLE_DEBUG_PLOT:
-        # Plot output PSD for selected channel
-        freqs, psd = signal.periodogram(inputData[:, chanSel], fs=sampFreq)
-        psd_db = 10 * np.log10(psd)
-        psd_db[0] = np.min(psd_db[1:])  # set DC component to minimum value
-        plt.figure()
-        plt.plot(freqs, psd_db)
-        plt.xlabel("Frequency")
-        plt.ylabel("PSD (db/Hz)")
-
-    # Generate output data - filter using 2nd order sections
-    # For now, use zero initial conditions
-    # Note sosfilt() uses TDF2 for filtering
-    zi = np.zeros((numStages, 2, numChannels))
-    zf = np.zeros_like(zi)
+    # Run frame by frame; the filter state stays in the model (bypass is handled by exec)
     outputData = np.zeros_like(inputData)
-    if enableNChCoeffs == "False":
-        # All channels use the same coefficients
-        for ch in range(numChannels):
-            outputData[:, ch], zf[:, :, ch] = signal.sosfilt(
-                np.ascontiguousarray(sosCoefs[:, :, 0]),
-                inputData[:, ch],
-                axis=0,
-                zi=zi[:, :, ch],
-            )
-    else:
-        # Different coefficients for each channel
-        for ch in range(numChannels):
-            outputData[:, ch], zf[:, :, ch] = signal.sosfilt(
-                np.ascontiguousarray(sosCoefs[:, :, ch]),
-                inputData[:, ch],
-                axis=0,
-                zi=zi[:, :, ch],
-            )
-
-    if ENABLE_DEBUG_PLOT:
-        # Plot output PSD for selected channel
-        freqs, psd = signal.periodogram(outputData[:, chanSel], fs=sampFreq)
-        psd_db = 10 * np.log10(psd)
-        psd_db[0] = np.min(psd_db[1:])  # set DC component to minimum value
-        plt.figure()
-        plt.plot(freqs, psd_db)
-        plt.xlabel("Frequency")
-        plt.ylabel("PSD (db/Hz)")
-
-    if biquadForm == "DSPLIB_BIQUAD_TIF":
-        # Generate TI biquad form coefficients
-        tifBiquadCascadeCoefs, tifBiquadCascadeGains = gen_tif_biquad_coefficients(
-            sosCoefs
-        )
-
-        if ENABLE_DEBUG_PRINT:
-            print("TIF biquadCascadeCoefs shape: ", tifBiquadCascadeCoefs.shape)
-            print("TIF biquadCascadeCoefs: ", tifBiquadCascadeCoefs)
-            print("TIF biquadCascadeGains shape: ", tifBiquadCascadeGains.shape)
-            print("TIF biquadCascadeGains: ", tifBiquadCascadeGains)
-
-    else:
-        tifBiquadCascadeCoefs = None
-        tifBiquadCascadeGains = None
-
-    # bypass copies the input to the output, leaving the filter unapplied
-    if testCase["bypassMode"]:
-        outputData = inputData.copy()
+    for frame in range(numExecReps):
+        s = frame * dataSize
+        e = s + dataSize
+        outputData[s:e, :] = kernel.exec(inputData[s:e, :])
+    zf = kernel.state
 
     # Write out header file
     headerFileName = "staticRefCase" + str(testId) + ".h"
@@ -500,9 +252,6 @@ def gen_test_case_header_file(testCase):
         testCase,
         headerFileName,
     )
-
-    if ENABLE_DEBUG_PLOT:
-        plt.show()
 
     return [np.min(outputData), np.max(outputData)]
 
@@ -529,7 +278,7 @@ def gen_test_case(testCase):
 # CSV file with paratmeters for all test cases
 testCasesCsvFile = "test_cases_list.csv"
 testIdList = []  # list of test IDs that we want to generate test data
-testIdList += range(1, 679)
+testIdList += range(1, 688)
 # testIdList = [10]
 
 myArgs = TISP_utils.getCmdLineArgs()

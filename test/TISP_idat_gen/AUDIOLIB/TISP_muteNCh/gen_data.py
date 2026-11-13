@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Texas Instruments Incorporated
+#
+# SPDX-License-Identifier: LicenseRef-TI-TFL
+
 from subprocess import call
 from sys import platform
 
@@ -12,40 +16,7 @@ import TISP_utils
 import file_io
 import os
 import matplotlib.pyplot as plt
-
-
-def generate_sine(
-    num_samples,
-    sampling_rate,
-    num_frames,
-    channel,
-    frequency,
-    amplitude,
-    num_channels=None,
-    use_phase_offset=True,
-):
-    """Generate a continuous sine wave for all numBlocks of a given channel.
-
-    Args:
-        num_samples (int): Number of samples per frame.
-        sampling_rate (int): Sampling rate in Hz.
-        num_frames (int): Number of numBlocks.
-        channel (int): Channel index (for phase offset if used).
-        frequency (float): Frequency of the sine wave in Hz.
-        amplitude (float): Amplitude of the sine wave.
-        num_channels (int, optional): Number of channels (for phase offset).
-        use_phase_offset (bool, optional): Whether to apply phase offset. Defaults to True.
-
-    Returns:
-        numpy.ndarray: Array of sine wave samples, shape (num_samples * num_frames,).
-    """
-    total_samples = num_samples * num_frames
-    t = np.linspace(0, total_samples / sampling_rate, total_samples, endpoint=False)
-    phase_offset = (
-        (channel * np.pi / num_channels) if use_phase_offset and num_channels else 0.0
-    )
-    sine_wave = amplitude * np.sin(2 * np.pi * frequency * t + phase_offset)
-    return sine_wave
+from muteNCh import MuteNCh
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -249,152 +220,41 @@ def gen_test_case_header_file(testCase):
     isInterleaved = testCase["isInterleaved"]
     fadeType = testCase["fadeType"]
     bypassMode = testCase["bypassMode"]
-    current_gain = np.array(testCase["initialGain"])  # (numChannels,)
-    targetGain = np.array(testCase["targetGain"])  # (numChannels,)
     frameSize = numSamples
     samplesPerFrame = numSamples * numChannels
     totalSamplesPerChannel = numSamples * numBlocks
 
     [minVal, maxVal] = [-10, 10]
 
-    pCurrentGain = np.zeros((numChannels, totalSamplesPerChannel), dtype=np.float32)
-    gainThreshold = 1e-6
-
-    # Compute gains based on fadeType for each channel
-    for ch in range(numChannels):
-        curr_g = current_gain[ch]
-        targ_g = targetGain[ch]
-        if fadeType == "HARD":
-            # Instantaneous gain change to target
-            pCurrentGain[ch, :] = targ_g
-        elif fadeType == "LINEAR":
-            # Linear fade (from muteNCh)
-            timeConstantSec = fadeTime / 1000.0
-            totalFadeSamples = timeConstantSec * samplingRate
-            gainStep = (
-                (targ_g - curr_g) / totalFadeSamples
-                if totalFadeSamples > 0 and fadeTime > 0
-                else 0
-            )
-            for i in range(totalSamplesPerChannel):
-                if abs(curr_g - targ_g) < gainThreshold or fadeTime == 0:
-                    curr_g = targ_g
-                else:
-                    curr_g += gainStep
-                    if (gainStep > 0 and curr_g > targ_g) or (
-                        gainStep < 0 and curr_g < targ_g
-                    ):
-                        curr_g = targ_g
-                pCurrentGain[ch, i] = curr_g
-        elif fadeType == "SMOOTH":
-            # Exponential smoothing
-            bypassSmoothing = fadeTime == 0.0
-            prevGain = curr_g
-            for frame in range(numBlocks):
-                startIdx = frame * frameSize
-                endIdx = (frame + 1) * frameSize
-                if frame > 0:
-                    prev_idx = startIdx - 1
-                    bypassSmoothing = (
-                        abs(pCurrentGain[ch, prev_idx] - targ_g) < gainThreshold
-                    )
-                if bypassSmoothing:
-                    pCurrentGain[ch, startIdx:endIdx] = targ_g
-                else:
-                    timeConstantSec = fadeTime / 1000.0
-                    smoothingCoefficient = np.exp(
-                        -1.0 / (samplingRate * timeConstantSec)
-                    )
-                    for j in range(startIdx, endIdx):
-                        if frame == 0 and j == startIdx:
-                            prevGain = curr_g
-                        else:
-                            prevGain = pCurrentGain[ch, j - 1]
-                        pCurrentGain[ch, j] = (smoothingCoefficient * prevGain) + (
-                            (1.0 - smoothingCoefficient) * targ_g
-                        )
-
     # Generate input samples for all channels
-    pInLocal = np.zeros((numBlocks, samplesPerFrame), dtype=np.float32)
-    if testType == "STATIC":
-        if isInterleaved:
-            for frame in range(numBlocks):
-                for j in range(numSamples):
-                    for c in range(numChannels):
-                        idx = j * numChannels + c
-                        pInLocal[frame, idx] = np.random.uniform(
-                            low=minVal, high=maxVal
-                        )
-        else:
-            for frame in range(numBlocks):
-                for i in range(numChannels):
-                    startIdx = i * numSamples
-                    endIdx = (i + 1) * numSamples
-                    pInLocal[frame, startIdx:endIdx] = np.random.uniform(
-                        low=minVal, high=maxVal, size=numSamples
-                    ).astype(np.float32)
-    elif testType == "SINE":
-        if isInterleaved:
-            for frame in range(numBlocks):
-                for j in range(numSamples):
-                    for c in range(numChannels):
-                        idx = j * numChannels + c
-                        frame_start = frame * numSamples
-                        sine_wave = generate_sine(
-                            numSamples,
-                            samplingRate,
-                            numBlocks,
-                            c,
-                            frequency,
-                            amplitude,
-                            numChannels,
-                            use_phase_offset=True,
-                        )
-                        pInLocal[frame, idx] = sine_wave[frame_start + j]
-        else:
-            for i in range(numChannels):
-                startIdx = i * numSamples
-                endIdx = (i + 1) * numSamples
-                sine_wave = generate_sine(
-                    numSamples,
-                    samplingRate,
-                    numBlocks,
-                    channel=i,
-                    frequency=frequency,
-                    amplitude=amplitude,
-                    num_channels=numChannels,
-                    use_phase_offset=True,
-                )
-                for frame in range(numBlocks):
-                    frame_start = frame * numSamples
-                    frame_end = (frame + 1) * numSamples
-                    pInLocal[frame, startIdx:endIdx] = sine_wave[frame_start:frame_end]
+    kernel = MuteNCh(
+        num_samples=numSamples,
+        num_channels=numChannels,
+        in_dtype="float32",
+        is_interleaved=isInterleaved,
+        samplingRate=samplingRate,
+        fadeTime=fadeTime,
+        fadeType={"LINEAR": 0, "SMOOTH": 1, "HARD": 2}[fadeType],
+        pIsMute=testCase["isMuted"],
+        bypassMode=bypassMode,
+    )
+    pInLocal = kernel.generate_inputs(
+        test_type=testType,
+        num_blocks=numBlocks,
+        frequency=frequency,
+        amplitude=amplitude,
+        min_val=minVal,
+        max_val=maxVal,
+    )
 
-    # Apply gains to input data
+    # Process frame by frame; the gain state is carried between frames
+    pCurrentGain = np.zeros((numChannels, totalSamplesPerChannel), dtype=np.float32)
     pOutLocal = np.zeros((numBlocks, samplesPerFrame), dtype=np.float32)
     for frame in range(numBlocks):
-        gainStartIdx = frame * frameSize
-        if isInterleaved:
-            for j in range(numSamples):
-                for c in range(numChannels):
-                    idx = j * numChannels + c
-                    gainIdx = gainStartIdx + j
-                    pOutLocal[frame, idx] = (
-                        pInLocal[frame, idx] * pCurrentGain[c, gainIdx]
-                    )
-        else:
-            for i in range(numChannels):
-                startIdx = i * numSamples
-                endIdx = (i + 1) * numSamples
-                for j in range(numSamples):
-                    gainIdx = gainStartIdx + j
-                    pOutLocal[frame, startIdx + j] = (
-                        pInLocal[frame, startIdx + j] * pCurrentGain[i, gainIdx]
-                    )
-
-    # bypass copies the input to the output, leaving the mute gain unapplied
-    if bypassMode:
-        pOutLocal = pInLocal.copy()
+        # exec applies the gains; bypass copies input to output
+        pOutLocal[frame, :] = kernel.exec(pInLocal[frame, :])
+        frameGain = kernel.last_gain_frame
+        pCurrentGain[:, frame * frameSize : (frame + 1) * frameSize] = frameGain
 
     # Generate plots for all channels if plotSignals is TRUE
     if plotSignals:

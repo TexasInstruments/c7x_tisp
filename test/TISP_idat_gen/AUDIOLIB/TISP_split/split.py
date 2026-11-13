@@ -1,69 +1,62 @@
 import numpy as np
 
 
-class TISP_split:
-    def __init__(self, dType="float", numSamples=1, outChannelsList=None,
-                 numExecReps=1, isInputInterleave=1):
+class Split:
+    """Reference model of the split kernel: one input, N outputs of the given channel counts."""
 
-        if outChannelsList is None:
-            outChannelsList = [1]
-        self._dType             = dType
-        self._numSamples        = numSamples
-        self._outChannelsList   = list(outChannelsList)
-        self._numOutputs        = len(self._outChannelsList)  # N - number of output ports
-        self._totalChannels     = sum(self._outChannelsList)  # C_total
-        self._numExecReps       = numExecReps
-        self._isInputInterleave = isInputInterleave
+    _kMaxOutputs = 64
+
+    def __init__(self, *, num_samples, num_channels, in_dtype, is_interleaved,
+                 num_outputs, out_channels_list=None, **_):
+        self.num_samples = int(num_samples)
+        self.num_channels = int(num_channels)
+        self.in_dtype = in_dtype
+        self.is_interleaved = is_interleaved
+        self.num_outputs = int(num_outputs)
+        self.out_channels_list = out_channels_list
+        self.init()
+
+    def init(self):
+        """Resolve the channel counts and dtype (called by the constructor)."""
+        self.np_dtype = np.dtype(self.in_dtype)
+        self.is_interleaved = bool(self.is_interleaved)
+
+        if self.out_channels_list is None or len(self.out_channels_list) == 0:
+            self.out_channels_list = [self.num_channels // self.num_outputs] * self.num_outputs
+        else:
+            self.out_channels_list = [int(c) for c in self.out_channels_list]
+        self.num_outputs = len(self.out_channels_list)
 
         # Validate numOutputs per spec (max 64)
-        self._kMaxOutputs = 64
-        if not (1 <= self._numOutputs <= self._kMaxOutputs):
+        if not (1 <= self.num_outputs <= self._kMaxOutputs):
             raise ValueError(
-                f"numOutputs must be between 1 and {self._kMaxOutputs}, got {self._numOutputs}"
+                f"numOutputs must be between 1 and {self._kMaxOutputs}, got {self.num_outputs}"
+            )
+        if sum(self.out_channels_list) != self.num_channels:
+            raise ValueError(
+                f"out_channels_list {self.out_channels_list} does not sum to "
+                f"num_channels {self.num_channels}"
             )
 
-    def exec(self, pInLocal):
+    def exec(self, x):
+        """Split one frame.
 
-        N       = self._numOutputs     # Number of outputs
-        S       = self._numSamples     # Samples per channel
-        C_total = self._totalChannels  # Total input channels to split
-
-        # Map dType string to numpy dtype
-        dtype_map = {
-            "float": np.float32,
-            "double": np.float64,
-            "int32": np.int32,
-            "uint32": np.uint32,
-            "int16": np.int16,
-            "uint16": np.uint16,
-            "int8": np.int8,
-            "uint8": np.uint8,
-        }
-        np_dtype = dtype_map.get(self._dType, pInLocal.dtype)
-
-        # Allocate N independent output arrays — one per output port
-        pOutLocal = [
-            np.zeros((self._numExecReps, S * self._outChannelsList[i]), dtype=np_dtype)
-            for i in range(N)
-        ]
-
-        for frame in range(self._numExecReps):
-            if self._isInputInterleave:
-                # Reshape aggregated input for this frame to (samples, totalChannels)
-                frame_in = pInLocal[frame].reshape((S, C_total))
-                ch_start = 0
-                for i in range(N):
-                    ch_end = ch_start + self._outChannelsList[i]
-                    pOutLocal[i][frame] = frame_in[:, ch_start:ch_end].flatten()
-                    ch_start = ch_end
+        x: [num_samples, num_channels] (interleaved) or [num_channels, num_samples] (planar).
+        Returns a list with one array per output, in the same layout as the input.
+        """
+        x = np.asarray(x)
+        frame_in = x.reshape(
+            (self.num_samples, self.num_channels) if self.is_interleaved
+            else (self.num_channels, self.num_samples)
+        )
+        outs = []
+        ch_start = 0
+        for n_ch in self.out_channels_list:
+            ch_end = ch_start + n_ch
+            if self.is_interleaved:
+                part = frame_in[:, ch_start:ch_end]
             else:
-                # Deinterleaved input: reshape to (channels, samples)
-                frame_in = pInLocal[frame].reshape((C_total, S))
-                ch_start = 0
-                for i in range(N):
-                    ch_end = ch_start + self._outChannelsList[i]
-                    pOutLocal[i][frame] = frame_in[ch_start:ch_end, :].flatten()
-                    ch_start = ch_end
-
-        out_lists = [pOutLocal[i].flatten().tolist() for i in range(N)]
-        return out_lists
+                part = frame_in[ch_start:ch_end, :]
+            outs.append(np.ascontiguousarray(part).astype(self.np_dtype))
+            ch_start = ch_end
+        return outs

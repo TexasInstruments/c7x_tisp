@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Texas Instruments Incorporated
+#
+# SPDX-License-Identifier: LicenseRef-TI-TFL
+
 from __future__ import print_function
 from subprocess import call
 from sys import platform
@@ -9,6 +13,7 @@ import csv
 sys.path.append("../../common")
 import TISP_utils
 import file_io
+from fir import FIR
 
 
 def get_soc_guard(am275_soc_value):
@@ -229,145 +234,33 @@ def gen_test_case_header_file(testCase):
     stateSize = testCase["stateSize"]
     numBlocks = testCase["numBlocks"]
 
-    if dTypeIn == "int8_t" or dTypeIn == "uint8_t":
-        bits = 8
-    elif dTypeIn == "int16_t" or dTypeIn == "uint16_t":
-        bits = 16
-    elif dTypeIn == "int32_t" or dTypeIn == "uint32_t" or dTypeIn == "float":
-        bits = 32
-    else:
-        bits = 64
+    bypassMode = testCase["bypassMode"]
 
-    # unsigned integer
-    if dTypeIn[0] == "u":
-        minVal = 0
-        maxVal = (2**bits) - 1
-    else:
-        minVal = -(2 ** (bits - 1))
-        maxVal = 2 ** (bits - 1)
+    # SDK test signal and filter taps (the taps are a constructor argument)
+    inputData, filterData = FIR.generate_inputs(
+        dTypeIn, dataSize, filterSize, batchSize, enableNChCoefs, numBlocks
+    )
 
-    # determine filter height
-    if enableNChCoefs == 1:
-        filterHeight = batchSize
-    else:
-        filterHeight = 1
+    # Build the model with the case's values (the reference runs in the precision the
+    # test signal is generated in: "float" is generated, and filtered, as float64)
+    kernel = FIR(
+        num_channels=batchSize,
+        num_samples=dataSize,
+        in_dtype=inputData.dtype.name,
+        filterSize=filterSize,
+        pCoeffs=filterData,
+        bypassMode=bypassMode,
+    )
 
-    if dTypeIn == "int8_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("int8")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("int8")
-    elif dTypeIn == "int16_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("int16")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("int16")
-    elif dTypeIn == "int32_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("int32")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("int32")
-    elif dTypeIn == "int64_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("int64")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("int64")
-    elif dTypeIn == "uint8_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("uint8")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("uint8")
-    elif dTypeIn == "uint16_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("uint16")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("uint16")
-    elif dTypeIn == "uint32_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("uint32")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("uint32")
-    elif dTypeIn == "uint64_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("uint64")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("uint64")
-    elif dTypeIn == "float":
-        inputData = np.random.uniform(
-            low=-1, high=1, size=(batchSize, (dataSize * numBlocks))
-        ).astype("float")
-        filterData = np.random.uniform(
-            low=-1, high=1, size=(filterHeight, filterSize)
-        ).astype("float")
-        stateData = np.zeros(
-            (batchSize, (dataSize * numBlocks + filterSize - 1))
-        ).astype("float")
-    elif dTypeIn == "double":
-        inputData = np.random.uniform(
-            low=-1, high=1, size=(batchSize, (dataSize * numBlocks))
-        ).astype("double")
-        filterData = np.random.uniform(
-            low=-1, high=1, size=(filterHeight, filterSize)
-        ).astype("double")
-        stateData = np.zeros(
-            (batchSize, (dataSize * numBlocks + filterSize - 1))
-        ).astype("double")
-    # # normalize coefficients
-    # filterSum = np.sum(np.abs(filterData), axis=1)
-    # filterNorm = filterData / filterSum[:, None]
-    # filterData = filterNorm
+    # FIR is stateful: run frame by frame; the filter history stays in the model
+    frameOuts = []
+    for frame in range(numBlocks):
+        frameIn = inputData[:, frame * dataSize : (frame + 1) * dataSize]
+        frameOut = kernel.exec(frameIn)
+        frameOuts.append(frameOut)
 
-    filterData = filterData[:, ::-1]
-
-    outSize = dataSize * numBlocks
-    outputData = []
-
-    # copy to state
-    stateData[:, filterSize - 1 :] = inputData
-
-    # perform FIR operation
-    if enableNChCoefs == 1:
-        for ch in range(batchSize):
-            outputData.append(
-                np.convolve(
-                    stateData[ch, 0 : (dataSize * numBlocks + filterSize - 1)],
-                    filterData[ch, 0:filterSize],
-                    mode="valid",
-                )
-            )
-
-    else:
-
-        for ch in range(batchSize):
-            outputData.append(
-                np.convolve(
-                    stateData[ch, 0 : (dataSize * numBlocks + filterSize - 1)],
-                    filterData[0, 0:filterSize],
-                    mode="valid",
-                )
-            )
-
-    # bypass copies the input to the output, leaving the filter unapplied
-    if testCase["bypassMode"]:
-        outputData = [inputData[ch, 0:outSize] for ch in range(batchSize)]
-
-    print(np.shape(outputData))
+    # (batchSize, dataSize * numBlocks), one row per channel
+    outputData = list(np.concatenate(frameOuts, axis=1))
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(

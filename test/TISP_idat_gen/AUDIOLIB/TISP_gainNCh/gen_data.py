@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Texas Instruments Incorporated
+#
+# SPDX-License-Identifier: LicenseRef-TI-TFL
+
 from __future__ import print_function
 from subprocess import call
 from sys import platform
@@ -11,6 +15,11 @@ sys.path.append("../../common")
 import TISP_utils
 import file_io
 import os
+from gainNCh import GainNCh
+
+# CSV C type names -> numpy dtype names used by the reference model
+NP_DTYPE = {"float": "float32", "double": "float64", "int16_t": "int16", "int32_t": "int32"}
+
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
 
@@ -189,33 +198,38 @@ def gen_test_case_header_file(testCase):
     # [minVal, maxVal] = TISP_utils.minMaxVal(dType)
     [minVal, maxVal] = [-10, 10]
 
-    if dType[0] == "f":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("float32")
-        in1 = np.random.uniform(low=minVal, high=maxVal, size=(inChannels)).astype(
-            "float32"
-        )
+    npDtype = NP_DTYPE[dType]
 
-    elif dType[0] == "d":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("double")
-        in1 = np.random.uniform(low=minVal, high=maxVal, size=inChannels).astype(
-            "double"
-        )
+    # 1. Generate input buffer (numBlocks frames) and gain vector
+    in0, gains = GainNCh.generate_inputs(
+        num_samples=inSamples,
+        num_channels=inChannels,
+        in_dtype=npDtype,
+        is_interleaved=isInterleave,
+        num_blocks=numBlocks,
+        min_val=minVal,
+        max_val=maxVal,
+    )
 
-    in1 = np.tile(in1, numBlocks)
-    if isInterleave:
-        in0 = in0.T
+    kernel = GainNCh(
+        num_samples=inSamples,
+        num_channels=inChannels,
+        in_dtype=npDtype,
+        is_interleaved=isInterleave,
+        pGains=gains,
+        bypassMode=bypassMode,
+    )
 
-    # bypass copies the input to the output, leaving the gain unapplied
-    if bypassMode:
-        out = in0.copy()
-    elif isInterleave:
-        out = in0 * in1
-    else:
-        out = in0 * in1[:, np.newaxis]
+    # 2. Apply the gain, one frame (block) at a time
+    out_frames = []
+    for frame in range(numBlocks):
+        lo, hi = frame * inChannels, (frame + 1) * inChannels
+        if isInterleave == 1:
+            out_frames.append(kernel.exec(in0[:, lo:hi]))
+        else:
+            out_frames.append(kernel.exec(in0[lo:hi]))
+    out = np.concatenate(out_frames, axis=1 if isInterleave == 1 else 0)
+    in1 = np.tile(gains, numBlocks)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, in1, out, testCase, headerFileName)

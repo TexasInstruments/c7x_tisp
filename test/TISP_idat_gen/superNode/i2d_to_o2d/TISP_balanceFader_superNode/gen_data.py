@@ -8,12 +8,14 @@ import csv
 import re
 
 sys.path.append("../../../common")
+sys.path.append("../../../AUDIOLIB/TISP_balanceFader")  # the balanceFader node model
 import TISP_utils
 import file_io
 import os
 import matplotlib.pyplot as plt
 import json
 import AUDIOLIB_channelMappings
+from balanceFader import BalanceFader
 
 # Dictionary to map test types to (f_start, f_end) tuples
 FREQUENCY_RANGES = {
@@ -57,58 +59,6 @@ def load_channel_layouts(json_file_path="channel_layouts.json"):
     except (FileNotFoundError, json.JSONDecodeError) as e:
         print(f"Error loading channel_layouts.json: {e}. Using default layout.")
         return {}
-
-
-def generate_sine(
-    num_samples, sampling_rate, num_frames, channel, frequency, amplitude, dtype
-):
-    """Generate a continuous sine wave for all samples of a given channel.
-
-    Args:
-        num_samples (int): Number of samples per frame.
-        sampling_rate (int): Sampling rate in Hz.
-        num_frames (int): Number of numExecReps.
-        channel (int): Channel index (for phase offset if needed).
-        frequency (float, optional): Frequency of the sine wave in Hz. Defaults to 2000.0 Hz.
-        amplitude (float, optional): Amplitude of the sine wave. Defaults to 1.0.
-
-    Returns:
-        numpy.ndarray: Array of sine wave samples, shape (num_samples * num_frames,).
-    """
-    total_samples = num_samples * num_frames
-    t = np.linspace(0, total_samples / sampling_rate, total_samples, endpoint=False)
-    sine_wave = amplitude * np.sin(2 * np.pi * frequency * t)
-    return sine_wave.astype(dtype)
-
-
-def generate_sweep(
-    num_samples, sampling_rate, num_frames, channel, amplitude, f_start, f_end, dtype
-):
-    """Generate a linear frequency sweep for all num_frames of a given channel.
-
-    Args:
-        num_samples (int): Number of samples per frame.
-        sampling_rate (int): Sampling rate in Hz.
-        num_frames (int): Number of frames.
-        channel (int): Channel index (for phase offset).
-        amplitude (float): Amplitude of the sweep signal.
-        f_start (float): Starting frequency in Hz.
-        f_end (float, optional): Ending frequency in Hz. Defaults to f_start * 10.
-
-    Returns:
-        numpy.ndarray: Array of sweep signal samples, shape (num_samples * num_frames,).
-    """
-    total_samples = num_samples * num_frames
-    duration = total_samples / sampling_rate  # Total duration in seconds
-    t = np.linspace(0, duration, total_samples, endpoint=False)
-
-    # Linear sweep: f(t) = f_start + (f_end - f_start)/duration * t
-    k = (f_end - f_start) / duration
-    phase = 2 * np.pi * (f_start * t + 0.5 * k * t**2)
-    phase_offset = channel * np.pi / 4  # 45-degree offset per channel
-    sweep_signal = amplitude * np.sin(phase + phase_offset)
-
-    return sweep_signal.astype(dtype)
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -359,141 +309,58 @@ def gen_test_case_header_file(testCase):
     blockHeight = testCase["blockHeight"]
 
     CMAP = AUDIOLIB_channelMappings.AUDIOLIB_CHANNEL_MAP
-    LFE_BALANCE_MAP = AUDIOLIB_channelMappings.AUDIOLIB_LFE_BALANCE_MODE_MAP
-    LFE_FADER_MAP = AUDIOLIB_channelMappings.AUDIOLIB_LFE_FADER_MODE_MAP
-
-    # Map dType to NumPy dtype
-    dtype = np.float32 if dType == "float" else np.float64
-
-    samplesPerFrame = numSamples * numChannels
-    [minVal, maxVal] = [-10, 10]
-
-    # --- 1. Get the custom channel layout and convert to integer array ---
-    channel_config_integers = [
-        CMAP[f"AUDIOLIB_CHANNEL_{name}"] for name in speaker_layout_names
-    ]
-
-    # --- 2. Calculate Fundamental Gain Components ---
-    balance_angle = (np.pi / 4.0) * (balance + 1)
-    targetGainL = np.cos(balance_angle)
-    targetGainR = np.sin(balance_angle)
-
-    fader_angle = (np.pi / 4.0) * (fader + 1)
-    frontGain = np.sin(fader_angle)
-    backGain = np.cos(fader_angle)
-    sideGain = (
-        sideGainFactor * backGain + (1 - sideGainFactor) * frontGain
-        if fader < 0
-        else backGain
+    kernel = BalanceFader(
+        num_samples=numSamples,
+        num_channels=numChannels,
+        in_dtype="float32" if dType == "float" else "float64",
+        is_interleaved=isInterleave,
+        balance=balance,
+        fade=fader,
+        sideGainFactor=sideGainFactor,
+        lfeBalanceGainFactor=lfeBalanceGainFactor,
+        lfeFaderGainFactor=lfeFaderGainFactor,
+        lfeBalanceMode=lfeBalanceMode,
+        lfeFaderMode=lfeFaderMode,
+        pChannelConfig=[CMAP[f"AUDIOLIB_CHANNEL_{name}"] for name in speaker_layout_names],
+        bypassMode=False,
     )
-    topMiddleGain = 0.5 * (frontGain + backGain)
+    final_channel_gains = kernel.final_channel_gains
+    channel_config_integers = kernel.channel_config_integers
 
-    # --- 3. Calculate Final Gain for Each Channel in the Layout ---
-    final_channel_gains = np.zeros(numChannels, dtype=dtype)
-    for i, channel_name in enumerate(speaker_layout_names):
-        channel_enum = CMAP[f"AUDIOLIB_CHANNEL_{channel_name}"]
-        gain = 0.0
+    # Planar test signal, block b in rows [b * numChannels, (b + 1) * numChannels)
+    in0 = kernel.generate_inputs(
+        test_type=testType,
+        num_blocks=1,
+        sampling_rate=samplingRate,
+        amplitude=amplitude,
+        frequency=frequency,
+        f_start=f_start,
+        f_end=f_end,
+        channel_frequencies=channel_frequencies,
+    )
 
-        front_left_channels = [
-            CMAP["AUDIOLIB_CHANNEL_FRONT_LEFT"],
-            CMAP["AUDIOLIB_CHANNEL_FRONT_LEFT_TREBBLE"],
-            CMAP["AUDIOLIB_CHANNEL_FRONT_LEFT_MID"],
-            CMAP["AUDIOLIB_CHANNEL_FRONT_LEFT_WOOFER"],
-        ]
-        front_right_channels = [
-            CMAP["AUDIOLIB_CHANNEL_FRONT_RIGHT"],
-            CMAP["AUDIOLIB_CHANNEL_FRONT_RIGHT_TREBBLE"],
-            CMAP["AUDIOLIB_CHANNEL_FRONT_RIGHT_MID"],
-            CMAP["AUDIOLIB_CHANNEL_FRONT_RIGHT_WOOFER"],
-        ]
-
-        if channel_enum in front_left_channels:
-            gain = targetGainL * frontGain
-        elif channel_enum in front_right_channels:
-            gain = targetGainR * frontGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_FRONT_CENTER"]:
-            gain = 1.0 * frontGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_LOW_FREQUENCY_EFFECTS"]:
-            lfeBalanceGain = 1.0
-            if lfeBalanceMode == LFE_BALANCE_MAP["AUDIOLIB_LFE_BALANCE_PARTIAL"]:
-                lfeBalanceGain = lfeBalanceGainFactor + (
-                    1 - lfeBalanceGainFactor
-                ) * np.cos(2 * balance_angle)
-            elif lfeBalanceMode == LFE_BALANCE_MAP["AUDIOLIB_LFE_BALANCE_FULL"]:
-                lfeBalanceGain = 0.5 * (targetGainL + targetGainR)
-
-            lfeFaderGain = 1.0
-            if lfeFaderMode == LFE_FADER_MAP["AUDIOLIB_LFE_FADER_AVERAGE"]:
-                lfeFaderGain = 0.5 * (frontGain + backGain)
-            elif lfeFaderMode == LFE_FADER_MAP["AUDIOLIB_LFE_FADER_POSITION_BASED"]:
-                lfeFaderGain = (
-                    1 - lfeFaderGainFactor
-                ) * frontGain + lfeFaderGainFactor * backGain
-            elif lfeFaderMode == LFE_FADER_MAP["AUDIOLIB_LFE_FADER_FULL"]:
-                lfeFaderGain = backGain
-            gain = lfeBalanceGain * lfeFaderGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_SIDE_LEFT"]:
-            gain = targetGainL * sideGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_SIDE_RIGHT"]:
-            gain = targetGainR * sideGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_REAR_LEFT"]:
-            gain = targetGainL * backGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_REAR_RIGHT"]:
-            gain = targetGainR * backGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_TOP_FRONT_LEFT"]:
-            gain = targetGainL * frontGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_TOP_FRONT_RIGHT"]:
-            gain = targetGainR * frontGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_TOP_MIDDLE_LEFT"]:
-            gain = targetGainL * topMiddleGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_TOP_MIDDLE_RIGHT"]:
-            gain = targetGainR * topMiddleGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_TOP_REAR_LEFT"]:
-            gain = targetGainL * backGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_TOP_REAR_RIGHT"]:
-            gain = targetGainR * backGain
-        elif channel_enum == CMAP["AUDIOLIB_CHANNEL_OVERHEAD"]:
-            gain = 1.0 * topMiddleGain
-
-        final_channel_gains[i] = gain
-
-    # --- 4. Generate Input and Output Signals ---
-    in0 = np.zeros((numChannels, numSamples), dtype=dtype)
-    if testType == "SINE":
-        for i, channel_name in enumerate(speaker_layout_names):
-            channel_enum = CMAP[f"AUDIOLIB_CHANNEL_{channel_name}"]
-            # Assign channel-specific frequency or default
-            channel_freq = channel_frequencies.get(channel_enum, frequency + i * 50)
-            in0[i, :] = generate_sine(
-                numSamples, samplingRate, 1, i, channel_freq, amplitude, dtype
-            )
-    elif testType == "SWEEP":
-        for i in range(numChannels):
-            in0[i, :] = generate_sweep(
-                numSamples, samplingRate, 1, i, amplitude, f_start, f_end, dtype
-            )
-    else:  # STATIC
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(numChannels, numSamples)
-        ).astype(dtype)
-
-    in1 = final_channel_gains  # Gains
+    # One exec per block, in the kernel layout
+    outBlocks = []
+    for blk in range(1):
+        frame = in0[blk * numChannels : (blk + 1) * numChannels, :]
+        if isInterleave:
+            outBlocks.append(kernel.exec(frame.T))
+        else:
+            outBlocks.append(kernel.exec(frame))
 
     if not isInterleave:
-        # Non-interleaved: shape (numChannels, numSamples)
-        out = in0 * in1[:, np.newaxis]
-        in_list = in0.flatten()  # 2D array for non-interleaved
-        out_list = out.flatten()
+        # Non-interleaved: shape (numChannels * numBlocks, numSamples)
+        out = np.vstack(outBlocks)
+        in_list = in0.flatten()
         pIn_interleaved = in0.T.flatten()  # For WAV and plots
-        pOut_interleaved = out.T.flatten()
     else:
-        # Interleaved: shape (numSamples * numChannels,)
-        in0_transposed = in0.T  # Shape (numSamples, numChannels)
-        out = in0_transposed * in1
-        in_list = in0_transposed.flatten()  # 1D interleaved
-        out_list = out.flatten()
+        # Interleaved: shape (numSamples, numChannels * numBlocks)
+        in0_transposed = in0.T
+        out = np.hstack(outBlocks)
+        in_list = in0_transposed.flatten()
         pIn_interleaved = in_list  # Already interleaved
-        pOut_interleaved = out_list
+    out_list = out.flatten()
+    pOut_interleaved = out_list if isInterleave else out.T.flatten()
 
     # Generate plots if plotSignals is TRUE
     if plotSignals:

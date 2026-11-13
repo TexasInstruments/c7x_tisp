@@ -19,6 +19,7 @@ common_dir_superNode = os.path.join(current_dir, "../../../common")
 # Add both common directories to the Python path
 sys.path.append(common_dir_gen)
 sys.path.append(common_dir_superNode)
+sys.path.append("../../../DSPLIB/TISP_fir")  # the fir node model
 
 from TISP_file_io import TensorToCppHeader
 import TISP_utils
@@ -198,129 +199,29 @@ def gen_test_case_header_file(testCase):
     dataSize = testCase["dataSize"]
     dTypeIn = testCase["dTypeIn"]
     filterSize = testCase["filterSize"]
-    dTypeFilter = testCase["dTypeFilter"]
-    filterSize = testCase["filterSize"]
     batchSize = testCase["batchSize"]
     enableNChCoefs = testCase["enableNChCoefs"]
-    stateSize = testCase["stateSize"]
     numBlocks = testCase["numBlocks"]
 
-    if dTypeIn == "int8_t" or dTypeIn == "uint8_t":
-        bits = 8
-    elif dTypeIn == "int16_t" or dTypeIn == "uint16_t":
-        bits = 16
-    elif dTypeIn == "int32_t" or dTypeIn == "uint32_t" or dTypeIn == "float":
-        bits = 32
-    else:
-        bits = 64
-
-    # unsigned integer
-    if dTypeIn[0] == "u":
-        minVal = 0
-        maxVal = (2**bits) - 1
-    else:
-        minVal = -(2 ** (bits - 1))
-        maxVal = 2 ** (bits - 1)
-
-    # determine filter height
-    if enableNChCoefs == 1:
-        filterHeight = batchSize
-    else:
-        filterHeight = 1
-
-    if dTypeIn == "int8_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("int8")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("int8")
-    elif dTypeIn == "int16_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("int16")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("int16")
-    elif dTypeIn == "int32_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("int32")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("int32")
-    elif dTypeIn == "int64_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("int64")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("int64")
-    elif dTypeIn == "uint8_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("uint8")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("uint8")
-    elif dTypeIn == "uint16_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("uint16")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("uint16")
-    elif dTypeIn == "uint32_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("uint32")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("uint32")
-    elif dTypeIn == "uint64_t":
-        inputData = np.random.uniform(
-            low=minVal, high=maxVal, size=(batchSize, (dataSize * numBlocks))
-        ).astype("uint64")
-        filterData = np.random.uniform(
-            low=minVal, high=maxVal, size=(filterHeight, filterSize)
-        ).astype("uint64")
-    elif dTypeIn == "float":
-        inputData = np.random.uniform(
-            low=-1, high=1, size=(batchSize, (dataSize * numBlocks))
-        ).astype("float")
-        filterData = np.random.uniform(
-            low=-1, high=1, size=(filterHeight, filterSize)
-        ).astype("float")
-        stateData = np.zeros(
-            (batchSize, (dataSize * numBlocks + filterSize - 1))
-        ).astype("float")
-    elif dTypeIn == "double":
-        inputData = np.random.uniform(
-            low=-1, high=1, size=(batchSize, (dataSize * numBlocks))
-        ).astype("double")
-        filterData = np.random.uniform(
-            low=-1, high=1, size=(filterHeight, filterSize)
-        ).astype("double")
-        stateData = np.zeros(
-            (batchSize, (dataSize * numBlocks + filterSize - 1))
-        ).astype("double")
-    # # normalize coefficients
-    # filterSum = np.sum(np.abs(filterData), axis=1)
-    # filterNorm = filterData / filterSum[:, None]
-    # filterData = filterNorm
-
-    filterData = filterData[:, ::-1]
-    myFIR = FIR()
-    outputData = myFIR.execute(
-        inputData,
-        stateData,
-        filterData,
-        batchSize,
-        dataSize,
-        filterSize,
-        numBlocks,
-        enableNChCoefs,
+    # SDK test signal and filter taps (the taps are a constructor argument)
+    inputData, filterData = FIR.generate_inputs(
+        dTypeIn, dataSize, filterSize, batchSize, enableNChCoefs, numBlocks
     )
+
+    kernel = FIR(
+        num_channels=batchSize,
+        num_samples=dataSize,
+        in_dtype=inputData.dtype.name,
+        filterSize=filterSize,
+        pCoeffs=filterData,
+    )
+
+    # FIR is stateful: run frame by frame; the filter history stays in the model
+    frameOuts = []
+    for frame in range(numBlocks):
+        frameIn = inputData[:, frame * dataSize : (frame + 1) * dataSize]
+        frameOuts.append(kernel.exec(frameIn))
+    outputData = np.concatenate(frameOuts, axis=1)
 
     headerFileName = f"../../../../superNode/i2d_to_o2d/TISP_fir_superNode/test_data/staticRefCase{str(testId)}.h"
     tensor_to_cpp_header = TensorToCppHeader(headerFileName, mode="new")
