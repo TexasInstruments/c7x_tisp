@@ -113,7 +113,7 @@ int TISP_muteNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
          size_t   inSamples     = currPrm.widthIn;
          size_t   inChannels    = currPrm.heightIn;
          gainStep               = (float *) malloc(inChannels * sizeof(float));
-         currentGain            = (float *) malloc(inChannels * sizeof(float));
+         currentGain            = (float *) calloc(inChannels, sizeof(float)); // 0, as after the kernel init
          targetGain             = (float *) malloc(inChannels * sizeof(float));
          size_t widthIn, heightIn;
          if (isInterleaved) {
@@ -140,7 +140,7 @@ int TISP_muteNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             }
          }
          else {
-            // Handle null: zero out or error
+            // No mute flags means the case has no reference output and is not checked: start with no channel muted
             for (uint32_t ch = 0; ch < inChannels; ch++) {
                muteCh[ch] = 0;
             }
@@ -189,6 +189,10 @@ int TISP_muteNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             if (!errorCtx.isSuccess()) {
                printf("\nError creating kernel: %s\n", errorCtx.getMessage());
+               free(gainStep);
+               free(currentGain);
+               free(targetGain);
+               free(muteCh);
                return -1;
             }
 
@@ -197,6 +201,10 @@ int TISP_muteNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
 
             if (!errorCtx.isSuccess()) {
                printf("\nError setting bypass mode: %s\n", errorCtx.getMessage());
+               free(gainStep);
+               free(currentGain);
+               free(targetGain);
+               free(muteCh);
                return -1;
             }
             TI_profile_stop();
@@ -351,8 +359,14 @@ int TISP_muteNCh_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             // TI_profile_add_test
             TI_profile_clear_run_stats();
          } // end of memory allocation successful?
-      }    // end repetitions
-   }       // end idat test cases
+
+         // release the reference state of this test case
+         free(gainStep);
+         free(currentGain);
+         free(targetGain);
+         free(muteCh);
+      } // end repetitions
+   }    // end idat test cases
 
    /* Close results CSV */
    fclose(fpOutputCSV);

@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="500" viewBox="0 0 1240 500" font-family="Segoe UI, Arial, sans-serif">
+  <rect width="1240" height="500" fill="#ffffff"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+    </marker>
+    <marker id="arrowTeal" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#0d9488"/>
+    </marker>
+  </defs>
+
+  <text x="620" y="34" text-anchor="middle" font-size="22" font-weight="700" fill="#0f172a">IsolateNCh: block diagram</text>
+
+  <!-- ===== Audio path (every sample) ===== -->
+  <rect x="30" y="70" width="160" height="60" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="110" y="96" text-anchor="middle" font-size="15" font-weight="700" fill="#92400e">Input x</text>
+  <text x="110" y="116" text-anchor="middle" font-size="12" fill="#92400e">M channels &#215; N samples</text>
+
+  <line x1="190" y1="100" x2="738" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="740" y="62" width="260" height="76" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="870" y="88" text-anchor="middle" font-size="15" font-weight="700" fill="#0c4a6e">AUDIOLIB_muteNCh exec</text>
+  <text x="870" y="109" text-anchor="middle" font-size="12.5" fill="#0c4a6e">y[ch] = g[ch] &#183; x[ch]</text>
+  <text x="870" y="127" text-anchor="middle" font-size="12.5" fill="#0c4a6e">g[ch] fades towards its target</text>
+
+  <line x1="1000" y1="100" x2="1048" y2="100" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="1050" y="70" width="160" height="60" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="1130" y="96" text-anchor="middle" font-size="15" font-weight="700" fill="#92400e">Output y</text>
+  <text x="1130" y="116" text-anchor="middle" font-size="12" fill="#92400e">same layout as input</text>
+
+  <!-- bypass -->
+  <path d="M640,100 L640,50 L1130,50 L1130,68" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+  <circle cx="640" cy="100" r="4" fill="#94a3b8"/>
+  <text x="1015" y="44" text-anchor="middle" font-size="12" fill="#64748b">bypass: input copied to output</text>
+
+  <!-- ===== Section labels ===== -->
+  <text x="30" y="196" font-size="13" font-weight="700" fill="#64748b">on construction and on every setParams (control)</text>
+  <line x1="30" y1="203" x2="1000" y2="203" stroke="#cbd5e1" stroke-width="1"/>
+
+  <!-- ===== Control path ===== -->
+  <!-- 1 isolate flags -->
+  <rect x="30" y="222" width="190" height="96" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="125" y="250" text-anchor="middle" font-size="15" font-weight="700" fill="#92400e">isIsolated[ch]</text>
+  <text x="125" y="274" text-anchor="middle" font-size="12.5" fill="#92400e">one flag per channel</text>
+  <text x="125" y="292" text-anchor="middle" font-size="12.5" fill="#92400e">1 = isolated, 0 = not</text>
+
+  <line x1="220" y1="270" x2="268" y2="270" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 2 any isolated -->
+  <rect x="270" y="222" width="190" height="96" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="365" y="250" text-anchor="middle" font-size="15" font-weight="700" fill="#115e59">Any isolated?</text>
+  <text x="365" y="274" text-anchor="middle" font-size="12.5" fill="#134e4a">anyIsolated =</text>
+  <text x="365" y="292" text-anchor="middle" font-size="12.5" fill="#134e4a">OR of all flags</text>
+
+  <line x1="460" y1="270" x2="508" y2="270" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 3 mute flags -->
+  <rect x="510" y="222" width="210" height="96" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+  <text x="615" y="250" text-anchor="middle" font-size="15" font-weight="700" fill="#115e59">Mute flags</text>
+  <text x="615" y="274" text-anchor="middle" font-size="12.5" fill="#134e4a">mute[ch] = 1 if anyIsolated</text>
+  <text x="615" y="292" text-anchor="middle" font-size="12.5" fill="#134e4a">and isIsolated[ch] = 0, else 0</text>
+
+  <!-- flags also feed the mute decision directly -->
+  <path d="M125,318 L125,340 L615,340 L615,320" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <line x1="720" y1="270" x2="768" y2="270" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 4 kernel set -->
+  <rect x="770" y="222" width="230" height="96" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="885" y="250" text-anchor="middle" font-size="15" font-weight="700" fill="#0c4a6e">AUDIOLIB_muteNCh set</text>
+  <text x="885" y="274" text-anchor="middle" font-size="12.5" fill="#0c4a6e">target g[ch] = 0 if mute[ch] = 1,</text>
+  <text x="885" y="292" text-anchor="middle" font-size="12.5" fill="#0c4a6e">else 1 (fade over fadeTime)</text>
+
+  <!-- set feeds the exec -->
+  <line x1="885" y1="222" x2="885" y2="141" stroke="#0d9488" stroke-width="2" marker-end="url(#arrowTeal)"/>
+  <text x="895" y="185" font-size="12" fill="#0f766e">new targets</text>
+
+  <!-- fade types -->
+  <line x1="1030" y1="270" x2="1002" y2="270" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+  <rect x="1030" y="222" width="180" height="96" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="1120" y="246" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">fadeType</text>
+  <text x="1048" y="268" font-size="12.5" fill="#334155">0  linear</text>
+  <text x="1048" y="286" font-size="12.5" fill="#334155">1  smooth</text>
+  <text x="1130" y="268" font-size="12.5" fill="#334155">2  hard</text>
+  <text x="1130" y="286" font-size="12.5" fill="#334155">3  symmetric</text>
+  <text x="1120" y="307" text-anchor="middle" font-size="11.5" fill="#64748b">over fadeTime ms</text>
+
+  <!-- ===== Example ===== -->
+  <text x="30" y="388" font-size="13" font-weight="700" fill="#64748b">example, 4 channels</text>
+  <line x1="30" y1="395" x2="1210" y2="395" stroke="#cbd5e1" stroke-width="1"/>
+
+  <text x="30" y="428" font-size="12.5" fill="#334155">isIsolated</text>
+  <text x="30" y="466" font-size="12.5" fill="#334155">output</text>
+  <!-- flags 0 1 0 0 -->
+  <g font-size="13" text-anchor="middle">
+    <rect x="110" y="410" width="34" height="26" rx="5" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="127" y="428" fill="#334155">0</text>
+    <rect x="150" y="410" width="34" height="26" rx="5" fill="#ccfbf1" stroke="#0d9488"/>
+    <text x="167" y="428" font-weight="700" fill="#115e59">1</text>
+    <rect x="190" y="410" width="34" height="26" rx="5" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="207" y="428" fill="#334155">0</text>
+    <rect x="230" y="410" width="34" height="26" rx="5" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="247" y="428" fill="#334155">0</text>
+
+    <rect x="110" y="448" width="34" height="26" rx="5" fill="#e2e8f0" stroke="#cbd5e1"/>
+    <text x="127" y="466" fill="#94a3b8">0</text>
+    <rect x="150" y="448" width="34" height="26" rx="5" fill="#fef3c7" stroke="#d97706"/>
+    <text x="167" y="466" font-weight="700" fill="#92400e">x</text>
+    <rect x="190" y="448" width="34" height="26" rx="5" fill="#e2e8f0" stroke="#cbd5e1"/>
+    <text x="207" y="466" fill="#94a3b8">0</text>
+    <rect x="230" y="448" width="34" height="26" rx="5" fill="#e2e8f0" stroke="#cbd5e1"/>
+    <text x="247" y="466" fill="#94a3b8">0</text>
+  </g>
+  <text x="284" y="428" font-size="12.5" fill="#334155">channel 1 isolated</text>
+  <text x="284" y="466" font-size="12.5" fill="#334155">only channel 1 plays; 0, 2, 3 fade to silence</text>
+
+  <!-- second example: none isolated -->
+  <g font-size="13" text-anchor="middle">
+    <rect x="700" y="410" width="34" height="26" rx="5" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="717" y="428" fill="#334155">0</text>
+    <rect x="740" y="410" width="34" height="26" rx="5" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="757" y="428" fill="#334155">0</text>
+    <rect x="780" y="410" width="34" height="26" rx="5" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="797" y="428" fill="#334155">0</text>
+    <rect x="820" y="410" width="34" height="26" rx="5" fill="#f8fafc" stroke="#94a3b8"/>
+    <text x="837" y="428" fill="#334155">0</text>
+
+    <rect x="700" y="448" width="34" height="26" rx="5" fill="#fef3c7" stroke="#d97706"/>
+    <text x="717" y="466" font-weight="700" fill="#92400e">x</text>
+    <rect x="740" y="448" width="34" height="26" rx="5" fill="#fef3c7" stroke="#d97706"/>
+    <text x="757" y="466" font-weight="700" fill="#92400e">x</text>
+    <rect x="780" y="448" width="34" height="26" rx="5" fill="#fef3c7" stroke="#d97706"/>
+    <text x="797" y="466" font-weight="700" fill="#92400e">x</text>
+    <rect x="820" y="448" width="34" height="26" rx="5" fill="#fef3c7" stroke="#d97706"/>
+    <text x="837" y="466" font-weight="700" fill="#92400e">x</text>
+  </g>
+  <text x="874" y="428" font-size="12.5" fill="#334155">none isolated</text>
+  <text x="874" y="466" font-size="12.5" fill="#334155">every channel plays</text>
+</svg>
