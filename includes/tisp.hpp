@@ -90,6 +90,7 @@
 #include "TISP_superNode.hpp"
 #include "TISP_tableInterpolate.hpp"
 #include "TISP_tableLookup.hpp"
+#include "TISP_tableSourceRowColSelector.hpp"
 #include "TISP_tan.hpp"
 #include "TISP_tanh.hpp"
 #include "TISP_thresholdDetector.hpp"

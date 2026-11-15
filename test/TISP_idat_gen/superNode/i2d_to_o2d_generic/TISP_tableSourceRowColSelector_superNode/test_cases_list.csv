@@ -1,0 +1,11 @@
+ID,dType,inWidth,inHeight,strideIn,numRows,numCols,isColSelect,isOutputInterleave,outPitch,blockWidth,testPattern,alignStride,AM275 SOC
+1,int32_t,256,16,256,16,8,0,0,8,64,STATIC,FALSE,yes
+2,int32_t,512,8,512,16,32,1,1,4096,128,STATIC,FALSE,yes
+3,int32_t,128,32,136,32,16,0,0,20,64,STATIC,FALSE,yes
+4,float,128,16,144,16,24,0,1,2048,64,STATIC,TRUE,yes
+5,uint32_t,256,8,264,20,12,1,0,24,128,STATIC,FALSE,yes
+6,int32_t,64,32,72,19,10,1,1,2050,32,STATIC,FALSE,yes
+7,double,128,8,132,32,33,0,0,36,64,STATIC,FALSE,yes
+8,int64_t,64,16,80,13,7,1,1,1024,32,STATIC,TRUE,yes
+9,uint64_t,96,8,100,40,9,0,1,770,32,STATIC,FALSE,yes
+10,float,256,64,256,8,64,1,0,8,256,STATIC,FALSE,yes

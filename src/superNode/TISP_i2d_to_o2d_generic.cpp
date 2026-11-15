@@ -180,3 +180,6 @@ template class TISP::SuperNode::I2dToO2dDiffDims<int16_t, float>;
 template class TISP::SuperNode::I2dToO2dDiffDims<int16_t, double>;
 template class TISP::SuperNode::I2dToO2dDiffDims<int32_t, float>;
 template class TISP::SuperNode::I2dToO2dDiffDims<int32_t, double>;
+template class TISP::SuperNode::I2dToO2dDiffDims<int32_t, int64_t>;
+template class TISP::SuperNode::I2dToO2dDiffDims<int32_t, uint32_t>;
+template class TISP::SuperNode::I2dToO2dDiffDims<int32_t, uint64_t>;
