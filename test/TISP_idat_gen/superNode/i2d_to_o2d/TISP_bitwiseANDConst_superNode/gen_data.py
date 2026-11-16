@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../DSPLIB/TISP_bitwiseANDConst")  # base kernel model
+from bitwiseANDConst import BitwiseANDConst
 
 
 def get_soc_guard(am275_soc_value):
@@ -170,17 +172,14 @@ def gen_test_case_header_file(testCase):
     heightIn = testCase["heightIn"]
     isInterleave = testCase["isInterleave"]
 
-    npType = dType[:-2]
     constant = testCase["constant"]
-    # the whole range of the type, so that every bit of the mask is exercised
-    in0 = np.random.randint(
-        low=0, high=int(np.iinfo(npType).max) + 1, size=(heightIn, widthIn), dtype=npType
-    )
+    model = BitwiseANDConst(dType=dType, constant=constant)
+    in0 = model.generate_inputs((heightIn, widthIn))
 
     if isInterleave:
         in0 = in0.T
 
-    out = np.bitwise_and(in0, np.array(constant).astype(npType))
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

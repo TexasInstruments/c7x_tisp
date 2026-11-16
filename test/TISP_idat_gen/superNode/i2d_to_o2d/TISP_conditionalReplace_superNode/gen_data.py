@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../DSPLIB/TISP_conditionalReplace")  # base kernel model
+from conditionalReplace import ConditionalReplace
 
 
 def get_soc_guard(am275_soc_value):
@@ -169,22 +171,10 @@ def gen_test_case_header_file(testCase):
     heightIn = testCase["heightIn"]
     isInterleave = testCase["isInterleave"]
 
-    # [-5, 5]: small enough that samples often equal the constants, so == and != see both outcomes
-    npType = dType[:-2]
-    in0 = np.random.randint(low=-5, high=6, size=(heightIn, widthIn)).astype(npType)
+    model = ConditionalReplace(dType=dType, numChannels=heightIn, testId=testId)
+    in0, in1 = model.generate_inputs((heightIn, widthIn))
 
-    # one entry per channel (row); every compare type occurs when there are at least 6 channels
-    compareType = ((np.arange(heightIn) + int(testId)) % 6).astype(npType)
-    constValue = np.random.randint(low=-3, high=4, size=heightIn).astype(npType)
-    replaceValue = np.random.randint(low=-100, high=101, size=heightIn).astype(npType)
-    in1 = np.concatenate([compareType, constValue, replaceValue])
-
-    out = np.zeros_like(in0)
-    for row in range(heightIn):
-        x = in0[row]
-        c = constValue[row]
-        hit = [x == c, x != c, x < c, x <= c, x > c, x >= c][int(compareType[row])]
-        out[row] = np.where(hit, replaceValue[row], x)
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, in1, out, testCase, headerFileName)

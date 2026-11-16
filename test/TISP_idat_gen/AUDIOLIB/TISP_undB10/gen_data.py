@@ -10,6 +10,7 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from undB10 import UndB10
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -170,19 +171,16 @@ def gen_test_case_header_file(testCase):
     numBlocks = testCase["numBlocks"]
     out = []
 
-    length = numBlocks * inChannels * inSamples
-
-    if dType == "float":
-        in0 = np.random.uniform(minX, maxX, length).astype(np.float32)
-
-    out = np.power(10, in0 / 10)
-
-    in0 = in0.reshape(inChannels * numBlocks, inSamples)
-    out = out.reshape(inChannels * numBlocks, inSamples)
-
-    if dType == "float":
-        out[out > np.finfo(np.float32).max] = np.finfo(np.float32).max
-        out[out < np.finfo(np.float32).tiny] = 0.0
+    model = UndB10(
+        num_channels=inChannels,
+        num_samples=inSamples,
+        num_blocks=numBlocks,
+        dtype=dType,
+        min_x=minX,
+        max_x=maxX,
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

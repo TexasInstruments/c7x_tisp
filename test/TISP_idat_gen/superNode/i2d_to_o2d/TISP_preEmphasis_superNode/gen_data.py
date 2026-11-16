@@ -10,6 +10,9 @@ sys.path.append("../../../common")
 import TISP_utils
 import file_io
 
+sys.path.append("../../../AUDIOLIB/TISP_preEmphasis")  # base kernel model
+from preEmphasis import PreEmphasis
+
 
 def get_soc_guard(am275_soc_value):
     """Generate SOC preprocessor guard based on 'AM275 SOC' column value"""
@@ -172,18 +175,12 @@ def gen_test_case_header_file(testCase):
     # [minVal, maxVal] = AUDIOLIB_utils.minMaxVal(dType)
     [minVal, maxVal] = [-10, 10]
 
-    if dType[0] == "f":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn, widthIn)
-        ).astype("float32")
+    alpha = testCase["alpha"]
+    kernel = PreEmphasis(alpha=alpha, num_channels=heightIn)
+    in0 = kernel.generate_inputs(shape=(heightIn, widthIn), min_val=minVal, max_val=maxVal)
 
     # y[n] = x[n] - alpha * x[n-1] along the samples of every channel, starting from silence
-    alpha = testCase["alpha"]
-    out = np.empty_like(in0)
-    prev = np.zeros(heightIn, dtype=in0.dtype)
-    for n in range(widthIn):
-        out[:, n] = in0[:, n] - alpha * prev
-        prev = in0[:, n]
+    out = kernel.exec(in0)
 
     if isInterleave:
         in0 = in0.T

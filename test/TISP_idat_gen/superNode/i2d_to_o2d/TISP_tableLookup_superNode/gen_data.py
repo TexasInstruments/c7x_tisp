@@ -13,7 +13,9 @@ import file_io
 import os
 import matplotlib.pyplot as plt
 
-from process import tableLookupProcess
+# base kernel model
+sys.path.append("../../../AUDIOLIB/TISP_tableLookup")
+from tableLookup import TableLookup
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -147,10 +149,10 @@ def gen_test_case_header_file(testCase):
 
     [minVal, maxVal] = [minVal, maxVal]
 
-    src = np.random.uniform(low=minVal - 10, high=maxVal, size=srcSamples)
-    table = np.random.uniform(low=minVal - 10, high=maxVal, size=tableSamples)
+    kernel = TableLookup(table_samples=tableSamples, min_val=minVal, max_val=maxVal)
+    src, table = kernel.generate_inputs(srcSamples)
 
-    dst = tableLookupProcess(src, table, minVal, maxVal, tableSamples)
+    dst = kernel.exec(src, table)
 
     # Write header file with flattened 1D inputs, outputs, and gains
     headerFileName = "staticRefCase" + str(testId) + ".h"

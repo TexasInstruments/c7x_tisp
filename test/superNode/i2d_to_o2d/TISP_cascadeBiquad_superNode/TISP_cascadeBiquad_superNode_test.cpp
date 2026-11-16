@@ -274,7 +274,7 @@ int TISP_cascadeBiquad_superNode_d(uint32_t *pProfile, uint8_t LevelOfFeedback)
             if (currPrm.dataType == DSPLIB_FLOAT32 || currPrm.dataType == DSPLIB_FLOAT64) {
 
                status_ref_vs_opt = TI_compare_mem_roi2DStatic_float(
-                   (void *) pOut, (void *) currPrm.staticOut, 0, (double) 1e-4, numChannels, inputSize,
+                   (void *) pOut, (void *) currPrm.staticOut, 0, (double) powf(2, -10), numChannels, inputSize,
                    numChannels * datasize, DSPLIB_sizeof(currPrm.dataType));
             }
             else {

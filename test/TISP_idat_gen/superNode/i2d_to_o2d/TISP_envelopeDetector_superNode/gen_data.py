@@ -8,6 +8,7 @@ import csv
 
 sys.path.append("../../../common")
 import TISP_utils
+sys.path.append("../../../AUDIOLIB/TISP_envelopeDetector")  # base kernel model
 from envelopeDetector import AUDIOLIB_envelopeDetector
 import file_io
 

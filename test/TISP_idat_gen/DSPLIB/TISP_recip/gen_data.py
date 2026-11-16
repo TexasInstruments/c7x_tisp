@@ -10,6 +10,8 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from recip import Recip
+
 import os
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
@@ -158,42 +160,6 @@ def process_test_case(testCase):
     return testCase
 
 
-def norm32(a):
-    """Redundant sign bits of a non-negative 32-bit value (C7x __norm)."""
-    if a == 0:
-        return 31
-    return 31 - a.bit_length()
-
-
-def sub_cond(b, a):
-    """C7x __sub_cond on unsigned 32-bit operands."""
-    if b >= a:
-        return (((b - a) << 1) + 1) & 0xFFFFFFFF
-    return (b << 1) & 0xFFFFFFFF
-
-
-def recip_q15(x):
-    """Fixed point reciprocal of a Q15 value, returns (exponent, fraction)."""
-    a = int(x)
-    neg = a < 0
-    if neg:
-        a = -a
-
-    normal = norm32(a)
-    a = (a << normal) & 0xFFFFFFFF
-    exp = normal - 15
-
-    b = 0x80000000
-    for _ in range(15):
-        b = sub_cond(b, a)
-
-    frac = b & 0x7FFF
-    if neg:
-        frac = -frac
-
-    return exp, frac
-
-
 def gen_test_case_header_file(testCase):
     """Generate test case and write out input, filter, and output tensor
     into a header file usable in C/C++ code.
@@ -220,40 +186,22 @@ def gen_test_case_header_file(testCase):
 
     if isInterleave:
         # Each block is inSamples rows of inChannels samples
-        shape = (numBlocks, inSamples, inChannels)
+        numRows, numCols = inSamples, inChannels
     else:
         # Each block is inChannels rows of inSamples samples
-        shape = (numBlocks, inChannels, inSamples)
+        numRows, numCols = inChannels, inSamples
 
     storeStyle = testCase["storeStyle"]
-    npType = {"float": "float32", "double": "float64", "int16_t": "int16"}[dType]
 
-    if dType[0] == "f" or dType[0] == "d":
-        # magnitude in [0.25, 16] with a random sign: no zero input, so no infinite reciprocal
-        in0 = (np.random.uniform(low=0.25, high=16, size=shape) * np.random.choice([-1, 1], size=shape)).astype(npType)
-        out = (np.array(1, dtype=npType) / in0).astype(npType)
-    else:
-        # Q15 magnitudes spread over all 15 bit lengths, no zero; the type minimum and maximum are always present
-        in0 = (2 ** np.random.uniform(low=0, high=15, size=shape)).astype(np.int32)
-        in0 = np.clip(in0, 1, 32767) * np.random.choice([-1, 1], size=shape)
-        in0 = in0.astype(npType)
-        in0[0, 0, 0] = -32768
-        in0[-1, -1, -1] = 32767
-        out = np.zeros((shape[0], shape[1], 2 * shape[2]), dtype=npType)
-        for n in range(shape[0]):
-            for y in range(shape[1]):
-                for x in range(shape[2]):
-                    exp, frac = recip_q15(in0[n, y, x])
-                    if storeStyle == 1:
-                        out[n, y, x] = exp
-                        out[n, y, shape[2] + x] = frac
-                    else:
-                        out[n, y, 2 * x] = exp
-                        out[n, y, 2 * x + 1] = frac
-
-    out = out.reshape(-1)
-
-    in0 = in0.reshape(numBlocks * shape[1], shape[2])
+    model = Recip(
+        dtype=dType,
+        num_rows=numRows,
+        num_cols=numCols,
+        store_style=storeStyle,
+        num_blocks=numBlocks,
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

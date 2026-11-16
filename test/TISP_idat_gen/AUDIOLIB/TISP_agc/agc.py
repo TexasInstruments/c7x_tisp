@@ -13,6 +13,7 @@ class AUDIOLIB_agc:
 
     def __init__(
         self,
+        *,
         inChannels=1,
         inSamples=32,
         samplingRate=48000.0,
@@ -25,6 +26,7 @@ class AUDIOLIB_agc:
         enableRecovery=1,
         recoveryRate=2.4,
         currentGain=0.0,
+        **_,
     ):
         self.inChannels = inChannels
         self.inSamples = inSamples
@@ -39,7 +41,12 @@ class AUDIOLIB_agc:
         self.enableRecovery = int(enableRecovery)
         self.recoveryRate = float(recoveryRate)
         self.currentGain = float(currentGain)
+        self.init()
 
+    def init(self):
+        """Precompute coefficients and reset the running state."""
+        inSamples = self.inSamples
+        inChannels = self.inChannels
         blockTime = inSamples / self.samplingRate
         smoothingTimeSec = self.smoothingTime / 1000.0
         self.oneOverSlope = 1.0 - 1.0 / self.ratio

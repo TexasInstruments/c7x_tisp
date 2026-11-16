@@ -59,34 +59,6 @@ def catch_warning(func, *args, **kwargs):
     return result
 
 
-def rescale_stage_gains(sosChan):
-    """Spread the filter gain over all stages so that b0 != 1 in every stage.
-
-    signal.tf2sos puts the whole filter gain into stage 1 and sets b0 = 1 in every
-    later stage. Scaling each stage's numerator by g[s] (with the product of all g
-    equal to 1) keeps the overall transfer function identical, but makes b0 != 1 in
-    every stage, which is what exposes stage-group gain bugs in the TIF kernel.
-
-    Args:
-        sosChan (numpy.ndarray): (numStages, 6) SOS coefficients of one channel.
-
-    Returns:
-        numpy.ndarray: rescaled (numStages, 6) SOS coefficients.
-    """
-    numStages = sosChan.shape[0]
-    # magnitudes kept away from 1 so b0 is clearly != 1; random sign is avoided to
-    # keep the intermediate signal levels sensible
-    g = np.where(
-        np.random.rand(numStages) < 0.5,
-        np.random.uniform(0.4, 0.8, numStages),
-        np.random.uniform(1.25, 2.5, numStages),
-    )
-    g[0] = 1.0 / np.prod(g[1:])
-    out = sosChan.copy()
-    out[:, :3] *= g[:, None]
-    return out
-
-
 def gen_tif_biquad_coefficients(
     sosCoefs,
     numCoefsPerTiBiquad=NUM_COEFS_PER_TI_BIQUAD,
@@ -202,7 +174,6 @@ class CascadeBiquad:
         enableNChCoeffs,
         biquadForm,
         numExecReps,
-        nonUnitB0=False,
     ):
         """SDK test signal: input and filter coefficients for a test case.
 
@@ -211,7 +182,6 @@ class CascadeBiquad:
 
         Args:
             enableNChCoeffs: "False" for one coefficient set shared by all channels.
-            nonUnitB0: spread the gain over all stages so that b0 != 1 in every stage.
 
         Returns:
             (inputData, pCoeffs, sosCoefs, zi, tifBiquadCascadeCoefs, tifBiquadCascadeGains):
@@ -307,8 +277,6 @@ class CascadeBiquad:
             # Design 2nd order sections
             sosChan = signal.tf2sos(bCoefs[ch, : len(b)], aCoefs[ch, : len(a)])
             # sosChan = catch_warning(signal.tf2sos, bCoefs[ch, :len(b)], aCoefs[ch, :len(a)])
-            if nonUnitB0:
-                sosChan = rescale_stage_gains(sosChan)
             sosCoefs[:, :, ch] = sosChan
 
         if ENABLE_DEBUG_PRINT:

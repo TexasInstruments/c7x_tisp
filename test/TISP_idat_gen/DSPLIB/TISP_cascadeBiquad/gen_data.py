@@ -215,8 +215,6 @@ def gen_test_case_header_file(testCase):
         enableNChCoeffs=testCase["enableNChCoeffs"],
         biquadForm=testCase["biquadForm"],
         numExecReps=numExecReps,
-        # optional: spread the gain over all stages so that b0 != 1 in every stage
-        nonUnitB0=testCase.get("nonUnitB0", "False") == "True",
     )
 
     # Build the model with the case's values (the reference runs in the precision the

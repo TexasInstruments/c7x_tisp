@@ -9,6 +9,7 @@ import csv
 sys.path.append("../../common")
 import TISP_utils
 import file_io
+from dB10 import DB10
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -169,34 +170,16 @@ def gen_test_case_header_file(testCase):
     numBlocks = testCase["numBlocks"]
     out = []
 
-    length = numBlocks * inChannels * inSamples
-
-    if dType == "float":
-        in0 = (
-            np.random.uniform(minX, maxX, length)
-            .astype(np.float32)
-            .reshape(inChannels * numBlocks, inSamples)
-        )
-    else:
-        in0 = (
-            np.random.uniform(minX, maxX, length)
-            .astype(np.float64)
-            .reshape(inChannels * numBlocks, inSamples)
-        )
-
-    out = np.log10(in0)
-
-    if dType == "float":
-        out[in0 > np.finfo(np.float32).max] = 308.2547
-        out[in0 <= 0.0] = np.uint32(0xFF800000)
-
-    else:
-        out[in0 > np.finfo(np.float64).max] = 308.2547
-        out[in0 <= 0.0] = np.uint64(
-            0xFFF0000000000000
-        )  # NaN/-Inf bit pattern for float64
-
-    out = out * 10
+    model = DB10(
+        num_channels=inChannels,
+        num_samples=inSamples,
+        num_blocks=numBlocks,
+        dtype=dType,
+        min_x=minX,
+        max_x=maxX,
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

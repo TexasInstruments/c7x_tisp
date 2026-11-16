@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../common")
 import TISP_utils
 import file_io
+from interleave import Interleave
+
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -174,79 +176,11 @@ def gen_test_case_header_file(testCase):
     shift = testCase["shift"]
     numBlocks = testCase["numBlocks"]
 
-    if dType == "int8_t" or dType == "uint8_t":
-        bits = 8
-    elif dType == "int16_t" or dType == "uint16_t":
-        bits = 16
-    elif dType == "int32_t" or dType == "uint32_t":
-        bits = 32
-    else:
-        bits = 32
-
-    # unsigned integer
-    if dType[0] == "u":
-        minVal = 0
-        maxVal = (2**bits) - 1
-    else:
-        minVal = -(2 ** (bits - 1))
-        maxVal = 2 ** (bits - 1)
-
-    if dType == "int8_t":
-        inp = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn * numBlocks, widthIn)
-        ).astype("int8")
-
-    elif dType == "int16_t":
-        inp = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn * numBlocks, widthIn)
-        ).astype("int16")
-
-    elif dType == "int32_t":
-        inp = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn * numBlocks, widthIn)
-        ).astype("int32")
-
-    elif dType == "int64_t":
-        inp = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn * numBlocks, widthIn)
-        ).astype("int64")
-
-    elif dType == "uint8_t":
-        inp = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn * numBlocks, widthIn)
-        ).astype("uint8")
-
-    elif dType == "uint16_t":
-        inp = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn * numBlocks, widthIn)
-        ).astype("uint16")
-
-    elif dType == "uint32_t":
-        inp = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn * numBlocks, widthIn)
-        ).astype("uint32")
-
-    elif dType == "uint64_t":
-        inp = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn * numBlocks, widthIn)
-        ).astype("uint64")
-
-    elif dType == "float":
-        inp = np.random.uniform(
-            low=-10, high=10, size=(heightIn * numBlocks, widthIn)
-        ).astype("float")
-
-    elif dType == "double":
-        inp = np.random.uniform(
-            low=-10, high=10, size=(heightIn * numBlocks, widthIn)
-        ).astype("double")
-
-    transposed_blocks = []
-    for i in range(numBlocks):
-        block = inp[i * heightIn : (i + 1) * heightIn, :]
-        transposed_block = block.T
-        transposed_blocks.append(transposed_block)
-    out = np.vstack(transposed_blocks)
+    model = Interleave(
+        dtype=dType, width_in=widthIn, height_in=heightIn, num_blocks=numBlocks
+    )
+    inp = model.generate_inputs()
+    out = model.exec(inp)
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(inp, out, testCase, headerFileName)
 

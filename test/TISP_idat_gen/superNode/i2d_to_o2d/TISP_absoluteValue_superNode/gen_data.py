@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../DSPLIB/TISP_absoluteValue")  # base kernel model
+from absoluteValue import AbsoluteValue
 
 
 def get_soc_guard(am275_soc_value):
@@ -167,25 +169,13 @@ def gen_test_case_header_file(testCase):
     heightIn = testCase["heightIn"]
     isInterleave = testCase["isInterleave"]
 
-    if dType[0] == "f" or dType[0] == "d":
-        npType = "float32" if dType[0] == "f" else "float64"
-        [minVal, maxVal] = [-10, 10]
-        in0 = np.random.uniform(low=minVal, high=maxVal, size=(heightIn, widthIn)).astype(
-            npType
-        )
-    else:
-        npType = dType[:-2]
-        # [-1000, 1000] clipped to the type; the most negative value is excluded because the optimized
-        # kernel saturates abs(min) to max while the natural C kernel wraps it back to min
-        [minVal, maxVal] = [max(np.iinfo(npType).min + 1, -1000), min(np.iinfo(npType).max, 1000)]
-        in0 = np.random.randint(
-            low=minVal, high=maxVal + 1, size=(heightIn, widthIn)
-        ).astype(npType)
+    model = AbsoluteValue(dType=dType)
+    in0 = model.generate_inputs((heightIn, widthIn))
 
     if isInterleave:
         in0 = in0.T
 
-    out = np.abs(in0)
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

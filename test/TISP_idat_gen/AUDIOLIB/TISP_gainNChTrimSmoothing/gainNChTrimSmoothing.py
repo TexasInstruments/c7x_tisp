@@ -29,8 +29,8 @@ class AUDIOLIB_gainNChTrimSmoothing:
     # Linear gain 0 is treated as -200 dB in the SYMMETRIC ratio so the ramp has a finite step.
     GAIN_FLOOR = 1.0e-10
 
-    def __init__(self, dType="float", inChannels=1, inSamples=1, samplingRate=48000, fadeTime=0.0,
-                 fadeType="SYMMETRIC", isInterleaved=0, numExecReps=1):
+    def __init__(self, *, dType="float", inChannels=1, inSamples=1, samplingRate=48000, fadeTime=0.0,
+                 fadeType="SYMMETRIC", isInterleaved=0, numExecReps=1, **_):
         """Initialize the AUDIOLIB_gainNChTrimSmoothing class with private members.
 
         Args:
@@ -55,7 +55,10 @@ class AUDIOLIB_gainNChTrimSmoothing:
         self._inChannels = int(inChannels)
         self._inSamples = int(inSamples)
         self._isInterleaved = int(isInterleaved)
+        self.init()
 
+    def init(self):
+        """Reset the per-channel state and derive the fade coefficients from fadeTime."""
         dtype = self._npDtype
         # Internal state tracking per channel across frames
         self._currentGain = np.ones(self._inChannels, dtype=dtype)

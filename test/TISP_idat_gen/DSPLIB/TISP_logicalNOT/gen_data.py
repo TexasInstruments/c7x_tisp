@@ -10,6 +10,7 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from logicalNOT import LogicalNOT
 import os
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
@@ -179,21 +180,13 @@ def gen_test_case_header_file(testCase):
     isInterleave = testCase["isInterleave"]
     numBlocks = testCase["numBlocks"]
 
-    shape = (inChannels * numBlocks, inSamples)
-    if dType[0] == "f" or dType[0] == "d":
-        npType = "float32" if dType[0] == "f" else "float64"
-        # zeros of both signs are mixed with non-zero values so that both outputs (0 and 1) occur
-        in0 = np.random.choice([0.0, -0.0, 0.5, -1.5, 3.0], size=shape).astype(npType)
-    else:
-        npType = dType[:-2]
-        # [-2, 2] clipped to the type, so that zeros occur often
-        [minVal, maxVal] = [max(np.iinfo(npType).min, -2), min(np.iinfo(npType).max, 2)]
-        in0 = np.random.randint(low=minVal, high=maxVal + 1, size=shape).astype(npType)
+    model = LogicalNOT(dType=dType)
+    in0 = model.generate_inputs((inChannels * numBlocks, inSamples))
 
     if isInterleave:
         in0 = in0.T
 
-    out = (in0 == 0).astype(in0.dtype)
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

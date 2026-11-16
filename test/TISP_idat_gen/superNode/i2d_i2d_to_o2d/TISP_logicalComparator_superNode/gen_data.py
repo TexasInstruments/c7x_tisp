@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../DSPLIB/TISP_logicalComparator")  # base kernel model
+from logicalComparator import LogicalComparator
 
 
 def get_soc_guard(am275_soc_value):
@@ -199,48 +201,14 @@ def gen_test_case_header_file(testCase):
 
     opType = testCase["opType"]
 
-    if dType[0] == "f" or dType[0] == "d":
-        npType = "float32" if dType[0] == "f" else "float64"
-        [minVal, maxVal] = [-10, 10]
-        in0 = np.random.uniform(low=minVal, high=maxVal, size=(heightIn, widthIn)).astype(
-            npType
-        )
-        in1 = np.random.uniform(low=minVal, high=maxVal, size=(heightIn, widthIn)).astype(
-            npType
-        )
-    else:
-        npType = dType[:-2]
-        # Full range for 8-bit types, [-1000, 1000] clipped to the type otherwise
-        [minVal, maxVal] = [max(np.iinfo(npType).min, -1000), min(np.iinfo(npType).max, 1000)]
-        in0 = np.random.randint(
-            low=minVal, high=maxVal + 1, size=(heightIn, widthIn)
-        ).astype(npType)
-        in1 = np.random.randint(
-            low=minVal, high=maxVal + 1, size=(heightIn, widthIn)
-        ).astype(npType)
-
-    # Copy about a quarter of the elements of input 0 into input 1 so ==, <= and >= see equal values
-    equal = np.random.uniform(size=in0.shape) < 0.25
-    in1[equal] = in0[equal]
+    model = LogicalComparator(dType=dType, opType=opType)
+    in0, in1 = model.generate_inputs((heightIn, widthIn))
 
     if isInterleave:
         in0 = in0.T
         in1 = in1.T
 
-    if opType == 0:
-        out = in0 == in1
-    elif opType == 1:
-        out = in0 != in1
-    elif opType == 2:
-        out = in0 < in1
-    elif opType == 3:
-        out = in0 <= in1
-    elif opType == 4:
-        out = in0 > in1
-    else:
-        out = in0 >= in1
-
-    out = out.astype(outType(dType)[:-2])
+    out = model.exec(in0, in1)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, in1, out, outType(dType), testCase, headerFileName)

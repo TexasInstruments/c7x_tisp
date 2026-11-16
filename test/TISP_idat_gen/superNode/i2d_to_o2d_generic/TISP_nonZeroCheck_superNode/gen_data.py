@@ -9,6 +9,9 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../DSPLIB/TISP_nonZeroCheck")  # base kernel model
+from nonZeroCheck import NonZeroCheck
+
 
 
 def get_soc_guard(am275_soc_value):
@@ -175,32 +178,15 @@ def gen_test_case_header_file(testCase):
 
     opType = testCase["opType"]
     axisType = testCase["axisType"]
-    npType = {"float": "float32", "double": "float64"}.get(dType, dType[:-2])
-
-    # ALL needs mostly non-zero data and ANY mostly zero data, so that both results occur
-    probNonZero = 0.98 if opType == 0 else 0.02
-    nonZero = np.random.uniform(size=(heightIn, widthIn)) < probNonZero
-    if dType[0] == "f" or dType[0] == "d":
-        values = np.random.uniform(low=1, high=2, size=(heightIn, widthIn)) * np.random.choice(
-            [-1, 1], size=(heightIn, widthIn)
-        )
-        zeros = np.random.choice([0.0, -0.0], size=(heightIn, widthIn))
-    else:
-        values = np.random.randint(low=1, high=4, size=(heightIn, widthIn)) * np.random.choice(
-            [-1, 1] if dType[0] == "i" else [1], size=(heightIn, widthIn)
-        )
-        zeros = np.zeros((heightIn, widthIn))
-    in0 = np.where(nonZero, values, zeros).astype(npType)
 
     # ROW axis reduces over the rows (one result per column), COLUMN axis over the columns (one result per row).
     # The supernode tiles the frame so that every tile holds the whole reduction axis, so the reference is the
     # reduction of the whole frame.
-    reduceAxis = 0 if axisType == 0 else 1
-    if opType == 0:
-        out = np.all(in0 != 0, axis=reduceAxis)
-    else:
-        out = np.any(in0 != 0, axis=reduceAxis)
-    out = out.astype(npType)
+    model = NonZeroCheck(
+        dtype=dType, op_type=opType, axis_type=axisType, num_rows=heightIn, num_cols=widthIn
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

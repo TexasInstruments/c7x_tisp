@@ -8,6 +8,7 @@ import csv
 
 sys.path.append("../../../common")
 import TISP_utils
+sys.path.append("../../../AUDIOLIB/TISP_agc")  # base kernel model
 from agc import AUDIOLIB_agc
 import file_io
 
