@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../DSPLIB/TISP_binaryLogicGate")  # base kernel model
+from binaryLogicGate import BinaryLogicGate
 
 
 def get_soc_guard(am275_soc_value):
@@ -174,26 +176,14 @@ def gen_test_case_header_file(testCase):
 
     opType = testCase["opType"]
 
-    npType = dType[:-2]
-    # Full range of the type; uint64_t is limited to 63 bits so every value is a valid C integer literal
-    maxVal = min(int(np.iinfo(npType).max), 2**63 - 1)
-    in0 = np.random.randint(low=0, high=maxVal + 1, size=(heightIn, widthIn), dtype=np.uint64).astype(
-        npType
-    )
-    in1 = np.random.randint(low=0, high=maxVal + 1, size=(heightIn, widthIn), dtype=np.uint64).astype(
-        npType
-    )
+    model = BinaryLogicGate(dType=dType, opType=opType)
+    in0, in1 = model.generate_inputs((heightIn, widthIn))
 
     if isInterleave:
         in0 = in0.T
         in1 = in1.T
 
-    if opType == 0:
-        out = in0 & in1
-    elif opType == 1:
-        out = in0 | in1
-    else:
-        out = in0 ^ in1
+    out = model.exec(in0, in1)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, in1, out, testCase, headerFileName)

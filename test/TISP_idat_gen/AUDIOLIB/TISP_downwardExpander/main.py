@@ -41,7 +41,7 @@ def main():
         libRootDir = os.path.join(os.path.dirname(__file__), "../../../../")
 
         # init constructor with only libRootDir, blockSize, and numChannels parameters
-        k0 = TISP_downwardExpander(libRootDir, blockSize=None, numChannels=None)
+        k0 = TISP_downwardExpander(libRootDir=libRootDir, blockSize=None, numChannels=None)
 
         if "init" in sys.argv:
             # NOTE: should only be used to initially set up the kernel in the library

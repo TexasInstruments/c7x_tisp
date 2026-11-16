@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../DSPLIB/TISP_logicalNOT")  # base kernel model
+from logicalNOT import LogicalNOT
 
 
 def get_soc_guard(am275_soc_value):
@@ -167,21 +169,13 @@ def gen_test_case_header_file(testCase):
     heightIn = testCase["heightIn"]
     isInterleave = testCase["isInterleave"]
 
-    shape = (heightIn, widthIn)
-    if dType[0] == "f" or dType[0] == "d":
-        npType = "float32" if dType[0] == "f" else "float64"
-        # zeros of both signs are mixed with non-zero values so that both outputs (0 and 1) occur
-        in0 = np.random.choice([0.0, -0.0, 0.5, -1.5, 3.0], size=shape).astype(npType)
-    else:
-        npType = dType[:-2]
-        # [-2, 2] clipped to the type, so that zeros occur often
-        [minVal, maxVal] = [max(np.iinfo(npType).min, -2), min(np.iinfo(npType).max, 2)]
-        in0 = np.random.randint(low=minVal, high=maxVal + 1, size=shape).astype(npType)
+    model = LogicalNOT(dType=dType)
+    in0 = model.generate_inputs((heightIn, widthIn))
 
     if isInterleave:
         in0 = in0.T
 
-    out = (in0 == 0).astype(in0.dtype)
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

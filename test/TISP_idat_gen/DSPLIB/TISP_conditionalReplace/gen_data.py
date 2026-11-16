@@ -10,6 +10,7 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from conditionalReplace import ConditionalReplace
 import os
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
@@ -182,25 +183,10 @@ def gen_test_case_header_file(testCase):
     isInterleave = testCase["isInterleave"]
     numBlocks = testCase["numBlocks"]
 
-    # [-5, 5]: small enough that samples often equal the constants, so == and != see both outcomes
-    npType = dType[:-2]
-    in0 = np.random.randint(
-        low=-5, high=6, size=(inChannels * numBlocks, inSamples)
-    ).astype(npType)
+    model = ConditionalReplace(dType=dType, numChannels=inChannels, testId=testId)
+    in0, in1 = model.generate_inputs((inChannels * numBlocks, inSamples))
 
-    # one entry per channel; every compare type occurs when there are at least 6 channels
-    compareType = ((np.arange(inChannels) + int(testId)) % 6).astype(npType)
-    constValue = np.random.randint(low=-3, high=4, size=inChannels).astype(npType)
-    replaceValue = np.random.randint(low=-100, high=101, size=inChannels).astype(npType)
-    in1 = np.concatenate([compareType, constValue, replaceValue])
-
-    out = np.zeros_like(in0)
-    for row in range(inChannels * numBlocks):
-        ch = row % inChannels
-        x = in0[row]
-        c = constValue[ch]
-        hit = [x == c, x != c, x < c, x <= c, x > c, x >= c][int(compareType[ch])]
-        out[row] = np.where(hit, replaceValue[ch], x)
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, in1, out, testCase, headerFileName)

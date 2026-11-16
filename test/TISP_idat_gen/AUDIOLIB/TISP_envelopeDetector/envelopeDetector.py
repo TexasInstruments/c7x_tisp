@@ -9,11 +9,13 @@ class AUDIOLIB_envelopeDetector:
 
     def __init__(
         self,
+        *,
         inChannels=1,
         inSamples=32,
         samplingRate=48000.0,
         attackTime=0.010,
         releaseTime=0.100,
+        **_,
     ):
         self.inChannels = inChannels
         self.inSamples = inSamples
@@ -21,12 +23,15 @@ class AUDIOLIB_envelopeDetector:
 
         self.attackTime = float(attackTime)
         self.releaseTime = float(releaseTime)
+        self.init()
 
-        fs = float(samplingRate)
+    def init(self):
+        """Precompute the attack/release coefficients and reset the envelope state."""
+        fs = self.samplingRate
         self.attackCoeff = 1.0 - np.exp(-1.0 / (fs * self.attackTime))
         self.releaseCoeff = 1.0 - np.exp(-1.0 / (fs * self.releaseTime))
 
-        self.envStates = np.zeros(inChannels, dtype=np.float32)
+        self.envStates = np.zeros(self.inChannels, dtype=np.float32)
 
     def derived_params(self):
         return {

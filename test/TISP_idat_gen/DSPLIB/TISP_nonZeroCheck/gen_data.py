@@ -10,6 +10,8 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from nonZeroCheck import NonZeroCheck
+
 import os
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
@@ -187,37 +189,24 @@ def gen_test_case_header_file(testCase):
 
     if isInterleave:
         # Each block is inSamples rows of inChannels samples
-        shape = (numBlocks, inSamples, inChannels)
+        numRows, numCols = inSamples, inChannels
     else:
         # Each block is inChannels rows of inSamples samples
-        shape = (numBlocks, inChannels, inSamples)
+        numRows, numCols = inChannels, inSamples
 
     opType = testCase["opType"]
     axisType = testCase["axisType"]
-    npType = {"float": "float32", "double": "float64"}.get(dType, dType[:-2])
 
-    # ALL needs mostly non-zero data and ANY mostly zero data, so that both results occur
-    probNonZero = 0.98 if opType == 0 else 0.02
-    nonZero = np.random.uniform(size=shape) < probNonZero
-    if dType[0] == "f" or dType[0] == "d":
-        values = np.random.uniform(low=1, high=2, size=shape) * np.random.choice([-1, 1], size=shape)
-        zeros = np.random.choice([0.0, -0.0], size=shape)
-    else:
-        values = np.random.randint(low=1, high=4, size=shape) * np.random.choice(
-            [-1, 1] if dType[0] == "i" else [1], size=shape
-        )
-        zeros = np.zeros(shape)
-    in0 = np.where(nonZero, values, zeros).astype(npType)
-
-    # Reduce every block: ROW axis reduces over the rows (one result per column), COLUMN over the columns
-    reduceAxis = 1 if axisType == 0 else 2
-    if opType == 0:
-        out = np.all(in0 != 0, axis=reduceAxis)
-    else:
-        out = np.any(in0 != 0, axis=reduceAxis)
-    out = out.astype(npType).reshape(-1)
-
-    in0 = in0.reshape(numBlocks * shape[1], shape[2])
+    model = NonZeroCheck(
+        dtype=dType,
+        op_type=opType,
+        axis_type=axisType,
+        num_rows=numRows,
+        num_cols=numCols,
+        num_blocks=numBlocks,
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

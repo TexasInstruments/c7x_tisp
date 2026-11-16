@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../AUDIOLIB/TISP_dB10")  # base kernel model
+from dB10 import DB10
 
 
 def get_soc_guard(am275_soc_value):
@@ -170,34 +172,16 @@ def gen_test_case_header_file(testCase):
 
     out = []
 
-    length = heightIn * widthIn
-
-    if dType == "float":
-        in0 = (
-            np.random.uniform(minX, maxX, length)
-            .astype(np.float32)
-            .reshape(heightIn, widthIn)
-        )
-    else:
-        in0 = (
-            np.random.uniform(minX, maxX, length)
-            .astype(np.float64)
-            .reshape(heightIn, widthIn)
-        )
-
-    out = np.log10(in0)
-
-    if dType == "float":
-        out[in0 > np.finfo(np.float32).max] = 308.2547
-        out[in0 <= 0.0] = np.uint32(0xFF800000)
-
-    else:
-        out[in0 > np.finfo(np.float64).max] = 308.2547
-        out[in0 <= 0.0] = np.uint64(
-            0xFFF0000000000000
-        )  # NaN/-Inf bit pattern for float64
-
-    out = out * 10
+    model = DB10(
+        num_channels=heightIn,
+        num_samples=widthIn,
+        num_blocks=1,
+        dtype=dType,
+        min_x=minX,
+        max_x=maxX,
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

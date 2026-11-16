@@ -8,6 +8,7 @@ import csv
 
 sys.path.append("../../../common")
 import TISP_utils
+sys.path.append("../../../AUDIOLIB/TISP_gainNChTrimSmoothing")  # base kernel model
 from gainNChTrimSmoothing import AUDIOLIB_gainNChTrimSmoothing
 import file_io
 

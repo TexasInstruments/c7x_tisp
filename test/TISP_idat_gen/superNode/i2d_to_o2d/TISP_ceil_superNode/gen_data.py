@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../AUDIOLIB/TISP_ceil")  # base kernel model
+from ceil import Ceil
 
 
 def get_soc_guard(am275_soc_value):
@@ -167,22 +169,15 @@ def gen_test_case_header_file(testCase):
     heightIn = testCase["heightIn"]
     isInterleave = testCase["isInterleave"]
 
-    # [minVal, maxVal] = AUDIOLIB_utils.minMaxVal(dType)
-    [minVal, maxVal] = [-10, 10]
-
-    if dType[0] == "f":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn, widthIn)
-        ).astype("float32")
-
-    elif dType[0] == "d":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn, widthIn)
-        ).astype("double")
-
-    if isInterleave:
-        in0 = in0.T
-    out = np.ceil(in0)
+    model = Ceil(
+        num_channels=heightIn,
+        num_samples=widthIn,
+        num_blocks=1,
+        dtype=dType,
+        is_interleave=isInterleave,
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

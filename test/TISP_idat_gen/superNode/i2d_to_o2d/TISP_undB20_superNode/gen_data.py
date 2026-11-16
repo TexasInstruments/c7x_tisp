@@ -9,6 +9,8 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../AUDIOLIB/TISP_undB20")  # base kernel model
+from undB20 import UndB20
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -148,19 +150,16 @@ def gen_test_case_header_file(testCase):
 
     out = []
 
-    length = heightIn * widthIn
-
-    if dType == "float":
-        in0 = np.random.uniform(minX, maxX, length).astype(np.float32)
-
-    out = np.power(10, in0 / 20)
-
-    in0 = in0.reshape(heightIn, widthIn)
-    out = out.reshape(heightIn, widthIn)
-
-    if dType == "float":
-        out[out > np.finfo(np.float32).max] = np.finfo(np.float32).max
-        out[out < np.finfo(np.float32).tiny] = 0.0
+    model = UndB20(
+        num_channels=heightIn,
+        num_samples=widthIn,
+        num_blocks=1,
+        dtype=dType,
+        min_x=minX,
+        max_x=maxX,
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

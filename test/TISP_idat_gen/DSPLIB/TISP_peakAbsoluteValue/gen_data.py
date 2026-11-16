@@ -10,6 +10,8 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from peakAbsoluteValue import PeakAbsoluteValue
+
 import os
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
@@ -181,25 +183,16 @@ def gen_test_case_header_file(testCase):
 
     if isInterleave:
         # Each block is inSamples rows of inChannels samples
-        shape = (numBlocks, inSamples, inChannels)
+        numRows, numCols = inSamples, inChannels
     else:
         # Each block is inChannels rows of inSamples samples
-        shape = (numBlocks, inChannels, inSamples)
+        numRows, numCols = inChannels, inSamples
 
-    if dType[0] == "f" or dType[0] == "d":
-        npType = "float32" if dType[0] == "f" else "float64"
-        [minVal, maxVal] = [-10, 10]
-        in0 = np.random.uniform(low=minVal, high=maxVal, size=shape).astype(npType)
-    else:
-        npType = dType[:-2]
-        # [-1000, 1000] clipped to the type, without the type minimum: its absolute value does not fit the type
-        [minVal, maxVal] = [max(np.iinfo(npType).min + 1, -1000), min(np.iinfo(npType).max, 1000)]
-        in0 = np.random.randint(low=minVal, high=maxVal + 1, size=shape).astype(npType)
-
-    # One maximum absolute value per row of every block, shape (numBlocks, rows)
-    out = np.max(np.abs(in0), axis=2).astype(npType)
-
-    in0 = in0.reshape(numBlocks * shape[1], shape[2])
+    model = PeakAbsoluteValue(
+        dtype=dType, num_rows=numRows, num_cols=numCols, num_blocks=numBlocks
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

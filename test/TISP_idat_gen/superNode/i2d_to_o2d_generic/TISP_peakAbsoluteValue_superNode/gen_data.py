@@ -9,6 +9,9 @@ import csv
 sys.path.append("../../../common")
 import TISP_utils
 import file_io
+sys.path.append("../../../DSPLIB/TISP_peakAbsoluteValue")  # base kernel model
+from peakAbsoluteValue import PeakAbsoluteValue
+
 
 
 def get_soc_guard(am275_soc_value):
@@ -167,23 +170,11 @@ def gen_test_case_header_file(testCase):
     heightIn = testCase["heightIn"]
     isInterleave = testCase["isInterleave"]
 
-    if dType[0] == "f" or dType[0] == "d":
-        npType = "float32" if dType[0] == "f" else "float64"
-        [minVal, maxVal] = [-10, 10]
-        in0 = np.random.uniform(low=minVal, high=maxVal, size=(heightIn, widthIn)).astype(
-            npType
-        )
-    else:
-        npType = dType[:-2]
-        # [-1000, 1000] clipped to the type, without the type minimum: its absolute value does not fit the type
-        [minVal, maxVal] = [max(np.iinfo(npType).min + 1, -1000), min(np.iinfo(npType).max, 1000)]
-        in0 = np.random.randint(
-            low=minVal, high=maxVal + 1, size=(heightIn, widthIn)
-        ).astype(npType)
-
     # The supernode runs the node once per tile of blockHeight whole rows, and the node gives one maximum absolute
     # value per row, so the reference is one maximum absolute value per row of the frame
-    out = np.max(np.abs(in0), axis=1).astype(npType)
+    model = PeakAbsoluteValue(dtype=dType, num_rows=heightIn, num_cols=widthIn)
+    in0 = model.generate_inputs()
+    out = model.exec(in0).reshape(-1)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

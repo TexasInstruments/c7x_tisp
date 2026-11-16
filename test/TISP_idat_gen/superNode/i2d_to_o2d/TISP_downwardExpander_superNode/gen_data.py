@@ -8,7 +8,8 @@ import csv
 
 sys.path.append("../../../common")
 import TISP_utils
-from downwardExpander import AUDIOLIB_downwardExpander
+sys.path.append("../../../AUDIOLIB/TISP_downwardExpander")  # base kernel model
+from downwardExpander import TISP_downwardExpander
 import file_io
 
 
@@ -203,13 +204,12 @@ def gen_test_case_header_file(testCase):
     releaseCoeff = np.round(rng.uniform(0.1, 0.9, numChannels), 1)
     holdSamples = np.round(rng.uniform(0, 8, numChannels), 0)
 
-    model = AUDIOLIB_downwardExpander(dType=dType, inChannels=numChannels, inSamples=numSamples)
-    model.set(thresholdDb, ratio, kneeWidthDb, attackCoeff, releaseCoeff, holdSamples)
-
     if testCase["bypassMode"]:
         out = in0.copy()
     else:
-        out = model.exec(in0)
+        model = TISP_downwardExpander(libRootDir=".", blockSize=numSamples, numChannels=numChannels)
+        # The base model takes/returns interleaved data (samples x channels) and returns (y, gainState, holdState)
+        out = model.exec(in0.T, thresholdDb, ratio, kneeWidthDb, attackCoeff, releaseCoeff, holdSamples)[0].T
 
     # Interleave the data: rows are samples, columns are channels
     in0 = in0.T.astype("float32")

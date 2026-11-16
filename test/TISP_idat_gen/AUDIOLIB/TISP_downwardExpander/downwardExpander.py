@@ -27,7 +27,7 @@ import AUDIOLIB_idat_gen as audiolib
 
 
 class TISP_downwardExpander(Kernel):
-    def __init__(self, libRootDir, blockSize=None, numChannels=None):
+    def __init__(self, *, libRootDir, blockSize=None, numChannels=None, **_):
 
         libName = "tisp"
         kernelName = "downwardExpander"
@@ -45,6 +45,16 @@ class TISP_downwardExpander(Kernel):
         self._undb20_converter = audiolib.AUDIOLIB_undB20(
             dType="float", inChannels=numChannels, inSamples=blockSize
         )
+        self.init()
+
+    def init(self):
+        """Reset the carried gain envelope and hold counter to rest.
+
+        exec() takes no state input here; it returns (y, gainStateOut, holdStateOut)
+        and a stateful caller keeps those in self.gainState / self.holdState.
+        """
+        self.gainState = None
+        self.holdState = None
 
     """ Kernel Core Algorithm """
 

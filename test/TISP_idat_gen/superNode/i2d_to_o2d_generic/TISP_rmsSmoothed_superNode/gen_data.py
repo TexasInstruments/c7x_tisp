@@ -8,8 +8,10 @@ import csv
 
 sys.path.append("../../../common")
 import TISP_utils
-from process import rmsSmoothedProcess
 import file_io
+
+sys.path.append("../../../AUDIOLIB/TISP_rmsSmoothed")  # base kernel model
+from rmsSmoothed import RmsSmoothed
 
 
 def get_soc_guard(am275_soc_value):
@@ -175,23 +177,22 @@ def gen_test_case_header_file(testCase):
     # [minVal, maxVal] = AUDIOLIB_utils.minMaxVal(dType)
     [minVal, maxVal] = [-10, 10]
 
-    if dType[0] == "f":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn, widthIn)
-        ).astype("float32")
-
-    elif dType[0] == "d":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(heightIn, widthIn)
-        ).astype("double")
+    blockWidth = testCase["blockWidth"]
+    numTiles = widthIn // blockWidth
+    npType = "float32" if dType[0] == "f" else "double"
+    kernel = RmsSmoothed(
+        block_size=blockWidth,
+        num_channels=heightIn,
+        sampling_rate=testCase["samplingRate"],
+        smoothing_time=testCase["smoothingTime"],
+        in_dtype=npType,
+    )
+    in0 = kernel.generate_inputs(shape=(heightIn, widthIn), min_val=minVal, max_val=maxVal)
 
     # The supernode runs the node once per tile of blockWidth samples over all channels, so the reference is one
     # smoothed RMS value per tile, the smoothed energy carried from tile to tile
-    blockWidth = testCase["blockWidth"]
-    numTiles = widthIn // blockWidth
     tiles = in0.reshape(heightIn, numTiles, blockWidth).transpose(1, 0, 2)
-    out0 = rmsSmoothedProcess(tiles, blockWidth, heightIn, testCase["samplingRate"], testCase["smoothingTime"],
-                              numTiles, in0.dtype.type)
+    out0 = np.array([kernel.exec(tiles[t]) for t in range(numTiles)], dtype=in0.dtype)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out0, testCase, headerFileName)

@@ -13,7 +13,7 @@ import file_io
 import os
 import matplotlib.pyplot as plt
 
-from process import tableLookupProcess
+from tableLookup import TableLookup
 
 
 def gen_testCaseParams(testParamsFile, currPrm):
@@ -176,18 +176,15 @@ def gen_test_case_header_file(testCase):
 
     [minVal, maxVal] = [minVal, maxVal]
 
-    if testCase["srcDataType"] == "float":
-        src = np.random.uniform(low=minVal - 10, high=maxVal, size=srcSamples * numBlocks)
-        table = np.random.uniform(low=minVal - 10, high=maxVal, size=tableSamples)
-    else:
-        # indices from -10 to tableSamples + 10, so both clamps and in-range entries are exercised
-        src = np.random.randint(low=-10, high=tableSamples + 11, size=srcSamples * numBlocks, dtype=np.int32)
-        if testCase["tableDataType"] == "float":
-            table = np.random.uniform(low=-1.0, high=1.0, size=tableSamples).astype(np.float32)
-        else:
-            table = np.random.randint(low=-1000, high=1000, size=tableSamples, dtype=np.int32)
+    kernel = TableLookup(table_samples=tableSamples, min_val=minVal, max_val=maxVal)
+    src, table = kernel.generate_inputs(
+        srcSamples,
+        numBlocks,
+        src_dtype=testCase["srcDataType"],
+        table_dtype=testCase["tableDataType"],
+    )
 
-    dst = tableLookupProcess(src, table, minVal, maxVal, tableSamples)
+    dst = kernel.exec(src, table)
 
     # Write header file with flattened 1D inputs, outputs, and gains
     headerFileName = "staticRefCase" + str(testId) + ".h"

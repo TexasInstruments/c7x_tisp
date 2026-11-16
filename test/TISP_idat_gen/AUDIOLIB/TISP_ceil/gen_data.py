@@ -10,6 +10,7 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from ceil import Ceil
 import os
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
@@ -179,23 +180,15 @@ def gen_test_case_header_file(testCase):
     isInterleave = testCase["isInterleave"]
     numBlocks = testCase["numBlocks"]
 
-    # [minVal, maxVal] = TISP_utils.minMaxVal(dType)
-    [minVal, maxVal] = [-10, 10]
-
-    if dType[0] == "f":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("float32")
-
-    elif dType[0] == "d":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("double")
-
-    if isInterleave:
-        in0 = in0.T
-
-    out = np.ceil(in0)
+    model = Ceil(
+        num_channels=inChannels,
+        num_samples=inSamples,
+        num_blocks=numBlocks,
+        dtype=dType,
+        is_interleave=isInterleave,
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, out, testCase, headerFileName)

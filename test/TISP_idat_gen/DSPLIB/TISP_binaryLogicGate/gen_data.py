@@ -10,6 +10,7 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from binaryLogicGate import BinaryLogicGate
 import os
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
@@ -187,26 +188,14 @@ def gen_test_case_header_file(testCase):
 
     opType = testCase["opType"]
 
-    npType = dType[:-2]
-    # Full range of the type; uint64_t is limited to 63 bits so every value is a valid C integer literal
-    maxVal = min(int(np.iinfo(npType).max), 2**63 - 1)
-    in0 = np.random.randint(
-        low=0, high=maxVal + 1, size=(inChannels * numBlocks, inSamples), dtype=np.uint64
-    ).astype(npType)
-    in1 = np.random.randint(
-        low=0, high=maxVal + 1, size=(inChannels * numBlocks, inSamples), dtype=np.uint64
-    ).astype(npType)
+    model = BinaryLogicGate(dType=dType, opType=opType)
+    in0, in1 = model.generate_inputs((inChannels * numBlocks, inSamples))
 
     if isInterleave:
         in0 = in0.T
         in1 = in1.T
 
-    if opType == 0:
-        out = in0 & in1
-    elif opType == 1:
-        out = in0 | in1
-    else:
-        out = in0 ^ in1
+    out = model.exec(in0, in1)
 
     headerFileName = "staticRefCase" + str(testId) + ".h"
     file_io.write_header_file(in0, in1, out, testCase, headerFileName)

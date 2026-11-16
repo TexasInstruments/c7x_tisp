@@ -9,7 +9,7 @@ import csv
 sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
-from process import rmsSmoothedProcess
+from rmsSmoothed import RmsSmoothed
 import file_io
 import os
 
@@ -183,11 +183,19 @@ def gen_test_case_header_file(testCase):
     [minVal, maxVal] = [-10, 10]
 
     npType = "float32" if dType[0] == "f" else "double"
-    in0 = np.random.uniform(low=minVal, high=maxVal, size=(numBlocks, inChannels, inSamples)).astype(npType)
+    kernel = RmsSmoothed(
+        block_size=inSamples,
+        num_channels=inChannels,
+        sampling_rate=samplingRate,
+        smoothing_time=testCase["smoothingTime"],
+        in_dtype=npType,
+    )
+    in0 = kernel.generate_inputs(
+        shape=(numBlocks, inChannels, inSamples), min_val=minVal, max_val=maxVal
+    )
 
     # The smoothed energy starts from zero and carries across the blocks; one smoothed RMS value per block
-    out0 = rmsSmoothedProcess(in0, inSamples, inChannels, samplingRate, testCase["smoothingTime"], numBlocks,
-                              np.dtype(npType).type)
+    out0 = np.array([kernel.exec(in0[blk]) for blk in range(numBlocks)], dtype=npType)
 
     in0 = in0.reshape(numBlocks * inChannels, inSamples)
 

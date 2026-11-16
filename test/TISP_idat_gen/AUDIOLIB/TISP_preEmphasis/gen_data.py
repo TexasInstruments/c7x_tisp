@@ -11,6 +11,7 @@ sys.path.append("../../common")
 import TISP_utils
 import file_io
 import os
+from preEmphasis import PreEmphasis
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
 
@@ -186,20 +187,19 @@ def gen_test_case_header_file(testCase):
     # [minVal, maxVal] = TISP_utils.minMaxVal(dType)
     [minVal, maxVal] = [-10, 10]
 
-    if dType[0] == "f":
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype("float32")
+    kernel = PreEmphasis(alpha=alpha, num_channels=inChannels)
+    in0 = kernel.generate_inputs(
+        shape=(inChannels * numBlocks, inSamples), min_val=minVal, max_val=maxVal
+    )
 
     # One signal per channel through all the blocks: [inChannels, numBlocks * inSamples]
     x = in0.reshape(numBlocks, inChannels, inSamples).transpose(1, 0, 2).reshape(inChannels, -1)
 
     # y[n] = x[n] - alpha * x[n-1], starting from silence and carried across the blocks
-    y = np.empty_like(x)
-    prev = np.zeros(inChannels, dtype=np.float32)
-    for n in range(x.shape[1]):
-        y[:, n] = x[:, n] - alpha * prev
-        prev = x[:, n]
+    y = np.concatenate(
+        [kernel.exec(x[:, blk * inSamples : (blk + 1) * inSamples]) for blk in range(numBlocks)],
+        axis=1,
+    )
 
     # Back to blocks; each block is [inSamples, inChannels] when interleaved, [inChannels, inSamples] otherwise
     def to_blocks(signal):

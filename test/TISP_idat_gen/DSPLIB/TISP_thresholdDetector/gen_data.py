@@ -10,6 +10,8 @@ sys.path.append("../../common")
 # from AUDIOLIB_idat_gen.common import TISP_utils
 import TISP_utils
 import file_io
+from thresholdDetector import ThresholdDetector
+
 import os
 
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'common')))
@@ -211,40 +213,16 @@ def gen_test_case_header_file(testCase):
 
     opType = testCase["opType"]
 
-    if dType[0] == "f" or dType[0] == "d":
-        npType = "float32" if dType[0] == "f" else "float64"
-        [minVal, maxVal] = [-10, 10]
-        in0 = np.random.uniform(
-            low=minVal, high=maxVal, size=(inChannels * numBlocks, inSamples)
-        ).astype(npType)
-    else:
-        npType = dType[:-2]
-        # Full range for 8-bit types, [-1000, 1000] clipped to the type otherwise
-        [minVal, maxVal] = [max(np.iinfo(npType).min, -1000), min(np.iinfo(npType).max, 1000)]
-        in0 = np.random.randint(
-            low=minVal, high=maxVal + 1, size=(inChannels * numBlocks, inSamples)
-        ).astype(npType)
-
-    constant = np.array(float(testCase["constant"])).astype(npType)
-
-    # Set about a quarter of the elements to the constant so ==, <= and >= see equal values
-    in0[np.random.uniform(size=in0.shape) < 0.25] = constant
-
-    if isInterleave:
-        in0 = in0.T
-
-    if opType == 0:
-        out = in0 == constant
-    elif opType == 1:
-        out = in0 != constant
-    elif opType == 2:
-        out = in0 < constant
-    elif opType == 3:
-        out = in0 <= constant
-    elif opType == 4:
-        out = in0 > constant
-    else:
-        out = in0 >= constant
+    model = ThresholdDetector(
+        dtype=dType,
+        op_type=opType,
+        constant=testCase["constant"],
+        num_rows=inChannels * numBlocks,
+        num_cols=inSamples,
+        is_interleave=isInterleave,
+    )
+    in0 = model.generate_inputs()
+    out = model.exec(in0)
 
     out = out.astype(outType(dType)[:-2])
 
