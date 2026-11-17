@@ -1,7 +1,7 @@
 /* TI branding overrides targeting RTD .wy-* selectors.
    In sphinx-immaterial these selectors don't exist — these rules are inert
    and kept for reference or future RTD builds.
-   WIP banner and C++ sig colouring have moved to immaterial_overrides.css
+   C++ sig colouring has moved to immaterial_overrides.css
    which uses .md-* Material Design selectors. */
 
 /* Color overrides */

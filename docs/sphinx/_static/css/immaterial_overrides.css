@@ -84,26 +84,6 @@
   background-color: #00606c;
 }
 
-/* --- WORK-IN-PROGRESS banner (same mechanism as audiolib) ---------------
-   Renders a WIP notice at the top of every page's content area via
-   .md-content__inner::before. REMOVE this block once docs are final. */
-.md-content__inner::before {
-  content: "\1F6A7\00A0 Work in progress \2014 documentation under active development; may be incomplete or change without notice.";
-  display: block;
-  box-sizing: border-box;
-  width: 100%;
-  height: auto;
-  background: #FFF4E5;
-  color: #7A4100;
-  border-left: 3px solid #CC0000;
-  border-radius: 3px;
-  padding: 10px 14px;
-  margin-bottom: 1.1em;
-  font-size: 0.95rem;
-  line-height: 1.45;
-  font-weight: 600;
-}
-
 /* --- Home-page cards ------------------------------------------------------ */
 .ti-home-grid .sd-card {
   background: #ffffff;
