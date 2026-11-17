@@ -514,12 +514,11 @@ templates_path = ["_templates"]
 # theme_overrides.css targets .wy-* RTD classes that don't exist in
 # sphinx-immaterial — load it anyway (harmless, no matching selectors).
 # Add a second CSS file targeting sphinx-immaterial's .md-* selectors for:
-#   - WIP amber banner via .md-content__inner::before
 #   - C++ signature token colouring (same palette as RTD version, new selectors)
 # ---------------------------------------------------------------------------
 
 def setup(app):
     # Original RTD overrides (harmless, no matching selectors in immaterial).
     app.add_css_file("css/theme_overrides.css")
-    # Immaterial-specific overrides: WIP banner + sig colouring.
+    # Immaterial-specific overrides: sig colouring.
     app.add_css_file("css/immaterial_overrides.css")
