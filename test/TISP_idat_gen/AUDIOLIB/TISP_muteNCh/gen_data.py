@@ -227,16 +227,16 @@ def gen_test_case_header_file(testCase):
     [minVal, maxVal] = [-10, 10]
 
     # Generate input samples for all channels
-    kernel = MuteNCh.from_legacy(
-        num_samples=numSamples,
-        num_channels=numChannels,
-        is_interleaved=isInterleaved,
-        sampling_rate=samplingRate,
-        fade_time=fadeTime,
-        fade_type=fadeType,
-        target_gain=testCase["targetGain"],
-        initial_gain=testCase["initialGain"],
-        bypass_mode=bypassMode,
+    kernel = MuteNCh.from_gains(
+        numChannels=numChannels,
+        numSamples=numSamples,
+        samplingRate=samplingRate,
+        fadeTime=fadeTime,
+        fadeType=fadeType,
+        initialGain=testCase["initialGain"],
+        targetGain=testCase["targetGain"],
+        isInterleaved=isInterleaved,
+        bypassMode=bypassMode,
     )
     pInLocal = kernel.generate_inputs(
         test_type=testType,
