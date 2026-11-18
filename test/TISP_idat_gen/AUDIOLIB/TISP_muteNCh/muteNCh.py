@@ -8,10 +8,20 @@ import numpy as np
 class MuteNCh:
     """Reference model of the muteNCh kernel (per-channel gain fade / mute).
 
-    Shared by the TISP_muteNCh and TISP_isolateNCh generators and their supernodes.
+    Same per-fade gain formulas as AUDIOLIB_muteNCh, run one frame per exec() with the gain state carried from frame
+    to frame. Two ways to build it:
+
+    MuteNCh(**operator parameters)  as the node is built from the descriptor (TVM pyeval): num_samples,
+                                    num_channels, in_dtype, is_interleaved, samplingRate, fadeTime, fadeType, pIsMute,
+                                    bypassMode. The gains start where the kernel leaves them after init() + set().
+    MuteNCh.from_gains(...)         AUDIOLIB_muteNCh's arguments with explicit initialGain / targetGain, for the
+                                    TISP_muteNCh and TISP_isolateNCh generators and their supernodes.
+
+    Both take keyword arguments by name only: a misspelt or unknown name raises TypeError instead of falling back to
+    a default.
     """
 
-    # fadeType enum key (as the kernel / master JSON passes it) -> fade label
+    # fadeType enum value (AUDIOLIB_MUTE_FADE_TYPE_*, as the descriptor and the kernel pass it) -> fade label
     FADE_TYPES = {0: "LINEAR", 1: "SMOOTH", 2: "HARD", 3: "SYMMETRIC"}
 
     def __init__(
@@ -26,82 +36,133 @@ class MuteNCh:
         fadeType,
         pIsMute,
         bypassMode=0,
-        **_,
     ):
-        self.num_samples = int(num_samples)
-        self.num_channels = int(num_channels)
-        self.dtype = np.dtype(in_dtype)
-        self.is_interleaved = bool(is_interleaved)
-        self.sampling_rate = samplingRate
-        self.fade_time = fadeTime
-        self.fade_type = self.FADE_TYPES[int(fadeType)]
-        self.bypass_mode = bool(bypassMode)
-        is_mute = np.asarray(pIsMute, dtype=np.float64).reshape(-1)
-        if is_mute.size == 1:
-            is_mute = np.repeat(is_mute, self.num_channels)
-        # target gain 1 - mute; the fade starts from the opposite (muted) end
-        self.target_gain = 1.0 - is_mute
-        self.initial_gain = (is_mute == 1) * 1.0
-        # one frame is num_samples samples per channel
-        self.frame_size = self.num_samples
-        self.init()
+        """Build the model from the operator's parameters, as the node is built from the descriptor.
+
+        After AUDIOLIB_muteNCh_init() every channel's gain is 0, and set() keeps it and sets the target to 1 - pIsMute,
+        so each channel fades from 0 to its target.
+
+        Args:
+            num_samples (int): Number of samples per channel per frame
+            num_channels (int): Number of channels
+            in_dtype (str or dtype): Data type, e.g., "float32"
+            is_interleaved (int): 1 interleaved [samples, channels], 0 planar [channels, samples]
+            samplingRate (int): Sampling rate in Hz
+            fadeTime (float): Fade time in milliseconds
+            fadeType (int or str): Enum value (0 LINEAR, 1 SMOOTH, 2 HARD, 3 SYMMETRIC) or its label
+            pIsMute (scalar or array): Mute flag per channel, 1 mutes (target gain 0), 0 plays (target gain 1); a
+                scalar applies to every channel
+            bypassMode (int): 1 copies the input to the output
+        """
+        numChannels = int(num_channels)
+        if isinstance(fadeType, str):
+            fadeTypeLabel = fadeType.upper()
+            if fadeTypeLabel not in self.FADE_TYPES.values():
+                raise ValueError(f"fadeType must be one of {sorted(self.FADE_TYPES.values())}, got {fadeType!r}")
+        else:
+            if int(fadeType) not in self.FADE_TYPES:
+                raise ValueError(f"fadeType must be one of {sorted(self.FADE_TYPES)}, got {fadeType!r}")
+            fadeTypeLabel = self.FADE_TYPES[int(fadeType)]
+        isMute = np.asarray(pIsMute).reshape(-1)
+        if isMute.size == 1:
+            isMute = np.repeat(isMute, numChannels)
+        if isMute.size != numChannels:
+            raise ValueError(f"pIsMute has {isMute.size} flags, expected 1 or num_channels = {numChannels}")
+        if not np.isin(isMute, (0, 1)).all():
+            raise ValueError(f"pIsMute flags must be 0 or 1, got {isMute.tolist()}")
+        self._setup(
+            dType=np.dtype(str(in_dtype)).name,
+            numChannels=numChannels,
+            numSamples=int(num_samples),
+            samplingRate=int(samplingRate),
+            fadeTime=float(fadeTime),
+            fadeType=fadeTypeLabel,
+            initialGain=[0.0] * numChannels,
+            targetGain=[1.0 - float(m) for m in isMute],
+            isInterleaved=bool(is_interleaved),
+            bypassMode=bypassMode,
+        )
 
     @classmethod
-    def from_legacy(
+    def from_gains(
         cls,
-        *,
-        num_samples,
-        num_channels,
-        is_interleaved,
-        sampling_rate,
-        fade_time,
-        fade_type,
-        target_gain,
-        initial_gain,
-        bypass_mode=False,
-        in_dtype="float32",
+        dType="float32",
+        numChannels=1,
+        numSamples=1,
+        samplingRate=48000,
+        fadeTime=0.0,
+        fadeType="HARD",
+        initialGain=None,
+        targetGain=None,
+        isInterleaved=False,
+        bypassMode=0,
     ):
-        """Build the model from explicit target / initial gains and a fade label.
+        """Build the model from AUDIOLIB_muteNCh's arguments with explicit gains (the generators' form).
 
-        For callers whose gains are not the 1 - pIsMute / (pIsMute == 1) pair (isolateNCh):
-        fade_type is the label ("LINEAR", "SMOOTH", "HARD", ...), not the enum key.
+        Args:
+            dType (str): Data type, e.g., "float32", "float64"
+            numChannels (int): Number of channels
+            numSamples (int): Number of samples per frame
+            samplingRate (int): Sampling rate in Hz
+            fadeTime (float): Fade time in milliseconds
+            fadeType (str): Type of fade ("HARD", "LINEAR", "SMOOTH", "SYMMETRIC")
+            initialGain (list): Initial gain values for each channel
+            targetGain (list): Target gain values for each channel
+            isInterleaved (bool): Whether the data is interleaved
+            bypassMode (int): 1 copies the input to the output
         """
-        self = cls(
-            num_samples=num_samples,
-            num_channels=num_channels,
-            in_dtype=in_dtype,
-            is_interleaved=is_interleaved,
-            samplingRate=sampling_rate,
-            fadeTime=fade_time,
-            fadeType=0,
-            pIsMute=np.zeros(num_channels),
-            bypassMode=bypass_mode,
+        self = cls.__new__(cls)
+        self._setup(
+            dType=dType,
+            numChannels=numChannels,
+            numSamples=numSamples,
+            samplingRate=samplingRate,
+            fadeTime=fadeTime,
+            fadeType=fadeType,
+            initialGain=initialGain,
+            targetGain=targetGain,
+            isInterleaved=isInterleaved,
+            bypassMode=bypassMode,
         )
-        self.fade_type = fade_type
-        self.target_gain = np.asarray(target_gain, dtype=np.float64)
-        self.initial_gain = np.asarray(initial_gain, dtype=np.float64)
-        self.init()
         return self
 
-    def init(self):
-        """Create the per-channel gain state from the initial gain (called by the constructor)."""
-        self.reset()
+    def _setup(
+        self,
+        *,
+        dType,
+        numChannels,
+        numSamples,
+        samplingRate,
+        fadeTime,
+        fadeType,
+        initialGain,
+        targetGain,
+        isInterleaved,
+        bypassMode,
+    ):
+        """Store the private members and create the gain state (shared by both constructors)."""
+        self._dType = dType
+        self._numChannels = numChannels
+        self._numSamples = numSamples
+        self._samplingRate = samplingRate
+        self._fadeTime = fadeTime
+        self._fadeType = fadeType
+        self._initialGain = (
+            initialGain if initialGain is not None else [1.0] * numChannels
+        )
+        self._targetGain = targetGain if targetGain is not None else [0.0] * numChannels
+        self._isInterleaved = isInterleaved
+        self._bypassMode = bool(bypassMode)
+        self.init()
 
-    def reset(self):
-        """(Re)create the per-channel gain state carried from frame to frame."""
-        init = np.array(self.initial_gain)
-        self.state = {
-            "frame": 0,
-            # initial gain, fixes the LINEAR fade step
-            "start": init.copy(),
-            # unrounded running gain used by the LINEAR fade
-            "linear": init.copy(),
-            # last output gain sample used by the SMOOTH fade
-            "smooth": init.copy(),
-            # running gain used by the SYMMETRIC fade
-            "symmetric": init.astype(np.float32),
-        }
-        # gains applied by the most recent exec() (num_channels, num_samples), for test-data dumps
+    def init(self):
+        """Create the per-channel gain state carried from frame to frame (called by the constructor)."""
+        self._frame = 0
+        # LINEAR: unrounded running gain; SYMMETRIC: running gain
+        self._currentGain = np.array(self._initialGain, dtype=np.float64)
+        # SMOOTH: distance from the target gain, carried in float32 as the kernel's smoothDistance
+        self._smoothDistance = np.float32(self._initialGain) - np.float32(self._targetGain)
+        # gains applied by the most recent exec() (numChannels, numSamples), for test-data dumps
         self.last_gain_frame = None
 
     @staticmethod
@@ -138,43 +199,30 @@ class MuteNCh:
         sine_wave = amplitude * np.sin(2 * np.pi * frequency * t + phase_offset)
         return sine_wave
 
-
-    def compute_frame_gains(self):
-        """Compute the per-sample gain ramp for ONE frame and advance the state.
+    def _calculate_gain(self):
+        """Calculate one frame of gain values for each channel based on fade type and advance the gain state.
 
         Returns:
-            gains: float32 array of shape (num_channels, frame_size). The internal
-            gain state is advanced to the next frame.
+            numpy.ndarray: Gain array of shape (numChannels, numSamples).
         """
-        state = self.state
-        targetGain = np.array(self.target_gain)
-        numChannels = self.num_channels
-        frameSize = self.frame_size
-        samplingRate = self.sampling_rate
-        fadeTime = self.fade_time
-        fadeType = self.fade_type
-        frame = state["frame"]
-
-        pFrameGain = np.zeros((numChannels, frameSize), dtype=np.float32)
+        frameSize = self._numSamples
+        pCurrentGain = np.zeros((self._numChannels, frameSize), dtype=np.float32)
         gainThreshold = 1e-6
 
-        for ch in range(numChannels):
-            targ_g = targetGain[ch]
-            if fadeType == "HARD":
+        # Compute gains based on fadeType for each channel
+        for ch in range(self._numChannels):
+            curr_g = self._currentGain[ch]
+            targ_g = self._targetGain[ch]
+            if self._fadeType == "HARD" or self._fadeTime == 0:
                 # Instantaneous gain change to target
-                pFrameGain[ch, :] = targ_g
-            elif fadeType == "LINEAR":
-                curr_g = state["linear"][ch]
-                timeConstantSec = fadeTime / 1000.0
-                totalFadeSamples = timeConstantSec * samplingRate
-                # the step is constant, derived from the initial gain
-                gainStep = (
-                    (targ_g - state["start"][ch]) / totalFadeSamples
-                    if totalFadeSamples > 0 and fadeTime > 0
-                    else 0
-                )
+                pCurrentGain[ch, :] = targ_g
+            elif self._fadeType == "LINEAR":
+                # Linear fade at a constant rate: a full fade, from 1 - target to target, lasts fadeTime
+                timeConstantSec = self._fadeTime / 1000.0
+                totalFadeSamples = timeConstantSec * self._samplingRate
+                gainStep = (targ_g - (1.0 - targ_g)) / totalFadeSamples
                 for i in range(frameSize):
-                    if abs(curr_g - targ_g) < gainThreshold or fadeTime == 0:
+                    if abs(curr_g - targ_g) < gainThreshold:
                         curr_g = targ_g
                     else:
                         curr_g += gainStep
@@ -182,51 +230,42 @@ class MuteNCh:
                             gainStep < 0 and curr_g < targ_g
                         ):
                             curr_g = targ_g
-                    pFrameGain[ch, i] = curr_g
-                state["linear"][ch] = curr_g
-            elif fadeType == "SMOOTH":
-                # Exponential smoothing
-                prevGain = state["smooth"][ch]
-                if frame == 0:
-                    bypassSmoothing = fadeTime == 0.0
-                else:
-                    bypassSmoothing = abs(prevGain - targ_g) < gainThreshold
-                if bypassSmoothing:
-                    pFrameGain[ch, :] = targ_g
-                else:
-                    timeConstantSec = fadeTime / 1000.0
-                    smoothingCoefficient = np.exp(-1.0 / (samplingRate * timeConstantSec))
-                    for j in range(frameSize):
-                        pFrameGain[ch, j] = (smoothingCoefficient * prevGain) + (
-                            (1.0 - smoothingCoefficient) * targ_g
-                        )
-                        prevGain = pFrameGain[ch, j]
-                state["smooth"][ch] = pFrameGain[ch, frameSize - 1]
-            elif fadeType == "SYMMETRIC":
+                    pCurrentGain[ch, i] = curr_g
+            elif self._fadeType == "SYMMETRIC":
                 # Constant ratio per sample between the floor (-200 dB) and 1, in float32 as the kernel computes it
                 floor = np.float32(1e-10)
                 totalFadeSamples = (
-                    np.float32(fadeTime) * np.float32(samplingRate)
+                    np.float32(self._fadeTime) * np.float32(self._samplingRate)
                 ) / np.float32(1000.0)
-                if totalFadeSamples <= 0:
-                    pFrameGain[ch, :] = targ_g
-                else:
-                    ratioUp = np.float32(
-                        np.power(np.float32(1.0) / floor, np.float32(1.0) / totalFadeSamples)
-                    )
-                    ratio = ratioUp if targ_g == 1.0 else np.float32(np.float32(1.0) / ratioUp)
-                    curr_g = state["symmetric"][ch]
-                    if frame == 0:
-                        # set() starts the ramp from the running gain, no lower than one ratio step below the floor
-                        curr_g = max(np.float32(curr_g), np.float32(floor / ratio))
-                    for i in range(frameSize):
-                        curr_g = min(max(np.float32(curr_g * ratio), floor), np.float32(1.0))
-                        pFrameGain[ch, i] = curr_g if curr_g > floor else 0.0
-                    state["symmetric"][ch] = curr_g
+                ratioUp = np.float32(
+                    np.power(np.float32(1.0) / floor, np.float32(1.0) / totalFadeSamples)
+                )
+                ratio = ratioUp if targ_g == 1.0 else np.float32(np.float32(1.0) / ratioUp)
+                curr_g = np.float32(curr_g)
+                if self._frame == 0:
+                    # set() starts the ramp from the running gain, no lower than one ratio step below the floor
+                    curr_g = max(curr_g, np.float32(floor / ratio))
+                for i in range(frameSize):
+                    curr_g = min(max(np.float32(curr_g * ratio), floor), np.float32(1.0))
+                    pCurrentGain[ch, i] = curr_g if curr_g > floor else 0.0
+            elif self._fadeType == "SMOOTH":
+                # Exponential smoothing on the distance from the target, in float32 as the kernel computes it:
+                # the distance shrinks by alpha every sample and the gain is target + distance
+                timeConstantSec = np.float32(self._fadeTime) / np.float32(1000.0)
+                smoothingCoefficient = np.float32(
+                    np.exp(np.float32(-1.0) / (np.float32(self._samplingRate) * timeConstantSec))
+                )
+                targ_g = np.float32(targ_g)
+                distance = self._smoothDistance[ch]
+                for i in range(frameSize):
+                    distance = np.float32(distance * smoothingCoefficient)
+                    curr_g = np.float32(targ_g + distance)
+                    pCurrentGain[ch, i] = curr_g
+                self._smoothDistance[ch] = distance
+            self._currentGain[ch] = curr_g
 
-        state["frame"] = frame + 1
-        return pFrameGain
-
+        self._frame += 1
+        return pCurrentGain
 
     def generate_inputs(
         self,
@@ -243,11 +282,11 @@ class MuteNCh:
             numpy.ndarray: float32 array of shape (num_blocks, num_samples * num_channels).
         """
         testType = test_type
-        isInterleaved = self.is_interleaved
-        numSamples = self.num_samples
-        numChannels = self.num_channels
+        isInterleaved = self._isInterleaved
+        numSamples = self._numSamples
+        numChannels = self._numChannels
         numBlocks = num_blocks
-        samplingRate = self.sampling_rate
+        samplingRate = self._samplingRate
         minVal = min_val
         maxVal = max_val
         samplesPerFrame = numSamples * numChannels
@@ -309,46 +348,53 @@ class MuteNCh:
 
         return pInLocal
 
-
-    def apply_frame_gains(self, in_frame, gain_frame):
-        """Apply one frame of gains to one frame of input; bypass copies input to output.
-
-        in_frame has shape (num_samples * num_channels,), gain_frame has shape
-        (num_channels, num_samples).
-        """
-        num_samples = self.num_samples
-        num_channels = self.num_channels
-        is_interleaved = self.is_interleaved
-
-        if self.bypass_mode:
-            return in_frame.copy()
-
-        pOut = np.zeros(num_samples * num_channels, dtype=self.dtype)
-        if is_interleaved:
-            for j in range(num_samples):
-                for c in range(num_channels):
-                    idx = j * num_channels + c
-                    pOut[idx] = in_frame[idx] * gain_frame[c, j]
-        else:
-            for i in range(num_channels):
-                startIdx = i * num_samples
-                for j in range(num_samples):
-                    pOut[startIdx + j] = in_frame[startIdx + j] * gain_frame[i, j]
-        return pOut
-
-    def exec(self, x):
-        """Process one frame: advance the fade state and apply the gains.
+    def _apply_gain(self, pInLocal, pCurrentGain):
+        """Apply one frame of gain values to one frame of input data to generate output data.
 
         Args:
-            x: one input frame in the kernel layout, interleaved [num_samples, num_channels]
-               or planar [num_channels, num_samples] (a flat frame is accepted too).
+            pInLocal (numpy.ndarray): Input data array of shape (numSamples * numChannels,).
+            pCurrentGain (numpy.ndarray): Gain array of shape (numChannels, numSamples).
 
         Returns:
-            the output frame, same shape and dtype as x. The gains applied are kept in
-            self.last_gain_frame, shape (num_channels, num_samples).
+            numpy.ndarray: Output data array of shape (numSamples * numChannels,).
         """
-        x = np.asarray(x)
-        gain_frame = self.compute_frame_gains()
-        self.last_gain_frame = gain_frame
-        out = self.apply_frame_gains(x.reshape(-1), gain_frame)
-        return out.astype(self.dtype).reshape(x.shape)
+        pOutLocal = np.zeros(self._numSamples * self._numChannels, dtype=self._dType)
+
+        if self._isInterleaved:
+            for j in range(self._numSamples):
+                for c in range(self._numChannels):
+                    idx = j * self._numChannels + c
+                    pOutLocal[idx] = pInLocal[idx] * pCurrentGain[c, j]
+        else:
+            for i in range(self._numChannels):
+                startIdx = i * self._numSamples
+                for j in range(self._numSamples):
+                    pOutLocal[startIdx + j] = (
+                        pInLocal[startIdx + j] * pCurrentGain[i, j]
+                    )
+
+        return pOutLocal
+
+    def exec(self, pInLocal):
+        """Execute the muteNCh algorithm on one frame: advance the fade state and apply the gains.
+
+        Args:
+            pInLocal (numpy.ndarray): One input frame in the kernel layout, interleaved [numSamples, numChannels]
+                or planar [numChannels, numSamples] (a flat frame is accepted too).
+
+        Returns:
+            numpy.ndarray: The output frame, same shape as pInLocal; bypassMode copies the input. The gains
+            applied are kept in self.last_gain_frame, shape (numChannels, numSamples).
+        """
+        pInLocal = np.asarray(pInLocal)
+        # Calculate gain values
+        pCurrentGain = self._calculate_gain()
+        self.last_gain_frame = pCurrentGain
+
+        if self._bypassMode:
+            pOutLocal = pInLocal.reshape(-1).copy()
+        else:
+            # Apply gain to input data
+            pOutLocal = self._apply_gain(pInLocal.reshape(-1), pCurrentGain)
+
+        return pOutLocal.astype(self._dType).reshape(pInLocal.shape)
