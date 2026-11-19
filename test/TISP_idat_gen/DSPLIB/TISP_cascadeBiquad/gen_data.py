@@ -177,6 +177,9 @@ def process_test_case(testCase):
     testCase["numReps"] = int(testCase["numReps"])
     testCase["testCategory"] = int(testCase["testCategory"])
     testCase["bypassMode"] = int(testCase["bypassMode"])
+    # Optional column: the reference model's arithmetic ("fp64" default, "fp32" to
+    # mirror the float32 kernel); a CSV without it, or an empty cell, keeps fp64.
+    testCase["precision"] = (testCase.get("precision") or "fp64").strip()
 
     return testCase
 
@@ -217,8 +220,8 @@ def gen_test_case_header_file(testCase):
         numExecReps=numExecReps,
     )
 
-    # Build the model with the case's values (the reference runs in the precision the
-    # test signal is generated in: "float" is generated, and filtered, as float64)
+    # Build the model with the case's values. The test signal is generated as float64;
+    # the case's precision column picks fp64 (sosfilt) or fp32 (kernel-matched) filtering.
     kernel = CascadeBiquad(
         num_channels=testCase["numChannels"],
         num_samples=dataSize,
@@ -227,6 +230,7 @@ def gen_test_case_header_file(testCase):
         biquadForm=testCase["biquadForm"],
         pCoeffs=pCoeffs,
         bypassMode=testCase["bypassMode"],
+        precision=testCase["precision"],
     )
 
     # Run frame by frame; the filter state stays in the model (bypass is handled by exec)
